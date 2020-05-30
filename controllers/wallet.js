@@ -38,6 +38,9 @@ exports.getWithdraw = (req, res) => {
 				var offlinebtn = 'onlinebutton';
       }
 
+      var chaindl = 'nooverlay';
+      var chaindlbtn = 'nobtn';
+
       var balance = info.balance;
 
       if (balance <= 0) {
@@ -47,7 +50,9 @@ exports.getWithdraw = (req, res) => {
         title: 'Send D',
         balance: balance,
         offline: offline,
-        offlinebtn: offlinebtn
+        offlinebtn: offlinebtn,
+        chaindl: chaindl,
+        chaindlbtn: chaindlbtn
     });
   });
 };

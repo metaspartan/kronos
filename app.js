@@ -11,12 +11,12 @@ const chalk = require('chalk');
 const errorHandler = require('errorhandler');
 const lusca = require('lusca');
 const dotenv = require('dotenv');
-const MongoStore = require('connect-mongo')(session);
+//const MongoStore = require('connect-mongo')(session);
 const flash = require('express-flash');
 const flashc = require('connect-flash');
 const path = require('path');
-const mongoose = require('mongoose');
-const passport = require('passport');
+//const mongoose = require('mongoose');
+//const passport = require('passport');
 const expressValidator = require('express-validator');
 const expressStatusMonitor = require('express-status-monitor');
 const sass = require('node-sass-middleware');
@@ -66,6 +66,7 @@ const app = express();
 /**
  * Connect to MongoDB.
  */
+/*
 mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGODB_URI || process.env.MONGOLAB_URI);
 mongoose.connection.on('error', (err) => {
@@ -73,6 +74,7 @@ mongoose.connection.on('error', (err) => {
   console.log('%s MongoDB connection error. Please make sure MongoDB is running.', chalk.red('✗'));
   process.exit();
 });
+*/
 
 /**
  * Express configuration.
@@ -91,6 +93,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
 recaptcha.init(process.env.RECAPTCHA_PUBLIC, process.env.RECAPTCHA_PRIVATE);
+/*
 app.use(session({
   resave: true,
   saveUninitialized: true,
@@ -101,8 +104,9 @@ app.use(session({
     clear_interval: 3600
   })
 }));
-app.use(passport.initialize());
-app.use(passport.session());
+*/
+//app.use(passport.initialize());
+//app.use(passport.session());
 app.use(flash());
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
@@ -118,7 +122,7 @@ app.use(flashc());
 const config = {
 username: "dpiadmin",
 password: 'testing123',
-maxAge: 60000 // 1 minute
+maxAge: 10800000 // 3 hours
 }
 
 app.use(passwordProtected(config));
@@ -170,7 +174,7 @@ app.post('/privkey', homeController.privkey);
 
 //Needs securing
 
-
+/*
 app.get('/login', userController.getLogin);
 app.post('/login', function (req, res, next) {
         recaptcha.verify(req, function (error) {
@@ -208,20 +212,23 @@ app.post('/account/2fa', passportConfig.isAuthenticated, passportConfig.ensureTo
 app.post('/account/password', passportConfig.isAuthenticated, passportConfig.ensureTotp, userController.postUpdatePassword);
 app.post('/account/delete', passportConfig.isAuthenticated, passportConfig.ensureTotp, userController.postDeleteAccount);
 app.get('/account/unlink/:provider', passportConfig.isAuthenticated, passportConfig.ensureTotp, userController.getOauthUnlink);
+*/
 
 /**
  * Wallet app routes.
  */
-app.get('/wallet', passportConfig.isAuthenticated, passportConfig.ensureTotp, walletController.wallet);
+//app.get('/wallet', passportConfig.isAuthenticated, passportConfig.ensureTotp, walletController.wallet);
+
+app.post('/newaddress', walletController.address);
 app.get('/addresses', walletController.addresses);
 app.get('/transactions', walletController.transactions);
-app.post('/newaddress', passportConfig.isAuthenticated, passportConfig.ensureTotp, walletController.address);
 app.post('/withdraw/send', walletController.withdraw);
 app.get('/withdraw', walletController.getWithdraw);
 
 /**
  * OAuth authentication routes. (Sign in)
  */
+/*
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'public_profile'] }));
 app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' }), (req, res) => {
   res.redirect(req.session.returnTo || '/wallet');
@@ -238,6 +245,7 @@ app.get('/auth/twitter', passport.authenticate('twitter'));
 app.get('/auth/twitter/callback', passport.authenticate('twitter', { failureRedirect: '/login' }), (req, res) => {
   res.redirect(req.session.returnTo || '/wallet');
 });
+*/
 
 /**
  * Error Handler.
@@ -250,7 +258,7 @@ app.use(errorHandler());
 app.listen(app.get('port'), '0.0.0.0', () => {
   var tri = tribus.digest('Denarius');
   console.log('✓ Tribus Hash of "Denarius"', tri);
-  console.log('%s dPi Interface is running at http://' + ip.address() + ':%d in %s mode', chalk.green('✓'), app.get('port'), app.get('env')); 
+  console.log('%s dPi Interface is running at http://' + ip.address() + ':%d in %s mode', chalk.green('✓'), app.get('port'), app.get('env'));
   console.log('  Open the URL above in your web browser on your local network to use dPi!\n');
 });
 

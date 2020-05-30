@@ -32,19 +32,9 @@ EOF
 
 sudo apt-get update -y && sudo apt-get upgrade -y
 
-sudo apt-get install -y git unzip build-essential libssl-dev libdb++-dev libboost-all-dev libqrencode-dev libminiupnpc-dev libevent-dev autogen automake libtool libqt5gui5 libqt5core5a libqt5dbus5 qttools5-dev qttools5-dev-tools qt5-default libcurl4-openssl-dev curl wget jq mongodb snap snapd pwgen nodejs npm
+sudo apt-get install -y git unzip build-essential libssl-dev autogen automake curl wget jq snap snapd pwgen nodejs npm
 
 echo "Dependancies Installed Successfully!"
-
-echo "Creating a MongoDB Directory - /data/db..."
-
-sudo mkdir -p /data/db
-
-sudo killall mongod
-
-echo "Starting MongoDB....."
-sudo mongod --fork --syslog
-#sudo screen -dmS mongo 'sudo mongod'
 
 echo "Snap installing Denarius..."
 
