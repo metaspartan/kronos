@@ -66,14 +66,18 @@ block content
           .col-sm-6(align='center')
             | Balance
     ul.list-group
-    each address in addresses
-      li.list-group-item(style='background-color: #151515;border-color: #444;')
-        .row
-        .col-sm-6
-          | #{address[0]}
-        .col-sm-6(align='center')
-          strong #{address[1]}
+    if (addresses)
+      each address in addresses
+        li.list-group-item(style='background-color: #151515;border-color: #444;')
+          .row
+          .col-sm-6
+            | #{address[0]}
+          .col-sm-6(align='center')
+            strong #{address[1]}
+          br
+      else
         br
+        h3(align='center', style='color: #bbb;') No Addresses Available
     br
     p(align='center')
       a.btn.btn-default(href='/', role='button') Go back to the Dashboard     

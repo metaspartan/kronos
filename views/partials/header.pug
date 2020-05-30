@@ -6,8 +6,8 @@ div(class=offline)
       button.btn.btn-danger(type='submit', id='submit',  onclick='reboot()') REBOOT DENARIUS NODE
       form.form-horizontal(action='/reboot', method='POST', id='sendreboot')
         input(type='hidden', name='_csrf', value=_csrf)
-div(class=chaindl, style='display:none;')
-  div(class=chaindlbtn, style='display:none;')
+div(class=chaindl)
+  div(class=chaindlbtn)
     p(align='center')
       h1 Denarius Node Syncing...
       p

@@ -111,7 +111,11 @@ exports.addresses = function (req, res) {
         if (err) {
           console.log(err);
         }
-      res.render('account/addresses', { title: 'My Addresses', addyy: addyy, addresses: addresses, privkey: privkey, offline: offline, offlinebtn: offlinebtn });
+
+        var chaindl = 'nooverlay';
+        var chaindlbtn = 'nobtn';
+
+      res.render('account/addresses', { title: 'My Addresses', addyy: addyy, addresses: addresses, privkey: privkey, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
 
   });
 });
@@ -270,7 +274,10 @@ exports.transactions = function (req, res) {
         var offlinebtn = 'onlinebutton';
       }
 
-    res.render('account/tx', { title: 'Transactions', transactions: transactions, offline: offline, offlinebtn: offlinebtn });
+      var chaindl = 'nooverlay';
+      var chaindlbtn = 'nobtn';
+
+    res.render('account/tx', { title: 'Transactions', transactions: transactions, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
     });
 
 };
