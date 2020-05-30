@@ -82,7 +82,7 @@ denarius.daemon
 
 echo "Installing Forever and Nodemon"
 
-npm install -g forever nodemon
+sudo npm install -g forever nodemon
 
 echo "Installing dPi from Github"
 
