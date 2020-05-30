@@ -35,8 +35,10 @@ const ProgressBar = require('progressbar.js');
 const cookieParser = require('cookie-parser');
 const toastr = require('express-toastr');
 const passwordProtected = require('express-password-protect');
-
 const upload = multer({ dest: path.join(__dirname, 'uploads') });
+const ip = require('ip');
+
+console.log(ip.address());
 
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
@@ -243,10 +245,10 @@ app.use(errorHandler());
 /**
  * Start Express server.
  */
-app.listen(app.get('port'), () => {
+app.listen(app.get('port'), ip.address(), () => {
   var tri = tribus.digest('Denarius');
   console.log('Tribus Hash of "Denarius"', tri);
-  console.log('%s dPi Interface is running at http://localhost:%d in %s mode', chalk.green('✓'), app.get('port'), app.get('env')); 
+  console.log('%s dPi Interface is running at http://' + ip.address() + ':%d in %s mode', chalk.green('✓'), app.get('port'), app.get('env')); 
   console.log('  Open the URL above in your web browser on your local network to use dPi!\n');
 });
 
