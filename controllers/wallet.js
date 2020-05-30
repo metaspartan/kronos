@@ -67,9 +67,9 @@ exports.addresses = function (req, res) {
       var offline = 'onlineoverlay';
       var offlinebtn = 'onlinebutton';
 
-      var addy1 = addresses.slice(-1)[0];
+      //var addy1 = addresses.slice(-1)[0];
 
-      var addy = addy1[0][0];
+      //var addy = addy1[0][0];
 
       var addresses = addresses[0];
 

@@ -117,11 +117,13 @@ app.use(flashc());
 
 const config = {
 username: "dpiadmin",
-password: "testing123",
+password: 'testing123',
 maxAge: 60000 // 1 minute
 }
 
 app.use(passwordProtected(config));
+
+app.set('trust proxy',1);
  
 // Load express-toastr
 // You can pass an object of default options to toastr(), see example/index.coffee
@@ -245,9 +247,9 @@ app.use(errorHandler());
 /**
  * Start Express server.
  */
-app.listen(app.get('port'), ip.address(), () => {
+app.listen(app.get('port'), '0.0.0.0', () => {
   var tri = tribus.digest('Denarius');
-  console.log('Tribus Hash of "Denarius"', tri);
+  console.log('✓ Tribus Hash of "Denarius"', tri);
   console.log('%s dPi Interface is running at http://' + ip.address() + ':%d in %s mode', chalk.green('✓'), app.get('port'), app.get('env')); 
   console.log('  Open the URL above in your web browser on your local network to use dPi!\n');
 });

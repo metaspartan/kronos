@@ -119,10 +119,10 @@ PWDPI3=$(pwgen 15 1)
 
 echo "Updating dPi Protection and Generating Password..."
 
-sed -i 's/.*password: "testing123",.*/password: "$PWDPI3",/' app.js
+sed -i "s/.*password: 'testing123',.*/password: '$PWDPI3',/" app.js
 
 sudo forever start app.js
 
 echo "dPi and Denarius are successfully installed! dPi is now running on port 3000, open your browser to this devices local LAN IP, e.g. 127.0.0.1:3000"
 
-echo "Your dPi credentials are $(tput setaf 2)dpiadmin $(tput setaf 7)& password is $(tput setaf 3)$PWDPI3"
+echo "$(tput setaf 7)Your dPi credentials are $(tput setaf 2)dpiadmin $(tput setaf 7)& password is $(tput setaf 3)$PWDPI3"
