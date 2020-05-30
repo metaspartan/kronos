@@ -3,9 +3,6 @@ dPi - Denarius Node Dashboard and AIO Interface
 
 [![Dependency Status](https://david-dm.org/carsenk/dpi/status.svg?style=flat)](https://david-dm.org/carsenk/dpi) [![Build Status](https://travis-ci.org/carsenk/dpi.svg?branch=master)](https://travis-ci.org/carsenk/dpi) [![Thinkful Pair on Node](https://tf-assets-staging.s3.amazonaws.com/badges/thinkful_repo_badge.svg)](http://start.thinkful.com/node/)
 
-![DesktopWallet](https://user-images.githubusercontent.com/10162347/27821646-3b31105c-6060-11e7-8c82-cbbbb5b1e663.png)
-![MobileWallet](https://user-images.githubusercontent.com/10162347/27821566-f807334c-605f-11e7-8bec-805fe433237f.png)
-
 **Live Demo**: Currently unavailable
 
 dPi - A NodeJS/MongoDB powered denariusd Web Wallet Dashboard with Statistics of your device. This is a major work in progress and this repo will be updated in time.
@@ -22,7 +19,7 @@ Install dPi with Denarius Now!
 -----------------
 
 ```bash
-wget https://raw.githubusercontent.com/carsenk/dpi/master/installdpi.sh | bash
+wget https://raw.githubusercontent.com/carsenk/dpi/master/installdpi.sh | bash installdpi.sh
 ```
 
 Features
@@ -59,7 +56,7 @@ Getting Started
 The easiest way to get started is to run the following bash command:
 
 ```bash
-wget https://raw.githubusercontent.com/carsenk/dpi/master/installdpi.sh | bash
+wget https://raw.githubusercontent.com/carsenk/dpi/master/installdpi.sh | bash installdpi.sh
 ```
 
 ```bash
