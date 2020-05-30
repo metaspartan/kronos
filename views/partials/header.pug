@@ -7,16 +7,28 @@ div(class=offline)
       form.form-horizontal(action='/reboot', method='POST', id='sendreboot')
         input(type='hidden', name='_csrf', value=_csrf)
 div(class=chaindl)
+  #container3(name='container3') &nbsp;
   div(class=chaindlbtn)
     p(align='center')
-      h1 Denarius Node Syncing...
+      h1 Denarius Node Syncing... 
+        strong #{blockperc} %
       p
-        | Please wait...This can take awhile...Downloading Blocks... 
+        | Please wait...This can take awhile...Downloading Blocks
       p
         | On Block 
-        strong #{blockheight}
+        strong #{blockheight} / #{cryptoidblocks}
+        br
+        #blockpp
+      p Peer Connections: #{peers}
+      p
+        i.fa.fa-arrow-up
+        | Data Sent #{datasent}
+        br
+        i.fa.fa-arrow-down
+        | Data Received #{datareceived} 
     p
       img(src='../img/syncing.svg', alt='Syncing Blocks...', border='0')
+      #blockcount(data-value=blockpercent)
 .navbar.navbar-default.navbar-fixed-top
   .container
     .navbar-header

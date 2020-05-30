@@ -169,7 +169,7 @@ exports.index = (req, res) => {
 				var stakebal = 'Node Offline';
 				var version = 'Node Offline';
 				var protocol = 'Node Offline';
-				var blockheight = 'Node Offline';
+				var blockheight = '0';
 				var moneysupply = 'Node Offline';
 				var peers = 'Node Offline';
 				var ip = 'Node Offline';
@@ -182,6 +182,7 @@ exports.index = (req, res) => {
 				var fslocked = 'Node Offline';
 				var testnet = 'Node Offline';
 				var walletstatuss = 'Node Offline';
+				var cryptoidblocks = '0';
 
 				var offline = 'offlineoverlay';
 				var offlinebtn = 'offlinebutton';
@@ -258,6 +259,18 @@ exports.index = (req, res) => {
 					privatekey = 'Wallet Locked';
 				}
 			}
+
+			unirest.get("https://chainz.cryptoid.info/d/api.dws?q=getblockcount")
+			.headers({'Accept': 'application/json'})
+			.end(function (result) {
+				var cryptoidblocks = result.body;
+			  //var usdprice = result.body[0]['price_usd'] * balance;
+			  //var btcprice = result.body[0]['price_btc'] * balance;
+
+			if (blockheight >= 0 && cryptoidblocks >= 0) {
+				var blockpercent = blockheight / cryptoidblocks;
+				var blockperc = blockheight / cryptoidblocks * 100;
+			}
 		
 	
         res.render('home', {
@@ -316,7 +329,10 @@ exports.index = (req, res) => {
 		  sending: sending,
 		  privatekey: privatekey,
 		  chaindl: chaindl,
-		  chaindlbtn: chaindlbtn
+		  chaindlbtn: chaindlbtn,
+		  cryptoidblocks: cryptoidblocks,
+		  blockpercent: blockpercent,
+		  blockperc: blockperc
         });
 	});
 	});
@@ -325,6 +341,7 @@ exports.index = (req, res) => {
 });
 });
 });
+	});
 });
 });
 });
