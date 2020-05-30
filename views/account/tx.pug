@@ -1,0 +1,66 @@
+extends ../layout
+
+block content
+  .txheader.container
+    p
+      h3(align='center', style='margin-top:55px;margin-bottom:50px;')
+        i.fa.fa-exchange
+        |  Denarius Wallet Transactions
+    if (transactions)
+      - transactions.sort((a, b)=>{a = new Date(a.timereceived);b = new Date(b.timereceived);return a>b ? -1 : a<b ? 1 : 0;})
+      each transaction in transactions
+        .panel.panel-default(style='border-color: #4e4e4e;')
+          if (transaction.category == 'receive')
+            .panel-heading.txreceive.mb
+              .pull-left
+                | Transaction Received
+                .date= new Date(transaction.timereceived*1000).toUTCString()
+              .pull-right
+                strong Confirmations !{transaction.confirmations}
+            .panel-body(style='background-color: #333;')
+              p(align='center')
+                strong.txamount !{transaction.amount.toFixed(8)}
+                  small(style='color:#777;')  D
+              p(align='center')
+                .txaddress !{transaction.address}
+              p(align='center') 
+                | TX ID: 
+                a.txid(href="https://chainz.cryptoid.info/d/tx.dws?" + transaction.txid, target='_blank') !{transaction.txid.substring(0,30)}
+          else if (transaction.category == 'send')
+            .panel-heading.txsent.mb
+              .pull-left
+                | Transaction Sent
+                .date= new Date(transaction.timereceived*1000).toUTCString()
+              .pull-right
+                strong Confirmations !{transaction.confirmations}
+            .panel-body(style='background-color: #333;')
+              p(align='center')
+                strong.txamount !{transaction.amount.toFixed(8)}
+                  small(style='color:#777;')  D
+              p(align='center')
+                .txaddress !{transaction.address}
+              p(align='center') 
+                | TX ID: 
+                a.txid(href="https://chainz.cryptoid.info/d/tx.dws?" + transaction.txid, target='_blank') !{transaction.txid.substring(0,30)}
+          else
+            .panel-heading.txreceive.mb
+              .pull-left
+                | Staked, Mined, or FS
+                .date= new Date(transaction.timereceived*1000).toUTCString()
+              .pull-right
+                strong Confirmations !{transaction.confirmations}
+            .panel-body(style='background-color: #333;')
+              p(align='center')
+                strong.txamount Rewarded +!{transaction.reward.toFixed(8)} 
+                  small(style='color:#777;')  D
+              p(align='center')
+                .txaddress !{transaction.address}
+              p(align='center') 
+                | TX ID: 
+                a.txid(href="https://chainz.cryptoid.info/d/tx.dws?" + transaction.txid, target='_blank') !{transaction.txid.substring(0,30)}
+      else
+        br
+        h3(align='center', style='color: #bbb;') No Transactions Available
+      p(align='center')
+        br
+        a.btn.btn-default(href='/') Go back to Dashboard

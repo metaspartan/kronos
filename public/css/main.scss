@@ -1,0 +1,488 @@
+@import "themes/sandstone/variables";
+
+@import "lib/bootstrap/bootstrap";
+@import "lib/font-awesome/font-awesome";
+
+@import "themes/sandstone/sandstone";
+
+@import url('https://fonts.googleapis.com/css?family=Lato:100,400|Quicksand:300|Roboto:100,300|Open Sans:100,300');
+
+// Scaffolding
+// -------------------------
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  padding-top: 60px;
+  margin-bottom: 75px;
+  background-image: url('../img/bgd.png');
+  background-repeat: repeat;
+  background-color: #222;
+  color: #FFF;
+  font-family: 'Open Sans', sans-serif;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 45px;
+  line-height: 45px;
+
+  p, ul {
+    margin-bottom: 0;
+  }
+}
+
+#container {
+  margin: 20px;
+  width: 200px;
+  height: 200px;
+  position: relative;
+}
+
+#container2 {
+  margin: 20px;
+  width: 200px;
+  height: 200px;
+  position: relative;
+}
+
+.Enabled {
+  color: green;
+  font-weight: bold;
+}
+
+.Disabled {
+  color: red;
+  font-weight: bold;
+}
+
+.Staking {
+  color: green;
+  font-weight: bold;
+}
+
+.Not {
+  color: red;
+  font-weight: bold;
+}
+
+.colory {
+  color: #f7d200;
+}
+
+.coloru {
+  color: #43c900;
+}
+
+.colorr {
+  color: #ff4300;
+}
+
+.blackinput {
+  background-color: #333 !important;
+  border-color: #444 !important;
+  color: #FFF !important;
+  width: 420px !important;
+}
+
+.blackinput2 {
+  background-color: #333 !important;
+  border-color: #444 !important;
+  color: #FFF !important;
+  width: 320px !important;
+}
+
+.blackinput3 {
+  background-color: #333 !important;
+  border-color: #444 !important;
+  color: #FFF !important;
+}
+
+.offlineoverlay {
+  /* Height & width depends on how you want to reveal the overlay (see JS below) */   
+  height: 100%;
+  width: 100%;
+  position: fixed; /* Stay in place */
+  z-index: 2050; /* Sit on top */
+  left: 0;
+  top: 0;
+  background-color: rgb(0,0,0); /* Black fallback color */
+  background-color: rgba(0,0,0, 0.98); /* Black w/opacity */
+  overflow-x: hidden; /* Disable horizontal scroll */
+  transition: 0.5s; 
+}
+
+.onlineoverlay {
+  display: none !important;
+}
+
+.offlinebutton {
+  display: visible !important;
+  position: relative;
+  top: 30%; /* 30% from the top */
+  width: 100%; /* 100% width */
+  text-align: center; /* Centered text/links */
+  margin-top: 30px; /* 30px top margin to avoid conflict with the close button on smaller screens */
+  z-index: 2060;
+}
+
+.onlinebutton {
+  display: none !important;
+}
+
+#toastr-container {
+  z-index: 999999 !important;
+}
+
+#sendu {
+  background-color: #222 !important;
+  padding: 10px;
+  border: none !important;
+}
+
+#pkey {
+  width: 100%;
+  display: none;
+}
+
+#sendu:active, #sendu:focus, #sendu:visited {
+  border: none !important;
+  outline: 0 !important;
+}
+
+.progressbar-text {
+  top: 58% !important;
+}
+
+// Input Fields
+// -------------------------
+
+textarea {
+  resize: vertical;
+}
+
+// Navbar
+// -------------------------
+
+.navbar-nav img {
+  width: 30px;
+  height: 30px;
+  margin: -15px 15px -15px;
+}
+
+.navbar-default{
+  background-image: url("../img/bg.png") !important;
+  background-repeat: repeat-x;
+  background-color: #191919 !important;
+}
+
+// Alerts
+// -------------------------
+
+.alert {
+  margin-top: 20px;
+}
+
+.alert-success {
+  background-color: #345703;
+  padding: 30px;
+}
+
+// Thumbnails
+// -------------------------
+
+.thumbnail {
+  padding: 0;
+  border-radius: 0;
+  box-shadow: 0 0 5px #ccc, inset 0 0 0 #000;
+}
+
+// Font Icons
+// -------------------------
+
+.fa {
+  margin-right: 6px;
+}
+
+a.forgot, a.forgot:hover {
+  color: #515151;
+}
+
+// Social Buttons
+
+.btn-facebook {
+  background-color: #3164bb;
+  color: #FFF;
+}
+
+.btn-twitter {
+  background-color: #37c8c8;
+  color: #FFF;
+}
+
+.btn-google {
+  background-color: #b41f1f;
+  color: #FFF;
+}
+
+.btn-github {
+  background-color: #4b4b4b;
+  color: #FFF;
+}
+
+// Wallet CSS
+
+//Safari Dropdown Fix
+.dropdown-menu {
+  z-index: 25000 !important;
+}
+
+.btn-gold {
+  background-color: #d9bc25;
+  color: #FFF;
+}
+
+.btn-grey {
+  background-color: #83929c;
+  color: #FFF;
+}
+
+.navbar-send {
+  float: right;
+  font-size: 23px;
+  margin-top: 15px;
+  margin-right: 15px;
+}
+
+a.send {
+  color: #98978B !important;
+}
+
+.navbar-toggle {
+    z-index: 3;
+}
+
+.ml {
+  margin-left: 15px;
+}
+
+.mt {
+  margin-top: 7px;
+}
+
+.mb {
+  padding-bottom: 50px;
+}
+
+.mbs {
+  padding-bottom: 30px;
+}
+
+.panel-default {
+    -webkit-box-shadow: 0px 5px 2px 0px rgba(50, 50, 50, 0.25);
+    -moz-box-shadow: 0px 5px 2px 0px rgba(50, 50, 50, 0.25);
+    box-shadow: 0px 5px 2px 0px rgba(50, 50, 50, 0.25);
+}
+
+.panel {
+    margin: 15px;
+}
+
+.panel-heading {
+    font-size: 14px !important;
+    background-color: #717171 !important;
+    color: #fff !important;
+}
+
+.res {
+    max-width: 100%;
+    height: 50px;
+    margin-top: -13px;
+}
+
+.newaddy {
+    font-size: 48px;
+    font-size: 3vw;
+    font-weight: bold;
+    text-align: center;
+}
+
+.addylist {
+  font-size: 21px;
+  font-size: 2vw;
+  text-align: center;
+}
+
+#box {
+  display: none;
+}
+
+.mainaddy {
+    font-size: 1.2em;
+    vertical-align: middle;
+    text-align: center;
+    margin-top: 60px;
+}
+
+@media (max-width: 800px) {
+  .mainaddy {
+    margin: 0;
+    font-size:1em;
+  }
+  .navbar-brand {
+     margin: 0 auto;
+     left: 50%;
+     position: absolute;
+     transform: translateX(-50%);
+  }
+}
+
+.txamount {
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.txaddress {
+    font-size: 13px;
+    text-align: center;
+}
+
+.txreceive {
+    background-color: #3c710b !important;
+    background-image: url('../img/bg.png');
+    background-repeat: repeat-x;
+    border-color: #444 !important;
+    text-shadow: 1px 1px #000;
+}
+
+.txsent {
+    background-color: #5b0e0e !important;
+    background-image: url('../img/bg.png');
+    background-repeat: repeat-x;
+    border-color: #444 !important;
+}
+
+a.txid {
+  color: #989898 !important;
+}
+
+a.minus, a.minus:hover {
+  color: #FFF !important;
+}
+
+.balance {
+    font-size: 58px;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 300;
+}
+
+.swapbalance {
+  font-size: 21px;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 300;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.error404 {
+    font-size: 25px;
+    color: #000;
+    text-align: center;
+}
+
+.error404title {
+    font-size: 76px;
+    color: #ff4444;
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+}
+
+.white {
+    color: #FFF;
+}
+
+.black {
+    color: #000;
+}
+
+.lightgrey {
+    color: #ccc;
+}
+
+.wallettitle {
+    font-size: 26px;
+    margin-bottom: -10px;
+    color: #5f5f5f;
+}
+
+//DIV Table
+
+.divTable {
+    display: table;
+    width: 100%;
+    text-align: center;
+}
+
+.divTableRow {
+    display: table-row;
+}
+
+.divTableHeading {
+    background-color: #EEE;
+    display: table-header-group;
+}
+
+.divTableCellh, .divTableHead {
+    border: 1px solid #999999;
+    display: table-cell;
+    padding: 3px 10px;
+    color: #fff;
+    background-color: #333;
+    font-size: 15px;
+}
+
+.divTableCell {
+    border: 1px solid #999999;
+    display: table-cell;
+    padding: 3px 10px;
+    color: #272727;
+    font-size: 12px;
+}
+
+.date {
+    font-size: 9px;
+}
+
+.category {
+    color: #26d82a;
+}
+
+.divTableHeading {
+    background-color: #EEE;
+    display: table-header-group;
+    font-weight: bold;
+}
+
+.divTableFoot {
+    background-color: #EEE;
+    display: table-footer-group;
+    font-weight: bold;
+}
+
+.divTableBody {
+    display: table-row-group;
+}
+
+.fa-spin-hover:hover {
+  -webkit-animation: fa-spin 2s infinite linear !important;
+  -moz-animation: fa-spin 2s infinite linear !important;;
+  -o-animation: fa-spin 2s infinite linear !important;;
+  animation: fa-spin 2s infinite linear !important;;
+}

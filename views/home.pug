@@ -1,0 +1,199 @@
+extends layout
+
+block content
+  script. 
+    function confirmedu() {
+      $('#sendunlock').submit();
+    }
+    function confirmedl() {
+      $('#sendlock').submit();
+    }
+    function confirmede() {
+      $('#sendencrypt').submit();
+    }
+    function toggl() {
+      var x = document.getElementById("pkey");
+      var y = document.getElementById("reveal");
+      if (x.style.display === "none") {
+        x.style.display = "block";
+        y.style.display = "none";
+      } else {
+        x.style.display = "none";
+      }
+    }
+  script(src='/js/reload.js')
+  .maincontent(style='border: none !important;')
+    #DisplayModalUnlock.modal
+      .modal-dialog
+          .modal-content(style='color:#FFF !important;background-color:#111 !important; border-color: #444 !important;')
+              .modal-header(style='border-bottom: none !important;')
+                  button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+                  h4.modal-title Unlock Denarius Wallet
+              .modal-body
+                .form-horizontal
+                  .row
+                    .col-sm-3(align='center')
+                      i.fa.fa-unlock.fa-5x
+                    .col-sm-9(style='margin-top:10px !important;')
+                      p(align='left')
+                        strong Are you sure you want to unlock your wallet?
+                      p(align='left')
+                        | Enter your Denarius wallet encryption passphrase below
+                  br
+                  form.form-horizontal(action='/unlock', method='POST', id='sendunlock')
+                    input(type='hidden', name='_csrf', value=_csrf)
+                    .form-group
+                      label.col-sm-3.control-label(for='password') Enter passphrase
+                      .col-sm-7
+                        input.form-control.blackinput(type='password', name='password', id='password', placeholder='************')
+              .modal-footer(style='border-top: none !important;')
+                  button.btn.btn-success(type='submit', id='submit', onclick='confirmedu()') Unlock Wallet
+                  button.btn.btn-default(type='button', data-dismiss='modal') Close
+    #DisplayModalLock.modal
+      .modal-dialog
+          .modal-content(style='color:#FFF !important;background-color:#111 !important; border-color: #444 !important;')
+              .modal-header(style='border-bottom: none !important;')
+                  button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+                  h4.modal-title Lock Denarius Wallet
+              .modal-body
+                .form-horizontal
+                .row
+                  .col-sm-3(align='center')
+                    i.fa.fa-lock.fa-5x
+                  .col-sm-9
+                    p(align='left')
+                      strong Are you sure you want to lock your wallet?
+                    form.form-horizontal(action='/lock', method='POST', id='sendlock')
+                      input(type='hidden', name='_csrf', value=_csrf)
+                      p(align='left') Locking your wallet will prevent staking rewards and the staker thread from running, but your coinage on your D will still grow.
+              .modal-footer(style='border-top: none !important;')
+                  button.btn.btn-danger(type='submit', id='submit', onclick='confirmedl()') Lock Wallet
+                  button.btn.btn-default(type='button', data-dismiss='modal') Close
+    #DisplayModalEncrypt.modal
+      .modal-dialog
+          .modal-content(style='color:#FFF !important;background-color:#111 !important; border-color: #444 !important;')
+              .modal-header(style='border-bottom: none !important;')
+                  button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+                  h4.modal-title Encrypt Denarius Wallet
+              .modal-body
+                .form-horizontal
+                  .row
+                    .col-sm-3(align='right')
+                      i.fa.fa-lock.fa-5x
+                    .col-sm-9(style='margin-top:10px !important;')
+                      p(align='left')
+                        strong Are you sure you want to encrypt your wallet?
+                      p(align='left')
+                        | Enter a wallet encryption passphrase below
+                  br
+                  form.form-horizontal(action='/encrypt', method='POST', id='sendencrypt')
+                    input(type='hidden', name='_csrf', value=_csrf)
+                    .form-group
+                      label.col-sm-3.control-label(for='passphrase') Enter a passphrase
+                      .col-sm-7
+                        input.form-control.blackinput(type='password', name='passphrase', id='passphrase', placeholder='************')
+                    .form-group
+                      label.col-sm-3.control-label(for='passphrase2') Confirm passphrase
+                      .col-sm-7
+                        input.form-control.blackinput(type='password', name='passphrase2', id='passphrase2', placeholder='************')
+              .modal-footer(style='border-top: none !important;')
+                  button.btn.btn-gold(type='submit', id='submit', onclick='confirmede()') Encrypt Wallet
+                  button.btn.btn-default(type='button', data-dismiss='modal') Close
+    .container
+      .row
+        .col-sm-3
+          h3(style='font-weight:light;font-size:48px;color: #777;') Balance
+          p 
+          .bal(style='font-size:36px;font-weight:100;') #{balance}
+            small(style='font-size:16px;')  D
+        .col-sm-3
+          h3
+            br
+            | &nbsp;
+          p 
+            | Staking is 
+            span(class=enabletoggle)
+              | #{enabletoggle} 
+            | and 
+            span(class=staketoggle) 
+              | #{staketoggle}
+            br
+            | Currently Staking #{stakebal} D
+            br
+            | Network Stake Weight #{netweight}
+            br
+            | Your Stake Weight #{yourweight}
+        .col-sm-3
+          p(align='center', style='margin-top:55px;')
+            button.btn.btn-default(type='button', id='sendu', data-toggle='modal', data-target=walletlink)
+              i(class=walleticon, align='center')
+            br
+            | Wallet is #{walletstatus}
+        .col-sm-3
+          h3
+            br
+            | &nbsp;
+          p
+            i.fa.fa-arrow-up
+            | Data Sent #{datasent}
+          p
+            i.fa.fa-arrow-down
+            | Data Received #{datareceived} 
+      .row
+        .col-sm-6
+          h3(style='font-weight:light;font-size:48px;color: #777;') Address
+          p 
+          .bal(style='font-size:28px;font-weight:100;margin-top:60px;') #{address}
+          p
+            #pkey #{privatekey}
+            a(onclick='toggl()', style='margin-left:15px;color: gold;cursor:pointer;',, id='reveal') Reveal Private Key
+        .col-sm-3
+          h3
+            br
+            | &nbsp;
+          p(align='center')
+            !=sending
+        .col-sm-3
+          h3
+            br
+            | &nbsp;
+          p(align='center')
+            .qrcode(align='center')
+              a(href='denarius:' + address)
+                img(src='' + qrcode)
+      .row
+        .col-sm-3
+          h3(style='font-weight:light;font-size:48px;color: #777;') Node Stats
+          p Current Block Height: #{blockheight}
+            p Denarius Version #{version}
+            p Protocol v#{protocol}
+            p Is Syncing: #{syncing}
+            p Peer Connections: #{peers}
+        .col-sm-3
+          h3 
+            br
+            | &nbsp;
+          p Node IP Address: #{ip}:33369
+            p Fortunastake Node: #{fs}
+            p Data Directory Location: #{datadir}
+        .col-sm-3
+          #container(name='container') &nbsp;
+        .col-sm-3
+          #container2(name='container2') &nbsp;
+      .row(style='margin-bottom:100px;')
+        .col-sm-6
+          h3(style='font-weight:light;font-size:48px;color: #777;') System Information
+          p Physical Cores #{cores} / #{threads} Threads
+          p Core Clock Speed: #{avg} - Average CPU Load: #{avgload}
+          p CPU Tempature: #{temp}
+          p Memory Usage:  #{memu} GB Used / #{memf} GB Free / #{memt} GB Total
+          #ram(data-value=mempp)
+          #cpu(data-value=cpu)
+        .col-sm-6
+          h3 
+            br 
+            | &nbsp;
+          p OS Name: #{osname}
+          p Platform: #{platform}
+          p Release: #{release}
+          p Kernel: #{kernel}

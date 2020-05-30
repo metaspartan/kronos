@@ -1,0 +1,65 @@
+div(class=offline)
+  div(class=offlinebtn)
+    p 
+      h1 Denarius Node Offline
+    p
+      button.btn.btn-danger(type='submit', id='submit',  onclick='reboot()') REBOOT DENARIUS NODE
+      form.form-horizontal(action='/reboot', method='POST', id='sendreboot')
+        input(type='hidden', name='_csrf', value=_csrf)
+.navbar.navbar-default.navbar-fixed-top
+  .container
+    .navbar-header
+      button.navbar-toggle.pull-left.ml(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+        span.sr-only Toggle navigation
+        span.icon-bar
+        span.icon-bar
+        span.icon-bar
+      .navbar-brand
+        img.res(src='../img/dpiwhite.png', alt='Denarius', border='0')
+      if user
+        .navbar-send.hidden-sm.hidden-md.hidden-lg.hidden-xl
+          a.send(href='/withdraw')
+            i.fa.fa-paper-plane
+    .collapse.navbar-collapse
+      ul.nav.navbar-nav
+        if !user
+          li(class=(title == 'Home') ? 'active' : undefined)
+            a(href='/') Dashboard
+          li(class=(title == 'BlockForums') ? 'active' : undefined)
+            a(href='https://blockforums.org', target='_blank') Forums
+          li(class=(title == 'Contact') ? 'active' : undefined)
+            a(href='https://discord.gg/UPpQy3n', target='_blank') Discord
+          li(class=(title == 'Transactions') ? 'active' : undefined)
+            a(href='/transactions') Transactions
+          li(class=(title == 'Addresses') ? 'active' : undefined)
+            a(href='/addresses') Addresses
+          li
+            a(href='/status') dPi Status
+        else
+          li(class=(title == 'Transactions') ? 'active' : undefined)
+            a(href='/transactions') Transactions
+          li(class=(title == 'Addresses') ? 'active' : undefined)
+            a(href='/addresses') Addresses
+      ul.nav.navbar-nav.navbar-right
+        if !user
+          li(class=(title == 'Version') ? 'active' : undefined)
+            a(href='#') v1.0.0-Alpha
+        else
+          li(class=(title == 'Send D') ? 'active' : undefined)
+            a(href='/withdraw')
+              i.fa.fa-paper-plane 
+              | SEND
+          li.dropdown(class=(title == 'Account Management') ? 'active' : undefined)
+            a.dropdown-toggle(href='#', data-toggle='dropdown')
+              if user.profile.picture
+                img(src=user.profile.picture)
+              else
+                img(src=user.gravatar(60))
+              span= user.email || user.id
+              i.caret
+            ul.dropdown-menu
+              li
+                a(href='/account') My Account
+              li.divider
+              li
+                a(href='/logout') Logout

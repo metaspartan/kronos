@@ -1,0 +1,16 @@
+extends ../layout
+
+block content
+  .page-header
+    h3(align='center') 2FA Token
+  form.form-horizontal(method='POST')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group
+      label.col-sm-3.control-label(for='code') 2FA Token
+      .col-sm-7
+        input.form-control(type='text', name='code', id='code', placeholder='Auth Code', required)
+    .form-group
+      .col-sm-offset-3.col-sm-7
+        button.col-sm-3.btn.btn-default(type='submit')
+          i.fa.fa-user
+          | Submit

@@ -1,0 +1,28 @@
+extends ../layout
+
+block content
+  .page-header
+    h3(align='center') Create account
+  form.form-horizontal(id='signup-form', method='POST')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group
+      label.col-sm-3.control-label(for='email') Email
+      .col-sm-7
+        input.form-control(type='email', name='email', id='email', placeholder='Email', autofocus, required)
+    .form-group
+      label.col-sm-3.control-label(for='password') Password
+      .col-sm-7
+        input.form-control(type='password', name='password', id='password', placeholder='Password', required)
+    .form-group
+      label.col-sm-3.control-label(for='confirmPassword') Confirm Password
+      .col-sm-7
+        input.form-control(type='password', name='confirmPassword', id='confirmPassword', placeholder='Confirm Password', required)
+    .form-group
+      label.col-sm-3.control-label(for='recatpcha') Captcha
+      .col-sm-7
+        != captcha
+    .form-group
+      .col-sm-offset-3.col-sm-7
+        button.btn.btn-default(type='submit')
+          i.fa.fa-user-plus
+          | Create your wallet!

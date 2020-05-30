@@ -1,0 +1,79 @@
+extends ../layout
+
+block content
+  script.
+    function show() {
+      var x = document.getElementById('box');
+      if (x.style.display === 'none') {
+          x.style.display = 'block';
+      } else {
+          x.style.display = 'none';
+      }
+    }
+    function confirmedpk() {
+      $('#sendpriv').submit();
+    }
+  .mainDiv
+    #DisplayModalPrivKey.modal
+      .modal-dialog
+          .modal-content(style='color:#FFF !important;background-color:#111 !important; border-color: #444 !important;')
+              .modal-header(style='border-bottom: none !important;')
+                  button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+                  h4.modal-title Retrieve a private key
+              .modal-body
+                .form-horizontal
+                  .row
+                    .col-sm-3(align='center')
+                      i.fa.fa-key.fa-5x
+                    .col-sm-9(style='margin-top:10px !important;')
+                      p(align='left')
+                        strong Get the private key of an owned Denarius address
+                      p(align='left')
+                        | Enter your Denarius wallet address below
+                  br
+                  form.form-horizontal(action='/privkey', method='POST', id='sendpriv')
+                    input(type='hidden', name='_csrf', value=_csrf)
+                    .form-group
+                      label.col-sm-3.control-label(for='addi') Enter D Address
+                      .col-sm-7
+                        input.form-control.blackinput(type='text', name='addi', id='addi', placeholder='D8jRk63FQDRUfeKqz99rkmCr47qsFUT5K2')
+              .modal-footer(style='border-top: none !important;')
+                  button.btn.btn-danger(type='submit', id='submit', onclick='confirmedpk()') Get Private Key
+                  button.btn.btn-default(type='button', data-dismiss='modal') Close
+  .container
+    h3(align='center')  Denarius Addresses
+    p(align='center') 
+      | Main D Wallet Address
+      ul.list-group
+        li.list-group-item(style='background-color: #151515;border-color:#444;')
+          .row
+            .col-md-6.mt(align='center')
+              strong #{addyy}
+            .col-md-6(align='center')
+              button.btn.btn-sm.btn-default(type='button', id='sendpk', data-toggle='modal', data-target='#DisplayModalPrivKey')
+                | Get Private Keys
+      #box(align='center')
+        em Write down or import your private key into Denarius-QT or denariusd to access your main wallet address
+        br
+        strong #{privkey}
+    p(align='center')
+      h3(align='center') List of Addresses
+      p(align='center') These are addresses and their respective balances that you own.
+      li.list-group-item(style='background-color: #151515;border-color: #444;')
+        .row
+          .col-sm-6
+            | Owned Addresses
+          .col-sm-6(align='center')
+            | Balance
+    ul.list-group
+    each address in addresses
+      li.list-group-item(style='background-color: #151515;border-color: #444;')
+        .row
+        .col-sm-6
+          | #{address[0]}
+        .col-sm-6(align='center')
+          strong #{address[1]}
+        br
+    br
+    p(align='center')
+      a.btn.btn-default(href='/', role='button') Go back to the Dashboard     

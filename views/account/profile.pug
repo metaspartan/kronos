@@ -1,0 +1,137 @@
+extends ../layout
+
+block content
+  .page-header
+    h3 Profile Information
+  form.form-horizontal(action='/account/profile', method='POST')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group
+      label.col-sm-3.control-label(for='email') Email
+      .col-sm-7
+        input.form-control(type='email', name='email', id='email', value=user.email)
+    .form-group
+      label.col-sm-3.control-label(for='name') Name
+      .col-sm-7
+        input.form-control(type='text', name='name', id='name', value=user.profile.name)
+    .form-group
+      label.col-sm-3.control-label Gender
+      .col-sm-6
+        label.radio.col-sm-3
+          input(type='radio', checked=user.profile.gender=='male', name='gender', value='male', data-toggle='radio')
+          span Male
+        label.radio.col-sm-3
+          input(type='radio', checked=user.profile.gender=='female', name='gender', value='female', data-toggle='radio')
+          span Female
+        label.radio.col-sm-3
+          input(type='radio', checked=user.profile.gender=='other', name='gender', value='other', data-toggle='radio')
+          span Other
+    .form-group
+      label.col-sm-3.control-label(for='location') Location
+      .col-sm-7
+        input.form-control(type='text', name='location', id='location', value=user.profile.location)
+    .form-group
+      label.col-sm-3.control-label(for='website') Website
+      .col-sm-7
+        input.form-control(type='text', name='website', id='website', value=user.profile.website)
+    .form-group
+      label.col-sm-3.control-label Gravatar
+      .col-sm-4
+        img(src=user.gravatar(), class='profile', width='100', height='100')
+    .form-group
+      .col-sm-offset-3.col-sm-4
+        button.btn.btn.btn-primary(type='submit')
+          i.fa.fa-pencil
+          | Update Profile
+
+  .page-header
+    h3 Change Password
+
+  form.form-horizontal(action='/account/password', method='POST')
+    input(type='hidden', name='_csrf', value=_csrf)
+    .form-group
+      label.col-sm-3.control-label(for='password') New Password
+      .col-sm-7
+        input.form-control(type='password', name='password', id='password')
+    .form-group
+      label.col-sm-3.control-label(for='confirmPassword') Confirm Password
+      .col-sm-7
+        input.form-control(type='password', name='confirmPassword', id='confirmPassword')
+    .form-group
+      .col-sm-offset-3.col-sm-4
+        button.btn.btn-primary(type='submit')
+          i.fa.fa-lock
+          | Change Password
+
+  .page-header
+    h3 Linked Accounts
+  .form-horizontal
+    .form-group
+      .col-sm-offset-3.col-sm-4
+        if user.facebook
+          a.btn.btn-block.btn-facebook.btn-social(href='/account/unlink/facebook')
+            i.fa.fa-facebook
+            | Unlink your Facebook account
+        else
+          a.btn.btn-block.btn-facebook.btn-social(href='/auth/facebook')
+            i.fa.fa-facebook
+            | Link your Facebook account
+        if user.twitter
+          a.btn.btn-block.btn-twitter.btn-social(href='/account/unlink/twitter')
+            i.fa.fa-twitter
+            | Unlink your Twitter account
+        else
+          a.btn.btn-block.btn-twitter.btn-social(href='/auth/twitter')
+            i.fa.fa-twitter
+            | Link your Twitter account
+        if user.google
+          a.btn.btn-block.btn-google.btn-social(href='/account/unlink/google')
+            i.fa.fa-google
+            | Unlink your Google account
+        else
+          a.btn.btn-block.btn-google.btn-social(href='/auth/google')
+            i.fa.fa-google
+            | Link your Google account
+        if user.github
+          a.btn.btn-block.btn-github.btn-social(href='/account/unlink/github')
+            i.fa.fa-github
+            | Unlink your Github account
+        else
+          a.btn.btn-block.btn-github.btn-social(href='/auth/github')
+            i.fa.fa-github
+            | Link your Github account
+
+  .page-header
+    h3 Two Factor Authentication
+  if user.secret
+    form.form-horizontal(action='/account/2fa', method='POST')
+      .form-group
+        p.col-sm-offset-3.col-sm-4
+          strong You have Two Factor Authentication enabled!
+          br
+          | Secret:
+          strong  #{secret}
+          img(src=''+ qrUrl)
+          br
+          | Make sure that you have added your secret to your 2FA app before logging out!
+        input(type='hidden', name='_csrf', value=_csrf)
+        .col-sm-offset-3.col-sm-4
+          input(type='checkbox', name='totp', checked, onchange='this.form.submit()', data-toggle='toggle')
+  else
+    form.form-horizontal(action='/account/2fa', method='POST')
+      .form-group
+        p.col-sm-offset-3.col-sm-4 You can enable Two Factor Authentication on your account for greater security.
+        input(type='hidden', name='_csrf', value=_csrf)
+        .col-sm-offset-3.col-sm-4
+          input(type='checkbox', name='totp', onchange='this.form.submit()', data-toggle='toggle')
+
+  .page-header
+    h3 Delete Account
+
+  form.form-horizontal(action='/account/delete', method='POST')
+    .form-group
+      p.col-sm-offset-3.col-sm-4 You can delete your account, but keep in mind this action is irreversible.
+      input(type='hidden', name='_csrf', value=_csrf)
+      .col-sm-offset-3.col-sm-4
+        button.btn.btn-danger(type='submit')
+          i.fa.fa-trash
+          | Delete my account

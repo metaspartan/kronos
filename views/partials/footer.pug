@@ -1,0 +1,24 @@
+footer
+  .footsec(style='background-color:#000;width:100%;height:800px;padding:50px;margin-right:0 !important;')
+    .row(style='margin-top:50px;margin-bottom:150px;')
+      .col-sm-6(style='padding:30px;', align='center')
+        h2 Fast, Secure, Open Source
+        p This wallet is powered upon Denarius/NodeJS/MongoDB running in conjunction with a Denarius Full Node, allowing access to the full power of the Denarius blockchain with an easy to use interface.
+        p
+          if user
+          else
+            a.btn.btn-default(href='#', role='button') View Github! »
+      .col-sm-6(style='padding:30px;', align='center')
+        h2 What is Denarius?
+        p Denarius is a cryptocurrency built upon the original Bitcoin Core Satoshi Nakamoto codebase. It features a new Proof-Of-Work hashing algorithm called "Tribus" and also features Proof-Of-Stake at 6% per year.
+        p
+          a.btn.btn-default(href='https://github.com/carsenk/denarius', target='_blank', role='button') View Denarius »
+    .text-center(style='margin-top:30px;')
+      p(align='center')
+        p(align='center')
+          img.res(src='../img/dpiwhite.png', style='height: 200px !important;')
+        | © 2017-2020 Denarius. All Rights Reserved. Powered by Denarius. dPi Version 1.0.0-Alpha
+        br
+        a(href='https://github.com/carsenk/denarius', target='_blank', style='margin-right:15px;') Denarius GitHub Project
+        a(href='https://github.com/carsenk/dpi', target='_blank', style='margin-right:15px;') dPi GitHub Project 
+        a(href='https://denarius.io', target='_blank') Denarius.io 

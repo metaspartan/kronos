@@ -1,0 +1,14 @@
+extends ../layout
+
+block content
+  .container
+    if user
+    .page-header
+      h3(align='center')  New Denarius Address
+      .newaddy #{address}
+      .qrcode(align='center')
+        a(href='denarius:' + address)
+          img(src='' + data_url)
+      br
+      p(align='center')
+        a.btn.btn-default(href='/wallet', role='button') Go back to your wallet       
