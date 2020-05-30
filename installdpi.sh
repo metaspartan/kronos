@@ -43,7 +43,7 @@ sudo mkdir -p /data/db
 sudo killall mongod
 
 echo "Starting MongoDB....."
-sudo mongod --fork --syslog &
+sudo mongod --fork --syslog
 #sudo screen -dmS mongo 'sudo mongod'
 
 echo "Snap installing Denarius..."
