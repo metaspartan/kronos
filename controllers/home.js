@@ -228,6 +228,14 @@ exports.index = (req, res) => {
 				var walletlink;
 				var sending;
 
+				if (syncing == true) {
+					var chaindl = 'syncingoverlay';
+					var chaindlbtn = 'syncingbtn';
+				} else if (syncing == false) {
+					var chaindl = 'nooverlay';
+					var chaindlbtn = 'nobtn';
+				}
+
 				if (walletstatuss == 'stakingonly') {
 					walleticon = 'fa fa-5x fa-unlock-alt colory';
 					walletstatus = 'Unlocked for Staking Only';
@@ -306,7 +314,9 @@ exports.index = (req, res) => {
 		  address: address, 
 		  qrcode: qrcode,
 		  sending: sending,
-		  privatekey: privatekey
+		  privatekey: privatekey,
+		  chaindl: chaindl,
+		  chaindlbtn: chaindlbtn
         });
 	});
 	});
