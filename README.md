@@ -19,7 +19,7 @@ Install dPi with Denarius Now!
 -----------------
 
 ```bash
-wget https://raw.githubusercontent.com/carsenk/dpi/master/installdpi.sh | bash installdpi.sh
+wget -qO- https://raw.githubusercontent.com/carsenk/dpi/master/installdpi.sh | bash
 ```
 
 Features
@@ -56,7 +56,7 @@ Getting Started
 The easiest way to get started is to run the following bash command:
 
 ```bash
-wget https://raw.githubusercontent.com/carsenk/dpi/master/installdpi.sh | bash installdpi.sh
+wget -qO- https://raw.githubusercontent.com/carsenk/dpi/master/installdpi.sh | bash
 ```
 
 ```bash
