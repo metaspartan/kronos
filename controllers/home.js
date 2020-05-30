@@ -269,7 +269,8 @@ exports.index = (req, res) => {
 
 			if (blockheight >= 0 && cryptoidblocks >= 0) {
 				var blockpercent = blockheight / cryptoidblocks;
-				var blockperc = blockheight / cryptoidblocks * 100;
+				var blockpercc = blockheight / cryptoidblocks * 100;
+				var blockperc = blockpercc.toFixed(2);
 			}
 		
 	
