@@ -1,9 +1,7 @@
 dPi - Denarius Node Dashboard and AIO Interface
 =======================
 
-[![Dependency Status](https://david-dm.org/carsenk/dpi/status.svg?style=flat)](https://david-dm.org/carsenk/dpi) [![Build Status](https://travis-ci.org/carsenk/dpi.svg?branch=master)](https://travis-ci.org/carsenk/dpi) [![Thinkful Pair on Node](https://tf-assets-staging.s3.amazonaws.com/badges/thinkful_repo_badge.svg)](http://start.thinkful.com/node/)
-
-**Live Demo**: Currently unavailable
+[![Dependency Status](https://david-dm.org/carsenk/dpi/status.svg?style=flat)](https://david-dm.org/carsenk/dpi) [![Build Status](https://travis-ci.org/carsenk/dpi.svg?branch=master)](https://travis-ci.org/carsenk/dpi)
 
 dPi - A NodeJS/MongoDB powered denariusd Web Wallet Dashboard with Statistics of your device. This is a major work in progress and this repo will be updated in time.
 
@@ -11,18 +9,27 @@ Send and Receive Funds, Create new addresses, View Transactions, Unlock/Lock Wal
 
 This was built for the Raspberry Pi in mind and one with at least 2GB of RAM, 4GB and 8GB models are recommended! dPi will run on any Linux distro (at your own risk).
 
-Swap between your D Balance in USD and BTC prices calculated from CoinGecko http://coinmarketcap.com/currencies/denarius-d/
+Running the installer script below installs denarius via snap install and then modifies your .env in dPi and denarius.conf to a random rpcuser and rpcpass, dPi then generates you a password to login into dPi with, so be on the look out for that when the installer finishes. (Username is dpiadmin) as of v1.0.3-Alpha. dPi will then be running on your LAN (192.168.x.x:3000) on port 3000.
 
-2FA Authentication is included as well as QR Codes for addresses and 2FA!
+Recommended Devices and OS
+-----------------
+Raspberry Pi 4 4GB - Ubuntu 20.04 Server Image
+Raspberry Pi 4 8GB - Ubuntu 20.04 Server Image
+Ubuntu 20.04
+Ubuntu 18.04 - WIP (Not Tested)
+Ubuntu 16.04 - WIP (Not Tested)
+Raspberry Pi OS - WIP (Not Tested)
 
 Install dPi with Denarius Now!
 -----------------
+
+Simply run this one command:
 
 ```bash
 wget -qO- https://raw.githubusercontent.com/carsenk/dpi/master/installdpi.sh | bash
 ```
 
-![image](https://user-images.githubusercontent.com/10162347/83344651-0c7e0b00-a2c7-11ea-941a-193b84ccb476.png)
+![image](https://user-images.githubusercontent.com/10162347/83363208-ca9ba600-a354-11ea-9fb5-2c00b75ed097.png)
 
 Features
 --------
@@ -50,7 +57,6 @@ Prerequisites
 -------------
 
 - [denariusd](https://github.com/carsenk/denarius)
-- [MongoDB](https://www.mongodb.org/downloads)
 - [Node.js 6.0+](http://nodejs.org)
 
 Getting Started
@@ -72,11 +78,12 @@ cd dpi
 # Install NPM dependencies
 npm install
 
-# Or, if you prefer to use `yarn` instead of `npm`
-yarn install
-
-# Then simply start your app
+# Then simply start dPi
 node app.js
+
+or
+
+npm start
 
 # Or, if you are using nodemon
 nodemon app.js
@@ -90,7 +97,7 @@ License
 
 The MIT License (MIT)
 
-Copyright (c) 2017 Carsen Klock
+Copyright (c) 2017-2020 Carsen Klock
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
