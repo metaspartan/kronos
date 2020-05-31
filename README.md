@@ -22,6 +22,8 @@ Install dPi with Denarius Now!
 wget -qO- https://raw.githubusercontent.com/carsenk/dpi/master/installdpi.sh | bash
 ```
 
+![image](https://user-images.githubusercontent.com/10162347/83344651-0c7e0b00-a2c7-11ea-941a-193b84ccb476.png)
+
 Features
 --------
 
@@ -29,9 +31,10 @@ Features
 - Wallet Addresses
 - View all transactions
 - Stake your Denarius
-- Unlock/Lock your wallet
+- Unlock/Lock/Encrypt your wallet
 - Easy to install
 - Auto Updates for Denarius via Snap
+- Easy installer to install Denarius via Snap and dPi
 - Mobile Ready Responsive Design
 - Flash and Toastr notifications
 - MVC Project Structure
