@@ -13,8 +13,10 @@ html
     link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/css/toastr.min.css')
 
   body
-    script. 
+    script.
       function reboot() {
+        document.getElementById("submitrb").style.display='none';
+        document.getElementById("rebooter").innerHTML = 'Attempting to reboot your node...Please wait 4 minutes...';
         $('#sendreboot').submit();
       }
     include partials/header

@@ -9,6 +9,8 @@ const ProgressBar = require('progressbar.js');
 const cpuu = require('cputilization');
 const toastr = require('express-toastr');
 const exec = require('child_process').exec;
+const shell = require('shelljs');
+const sleep = require('system-sleep');
 /**
  * GET /
  * Home page.
@@ -166,12 +168,61 @@ exports.index = (req, res) => {
 				}
 			}
 
+			client.getMiningInfo(function (error, mineinfo, resHeaders) {
+
+				if (error) {
+					var diff = 'Node Offline';
+					var nethash = 'Node Offline';
+					var stakediff = 'Node Offline';
+	
+					var offline = 'offlineoverlay';
+	
+					var offlinebtn = 'offlinebutton';
+	
+					console.log(error);
+	
+				} else {
+					var diff = mineinfo.difficulty['proof-of-work'];
+					var stakediff = mineinfo.difficulty['proof-of-stake'];
+					var nethashh = mineinfo.netmhashps;
+
+					var nethash = nethashh.toFixed(2);
+	
+					var offline = 'onlineoverlay';
+					var offlinebtn = 'onlinebutton';
+
+				}
+
+			client.getNetTotals(function (error, netinfo, resHeaders) {
+
+					if (error) {
+						var timeframe = 'Node Offline';
+						var target = 'Node Offline';
+		
+						var offline = 'offlineoverlay';
+		
+						var offlinebtn = 'offlinebutton';
+		
+						console.log(error);
+		
+					} else {
+						var timeframe = netinfo.uploadtarget['timeframe'];
+						var target = netinfo.uploadtarget['target'];
+		
+						var offline = 'onlineoverlay';
+						var offlinebtn = 'onlinebutton';
+	
+					}
+	
+
 
 	    client.getInfo(function (error, info, resHeaders) {
 			//if (error) return console.log(error);
 
 			if (error) {
 				var balance = 'Node Offline';
+				var unbalance = 'Node Offline';
+				var instake = 'Node Offline';
 				var stakebal = 'Node Offline';
 				var version = 'Node Offline';
 				var protocol = 'Node Offline';
@@ -182,6 +233,7 @@ exports.index = (req, res) => {
 				var datadir = 'Node Offline';
 				var syncing = 'Node Offline';
 				var fs = 'Node Offline';
+				var tor =' Node Offline';
 				var datareceived = 'Node Offline';
 				var datasent = 'Node Offline';
 				var nativetor = 'Node Offline';
@@ -211,6 +263,8 @@ exports.index = (req, res) => {
 			} else {
 				//console.log(info);
 				var balance = info.balance;
+				var unbalance = info.unconfirmed;
+				var instake = info.stake;
 				var stakebal = info.stake;
 				var version = info.version;
 				var protocol = info.protocolversion;
@@ -221,6 +275,7 @@ exports.index = (req, res) => {
 				var datadir = info.datadir;
 				var syncing = info.initialblockdownload;
 				var fs = info.fortunastake;
+				var tor = info.nativetor;
 				var datareceived = info.datareceived;
 				var datasent = info.datasent;
 				var nativetor = info.nativetor;
@@ -309,6 +364,8 @@ exports.index = (req, res) => {
 		  model: model,
 		  blockheight: blockheight,
 		  balance: balance,
+		  unbalance: unbalance,
+		  instake: instake,
 		  version: version,
 		  protocol: protocol,
 		  peers: peers,
@@ -316,11 +373,17 @@ exports.index = (req, res) => {
 		  datadir: datadir,
 		  syncing: syncing,
 		  fs: fs,
+		  tor: tor,
 		  moneysupply: moneysupply,
 		  memp: memp,
 		  mempp: mempp,
 		  cpu: cpu,
 		  avgload: avgload,
+		  nethash: nethash,
+		  timeframe: timeframe,
+		  target: target,
+		  diff: diff,
+		  stakediff: stakediff,
 		  stakebal: stakebal,
 		  enabled: enabled,
 		  staking: staking,
@@ -354,6 +417,8 @@ exports.index = (req, res) => {
 	});
 	});
   });
+});
+});
 });
 });
 });
@@ -437,24 +502,34 @@ exports.lock = (req, res, next) => {
   });
   };
 
-
   exports.reboot = (req, res, next) => {
 
-	const myShellScript = exec('sh restartnode.sh /');
-
-	myShellScript.stdout.on('data', (data)=>{
-		console.log(data);
-		req.toastr.success('Success!', 'Rebooting Denarius...', { positionClass: 'toast-bottom-right' });
-		// do whatever you want here with data
-		//return res.redirect('/');
+	//Execute denarius.daemon stop command
+	shell.exec(`denarius.daemon stop`, function(err){
+		if(err){
+		  console.log(chalk.red(err));
+		  req.toastr.error('Something went wrong!', 'Reboot Error!', { positionClass: 'toast-bottom-right' });
+		  process.exit(0);
+		  //return res.redirect('/');
+		}
 	});
 
-	myShellScript.stderr.on('data', (data)=>{
-		console.error(data);
-		req.toastr.error('Something went wrong!', 'Reboot Error!', { positionClass: 'toast-bottom-right' });
-		//res.end();
-		//return res.redirect('/');
+	//req.toastr.success('Success!', 'Stopping Denarius...Please wait', { positionClass: 'toast-bottom-right' });
+
+	sleep(120000); // sleep for 120 seconds
+
+	shell.exec(`denarius.daemon`, function(err){
+		if(err){
+		  console.log(chalk.red(err));
+		  req.toastr.error('Something went wrong!', 'Reboot Error!', { positionClass: 'toast-bottom-right' });
+		  process.exit(0);
+		  //return res.redirect('/');
+		}
 	});
+
+	//req.toastr.success('Success!', 'Starting Denarius...Please wait', { positionClass: 'toast-bottom-right' });
+
+	sleep(120000); // sleep for 120 seconds
 
 	return res.redirect('/');
 

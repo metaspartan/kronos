@@ -3,7 +3,8 @@ div(class=offline)
     p 
       h1 Denarius Node Offline
     p
-      button.btn.btn-danger(type='submit', id='submit',  onclick='reboot()') REBOOT DENARIUS NODE
+      #rebooter
+      button.btn.btn-danger(type='submit', id='submitrb',  onclick='reboot()') REBOOT DENARIUS NODE
       form.form-horizontal(action='/reboot', method='POST', id='sendreboot')
         input(type='hidden', name='_csrf', value=_csrf)
 div(class=chaindl)
@@ -81,4 +82,4 @@ div(class=chaindl)
               li
                 a(href='https://discord.gg/UPpQy3n', target='_blank') Discord
           li(class=(title == 'Version') ? 'active' : undefined)
-            a(href='#') v1.0.2-Alpha
+            a(href='#') v1.0.3-Alpha

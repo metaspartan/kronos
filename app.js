@@ -37,6 +37,7 @@ const toastr = require('express-toastr');
 const passwordProtected = require('express-password-protect');
 const upload = multer({ dest: path.join(__dirname, 'uploads') });
 const ip = require('ip');
+const shell = require('shelljs');
 
 console.log(ip.address());
 

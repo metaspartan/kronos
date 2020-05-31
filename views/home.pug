@@ -100,31 +100,54 @@ block content
                   button.btn.btn-gold(type='submit', id='submit', onclick='confirmede()') Encrypt Wallet
                   button.btn.btn-default(type='button', data-dismiss='modal') Close
     .container(style='width:90%')
-      .row(style='background-color:#000;border-radius:30px;padding:30px;margin:15px;')
+      .row(style='background-color:#000;background: linear-gradient(165deg, rgba(52,51,46,1) 0%, rgba(38,38,38,1) 48%, rgba(0,0,0,1) 100%);border-radius:30px;padding:30px;margin:15px;')
           .col-md-3
-            h3(style='font-weight:light;font-size:48px;color: #777;') Node Stats
+            h3(style='font-weight:light;font-size:48px;color: #777;margin-top:0px;') Node Stats
             p Current Block Height: #{blockheight}
               p Denarius Version #{version}
               p Protocol v#{protocol}
               p Is Syncing: #{syncing}
               p Peer Connections: #{peers}
           .col-md-3
-            h3 
-              br
-              | &nbsp;
-            p Node IP Address: #{ip}:33369
+            p(style='margin-top:62px;') Node IP Address: #{ip}:33369
               p Fortunastake Node: #{fs}
-              p Data Directory Location: #{datadir}
+              p Native Tor Enabled: #{tor}
+              p Data Directory Location: 
+                small(style='color:#777;') #{datadir}
           .col-md-3
             #container(name='container') &nbsp;
           .col-md-3
             #container2(name='container2') &nbsp;
-      .row(style='background-color:#000;border-radius:30px;padding:30px;margin:15px;')
-        .col-sm-3
+      .row(style='background-color:#000;background: linear-gradient(165deg, rgba(52,51,46,1) 0%, rgba(38,38,38,1) 48%, rgba(0,0,0,1) 100%);border-radius:30px;padding:30px;margin:15px;')
+        .col-sm-6
           h3(style='font-weight:light;font-size:48px;color: #777;margin-top:0px;') Balance
           p 
-          .bal(style='font-size:3vw;font-weight:100;') #{balance}
+          .bal(style='font-size:1.7em;font-weight:100;') #{balance}
             small(style='font-size:16px;')  D
+        .col-sm-3
+          h3(style='font-weight:light;font-size:28px;color: #777;margin-top:15px;') Unconfirmed
+          p 
+          .bal(style='font-size:1.7em;font-weight:100;') #{unbalance}
+            small(style='font-size:16px;')  D
+        .col-sm-3
+          h3(style='font-weight:light;font-size:28px;color: #777;margin-top:15px;') In Stake
+          p 
+          .bal(style='font-size:1.7em;font-weight:100;') #{instake}
+            small(style='font-size:16px;')  D
+      .row(style='background-color:#000;background: linear-gradient(165deg, rgba(52,51,46,1) 0%, rgba(38,38,38,1) 48%, rgba(0,0,0,1) 100%);border-radius:30px;padding:30px;margin:15px;')
+        .col-sm-3
+          p
+            | PoW Mining Hashrate 
+            br 
+            h4 
+              strong #{nethash}
+              small  MH/sec
+            br
+            | Tribus PoW Difficulty 
+            strong #{diff}
+            br
+            | Staking PoS Difficulty 
+            strong #{stakediff}
         .col-sm-3
           p 
             | Staking is 
@@ -133,13 +156,13 @@ block content
             | and 
             span(class=staketoggle) 
               | #{staketoggle}
-            br
-            | Currently Staking #{stakebal} D
-            br
-            | Network Stake Weight #{netweight}
-            br
-            | Your Stake Weight #{yourweight}
-            br
+          p
+            | Network Stake Weight 
+            strong #{netweight}
+          p
+            | Your Stake Weight 
+            strong #{yourweight}
+          p
             | Network Stake Rate is 6% APR of D
         .col-sm-3
           p(align='center')
@@ -147,11 +170,21 @@ block content
         .col-sm-3
           p
             i.fa.fa-arrow-up
-            | Data Sent #{datasent}
+            | Data Sent 
+            strong #{datasent}
           p
             i.fa.fa-arrow-down
-            | Data Received #{datareceived} 
-      .row(style='background-color:#000;border-radius:30px;padding:30px;margin:15px;')
+            | Data Received 
+            strong #{datareceived}
+          p
+            i.fa.fa-clock-o
+            | Target Timeframe 
+            strong #{timeframe}
+          p
+            i.fa.fa-hourglass-2
+            | Upload Target Limit 
+            strong #{target} 
+      .row(style='background-color:#000;background: linear-gradient(165deg, rgba(52,51,46,1) 0%, rgba(38,38,38,1) 48%, rgba(0,0,0,1) 100%);border-radius:30px;padding:30px;margin:15px;')
         .col-md-6
           h3(style='font-weight:light;font-size:48px;color: #777;margin-top:0px;') Address
           .bal(style='font-size:1.8vw;font-weight:100;', align='center') #{address}
@@ -175,7 +208,7 @@ block content
         .col-md-3
           p(align='center')
             !=sending
-      .row(style='background-color:#000;border-radius:30px;padding:30px;margin:15px;margin-bottom:150px;')
+      .row(style='background-color:#000;background: linear-gradient(165deg, rgba(52,51,46,1) 0%, rgba(38,38,38,1) 48%, rgba(0,0,0,1) 100%);border-radius:30px;padding:30px;margin:15px;margin-bottom:150px;')
         .col-sm-6
           h3(style='font-weight:light;font-size:48px;color: #777;margin-top:0px;') System Information
           p Physical Cores #{cores} / #{threads} Threads

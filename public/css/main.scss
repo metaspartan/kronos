@@ -216,6 +216,11 @@ footer {
   z-index: 999999 !important;
 }
 
+.reboot {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 #sendu {
   background-color: #222 !important;
   border: none !important;
