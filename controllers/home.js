@@ -213,6 +213,23 @@ exports.index = (req, res) => {
 						var offlinebtn = 'onlinebutton';
 	
 					}
+
+				
+			client.fortunaStake('count', function (error, fscountt, resHeaders) {
+
+				if (error) {
+					var fscount = 'Node Offline';	
+					var offline = 'offlineoverlay';	
+					var offlinebtn = 'offlinebutton';	
+					console.log(error);
+	
+				} else {
+					var fscount = fscountt;
+	
+					var offline = 'onlineoverlay';
+					var offlinebtn = 'onlinebutton';
+
+				}
 	
 
 
@@ -220,8 +237,10 @@ exports.index = (req, res) => {
 			//if (error) return console.log(error);
 
 			if (error) {
-				var balance = 'Node Offline';
-				var unbalance = 'Node Offline';
+				var balance = '0';
+				var unbalance = '0';
+				var currentprice = '0';
+				var usdbalance = '0';
 				var instake = 'Node Offline';
 				var stakebal = 'Node Offline';
 				var version = 'Node Offline';
@@ -333,6 +352,14 @@ exports.index = (req, res) => {
 			  //var usdprice = result.body[0]['price_usd'] * balance;
 			  //var btcprice = result.body[0]['price_btc'] * balance;
 
+			unirest.get("https://api.coingecko.com/api/v3/coins/denarius?tickers=true&market_data=true&community_data=false&developer_data=true")
+			  .headers({'Accept': 'application/json'})
+			  .end(function (result) {
+					//var cryptoidblocks = result.body;
+					var usdbalance = result.body['market_data']['current_price']['usd'] * balance;
+					var currentprice = result.body['market_data']['current_price']['usd'];
+				//var btcprice = result.body[0]['price_btc'] * balance;
+
 			if (blockheight >= 0 && cryptoidblocks >= 0) {
 				var blockpercent = blockheight / cryptoidblocks;
 				var blockpercc = blockheight / cryptoidblocks * 100;
@@ -412,11 +439,16 @@ exports.index = (req, res) => {
 		  cryptoidblocks: cryptoidblocks,
 		  blockpercent: blockpercent,
 		  blockperc: blockperc,
-		  sendicon: sendicon
+		  sendicon: sendicon,
+		  fscount: fscount,
+		  currentprice: currentprice.toFixed(2),
+		  usdbalance: usdbalance.toFixed(2)
         });
 	});
 	});
   });
+});
+});
 });
 });
 });

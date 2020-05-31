@@ -103,13 +103,17 @@ block content
       .row(style='background-color:#000;background: linear-gradient(165deg, rgba(52,51,46,1) 0%, rgba(38,38,38,1) 48%, rgba(0,0,0,1) 100%);border-radius:30px;padding:30px;margin:15px;')
           .col-md-3
             h3(style='font-weight:light;font-size:48px;color: #777;margin-top:0px;') Node Stats
-            p Current Block Height: #{blockheight}
+            p Block Height: 
+              strong #{blockheight}
               p Denarius Version #{version}
               p Protocol v#{protocol}
               p Is Syncing: #{syncing}
-              p Peer Connections: #{peers}
+              p Peer Connections: 
+                strong #{peers}
           .col-md-3
             p(style='margin-top:62px;') Node IP Address: #{ip}:33369
+              p FortunaStakes Online: 
+                strong #{fscount}
               p Fortunastake Node: #{fs}
               p Native Tor Enabled: #{tor}
               p Data Directory Location: 
@@ -122,8 +126,11 @@ block content
         .col-sm-6
           h3(style='font-weight:light;font-size:48px;color: #777;margin-top:0px;') Balance
           p 
-          .bal(style='font-size:1.7em;font-weight:100;') #{balance}
+          .bal(style='font-size:2.5em;font-weight:100;') #{balance}
             small(style='font-size:16px;')  D
+          p
+          .bal(style='font-size:1.6em;font-weight:100;color:#888;') $#{usdbalance}
+            small(style='font-size:16px;')  USD @ $#{currentprice} ea
         .col-sm-3
           h3(style='font-weight:light;font-size:28px;color: #777;margin-top:15px;') Unconfirmed
           p 
