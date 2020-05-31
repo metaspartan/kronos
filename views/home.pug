@@ -99,17 +99,33 @@ block content
               .modal-footer(style='border-top: none !important;')
                   button.btn.btn-gold(type='submit', id='submit', onclick='confirmede()') Encrypt Wallet
                   button.btn.btn-default(type='button', data-dismiss='modal') Close
-    .container
-      .row
+    .container(style='width:90%')
+      .row(style='background-color:#000;border-radius:30px;padding:30px;margin:15px;')
+          .col-md-3
+            h3(style='font-weight:light;font-size:48px;color: #777;') Node Stats
+            p Current Block Height: #{blockheight}
+              p Denarius Version #{version}
+              p Protocol v#{protocol}
+              p Is Syncing: #{syncing}
+              p Peer Connections: #{peers}
+          .col-md-3
+            h3 
+              br
+              | &nbsp;
+            p Node IP Address: #{ip}:33369
+              p Fortunastake Node: #{fs}
+              p Data Directory Location: #{datadir}
+          .col-md-3
+            #container(name='container') &nbsp;
+          .col-md-3
+            #container2(name='container2') &nbsp;
+      .row(style='background-color:#000;border-radius:30px;padding:30px;margin:15px;')
         .col-sm-3
-          h3(style='font-weight:light;font-size:48px;color: #777;') Balance
+          h3(style='font-weight:light;font-size:48px;color: #777;margin-top:0px;') Balance
           p 
-          .bal(style='font-size:36px;font-weight:100;') #{balance}
+          .bal(style='font-size:3vw;font-weight:100;') #{balance}
             small(style='font-size:16px;')  D
         .col-sm-3
-          h3
-            br
-            | &nbsp;
           p 
             | Staking is 
             span(class=enabletoggle)
@@ -123,66 +139,45 @@ block content
             | Network Stake Weight #{netweight}
             br
             | Your Stake Weight #{yourweight}
-        .col-sm-3
-          p(align='center', style='margin-top:55px;')
-            button.btn.btn-default(type='button', id='sendu', data-toggle='modal', data-target=walletlink)
-              i(class=walleticon, align='center')
             br
-            | Wallet is #{walletstatus}
+            | Network Stake Rate is 6% APR of D
         .col-sm-3
-          h3
-            br
-            | &nbsp;
+          p(align='center')
+            img(src='../img/denarius.png', height='128px;', align='center')
+        .col-sm-3
           p
             i.fa.fa-arrow-up
             | Data Sent #{datasent}
           p
             i.fa.fa-arrow-down
             | Data Received #{datareceived} 
-      .row
-        .col-sm-6
-          h3(style='font-weight:light;font-size:48px;color: #777;') Address
-          p 
-          .bal(style='font-size:28px;font-weight:100;margin-top:60px;') #{address}
-          p
-            #pkey #{privatekey}
-            a(onclick='toggl()', style='margin-left:15px;color: gold;cursor:pointer;',, id='reveal') Reveal Private Key
-        .col-sm-3
-          h3
+      .row(style='background-color:#000;border-radius:30px;padding:30px;margin:15px;')
+        .col-md-6
+          h3(style='font-weight:light;font-size:48px;color: #777;margin-top:0px;') Address
+          .bal(style='font-size:1.8vw;font-weight:100;', align='center') #{address}
+          br
+          .qrcode(align='center')
+            a(href='denarius:' + address)
+              img(src='' + qrcode)
+          p(align='center')
+            p
+              div(align='center')
+                #pkey #{privatekey}
+              div(align='center')
+                a(onclick='toggl()', style='margin-left:15px;color: gold;cursor:pointer;', id='reveal', align='center') Reveal Private Key
+        .col-md-3
+          p(align='center', style='margin-top:55px;')
+            button.btn.btn-default(type='button', id='sendu', data-toggle='modal', data-target=walletlink)
+              i(class=walleticon, align='center')
             br
-            | &nbsp;
+            br
+            | Wallet is #{walletstatus}
+        .col-md-3
           p(align='center')
             !=sending
-        .col-sm-3
-          h3
-            br
-            | &nbsp;
-          p(align='center')
-            .qrcode(align='center')
-              a(href='denarius:' + address)
-                img(src='' + qrcode)
-      .row
-        .col-sm-3
-          h3(style='font-weight:light;font-size:48px;color: #777;') Node Stats
-          p Current Block Height: #{blockheight}
-            p Denarius Version #{version}
-            p Protocol v#{protocol}
-            p Is Syncing: #{syncing}
-            p Peer Connections: #{peers}
-        .col-sm-3
-          h3 
-            br
-            | &nbsp;
-          p Node IP Address: #{ip}:33369
-            p Fortunastake Node: #{fs}
-            p Data Directory Location: #{datadir}
-        .col-sm-3
-          #container(name='container') &nbsp;
-        .col-sm-3
-          #container2(name='container2') &nbsp;
-      .row(style='margin-bottom:100px;')
+      .row(style='background-color:#000;border-radius:30px;padding:30px;margin:15px;margin-bottom:150px;')
         .col-sm-6
-          h3(style='font-weight:light;font-size:48px;color: #777;') System Information
+          h3(style='font-weight:light;font-size:48px;color: #777;margin-top:0px;') System Information
           p Physical Cores #{cores} / #{threads} Threads
           p Core Clock Speed: #{avg} - Average CPU Load: #{avgload}
           p CPU Tempature: #{temp}
@@ -190,10 +185,10 @@ block content
           #ram(data-value=mempp)
           #cpu(data-value=cpu)
         .col-sm-6
-          h3 
-            br 
-            | &nbsp;
+          h3
           p OS Name: #{osname}
           p Platform: #{platform}
           p Release: #{release}
           p Kernel: #{kernel}
+          p Architecture: #{arch}
+          p Hostname: #{hostname}

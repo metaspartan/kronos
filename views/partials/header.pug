@@ -48,14 +48,16 @@ div(class=chaindl)
         if !user
           li(class=(title == 'Home') ? 'active' : undefined)
             a(href='/') Dashboard
-          li(class=(title == 'BlockForums') ? 'active' : undefined)
-            a(href='https://blockforums.org', target='_blank') Forums
-          li(class=(title == 'Contact') ? 'active' : undefined)
-            a(href='https://discord.gg/UPpQy3n', target='_blank') Discord
-          li(class=(title == 'Transactions') ? 'active' : undefined)
-            a(href='/transactions') Transactions
-          li(class=(title == 'Addresses') ? 'active' : undefined)
-            a(href='/addresses') Addresses
+          li.dropdown(class=(title == 'Wallet') ? 'active' : undefined)
+            a.dropdown-toggle(href='#', data-toggle='dropdown')
+              span Wallet
+              i.caret
+            ul.dropdown-menu
+              li
+                a(href='/transactions') Transactions
+              li.divider
+              li
+                a(href='/addresses') Addresses
           li
             a(href='/status') dPi Status
         else
@@ -64,25 +66,19 @@ div(class=chaindl)
           li(class=(title == 'Addresses') ? 'active' : undefined)
             a(href='/addresses') Addresses
       ul.nav.navbar-nav.navbar-right
-        if !user
-          li(class=(title == 'Version') ? 'active' : undefined)
-            a(href='#') v1.0.1-Alpha
-        else
-          li(class=(title == 'Send D') ? 'active' : undefined)
+          li(style=sendicon,class=(title == 'Send D') ? 'active' : undefined)
             a(href='/withdraw')
               i.fa.fa-paper-plane 
               | SEND
-          li.dropdown(class=(title == 'Account Management') ? 'active' : undefined)
+          li.dropdown(class=(title == 'Community') ? 'active' : undefined)
             a.dropdown-toggle(href='#', data-toggle='dropdown')
-              if user.profile.picture
-                img(src=user.profile.picture)
-              else
-                img(src=user.gravatar(60))
-              span= user.email || user.id
+              span Community
               i.caret
             ul.dropdown-menu
               li
-                a(href='/account') My Account
+                a(href='https://blockforums.org', target='_blank') Forums
               li.divider
               li
-                a(href='/logout') Logout
+                a(href='https://discord.gg/UPpQy3n', target='_blank') Discord
+          li(class=(title == 'Version') ? 'active' : undefined)
+            a(href='#') v1.0.2-Alpha

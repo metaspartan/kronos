@@ -66,6 +66,12 @@ exports.index = (req, res) => {
 		var kernel = data4.kernel;
 		var platform = data4.platform;
 		var release = data4.release;
+		var hostname = data4.hostname;
+		var arch = data4.arch;
+
+	si.system(function (data9) {
+		var manu = data9.manufacturer;
+		var model = data9.model;
 
 	si.currentLoad().then(data6 => {
 			//console.log(data6);
@@ -191,6 +197,7 @@ exports.index = (req, res) => {
 				var walleticon;
 				var walletlink;
 				var sending;
+				var sendicon;
 
 				if (walletstatuss == 'Node Offline') {
 					walleticon = 'fa fa-5x fa-key colorr';
@@ -228,6 +235,7 @@ exports.index = (req, res) => {
 				var walleticon;
 				var walletlink;
 				var sending;
+				var sendicon;
 
 				if (syncing == true) {
 					var chaindl = 'syncingoverlay';
@@ -245,17 +253,20 @@ exports.index = (req, res) => {
 					walleticon = 'fa fa-5x fa-unlock coloru';
 					walletstatus = 'Unlocked';
 					walletlink = '#DisplayModalLock';
-					sending = '<a class="btn btn-gold" href="/withdraw" style="margin-top: 35px;color: #a7a7a7 !important; background-color: #222 !important;"><i class="fa fa-5x fa-paper-plane"></i><br />Send Denarius</a>';
+					sending = '<p align="center" style="margin-top:55px;"><a class="btn btn-gold" href="/withdraw" style="  background-color: #222 !important;	border: none !important;border-radius:90px !important;padding:30px !important;"><i class="fa fa-5x fa-paper-plane"></i></a><br /><br />Send Denarius</p>';
+					sendicon = 'display: visible !important;';
 				} else if (walletstatuss == 'unencrypted') {
 					walleticon = 'fa fa-5x fa-key'
 					walletstatus = 'Unencrypted';
 					walletlink = '#DisplayModalEncrypt';
-					sending = '<a class="btn btn-gold" href="/withdraw"><i class="fa fa-paper-plane"></i> Send Denarius</a>';
+					sending = '<p align="center" style="margin-top:55px;"><a class="btn btn-gold" href="/withdraw" style="  background-color: #222 !important;	border: none !important;border-radius:90px !important;padding:30px !important;"><i class="fa fa-5x fa-paper-plane"></i></a><br /><br />Send Denarius</p>';
+					sendicon = 'display: visible !important';
 				} else if (walletstatuss == 'locked') {
 					walleticon = 'fa fa-5x fa-lock colorr';
 					walletstatus = 'Locked';
 					walletlink = '#DisplayModalUnlock';
 					sending = '';
+					sendicon = 'display: none !important';
 					privatekey = 'Wallet Locked';
 				}
 			}
@@ -292,6 +303,10 @@ exports.index = (req, res) => {
 		  kernel: kernel,
 		  platform: platform,
 		  release: release,
+		  arch: arch,
+		  hostname: hostname,
+		  manu: manu,
+		  model: model,
 		  blockheight: blockheight,
 		  balance: balance,
 		  version: version,
@@ -333,7 +348,8 @@ exports.index = (req, res) => {
 		  chaindlbtn: chaindlbtn,
 		  cryptoidblocks: cryptoidblocks,
 		  blockpercent: blockpercent,
-		  blockperc: blockperc
+		  blockperc: blockperc,
+		  sendicon: sendicon
         });
 	});
 	});
@@ -342,7 +358,8 @@ exports.index = (req, res) => {
 });
 });
 });
-	});
+});
+});
 });
 });
 });
