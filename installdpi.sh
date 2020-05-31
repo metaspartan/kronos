@@ -7,6 +7,23 @@ GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
+# License dPi Installer
+#
+# This script is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This script is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this script; if not, write to the
+# Free Software Foundation, Inc., 59 Temple Place, Suite 330,
+# Boston, MA  02111-1307  USA
+
 #FUNCTIONS
 
 # Show a progress bar for $1 seconds
@@ -81,23 +98,6 @@ progress_bar()
   trap - SIGINT
 }
 
-# License
-#
-# This script is free software; you can redistribute it and/or modify it
-# under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# This script is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this script; if not, write to the
-# Free Software Foundation, Inc., 59 Temple Place, Suite 330,
-# Boston, MA  02111-1307  USA
-
 printf "                     ${GREEN}_ ____ ${NC}${RED} _ ${NC}\n"
 printf "                  "${GREEN}"__| |  _  ${NC}${RED}(_) ${NC}\n"
 printf "                 ${GREEN}/ _  | |_) | |${NC}\n"
@@ -157,19 +157,19 @@ denarius.daemon stop
 
 echo "This will take 360 seconds.......Please wait....."
 
-progressbar 120
+progress_bar 120
 
 denarius.daemon
 
 echo "This will take 240 seconds.......Please wait....."
 
-progressbar 120
+progress_bar 120
 
 denarius.daemon stop
 
 echo "This will take 120 seconds.......Please wait....."
 
-progressbar 120
+progress_bar 120
 
 echo "Denarius stopped and prepared for credential injection"
 
@@ -191,9 +191,11 @@ echo "Starting Denarius"
 
 denarius.daemon
 
+progress_bar 10
+
 echo "Installing Forever and Nodemon"
 
-npm install -g forever nodemon
+sudo npm install -g forever nodemon
 
 echo "Installing dPi from Github"
 
