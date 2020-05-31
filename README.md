@@ -1,9 +1,9 @@
 dPi - Denarius Node Dashboard and AIO Interface
 =======================
 
-[![Dependency Status](https://david-dm.org/carsenk/dpi/status.svg?style=flat)](https://david-dm.org/carsenk/dpi) [![Build Status](https://travis-ci.org/carsenk/dpi.svg?branch=master)](https://travis-ci.org/carsenk/dpi)
+[![Build Status](https://travis-ci.org/carsenk/dpi.svg?branch=master)](https://travis-ci.org/carsenk/dpi)
 
-dPi - A NodeJS/MongoDB powered denariusd Web Wallet Dashboard with Statistics of your device. This is a major work in progress and this repo will be updated in time.
+dPi - A secondary layer NodeJS powered denariusd Web Wallet Dashboard with Statistics of your device. This is a major work in progress and this repo will be updated in time.
 
 Send and Receive Funds, Create new addresses, View Transactions, Unlock/Lock Wallet, Stake D, Reboot your node, and more!
 
