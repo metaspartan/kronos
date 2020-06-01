@@ -100,7 +100,7 @@ block content
                   button.btn.btn-gold(type='submit', id='submit', onclick='confirmede()') Encrypt Wallet
                   button.btn.btn-default(type='button', data-dismiss='modal') Close
     .container(style='width:90%')
-      .row(style='background-color:#000;background: linear-gradient(165deg, rgba(52,51,46,1) 0%, rgba(38,38,38,1) 48%, rgba(0,0,0,1) 100%);border-radius:30px;padding:30px;margin:15px;')
+      .row(class='rowclass')
           .col-md-3
             h3(style='font-weight:light;font-size:48px;color: #777;margin-top:0px;') Node Stats
             p Block Height: 
@@ -117,12 +117,15 @@ block content
               p Fortunastake Node: #{fs}
               p Native Tor Enabled: #{tor}
               p Data Directory Location: 
+                br
                 small(style='color:#777;') #{datadir}
-          .col-md-3
-            #container(name='container') &nbsp;
-          .col-md-3
-            #container2(name='container2') &nbsp;
-      .row(style='background-color:#000;background: linear-gradient(165deg, rgba(52,51,46,1) 0%, rgba(38,38,38,1) 48%, rgba(0,0,0,1) 100%);border-radius:30px;padding:30px;margin:15px;')
+          .col-md-6
+            .row
+              .col-sm-6
+                #container(name='container') &nbsp;
+              .col-sm-6
+                #container2(name='container2') &nbsp;
+      .row(class='rowclass')
         .col-sm-6
           h3(style='font-weight:light;font-size:48px;color: #777;margin-top:0px;') Balance
           p 
@@ -141,7 +144,7 @@ block content
           p 
           .bal(style='font-size:1.7em;font-weight:100;') #{instake}
             small(style='font-size:16px;')  D
-      .row(style='background-color:#000;background: linear-gradient(165deg, rgba(52,51,46,1) 0%, rgba(38,38,38,1) 48%, rgba(0,0,0,1) 100%);border-radius:30px;padding:30px;margin:15px;')
+      .row(class='rowclass')
         .col-sm-3
           p
             | PoW Mining Hashrate 
@@ -191,10 +194,10 @@ block content
             i.fa.fa-hourglass-2
             | Upload Target Limit 
             strong #{target} 
-      .row(style='background-color:#000;background: linear-gradient(165deg, rgba(52,51,46,1) 0%, rgba(38,38,38,1) 48%, rgba(0,0,0,1) 100%);border-radius:30px;padding:30px;margin:15px;')
+      .row(class='rowclass')
         .col-md-6
           h3(style='font-weight:light;font-size:48px;color: #777;margin-top:0px;') Address
-          .bal(style='font-size:1.8vw;font-weight:100;', align='center') #{address}
+          .bal(style='font-size:1.9vw;font-weight:100;text-align:center;', align='center') #{address}
           br
           .qrcode(align='center')
             a(href='denarius:' + address)
@@ -215,7 +218,7 @@ block content
         .col-md-3
           p(align='center')
             !=sending
-      .row(style='background-color:#000;background: linear-gradient(165deg, rgba(52,51,46,1) 0%, rgba(38,38,38,1) 48%, rgba(0,0,0,1) 100%);border-radius:30px;padding:30px;margin:15px;margin-bottom:150px;')
+      .row(class='rowclass', style='margin-bottom:150px;')
         .col-sm-6
           h3(style='font-weight:light;font-size:48px;color: #777;margin-top:0px;') System Information
           p Physical Cores #{cores} / #{threads} Threads

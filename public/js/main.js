@@ -30,7 +30,7 @@ var bar = new ProgressBar.Circle(document.getElementById('container'), {
       if (value === 0) {
         circle.setText('~');
       } else {
-        circle.setText('<span style="color: #FFF;font-size:32px;">' + value + '%</span><br /><span style="font-size:11px;">RAM In Use</span>');
+        circle.setText('<span class="valuetxt">' + value + '%</span><br /><span style="font-size:11px;">RAM In Use</span>');
       }
   
     }
@@ -63,7 +63,7 @@ var bar = new ProgressBar.Circle(document.getElementById('container'), {
       if (value2 === 0) {
         circle2.setText('~');
       } else {
-        circle2.setText('<span style="color: #FFF;font-size:32px;">' + value2 + '%</span><br /><span style="font-size:11px;">CPU In Use</span>');
+        circle2.setText('<span class="valuetxt">' + value2 + '%</span><br /><span style="font-size:11px;">CPU In Use</span>');
       }
   
     }

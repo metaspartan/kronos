@@ -60,9 +60,9 @@ exports.index = (req, res) => {
 		var memu = memuuu.toFixed(2);
 
 
-		var memp = memf / memt * 100;
+		var memp = memu / memt * 100;
 		var memppp = memp / 100;
-		var mempp = 1 - memppp;
+		var mempp = memppp;
 
 	si.osInfo(function (data4) {
 		var osname = data4.distro;
