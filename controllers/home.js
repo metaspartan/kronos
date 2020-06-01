@@ -11,6 +11,7 @@ const toastr = require('express-toastr');
 const exec = require('child_process').exec;
 const shell = require('shelljs');
 const sleep = require('system-sleep');
+
 /**
  * GET /
  * Home page.
@@ -45,7 +46,7 @@ exports.index = (req, res) => {
 
 		var bytes = 1073741824;
 		var memtt = data1.total;
-		var memuu = data1.used;
+		var memuu = data1.active;
 		var memff = data1.free;
 		var mema = data1.available;
 
