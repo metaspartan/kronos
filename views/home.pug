@@ -100,9 +100,15 @@ block content
                   button.btn.btn-gold(type='submit', id='submit', onclick='confirmede()') Encrypt Wallet
                   button.btn.btn-default(type='button', data-dismiss='modal') Close
     .container(style='width:90%')
+      p(align='center')
+        h3(align='center', style='margin:30px;')
+          | Everything is 
+          span(style='color: green;') great!
       .row(class='rowclass')
           .col-md-3
-            h3(style='font-weight:light;font-size:48px;color: #777;margin-top:0px;') Node Stats
+            h3(style='font-weight:light;font-size:48px;color: #777;margin-top:0px;margin-bottom:15px;') 
+              i.fas.fa-hdd 
+              |  Stats
             p Block Height: 
               strong #{blockheight}
               p Denarius Version #{version}
@@ -179,20 +185,20 @@ block content
             img(src='../img/denarius.png', height='128px;', align='center')
         .col-sm-3
           p
-            i.fa.fa-arrow-up
-            | Data Sent 
+            i.fa.fa-arrow-up 
+            |  Data Sent 
             strong #{datasent}
           p
-            i.fa.fa-arrow-down
-            | Data Received 
+            i.fa.fa-arrow-down 
+            |  Data Received 
             strong #{datareceived}
           p
-            i.fa.fa-clock-o
-            | Target Timeframe 
+            i.fas.fa-stopwatch 
+            |  Target Timeframe 
             strong #{timeframe}
           p
-            i.fa.fa-hourglass-2
-            | Upload Target Limit 
+            i.fas.fa-hourglass-half 
+            |  Upload Target Limit 
             strong #{target} 
       .row(class='rowclass')
         .col-md-6
@@ -219,19 +225,20 @@ block content
           p(align='center')
             !=sending
       .row(class='rowclass', style='margin-bottom:150px;')
+        h3(style='font-weight:light;font-size:48px;color: #777;margin-top:0px;margin-bottom:30px;') 
+          i.fas.fa-microchip 
+          |  System Info
         .col-sm-6
-          h3(style='font-weight:light;font-size:48px;color: #777;margin-top:0px;') System Information
           p Physical Cores #{cores} / #{threads} Threads
           p Core Clock Speed: #{avg} - Average CPU Load: #{avgload}
           p CPU Tempature: #{temp}
           p Memory Usage:  #{memu} GB Used / #{memf} GB Free / #{memt} GB Total
+          p Architecture: #{arch}
           #ram(data-value=mempp)
           #cpu(data-value=cpu)
         .col-sm-6
-          h3
           p OS Name: #{osname}
           p Platform: #{platform}
           p Release: #{release}
           p Kernel: #{kernel}
-          p Architecture: #{arch}
           p Hostname: #{hostname}

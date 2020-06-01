@@ -48,17 +48,25 @@ div(class=chaindl)
       ul.nav.navbar-nav
         if !user
           li(class=(title == 'Home') ? 'active' : undefined)
-            a(href='/') Dashboard
+            a(href='/') 
+              i.fas.fa-tachometer-alt 
+              |  Dashboard
           li.dropdown(class=(title == 'Wallet') ? 'active' : undefined)
             a.dropdown-toggle(href='#', data-toggle='dropdown')
-              span Wallet
+              span 
+              i.fa.fa-wallet 
+              |  Wallet
               i.caret
             ul.dropdown-menu
               li
-                a(href='/transactions') Transactions
+                a(href='/transactions') 
+                  i.fas.fa-exchange-alt 
+                  |  Transactions
               li.divider
               li
-                a(href='/addresses') Addresses
+                a(href='/addresses') 
+                  i.fas.fa-at 
+                  |  Addresses
           li
             a(href='/status') dPi Status
         else
@@ -70,7 +78,7 @@ div(class=chaindl)
           li(style=sendicon,class=(title == 'Send D') ? 'active' : undefined)
             a(href='/withdraw')
               i.fa.fa-paper-plane 
-              | SEND
+              |  SEND
           li.dropdown(class=(title == 'Community') ? 'active' : undefined)
             a.dropdown-toggle(href='#', data-toggle='dropdown')
               span Community

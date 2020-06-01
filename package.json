@@ -15,7 +15,6 @@
     "eslint": "eslint **/*.js"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.13.0",
     "bcrypt-nodejs": "^0.0.3",
     "bitcoin": "git://github.com/carsenk/node-bitcoin",
     "bluebird": "^3.4.7",
