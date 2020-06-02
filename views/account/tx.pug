@@ -4,7 +4,7 @@ block content
   .txheader.container
     p
       h3(align='center', style='margin-top:55px;margin-bottom:50px;')
-        i.fa.fa-exchange
+        i.fa.fa-exchange-alt
         |  Denarius Wallet Transactions
     if (transactions)
       - transactions.sort((a, b)=>{a = new Date(a.timereceived);b = new Date(b.timereceived);return a>b ? -1 : a<b ? 1 : 0;})

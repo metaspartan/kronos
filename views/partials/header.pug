@@ -67,6 +67,36 @@ div(class=chaindl)
                 a(href='/addresses') 
                   i.fas.fa-at 
                   |  Addresses
+          li.dropdown(class=(title == 'Tools') ? 'active' : undefined)
+            a.dropdown-toggle(href='#', data-toggle='dropdown')
+              span 
+              i.fas.fa-tools 
+              |  Tools (WIP)
+              i.caret
+            ul.dropdown-menu
+              li
+                a(href='/backup') 
+                  i.fas.fa-server 
+                  |  Backup Wallet
+              li.divider
+              li
+                a(href='/signmsg') 
+                  i.fas.fa-signature 
+                  |  Sign a message
+              li
+                a(href='/verifymsg') 
+                  i.fas.fa-certificate 
+                  |  Verify a message
+              li.divider
+              li
+                a(href='/rawtx') 
+                  i.far.fa-paper-plane 
+                  |  Send Raw Transaction
+              li.divider
+              li
+                a(href='/rawtx') 
+                  i.fas.fa-key  
+                  |  Import a private key
           li
             a(href='/status') dPi Status
         else
@@ -81,13 +111,19 @@ div(class=chaindl)
               |  SEND
           li.dropdown(class=(title == 'Community') ? 'active' : undefined)
             a.dropdown-toggle(href='#', data-toggle='dropdown')
-              span Community
+              span 
+                i.fas.fa-users 
+                |  Community
               i.caret
             ul.dropdown-menu
               li
-                a(href='https://blockforums.org', target='_blank') Forums
+                a(href='https://blockforums.org', target='_blank') 
+                  i.fas.fa-bold 
+                  |  Forums
               li.divider
               li
-                a(href='https://discord.gg/UPpQy3n', target='_blank') Discord
+                a(href='https://discord.gg/UPpQy3n', target='_blank')
+                  i.fab.fa-discord 
+                  |  Discord
           li(class=(title == 'Version') ? 'active' : undefined)
-            a(href='#') v1.0.3-Alpha
+            a(href='#') v1.0.4-Alpha
