@@ -30,7 +30,7 @@ var bar = new ProgressBar.Circle(document.getElementById('container'), {
       if (value === 0) {
         circle.setText('~');
       } else {
-        circle.setText('<span class="valuetxt">' + value + '%</span><br /><span style="font-size:11px;">RAM In Use</span>');
+        circle.setText('<span class="valuetxt">' + value + '%</span><br /><span class="systxt">RAM In Use</span>');
       }
   
     }
@@ -52,7 +52,7 @@ var bar = new ProgressBar.Circle(document.getElementById('container'), {
     text: {
       autoStyleContainer: false
     },
-    from: { color: '#ffd800', width: 16 },
+    from: { color: '#ffd800', width: 6 },
     to: { color: '#ffd800', width: 1 },
     // Set default step function for all animate calls
     step: function(state2, circle2) {
@@ -63,7 +63,7 @@ var bar = new ProgressBar.Circle(document.getElementById('container'), {
       if (value2 === 0) {
         circle2.setText('~');
       } else {
-        circle2.setText('<span class="valuetxt">' + value2 + '%</span><br /><span style="font-size:11px;">CPU In Use</span>');
+        circle2.setText('<span class="valuetxt">' + value2 + '%</span><br /><span class="systxt">CPU In Use</span>');
       }
   
     }

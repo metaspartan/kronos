@@ -1,0 +1,34 @@
+extends ../layout
+
+block content
+  script.
+    function confirmed() {
+      $('#sendform').submit();
+    }
+  .container
+    div(style='margin-top:100px;')
+      h1(align='center')
+        | Verify a Message
+      p
+        .titlesmall(align='center') Verify a message with one of your owned Denarius addresses and valid signatures
+      p
+        form.form-horizontal(action='/verifymsg', method='POST', id='sendform')
+          input(type='hidden', name='_csrf', value=_csrf)
+          .form-group
+            label.col-sm-3.control-label(for='sendaddress') D Owned Address
+            .col-sm-7
+              input.form-control.blackinput3(type='text', name='sendaddress', id='sendaddress', placeholder='D8jRk63FQDRUfeKqz99rkmCr47qsFUT5K2')
+          .form-group
+            label.col-sm-3.control-label(for='signature') Signature from Signing
+            .col-sm-7
+              input.form-control.blackinput3(type='text', name='signature', id='signature', placeholder='H213KJQXkmbgsRppLFu+aNeyowO/pAT5pEzM4zqSdUI2Nga6S5HXDs+C/5vxuPEGftf1cDc4US0l0e7YftvG0xw=')
+          .form-group
+            label.col-sm-3.control-label(for='unsignedmsg') Message
+            .col-sm-7
+              .input-group
+                textarea.form-control.blackinput3(row='10', cols='70', name='unsignedmsg', id='unsignedmsg', placeholder='Your message you want to sign with Denarius goes here...')
+          .form-group
+            .col-sm-offset-3.col-sm-4
+              button.btn.btn-default(type='button', id='verifymsg', onclick='confirmed()')
+                i.fa.fa-key
+                |  Verify Message

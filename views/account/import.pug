@@ -1,0 +1,30 @@
+extends ../layout
+
+block content
+  script.
+    function confirmed() {
+      $('.importkey').show();
+      $('#sendimportbtn').hide();
+      $('#sendimport').submit();
+    }
+  .container
+    div(style='margin-top:100px;')
+      h1(align='center')
+        | Import Private Key
+      p
+        .titlesmall(align='center') Import a private key into your Denarius wallet, in WIF format. Starts with Q, This does not rescan after importing, it is recommended to reboot your node after to view imported addresses/balances/keys.
+      p
+        .importkey(align='center', style='color: green;') dPi is importing the private key, you may want to reboot your node later...
+      br
+      p
+        form.form-horizontal(action='/importpriv', method='POST', id='sendimport')
+          input(type='hidden', name='_csrf', value=_csrf)
+          .form-group
+            label.col-sm-3.control-label(for='privkey') Private Key (WIF)
+            .col-sm-7
+              input.form-control.blackinput3(type='text', name='privkey', id='privkey', placeholder='QUhaQ7i3LV2jvwZzESm49HxkAa5vLSazBBsGr8DHTEwTdrERGWGX')
+          .form-group
+            .col-sm-offset-3.col-sm-4
+              button.btn.btn-default(type='button', id='sendimportbtn', onclick='confirmed()')
+                i.fa.fa-key
+                |  Import Private Key

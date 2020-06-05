@@ -137,15 +137,34 @@ progress_bar 3
 
 printf "${GREEN}Installing dPi, Denarius, and related dependancies${NC}\n"
 
+lsof /var/lib/dpkg/lock >/dev/null 2>&1
+[ $? = 0 ] && echo "dpkg is currently locked, cannot install dPi...Please ensure you are not running software updates"
+
 sudo apt-get update -y && sudo apt-get upgrade -y
 
 sudo apt-get install -y git unzip build-essential libssl-dev autogen automake curl wget jq snap snapd pwgen
 
-sudo apt-get install -y nodejs libssl1.0-dev
-
-sudo apt-get install -y npm
+sudo apt-get install -y libssl1.0-dev
 
 printf "${GREEN}Dependancies Installed Successfully!${NC}\n"
+
+printf "${GREEN}Installing NVM and Node Version 6.x!${NC}\n"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+if [ ! -d ~/.nvm ]; then
+  wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
+  source ~/.nvm/nvm.sh
+  source ~/.profile
+  source ~/.bashrc
+  nvm install v6
+  npm install
+  npm install -g forever
+fi
+
+printf "${GREEN}Successfully Installed NVM and Node Version 6.x!${NC}\n"
 
 printf "${GREEN}Snap installing Denarius...${NC}\n"
 
@@ -199,6 +218,10 @@ sudo npm install -g forever nodemon
 
 echo "Installing dPi from Github"
 
+if [ -d "/dpi" ]; then
+  sudo rm -rf dpi
+fi
+
 git clone https://github.com/carsenk/dpi
 
 cd dpi
@@ -207,7 +230,7 @@ echo "Installing dPi Node Modules..."
 
 npm install
 
-echo "Installed dPi Node Modules"
+echo "Successfully Installed dPi Node Modules"
 
 echo "Updating Enviroment..."
 
@@ -221,7 +244,7 @@ PWDPI3=$(pwgen 15 1)
 
 echo "Updating dPi Protection and Generating Password..."
 
-sed -i "s/.*password: 'testing123',.*/password: '$PWDPI3',/" app.js
+sed -i "s/.*DPIPASS=.*/DPIPASS="${PWDPI3}"/" .env
 
 sudo forever start app.js
 

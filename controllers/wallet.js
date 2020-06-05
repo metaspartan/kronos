@@ -28,7 +28,7 @@ var client = new bitcoin.Client({
  */
 exports.getWithdraw = (req, res) => {
   //var username = req.user.email;
-  client.getInfo(function (error, info, resHeaders) {
+  client.getBalance(function (error, info, resHeaders) {
       if (error) {
         var offline = 'offlineoverlay';
 				var offlinebtn = 'offlinebutton';
@@ -41,7 +41,7 @@ exports.getWithdraw = (req, res) => {
       var chaindl = 'nooverlay';
       var chaindlbtn = 'nobtn';
 
-      var balance = info.balance;
+      var balance = info;
 
       if (balance <= 0) {
         balance = 0;
@@ -57,8 +57,193 @@ exports.getWithdraw = (req, res) => {
   });
 };
 
+exports.getRaw = (req, res) => {
+  //var username = req.user.email;
+  client.getBalance(function (error, info, resHeaders) {
+      if (error) {
+        var offline = 'offlineoverlay';
+        var offlinebtn = 'offlinebutton';
+        var balance = '0';
+        console.log(error);
+      } else {
+        var offline = 'onlineoverlay';
+				var offlinebtn = 'onlinebutton';
+      }
+
+      var chaindl = 'nooverlay';
+      var chaindlbtn = 'nobtn';
+
+      var balance = info;
+
+      if (balance <= 0) {
+        balance = 0;
+      }
+    res.render('account/sendraw', {
+        title: 'Broadcast Raw TX',
+        balance: balance,
+        offline: offline,
+        offlinebtn: offlinebtn,
+        chaindl: chaindl,
+        chaindlbtn: chaindlbtn
+    });
+  });
+};
+
+exports.getPriv = (req, res) => {
+  //var username = req.user.email;
+  client.getBalance(function (error, info, resHeaders) {
+      if (error) {
+        var offline = 'offlineoverlay';
+        var offlinebtn = 'offlinebutton';
+        var balance = '0';
+        var info = 'Node is importing private key...Please wait...';
+        console.log(error);
+      } else {
+        var offline = 'onlineoverlay';
+        var offlinebtn = 'onlinebutton';
+        var balance = info;
+        var info = '';
+      }
+
+      var chaindl = 'nooverlay';
+      var chaindlbtn = 'nobtn';
+
+      //var balance = info.balance;
+
+      if (balance <= 0) {
+        balance = 0;
+      }
+    res.render('account/import', {
+        title: 'Import Private Key',
+        balance: balance,
+        offline: offline,
+        offlinebtn: offlinebtn,
+        chaindl: chaindl,
+        chaindlbtn: chaindlbtn,
+        info: info
+    });
+  });
+};
+
+exports.getSign = (req, res) => {
+  //var username = req.user.email;
+  client.getBalance(function (error, info, resHeaders) {
+      if (error) {
+        var offline = 'offlineoverlay';
+        var offlinebtn = 'offlinebutton';
+        var balance = '0';
+        console.log(error);
+      } else {
+        var offline = 'onlineoverlay';
+				var offlinebtn = 'onlinebutton';
+      }
+
+      var chaindl = 'nooverlay';
+      var chaindlbtn = 'nobtn';
+
+      var balance = info;
+
+      if (balance <= 0) {
+        balance = 0;
+      }
+    res.render('account/sign', {
+        title: 'Sign a Denarius Message',
+        balance: balance,
+        offline: offline,
+        offlinebtn: offlinebtn,
+        chaindl: chaindl,
+        chaindlbtn: chaindlbtn
+    });
+  });
+};
+
+exports.getVerify = (req, res) => {
+  //var username = req.user.email;
+  client.getBalance(function (error, info, resHeaders) {
+      if (error) {
+        var offline = 'offlineoverlay';
+        var offlinebtn = 'offlinebutton';
+        var balance = '0';
+        console.log(error);
+      } else {
+        var offline = 'onlineoverlay';
+				var offlinebtn = 'onlinebutton';
+      }
+
+      var chaindl = 'nooverlay';
+      var chaindlbtn = 'nobtn';
+
+      var balance = info;
+
+      if (balance <= 0) {
+        balance = 0;
+      }
+    res.render('account/verify', {
+        title: 'Verify a Denarius Message',
+        balance: balance,
+        offline: offline,
+        offlinebtn: offlinebtn,
+        chaindl: chaindl,
+        chaindlbtn: chaindlbtn
+    });
+  });
+};
+
+exports.getBackup = (req, res) => {
+  //var username = req.user.email;
+  client.getBalance(function (error, info, resHeaders) {
+      if (error) {
+        var offline = 'offlineoverlay';
+        var offlinebtn = 'offlinebutton';
+        var balance = '0';
+        console.log(error);
+      } else {
+        var offline = 'onlineoverlay';
+				var offlinebtn = 'onlinebutton';
+      }
+
+      var chaindl = 'nooverlay';
+      var chaindlbtn = 'nobtn';
+
+      var balance = info;
+
+      if (balance <= 0) {
+        balance = 0;
+      }
+    res.render('account/backup', {
+        title: 'Backup your D Wallet',
+        balance: balance,
+        offline: offline,
+        offlinebtn: offlinebtn,
+        chaindl: chaindl,
+        chaindlbtn: chaindlbtn
+    });
+  });
+};
+
+
 exports.addresses = function (req, res) {
   //var username = req.user.email;
+
+  client.getBalance(function (error, info, resHeaders) {
+    if (error) {
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var balance = '0';
+      console.log(error);
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+    }
+
+    var chaindl = 'nooverlay';
+    var chaindlbtn = 'nobtn';
+
+    var balance = info;
+
+    if (balance <= 0) {
+      balance = 0;
+    }
 
   //List All Addresses
   client.listAddressGroupings(function (err, addresses, resHeaders) {
@@ -120,9 +305,10 @@ exports.addresses = function (req, res) {
         var chaindl = 'nooverlay';
         var chaindlbtn = 'nobtn';
 
-      res.render('account/addresses', { title: 'My Addresses', addyy: addyy, addresses: addresses, privkey: privkey, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
+      res.render('account/addresses', { title: 'My Addresses', addyy: addyy, addresses: addresses, balance: balance, privkey: privkey, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
 
   });
+});
 });
 });
 
@@ -219,12 +405,12 @@ exports.withdraw = (req, res, next) => {
     var sendtoaddress = req.body.sendaddress;
     var amount = req.body.amount;
 
-    client.getInfo(function (error, info, resHeaders) {
+    client.getBalance(function (error, info, resHeaders) {
         if (error) {
           console.log(error);
         }
 
-        var balance = info.balance;
+        var balance = info;
 
     var valid = WAValidator.validate(`${sendtoaddress}`, 'DNR'); //Need to update to D still
 
@@ -266,6 +452,26 @@ exports.withdraw = (req, res, next) => {
 exports.transactions = function (req, res) {
   //var username = req.user.email;
 
+  client.getBalance(function (error, info, resHeaders) {
+    if (error) {
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var balance = '0';
+      console.log(error);
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+    }
+
+    var chaindl = 'nooverlay';
+    var chaindlbtn = 'nobtn';
+
+    var balance = info;
+
+    if (balance <= 0) {
+      balance = 0;
+    }
+
   //List Transactions
   client.listTransactions('*', 300, function (err, transactions, resHeaders) {
       if (err) {
@@ -282,7 +488,198 @@ exports.transactions = function (req, res) {
       var chaindl = 'nooverlay';
       var chaindlbtn = 'nobtn';
 
-    res.render('account/tx', { title: 'Transactions', transactions: transactions, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
+    res.render('account/tx', { title: 'Transactions', transactions: transactions, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
     });
 
+  });
 };
+
+/**
+ * POST /sendraw
+ * Send Raw Transaction to D network
+ */
+exports.sendRaw = (req, res, next) => {
+  var rawtx = req.body.rawtx;
+
+  client.getBalance(function (error, info, resHeaders) {
+      if (error) {
+        console.log(error);
+      }
+
+      var balance = info;
+
+      client.sendRawTransaction(`${rawtx}`, function (error, tx, resHeaders) {
+          if (error) {
+              req.toastr.error('Insufficient Funds, Invalid Amount, or Transaction already exists!', 'Invalid!', { positionClass: 'toast-bottom-right' });
+              //req.flash('errors', { msg: 'Insufficient Funds or Invalid Amount!' });
+              return res.redirect('/rawtx');
+
+          } else {
+
+              var sendtx = tx;
+
+              req.toastr.success(`Raw Transaction was sent successfully!`, 'Success!', { positionClass: 'toast-bottom-right' });
+              req.flash('success', { msg: `Your raw transaction was sent successfully! TX ID: <a href="https://coinexplorer.net/D/transaction/${sendtx}" target="_blank">${sendtx}</a>` });
+              return res.redirect('/rawtx');
+          }
+      });
+})
+};
+
+/**
+ * POST /importpriv
+ * Import private key
+ */
+exports.importPriv = (req, res, next) => {
+  var privkey = req.body.privkey;
+
+  client.getBalance(function (error, info, resHeaders) {
+      if (error) {
+        console.log(error);
+      }
+
+      var balance = info;
+
+      client.importPrivKey(`${privkey}`, 'imported', 'false', function (error, success, resHeaders) {
+          if (error) {
+              req.toastr.error('Invalid Private Key or Wrong Format!', 'Invalid!', { positionClass: 'toast-bottom-right' });
+              //req.flash('errors', { msg: 'Insufficient Funds or Invalid Amount!' });
+              return res.redirect('/import');
+
+          } else {
+
+              req.toastr.success(`Imported private key successfully!`, 'Success!', { positionClass: 'toast-bottom-right' });
+              return res.redirect('/import');
+          }
+      });
+})
+};
+
+/**
+ * POST /signmsg
+ * Sign Denarius Message
+ */
+exports.signMsg = (req, res, next) => {
+  //var username = req.user.email;
+  var sendtoaddress = req.body.sendaddress;
+  var msg = req.body.unsignedmsg;
+
+  client.getBalance(function (error, info, resHeaders) {
+      if (error) {
+        console.log(error);
+      }
+
+      var balance = info;
+
+  var valid = WAValidator.validate(`${sendtoaddress}`, 'DNR'); //Need to update to D still
+
+  if (valid) {
+
+      client.signMessage(`${sendtoaddress}`, `${msg}`, function (error, signedmsghex, resHeaders) {
+          if (error) {
+              req.toastr.error('You dont own this address or an error occured!', 'Error!', { positionClass: 'toast-bottom-right' });
+              //req.flash('errors', { msg: 'Insufficient Funds or Invalid Amount!' });
+              return res.redirect('/sign');
+
+          } else {
+
+              var signed = signedmsghex;
+
+              req.toastr.success(`Signed message successfully`, 'Success!', { positionClass: 'toast-bottom-right' });
+              req.flash('success', { msg: `Your signed message <strong>${msg}</strong> is: <strong>${signed}</strong> signed with the address: <strong>${sendtoaddress}</strong>` });
+              return res.redirect('/sign');
+          }
+      });
+
+  } else {
+      req.toastr.error('You entered an invalid Denarius (D) Address!', 'Invalid Address!', { positionClass: 'toast-bottom-right' });
+      //req.flash('errors', { msg: 'You entered an invalid Denarius (D) Address!' });
+      return res.redirect('/sign');
+  }
+
+});
+};
+
+
+/**
+ * POST /verifymsg
+ * Verify Denarius Message
+ */
+exports.verifyMsg = (req, res, next) => {
+  //var username = req.user.email;
+  var sendtoaddress = req.body.sendaddress;
+  var msg = req.body.unsignedmsg;
+  var signature = req.body.signature;
+
+  client.getBalance(function (error, info, resHeaders) {
+      if (error) {
+        console.log(error);
+      }
+
+      var balance = info;
+
+  var valid = WAValidator.validate(`${sendtoaddress}`, 'DNR'); //Need to update to D still
+
+  if (valid) {
+
+      client.verifyMessage(`${sendtoaddress}`, `${signature}`, `${msg}`, function (error, signedmsghex, resHeaders) {
+          if (error) {
+              req.toastr.error('You dont own this address or an error occured!', 'Error!', { positionClass: 'toast-bottom-right' });
+              //req.flash('errors', { msg: 'Insufficient Funds or Invalid Amount!' });
+              return res.redirect('/verify');
+
+          } else {
+
+              var signed = signedmsghex;
+
+              if (signed == true) {
+
+                req.toastr.success(`Message is valid!`, 'Success!', { positionClass: 'toast-bottom-right' });
+                req.flash('success', { msg: `Your message <strong>${msg}</strong> with signature: <strong>${signature}</strong> and the address: <strong>${sendtoaddress}</strong> is valid!` });
+                return res.redirect('/verify');
+
+              } else if (signed == false) {
+                req.toastr.error('Message unable to be validated!', 'Message not verified!', { positionClass: 'toast-bottom-right' });
+                return res.redirect('/verify');
+              }
+          }
+      });
+
+  } else {
+      req.toastr.error('You entered an invalid Denarius (D) Address!', 'Invalid Address!', { positionClass: 'toast-bottom-right' });
+      //req.flash('errors', { msg: 'You entered an invalid Denarius (D) Address!' });
+      return res.redirect('/verify');
+  }
+
+});
+};
+
+/**
+ * POST /backupwallet
+ * Backup Denarius Wallet
+ */
+exports.backupWallet = (req, res, next) => {
+  var location = req.body.backuploc;
+
+  client.getBalance(function (error, info, resHeaders) {
+      if (error) {
+        console.log(error);
+      }
+
+      var balance = info;
+
+      client.backupWallet(`${location}`, function (error, success, resHeaders) {
+          if (error) {
+              req.toastr.error('Invalid Location or Permission issue!', 'Error!', { positionClass: 'toast-bottom-right' });
+              //req.flash('errors', { msg: 'Insufficient Funds or Invalid Amount!' });
+              return res.redirect('/backup');
+
+          } else {
+              req.flash('success', { msg: `Your wallet was backed up successfully to <strong>${location}</strong>` });
+              req.toastr.success(`Backup completed successfully!`, 'Success!', { positionClass: 'toast-bottom-right' });
+              return res.redirect('/backup');
+          }
+      });
+})
+};
+

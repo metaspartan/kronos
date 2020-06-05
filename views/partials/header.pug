@@ -71,7 +71,7 @@ div(class=chaindl)
             a.dropdown-toggle(href='#', data-toggle='dropdown')
               span 
               i.fas.fa-tools 
-              |  Tools (WIP)
+              |  Tools 
               i.caret
             ul.dropdown-menu
               li
@@ -80,11 +80,11 @@ div(class=chaindl)
                   |  Backup Wallet
               li.divider
               li
-                a(href='/signmsg') 
+                a(href='/sign') 
                   i.fas.fa-signature 
                   |  Sign a message
               li
-                a(href='/verifymsg') 
+                a(href='/verify') 
                   i.fas.fa-certificate 
                   |  Verify a message
               li.divider
@@ -92,13 +92,13 @@ div(class=chaindl)
                 a(href='/rawtx') 
                   i.far.fa-paper-plane 
                   |  Send Raw Transaction
-              li.divider
-              li
-                a(href='/rawtx') 
+              li.divider(style=sendicon)
+              li(style=sendicon)
+                a(href='/import') 
                   i.fas.fa-key  
                   |  Import a private key
           li
-            a(href='/status') dPi Status
+            a(href='/status') #{balance} D
         else
           li(class=(title == 'Transactions') ? 'active' : undefined)
             a(href='/transactions') Transactions
@@ -126,4 +126,4 @@ div(class=chaindl)
                   i.fab.fa-discord 
                   |  Discord
           li(class=(title == 'Version') ? 'active' : undefined)
-            a(href='#') v1.0.4-Alpha
+            a(href='#') v1.0.5-Alpha

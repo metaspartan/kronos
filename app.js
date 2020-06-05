@@ -93,7 +93,6 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
-recaptcha.init(process.env.RECAPTCHA_PUBLIC, process.env.RECAPTCHA_PRIVATE);
 /*
 app.use(session({
   resave: true,
@@ -121,8 +120,8 @@ app.use(flashc());
 
 
 const config = {
-username: "dpiadmin",
-password: 'testing123',
+username: process.env.DPIUSER,
+password: process.env.DPIPASS,
 maxAge: 10800000 // 3 hours
 }
 
@@ -163,7 +162,6 @@ app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }))
  * Primary app routes.
  */
 app.get('/', homeController.index);
-
 app.post('/', homeController.index);
 
 //POST Routes
@@ -172,6 +170,27 @@ app.post('/lock', homeController.lock);
 app.post('/encrypt', homeController.encrypt);
 app.post('/reboot', homeController.reboot);
 app.post('/privkey', homeController.privkey);
+
+
+app.post('/newaddress', walletController.address);
+app.get('/addresses', walletController.addresses);
+app.get('/transactions', walletController.transactions);
+app.post('/withdraw/send', walletController.withdraw);
+app.get('/withdraw', walletController.getWithdraw);
+app.get('/rawtx', walletController.getRaw);
+app.post('/sendrawtx', walletController.sendRaw);
+
+app.get('/import', walletController.getPriv);
+app.post('/importpriv', walletController.importPriv);
+
+app.get('/sign', walletController.getSign);
+app.post('/signmsg', walletController.signMsg);
+
+app.get('/verify', walletController.getVerify);
+app.post('/verifymsg', walletController.verifyMsg);
+
+app.get('/backup', walletController.getBackup);
+app.post('/backupwallet', walletController.backupWallet);
 
 //Needs securing
 
@@ -219,12 +238,6 @@ app.get('/account/unlink/:provider', passportConfig.isAuthenticated, passportCon
  * Wallet app routes.
  */
 //app.get('/wallet', passportConfig.isAuthenticated, passportConfig.ensureTotp, walletController.wallet);
-
-app.post('/newaddress', walletController.address);
-app.get('/addresses', walletController.addresses);
-app.get('/transactions', walletController.transactions);
-app.post('/withdraw/send', walletController.withdraw);
-app.get('/withdraw', walletController.getWithdraw);
 
 /**
  * OAuth authentication routes. (Sign in)

@@ -54,8 +54,8 @@ html {
 body {
   padding-top: 60px;
   margin-bottom: 75px;
-  background-image: url('../img/bgd.png');
-  background-repeat: repeat;
+  //background-image: url('../img/bgb.png');
+  //background-repeat: repeat;
   background-color: #222;
   color: #FFF;
   font-family: 'Open Sans', sans-serif;
@@ -85,7 +85,13 @@ body {
   }
 
   .progressbar-text {
-    top: 63% !important;
+    top: 72% !important;
+  }
+
+  .systxt {
+    font-size: 11px !important;
+    top: -15px;
+    position: relative;
   }
 
   #container2 {
@@ -108,19 +114,46 @@ body {
   padding-right: 15px;
 }
 
+.importkey {
+  display: none;
+}
+
 .valuetxt {
   color: #FFF;
   font-size:32px;
 }
 
-
 .rowclass {
   background-color:#000;
-  background: linear-gradient(165deg, rgba(52,51,46,1) 0%, rgba(38,38,38,1) 48%, rgba(0,0,0,1) 100%);
+  background: linear-gradient(-165deg, rgb(41, 40, 37) 0%, rgba(38,38,38,1) 48%, rgb(22, 22, 22) 100%);
   border-radius:30px;
   padding:30px;
   margin:15px;
 }
+
+.pace {
+  -webkit-pointer-events: none;
+  pointer-events: none;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+.pace-inactive {
+  display: none;
+}
+
+.pace .pace-progress {
+  background: #FFD800;
+  position: fixed;
+  z-index: 2000;
+  top: 0;
+  right: 100%;
+  width: 100%;
+  height: 2px;
+}
+
 
 footer {
   position: absolute;
@@ -153,6 +186,10 @@ footer {
   height: 20px;
   position: relative;
   top: -20px;
+}
+
+.systxt {
+  font-size: 11px;
 }
 
 .Enabled {

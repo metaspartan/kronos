@@ -1,0 +1,29 @@
+extends ../layout
+
+block content
+  script.
+    function confirmed() {
+      $('#sendrawform').submit();
+    }
+  .container
+    div(style='margin-top:100px;')
+      h1(align='center')
+        | Send a Raw Transaction
+      p
+        .titlesmall(align='center') Broadcast a raw transaction on the Denarius network in HEX format.
+      p
+        .balancesm(align='center') Balance: 
+          strong #{balance} D
+      br
+      p
+        form.form-horizontal(action='/sendrawtx', method='POST', id='sendrawform')
+          input(type='hidden', name='_csrf', value=_csrf)
+          .form-group
+            label.col-sm-3.control-label(for='rawtx') Raw Transaction in HEX format
+            .col-sm-7
+              textarea.form-control.blackinput3(rows='10', cols='70', name='rawtx', id='rawtx', placeholder='010000006967d45e01f3185bc444a1ee645fd169d59a12cc12980a84d655472c9a5377d73857eb50a0010000006b483045022100f0161434bce1bc1d932b32b82412cee9cc961d92a2e0ea4c479361f93b07c8fe022079aef5675a1cdc14c5929396f0a55f447cbb65fd2529903ed43758d7d511ea140121030cf8eb980a19b92be0ca87969055f9d102dfa1dcc71db997b3a7fbb12969fbb5ffffffff03a0860100000000001976a914f9917c92a8ac0762ba38c1d2009fcfc12b7050f688ac0000000000000000096a026e706a03504f44c885e305000000001976a914b8400eda6796c9a0760585642250a70ec9941aea88ac00000000')
+          .form-group
+            .col-sm-offset-3.col-sm-4
+              button.btn.btn-default(type='button', id='sendrawtx', onclick='confirmed()')
+                i.fa.fa-paper-plane
+                |  Broadcast Raw TX

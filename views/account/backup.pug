@@ -1,0 +1,25 @@
+extends ../layout
+
+block content
+  script.
+    function confirmed() {
+      $('#sendform').submit();
+    }
+  .container
+    div(style='margin-top:100px;')
+      h1(align='center')
+        | Backup your Wallet
+      p
+        .titlesmall(align='center') Backup your Denarius wallet.dat file to another location, HIGHLY RECOMMENDED!
+      p
+        form.form-horizontal(action='/backupwallet', method='POST', id='sendform')
+          input(type='hidden', name='_csrf', value=_csrf)
+          .form-group
+            label.col-sm-3.control-label(for='backuploc') Backup Save Location
+            .col-sm-7
+              input.form-control.blackinput3(type='text', name='backuploc', id='backuploc', placeholder='/home/<user>/Documents/walletbackup.dat')
+          .form-group
+            .col-sm-offset-3.col-sm-4
+              button.btn.btn-default(type='button', id='backupbtn', onclick='confirmed()')
+                i.fas.fa-database
+                |  Backup Wallet
