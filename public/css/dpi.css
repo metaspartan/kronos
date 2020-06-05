@@ -5,7 +5,7 @@
 
 @import "themes/sandstone/sandstone";
 
-@import url('https://fonts.googleapis.com/css?family=Lato:100,400|Quicksand:300|Roboto:100,300|Open Sans:100,300');
+@import url('https://fonts.googleapis.com/css?family=Lato:100,400|Quicksand:300|Roboto:100,300|Open Sans:100,300|Ubuntu:100,300|Muli:100,300');
 
 // Scaffolding
 // -------------------------
@@ -54,11 +54,20 @@ html {
 body {
   padding-top: 60px;
   margin-bottom: 75px;
-  //background-image: url('../img/bgb.png');
-  //background-repeat: repeat;
   background-color: #222;
   color: #FFF;
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Lato', sans-serif;
+}
+
+#myVideo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  opacity: 0.1;
+  z-index: -10;
+  filter: grayscale(100%);
+  min-width: 100%;
+  min-height: 100%;
 }
 
 @media only screen and (max-width: 767px) {

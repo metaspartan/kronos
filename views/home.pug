@@ -106,7 +106,7 @@ block content
           span(style='color: #42B905;') Great!
       .row(class='rowclass')
           .col-md-3
-            h3(style='font-weight:light;font-size:48px;color: #777;margin-top:0px;margin-bottom:15px;') 
+            h3(style='font-weight:light;font-size:48px;color: #393939;margin-top:0px;margin-bottom:15px;') 
               i.fas.fa-hdd 
               |  Stats
             p Block Height: 
@@ -131,24 +131,26 @@ block content
                 #container(name='container') &nbsp;
               .col-sm-6(align='center')
                 #container2(name='container2') &nbsp;
-      .row(class='rowclass')
+      .row(class='rowclass balancerow')
         .col-sm-6
-          h3(style='font-weight:light;font-size:48px;color: #777;margin-top:0px;') Balance
+          h3(style='font-size:48px;color: #393939;margin-top:0px;') 
+            i.fas.fa-wallet 
+            |  Balance
           p 
-          .bal(style='font-size:2.5em;font-weight:100;') #{balance}
+          .bal(style='font-size:2.5em;') #{balance}
             small(style='font-size:16px;')  D
           p
-          .bal(style='font-size:1.6em;font-weight:100;color:#888;') $#{usdbalance}
+          .bal(style='font-size:1.6em;color:#888;') $#{usdbalance}
             small(style='font-size:16px;')  USD @ $#{currentprice} ea
         .col-sm-3
-          h3(style='font-weight:light;font-size:28px;color: #777;margin-top:15px;') Unconfirmed
+          h3(style='font-weight:light;font-size:28px;color: #393939;margin-top:15px;') Unconfirmed
           p 
-          .bal(style='font-size:1.7em;font-weight:100;') #{unbalance}
+          .bal(style='font-size:1.7em;') #{unbalance}
             small(style='font-size:16px;')  D
         .col-sm-3
-          h3(style='font-weight:light;font-size:28px;color: #777;margin-top:15px;') In Stake
+          h3(style='font-weight:light;font-size:28px;color: #393939;margin-top:15px;') In Stake
           p 
-          .bal(style='font-size:1.7em;font-weight:100;') #{instake}
+          .bal(style='font-size:1.7em;') #{instake}
             small(style='font-size:16px;')  D
       .row(class='rowclass')
         .col-sm-3
@@ -224,7 +226,7 @@ block content
           p(align='center')
             !=sending
       .row(class='rowclass', style='margin-bottom:150px;')
-        h3(style='font-weight:light;font-size:48px;color: #777;margin-top:0px;margin-bottom:30px;') 
+        h3(style='font-weight:light;font-size:48px;color: #393939;margin-top:0px;margin-bottom:30px;') 
           i.fas.fa-microchip 
           |  System Info
         .col-sm-6

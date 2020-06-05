@@ -144,7 +144,7 @@ sudo apt-get update -y && sudo apt-get upgrade -y
 
 sudo apt-get install -y git unzip build-essential libssl-dev autogen automake curl wget jq snap snapd pwgen
 
-sudo apt-get install -y libssl1.0-dev
+sudo apt-get remove -y nodejs npm
 
 printf "${GREEN}Dependancies Installed Successfully!${NC}\n"
 
@@ -154,15 +154,15 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-if [ ! -d ~/.nvm ]; then
-  wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
-  source ~/.nvm/nvm.sh
-  source ~/.profile
-  source ~/.bashrc
-  nvm install v8
-  npm install
-  npm install -g forever
-fi
+#if [ ! -d ~/.nvm ]; then
+wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
+source ~/.nvm/nvm.sh
+source ~/.profile
+source ~/.bashrc
+nvm install v8
+npm install
+npm install -g forever
+#fi
 
 printf "${GREEN}Successfully Installed NVM and Node Version 6.x!${NC}\n"
 
@@ -212,10 +212,6 @@ denarius.daemon
 
 progress_bar 10
 
-echo "Installing Forever and Nodemon"
-
-sudo npm install -g forever nodemon
-
 echo "Installing dPi from Github"
 
 if [ -d "dpi" ]; then
@@ -246,7 +242,7 @@ echo "Updating dPi Protection and Generating Password..."
 
 sed -i "s/.*DPIPASS=.*/DPIPASS="${PWDPI3}"/" .env
 
-sudo forever start app.js
+nohup npm start &
 
 echo "dPi and Denarius are successfully installed! dPi is now running on port 3000, open your browser to this devices local LAN IP, e.g. 192.168.x.x:3000"
 
