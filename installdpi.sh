@@ -218,7 +218,7 @@ sudo npm install -g forever nodemon
 
 echo "Installing dPi from Github"
 
-if [ -d "/dpi" ]; then
+if [ -d "dpi" ]; then
   sudo rm -rf dpi
 fi
 
