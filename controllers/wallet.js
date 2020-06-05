@@ -1,7 +1,5 @@
 'use strict';
 
-const passport = require('passport');
-const User = require('../models/User');
 const bitcoin = require('bitcoin');
 const WAValidator = require('wallet-address-validator');
 const QRCode = require('qrcode');

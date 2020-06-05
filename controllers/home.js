@@ -542,7 +542,7 @@ exports.lock = (req, res, next) => {
 	//Execute denarius.daemon stop command
 	shell.exec(`denarius.daemon stop`, function(err){
 		if(err){
-		  console.log(chalk.red(err));
+		  console.log(err);
 		  req.toastr.error('Something went wrong!', 'Reboot Error!', { positionClass: 'toast-bottom-right' });
 		  process.exit(0);
 		  //return res.redirect('/');
@@ -555,7 +555,7 @@ exports.lock = (req, res, next) => {
 
 	shell.exec(`denarius.daemon`, function(err){
 		if(err){
-		  console.log(chalk.red(err));
+		  console.log(err);
 		  req.toastr.error('Something went wrong!', 'Reboot Error!', { positionClass: 'toast-bottom-right' });
 		  process.exit(0);
 		  //return res.redirect('/');

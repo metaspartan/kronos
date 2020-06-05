@@ -159,7 +159,7 @@ if [ ! -d ~/.nvm ]; then
   source ~/.nvm/nvm.sh
   source ~/.profile
   source ~/.bashrc
-  nvm install v6
+  nvm install v8
   npm install
   npm install -g forever
 fi
@@ -174,19 +174,19 @@ printf "${GREEN}Rebooting Denarius to inject credentials...${NC}\n"
 
 denarius.daemon stop
 
-echo "This will take 360 seconds.......Please wait....."
+echo "This will take 6 minutes.......Please wait....."
 
 progress_bar 120
 
 denarius.daemon
 
-echo "This will take 240 seconds.......Please wait....."
+echo "This will take 4 minutes.......Please wait....."
 
 progress_bar 120
 
 denarius.daemon stop
 
-echo "This will take 120 seconds.......Please wait....."
+echo "This will take 2 minutes.......Please wait....."
 
 progress_bar 120
 
