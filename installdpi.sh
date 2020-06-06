@@ -527,9 +527,11 @@ sudo rm -rf node_modules
 
 sudo rm -rf package-lock.json
 
+sudo rm -rf package.json
+
 mv .env ~/.env
 
-git stash
+git checkout .
 
 git pull
 
