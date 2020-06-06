@@ -44,7 +44,13 @@ si.cpu(function (data) {
 
 	si.cpuTemperature(function (data3) {
 	var tempp = data3.main;
-	var temp = tempp.toFixed(0);
+	var temppp = tempp.toFixed(0);
+
+	if (temppp == -1) {
+		var temp = 'N/A';
+	} else {
+		var temp = temppp;
+	}
 
 si.mem(function (data1) {
 
@@ -57,7 +63,8 @@ si.mem(function (data1) {
 	var memttt = memtt / bytes;
 	var memt = memttt.toFixed(2);
 
-	var memfff = memff / bytes;
+	var memffff = memtt - memuu;
+	var memfff = memffff / bytes;
 	var memf = memfff.toFixed(2);
 
 	var memuuu = memuu / bytes;
