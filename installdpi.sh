@@ -523,13 +523,19 @@ npm install -g npm
 
 cd dpi
 
+sudo rm -rf node_modules
+
 git pull
 
 NODEPID=$(pidof node)
 
 echo "Killing PID of dPi for update ${NODEPID}"
 
-kill -9 ${NODEPID}
+sudo kill -9 ${NODEPID}
+
+npm install
+
+npm update
 
 nohup npm start &
 

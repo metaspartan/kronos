@@ -1,6 +1,6 @@
 {
   "name": "dPi",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A Dashboard styled wallet for denariusd in NodeJS for Raspberry Pis & other Linux distros",
   "repository": {
     "type": "git",
@@ -13,7 +13,7 @@
     "test": "mocha --reporter spec"
   },
   "dependencies": {
-    "bitcoin": "git://github.com/carsenk/node-bitcoin",
+    "bitcoin": "git://github.com/carsenk/node-bitcoin.git",
     "bluebird": "^3.7.2",
     "body-parser": "^1.19.0",
     "cheerio": "^1.0.0-rc.3",
@@ -27,9 +27,9 @@
     "errorhandler": "^1.5.1",
     "express": "^4.17.1",
     "express-flash": "^0.0.2",
-    "express-password-protect": "git://github.com/carsenk/express-protect-dpi",
+    "express-password-protect": "git://github.com/carsenk/express-protect-dpi.git",
     "express-session": "^1.14.2",
-    "express-status-monitor": "git://github.com/carsenk/express-status-monitor",
+    "express-status-monitor": "git://github.com/carsenk/express-status-monitor.git",
     "express-toastr": "^2.0.2",
     "ip": "^1.1.5",
     "lob": "^6.1.0",
@@ -48,7 +48,7 @@
     "tribus-hashjs": "^1.0.3",
     "unirest": "^0.6.0",
     "validator": "^13.0.0",
-    "wallet-address-validator": "git://github.com/carsenk/wallet-address-validator"
+    "wallet-address-validator": "git://github.com/carsenk/wallet-address-validator.git"
   },
   "devDependencies": {
     "chai": "^4.2.0",

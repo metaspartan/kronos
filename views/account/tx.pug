@@ -51,8 +51,9 @@ block content
                 strong Confirmations !{transaction.confirmations}
             .panel-body(style='background-color: #333;')
               p(align='center')
-                strong.txamount Rewarded +!{transaction.reward.toFixed(8)} 
-                  small(style='color:#777;')  D
+                if (transaction.reward)
+                  strong.txamount Rewarded +!{transaction.reward.toFixed(8)} 
+                    small(style='color:#777;')  D
               p(align='center')
                 .txaddress !{transaction.address}
               p(align='center') 
