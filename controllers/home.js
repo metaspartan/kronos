@@ -513,7 +513,7 @@ exports.lock = (req, res, next) => {
 	//var sendtoaddress = req.body.sendaddress;
 	//var amount = req.body.amount;
 
-	req.assert('password2', 'Passwords do not match').equals(req.body.passphrase);
+	//req.assert('password2', 'Passwords do not match').equals(req.body.passphrase);
 
 	if (password == password2) {
 		var passworded = password;
