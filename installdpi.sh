@@ -175,27 +175,11 @@ printf "${GREEN}Snap installing Denarius...${NC}\n"
 
 sudo snap install denarius
 
-printf "${GREEN}Rebooting Denarius to inject credentials...${NC}\n"
-
 denarius.daemon stop
 
-echo "This will take 6 minutes.......Please wait....."
+printf "${GREEN}This will take 30 seconds...${NC}\n"
 
-progress_bar 120
-
-denarius.daemon
-
-echo "This will take 4 minutes.......Please wait....."
-
-progress_bar 120
-
-denarius.daemon stop
-
-echo "This will take 2 minutes.......Please wait....."
-
-progress_bar 120
-
-echo "Denarius stopped and prepared for credential injection"
+progress_bar 30
 
 #Generate random rpcuser and rpcpass for injection
 PWUD1=$(pwgen 13 1)
@@ -205,6 +189,9 @@ PWPD2=$(pwgen 33 1)
 echo "Generated random username and password..."
 
 #Update denarius.conf to match env credentials
+
+touch ~/snap/denarius/common/.denarius/denarius.conf
+
 sed -i "s/.*rpcuser=.*/rpcuser="${PWUD1}"/" ~/snap/denarius/common/.denarius/denarius.conf
 
 sed -i "s/.*rpcpassword=.*/rpcpassword="${PWPD2}"/" ~/snap/denarius/common/.denarius/denarius.conf
