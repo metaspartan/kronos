@@ -508,15 +508,25 @@ echo "$(tput setaf 7)Your dPi credentials are $(tput setaf 2)dpiadmin $(tput set
 3) echo 3 "Update dPi for Denarius"
 echo "Updating in progress...This is a work in progress"
 
+echo "Ensuring you have NVM and NodeJS/NPM"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
+source ~/.nvm/nvm.sh
+source ~/.profile
+source ~/.bashrc
+nvm install v8
+npm install -g npm
 
 cd dpi
 
 git pull
 
 nodepid=pidof node
+
+echo "Killing PID of dPi for update ${nodepid}"
 
 kill -9 ${nodepid}
 
