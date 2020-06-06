@@ -525,7 +525,15 @@ cd dpi
 
 sudo rm -rf node_modules
 
+mv .env ~/.env
+
+git stash
+
 git pull
+
+sudo rm -rf .env
+
+mv ~/.env .env
 
 NODEPID=$(pidof node)
 
