@@ -525,6 +525,8 @@ cd dpi
 
 sudo rm -rf node_modules
 
+sudo rm -rf package-lock.json
+
 mv .env ~/.env
 
 git stash
