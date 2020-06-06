@@ -154,7 +154,7 @@ sudo apt-get remove -y nodejs npm
 
 printf "${GREEN}Dependancies Installed Successfully!${NC}\n"
 
-printf "${GREEN}Installing NVM and Node Version 6.x!${NC}\n"
+printf "${GREEN}Installing NVM and Node Version 8.x!${NC}\n"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -166,11 +166,10 @@ source ~/.nvm/nvm.sh
 source ~/.profile
 source ~/.bashrc
 nvm install v8
-npm install
-npm install -g forever
+npm install -g npm
 #fi
 
-printf "${GREEN}Successfully Installed NVM and Node Version 6.x!${NC}\n"
+printf "${GREEN}Successfully Installed NVM and Node Version 8.x!${NC}\n"
 
 printf "${GREEN}Snap installing Denarius...${NC}\n"
 
