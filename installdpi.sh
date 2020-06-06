@@ -1,5 +1,11 @@
 #!/bin/bash
 
+TEMP=/tmp/answer$$
+whiptail --title "dPi for Denarius"  --menu  "Installer for dPi Secondary Layer :" 20 0 0 1 "Install dPi" 2 "Update/Upgrade dPi" 2>$TEMP
+choice=`cat $TEMP`
+case $choice in
+
+1) echo 1 "Installer for dPi"
 #COLORS
 BLUE='\033[0;34m'
 CYAN='\033[0;36m'
@@ -247,3 +253,12 @@ nohup npm start &
 echo "dPi and Denarius are successfully installed! dPi is now running on port 3000, open your browser to this devices local LAN IP, e.g. 192.168.x.x:3000"
 
 echo "$(tput setaf 7)Your dPi credentials are $(tput setaf 2)dpiadmin $(tput setaf 7)& password is $(tput setaf 3)$PWDPI3"
+                ;;
+2) echo 2 "Update dPi for Denarius"
+echo "This is currently a WIP"
+cd dpi
+git pull
+nohup npm start &
+                ;;
+esac
+echo Selected $choice

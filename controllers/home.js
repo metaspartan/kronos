@@ -540,7 +540,7 @@ exports.lock = (req, res, next) => {
   exports.reboot = (req, res, next) => {
 
 	//Execute denarius.daemon stop command
-	shell.exec(`denarius.daemon stop`, function(err){
+	shell.exec(`bash restartnode.sh`, function(err){
 		if(err){
 		  console.log(err);
 		  req.toastr.error('Something went wrong!', 'Reboot Error!', { positionClass: 'toast-bottom-right' });
@@ -551,20 +551,11 @@ exports.lock = (req, res, next) => {
 
 	//req.toastr.success('Success!', 'Stopping Denarius...Please wait', { positionClass: 'toast-bottom-right' });
 
-	sleep(120000); // sleep for 120 seconds
-
-	shell.exec(`denarius.daemon`, function(err){
-		if(err){
-		  console.log(err);
-		  req.toastr.error('Something went wrong!', 'Reboot Error!', { positionClass: 'toast-bottom-right' });
-		  process.exit(0);
-		  //return res.redirect('/');
-		}
-	});
+	//sleep(120000); // sleep for 120 seconds
 
 	//req.toastr.success('Success!', 'Starting Denarius...Please wait', { positionClass: 'toast-bottom-right' });
 
-	sleep(120000); // sleep for 120 seconds
+	//sleep(120000); // sleep for 120 seconds
 
 	return res.redirect('/');
 

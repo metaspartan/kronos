@@ -46,84 +46,78 @@ div(class=chaindl)
             i.fa.fa-paper-plane
     .collapse.navbar-collapse
       ul.nav.navbar-nav
-        if !user
           li(class=(title == 'Home') ? 'active' : undefined)
             a(href='/') 
-              i.fas.fa-tachometer-alt 
-              |  Dashboard
+              i.fas.fa-tachometer-alt  
+              |   Dashboard
           li.dropdown(class=(title == 'Wallet') ? 'active' : undefined)
             a.dropdown-toggle(href='#', data-toggle='dropdown')
               span 
-              i.fa.fa-wallet 
-              |  Wallet
+              i.fa.fa-wallet  
+              |   Wallet
               i.caret
             ul.dropdown-menu
               li
                 a(href='/transactions') 
-                  i.fas.fa-exchange-alt 
-                  |  Transactions
+                  i.fas.fa-exchange-alt  
+                  |   Transactions
               li.divider
               li
                 a(href='/addresses') 
-                  i.fas.fa-at 
-                  |  Addresses
+                  i.fas.fa-at  
+                  |   Addresses
           li.dropdown(class=(title == 'Tools') ? 'active' : undefined)
             a.dropdown-toggle(href='#', data-toggle='dropdown')
               span 
-              i.fas.fa-tools 
-              |  Tools 
+              i.fas.fa-tools  
+              |   Tools 
               i.caret
             ul.dropdown-menu
               li
                 a(href='/backup') 
-                  i.fas.fa-server 
-                  |  Backup Wallet
+                  i.fas.fa-server  
+                  |   Backup Wallet
               li.divider
               li
                 a(href='/sign') 
-                  i.fas.fa-signature 
-                  |  Sign a message
+                  i.fas.fa-signature  
+                  |   Sign a message
               li
                 a(href='/verify') 
-                  i.fas.fa-certificate 
-                  |  Verify a message
+                  i.fas.fa-certificate  
+                  |   Verify a message
               li.divider
               li
                 a(href='/rawtx') 
-                  i.far.fa-paper-plane 
-                  |  Send Raw Transaction
+                  i.far.fa-paper-plane  
+                  |   Send Raw Transaction
               li.divider(style=sendicon)
               li(style=sendicon)
                 a(href='/import') 
-                  i.fas.fa-key  
-                  |  Import a private key
+                  i.fas.fa-key   
+                  |   Import a private key
           li
             a(href='/status') #{balance} D
-        else
-          li(class=(title == 'Transactions') ? 'active' : undefined)
-            a(href='/transactions') Transactions
-          li(class=(title == 'Addresses') ? 'active' : undefined)
-            a(href='/addresses') Addresses
       ul.nav.navbar-nav.navbar-right
           li(style=sendicon,class=(title == 'Send D') ? 'active' : undefined)
             a(href='/withdraw')
               i.fa.fa-paper-plane 
-              |  SEND
+              |   SEND
           li.dropdown(class=(title == 'Community') ? 'active' : undefined)
             a.dropdown-toggle(href='#', data-toggle='dropdown')
               span 
                 i.fas.fa-users 
-                |  Community
+                |   Community
               i.caret
             ul.dropdown-menu
               li
                 a(href='https://blockforums.org', target='_blank') 
                   i.fas.fa-bold 
-                  |  Forums
+                  |   Forums
               li.divider
               li
                 a(href='https://discord.gg/UPpQy3n', target='_blank')
                   i.fab.fa-discord 
-                  |  Discord
+                  |   Discord
           li(class=(title == 'Version') ? 'active' : undefined)
             a(href='#') v1.0.5-Alpha
