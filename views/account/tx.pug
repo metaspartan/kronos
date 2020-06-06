@@ -57,6 +57,9 @@ block content
                 if (transaction.amount)
                   strong.txamount !{transaction.amount.toFixed(8)} 
                     small(style='color:#777;')  D
+                if (!transaction.amount && !transaction.reward)
+                  strong.txamount No reward 0.00000000
+                    small(style='color:#777;')  D
               p(align='center')
                 .txaddress !{transaction.address}
               p(align='center') 
