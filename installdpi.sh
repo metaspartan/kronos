@@ -526,7 +526,7 @@ git pull
 
 nodepid=pidof node
 
-echo "Killing PID of dPi for update ${nodepid}"
+echo "Killing PID of dPi for update $nodepid"
 
 kill -9 ${nodepid}
 
