@@ -506,6 +506,7 @@ echo "dPi and Denarius are successfully installed! dPi is now running on port 30
 echo "$(tput setaf 7)Your dPi credentials are $(tput setaf 2)dpiadmin $(tput setaf 7)& password is $(tput setaf 3)$PWDPI3"
                 ;;
 3) echo 3 "Update dPi for Denarius"
+
 echo "Updating in progress...This is a work in progress"
 
 echo "Ensuring you have NVM and NodeJS/NPM"
@@ -524,13 +525,15 @@ cd dpi
 
 git pull
 
-nodepid=pidof node
+NODEPID=$(pidof node)
 
-echo "Killing PID of dPi for update $nodepid"
+echo "Killing PID of dPi for update ${NODEPID}"
 
-kill -9 ${nodepid}
+kill -9 ${NODEPID}
 
 nohup npm start &
+
+echo "Updated dPi, Login with your previous password."
                 ;;
 esac
 echo Selected $choice
