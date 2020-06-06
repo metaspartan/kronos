@@ -1,35 +1,35 @@
 dPi - Denarius Node Dashboard and AIO Interface
 =======================
 
-[![Build Status](https://travis-ci.org/carsenk/dpi.svg?branch=master)](https://travis-ci.org/carsenk/dpi)
+[![Build Status](https://travis-ci.org/carsenk/dpi.svg?branch=master)](https://travis-ci.org/carsenk/dpi) [![Dependency Status](https://david-dm.org/carsenk/dpi/status.svg?style=flat)](https://david-dm.org/carsenk/dpi) [![devDependencies Status](https://david-dm.org/carsenk/dpi/dev-status.svg)](https://david-dm.org/carsenk/dpi?type=dev)
 
 dPi - A secondary layer NodeJS powered denariusd Web Wallet Dashboard with Statistics of your device. This is a major work in progress and this repo will be updated in time.
 
-Send and Receive Funds, Create new addresses, View Transactions, Unlock/Lock Wallet, Stake D, Reboot your node, and more!
+Send and Receive Funds, Create new addresses, View Transactions, Unlock/Lock Wallet, Stake D, Reboot your node, Import Private Keys, View Private Keys, Encrypt your wallet, Broadcast raw transactions, Sign and Verify Denarius messages, and much more!
 
-This was built for the Raspberry Pi in mind and one with at least 2GB of RAM, 4GB and 8GB models are recommended! dPi will run on any Linux distro (at your own risk).
+This was built for the Raspberry Pi in mind and one with at least 2GB of RAM, 4GB and 8GB models are recommended! dPi will run on any Linux distro.
 
-Running the installer script below installs denarius via snap install and then modifies your .env in dPi and denarius.conf to a random rpcuser and rpcpass, dPi then generates you a password to login into dPi with, so be on the look out for that when the installer finishes. (Username is dpiadmin) as of v1.0.3-Alpha. dPi will then be running on your LAN (192.168.x.x:3000) on port 3000.
+Running the installer script below installs denarius via snap install and then modifies your .env in dPi and denarius.conf to a random rpcuser and rpcpass, dPi then generates you a password to login into dPi with, so be on the look out for that when the installer finishes. (Username is dpiadmin) as of v1.0.5-Alpha. dPi will then be running on your LAN (192.168.x.x:3000) on port 3000.
 
 Recommended Devices and OS
 -----------------
 Raspberry Pi 4 4GB - Ubuntu 20.04 Server Image
 Raspberry Pi 4 8GB - Ubuntu 20.04 Server Image
 Ubuntu 20.04
-Ubuntu 18.04 - WIP (Not Tested)
-Ubuntu 16.04 - WIP (Not Tested)
-Raspberry Pi OS - WIP (Not Tested)
+Ubuntu 18.04
+Ubuntu 16.04
+Raspberry Pi OS
 
 Install dPi with Denarius Now!
 -----------------
 
-Simply run this one command:
+Simply run this one command, then choose if you want to Install dPi with or without chaindata or if you want to just update!:
 
 ```bash
 wget -qO- https://raw.githubusercontent.com/carsenk/dpi/master/installdpi.sh | bash
 ```
 
-![image](https://user-images.githubusercontent.com/10162347/83363208-ca9ba600-a354-11ea-9fb5-2c00b75ed097.png)
+![image](https://user-images.githubusercontent.com/10162347/83936439-dcc87a80-a780-11ea-9bd5-4ea28b2e441b.png)
 
 Features
 --------
@@ -39,6 +39,11 @@ Features
 - View all transactions
 - Stake your Denarius
 - Unlock/Lock/Encrypt your wallet
+- Backup Wallet
+- Sign/Verify Denarius Messages
+- Import Private Keys
+- Export Private Keys
+- Broadcast Raw Transaction
 - Easy to install
 - Auto Updates for Denarius via Snap
 - Easy installer to install Denarius via Snap and dPi
