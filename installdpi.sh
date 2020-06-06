@@ -506,9 +506,11 @@ echo "dPi and Denarius are successfully installed! dPi is now running on port 30
 echo "$(tput setaf 7)Your dPi credentials are $(tput setaf 2)dpiadmin $(tput setaf 7)& password is $(tput setaf 3)$PWDPI3"
                 ;;
 3) echo 3 "Update dPi for Denarius"
-echo "This is currently a WIP"
+echo "Updating in progress...This is a work in progress"
 cd dpi
 git pull
+nodepid=pidof node
+kill -9 ${nodepid}
 nohup npm start &
                 ;;
 esac
