@@ -507,10 +507,19 @@ echo "$(tput setaf 7)Your dPi credentials are $(tput setaf 2)dpiadmin $(tput set
                 ;;
 3) echo 3 "Update dPi for Denarius"
 echo "Updating in progress...This is a work in progress"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
 cd dpi
+
 git pull
+
 nodepid=pidof node
+
 kill -9 ${nodepid}
+
 nohup npm start &
                 ;;
 esac
