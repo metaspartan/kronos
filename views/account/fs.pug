@@ -1,26 +1,24 @@
 extends ../layout
 
 block content
-  .txheader.container
-    p
-      h3(align='center', style='margin-top:55px;margin-bottom:50px;')
-        i.fas.fa-th
-        |  Denarius FortunaStake Node List
-      .row
-        .col-md-6(align='center')
-          | Online FortunaStake Count
-          h1 !{count}
-          br
-          if (statuss)
-            each status in statuss
-              | FS Status: !{status.status}
-              if (status.length > 1)
-                ul
-                  li !{status.alias} - !{status.status} - !{status.ipaddr} - !{status.collateral}
-        .col-md-6(align='center')
-          button.btn.btn-default(onclick='#') FS Generate Key  
-          | &nbsp;&nbsp;
-          button.btn.btn-default(onclick='#') Start or Stop FS
+  .txheader
+    .fsheader(align='center')
+      p(style='margin-top:35px;')
+        .row
+          .col-md-4
+            if (statuss)
+              each status in statuss
+                | FS Status: !{status.status}
+                if (status.length > 1)
+                  ul
+                    li !{status.alias} - !{status.status} - !{status.ipaddr} - !{status.collateral}
+          .col-md-4
+            .count(style='font-size:133px;font-weight:100;margin-bottom:-20px;', align='center') !{count}
+            small(align='center', style='color: green;') FS Online
+          .col-md-4
+            button.btn.btn-default(onclick='#') FS Generate Key  
+            | &nbsp;&nbsp;
+            button.btn.btn-default(onclick='#') Start or Stop FS
     .row
     if (fss)
       each fs in fss

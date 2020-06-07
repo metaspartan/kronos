@@ -527,6 +527,19 @@ a.send {
   padding-bottom: 30px;
 }
 
+.fsheader {
+  background-color: #111;
+  background-image: url('../img/fsheadt.png');
+  background-position: center;
+  width: 100%;
+  height: 400px;
+  padding: 50px;
+}
+
+.fsheader::before {
+  filter: blur(30px);
+}
+
 .panel-default {
     -webkit-box-shadow: 0px 5px 2px 0px rgba(50, 50, 50, 0.25);
     -moz-box-shadow: 0px 5px 2px 0px rgba(50, 50, 50, 0.25);
