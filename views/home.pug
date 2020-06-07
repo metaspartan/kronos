@@ -209,12 +209,7 @@ block content
           .qrcode(align='center')
             a(href='denarius:' + address)
               img(src='' + qrcode)
-          p(align='center')
-            p
-              div(align='center')
-                #pkey #{privatekey}
-              div(align='center')
-                a(onclick='toggl()', style='margin-left:15px;color: gold;cursor:pointer;', id='reveal', align='center') Reveal Private Key
+          br
         .col-md-2
           form.form-horizontal(action='/getnewaddress', method='POST', id='sendaddy', style='margin-top:55px;', align='center')
             input(type='hidden', name='_csrf', value=_csrf)

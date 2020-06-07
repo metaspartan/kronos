@@ -125,12 +125,6 @@ si.currentLoad().then(data6 => {
 
 		}
 
-	client.dumpPrivKey(`${address}`, function (err, privkey, resHeaders) {
-		if (err) {
-			console.log(err);
-		}
-
-		var privatekey = privkey;
 
 	QRCode.toDataURL(qr, function(err, qrcode) {
 
@@ -438,7 +432,6 @@ si.currentLoad().then(data6 => {
 			address: address, 
 			qrcode: qrcode,
 			sending: sending,
-			privatekey: privatekey,
 			chaindl: chaindl,
 			chaindlbtn: chaindlbtn,
 			cryptoidblocks: cryptoidblocks,
@@ -451,7 +444,6 @@ si.currentLoad().then(data6 => {
         	});
 		});
 	});
-});
 });
 });
 });

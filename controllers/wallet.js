@@ -295,18 +295,12 @@ exports.addresses = function (req, res) {
 
 			}
 
-      client.dumpPrivKey(`${addyy}`, function (err, privkey, resHeaders) {
-        if (err) {
-          console.log(err);
-        }
-
         var chaindl = 'nooverlay';
         var chaindlbtn = 'nobtn';
 
-      res.render('account/addresses', { title: 'My Addresses', addyy: addyy, addresses: addresses, balance: balance, privkey: privkey, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
+      res.render('account/addresses', { title: 'My Addresses', addyy: addyy, addresses: addresses, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
 
   });
-});
 });
 });
 
