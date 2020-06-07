@@ -215,14 +215,22 @@ block content
                 #pkey #{privatekey}
               div(align='center')
                 a(onclick='toggl()', style='margin-left:15px;color: gold;cursor:pointer;', id='reveal', align='center') Reveal Private Key
-        .col-md-3
+        .col-md-2
+          form.form-horizontal(action='/getnewaddress', method='POST', id='sendaddy', style='margin-top:55px;', align='center')
+            input(type='hidden', name='_csrf', value=_csrf)
+            button.btn.btn-default(type='submit', id='sendu', onclick='getaddress()')
+              i(class='fa fa-5x fa-address-card', align='center')
+            br
+            br
+            | Get New Address
+        .col-md-2
           p(align='center', style='margin-top:55px;')
             button.btn.btn-default(type='button', id='sendu', data-toggle='modal', data-target=walletlink)
               i(class=walleticon, align='center')
             br
             br
             | Wallet is #{walletstatus}
-        .col-md-3
+        .col-md-2
           p(align='center')
             !=sending
       .row(class='rowclass', style='margin-bottom:150px;')

@@ -13,6 +13,9 @@ block content
     function confirmedpk() {
       $('#sendpriv').submit();
     }
+    function getaddress() {
+      $('#sendaddy').submit();
+    }
   .mainDiv
     #DisplayModalPrivKey.modal
       .modal-dialog
@@ -50,8 +53,15 @@ block content
             .col-md-6.mt(align='center')
               strong #{addyy}
             .col-md-6(align='center')
-              button.btn.btn-sm.btn-default(type='button', id='sendpk', data-toggle='modal', data-target='#DisplayModalPrivKey')
-                | Get Private Keys
+              .row
+                .col-md-6
+                  button.btn.btn-sm.btn-default(type='button', id='sendpk', data-toggle='modal', data-target='#DisplayModalPrivKey')
+                    | Get Private Keys
+                .col-md-6
+                  form.form-horizontal(action='/getnewaddress', method='POST', id='sendaddy')
+                    input(type='hidden', name='_csrf', value=_csrf)
+                    button.btn.btn-sm.btn-default(type='submit', id='submit', onclick='getaddress()')
+                      | Get New Address
       #box(align='center')
         em Write down or import your private key into Denarius-QT or denariusd to access your main wallet address
         br
@@ -61,20 +71,18 @@ block content
       p(align='center') These are addresses and their respective balances that you own.
       li.list-group-item(style='background-color: #151515;border-color: #444;')
         .row
-          .col-sm-6
-            | Owned Addresses
           .col-sm-6(align='center')
-            | Balance
+            | Owned Addresses
+          .col-sm-6(align='center') Total Amount Received Overall
     ul.list-group
     if (addresses)
       each address in addresses
         li.list-group-item(style='background-color: #151515;border-color: #444;')
           .row
-          .col-sm-6
-            | #{address[0]}
-          .col-sm-6(align='center')
-            strong #{address[1]}
-          br
+            .col-sm-6(align='center')
+              | #{address.address}
+            .col-sm-6(align='center')
+              strong #{address.amount} D
     else
       br
       h3(align='center', style='color: #bbb;') No Addresses Available

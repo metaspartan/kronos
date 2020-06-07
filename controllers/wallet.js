@@ -244,7 +244,7 @@ exports.addresses = function (req, res) {
     }
 
   //List All Addresses
-  client.listAddressGroupings(function (err, addresses, resHeaders) {
+  client.listReceivedByAddress(0, true, function (err, addresses, resHeaders) {
       if (err) {
         console.log(err);
         var offline = 'offlineoverlay';
@@ -259,7 +259,7 @@ exports.addresses = function (req, res) {
 
       //var addy = addy1[0][0];
 
-      var addresses = addresses[0];
+      //var addresses = addresses[0];
 
       //console.log(addy);
 
@@ -379,17 +379,49 @@ exports.wallet = function (req, res) {
 //POST GET NEW ADDRESS
 
 exports.address = function (req, res) {
-    var username = req.user.email;
+    //var username = req.user.email;
 
-    client.getNewAddress(`dnrw(${username})`, function (error, address, resHeaders) {
-        if (error) return console.log(error);
+    client.getBalance(function (error, info, resHeaders) {
+      if (error) {
+        var offline = 'offlineoverlay';
+        var offlinebtn = 'offlinebutton';
+        var balance = '0';
+        console.log(error);
+      } else {
+        var offline = 'onlineoverlay';
+        var offlinebtn = 'onlinebutton';
+      }
+  
+      var chaindl = 'nooverlay';
+      var chaindlbtn = 'nobtn';
+  
+      var balance = info;
+  
+      if (balance <= 0) {
+        balance = 0;
+      }  
+
+    client.getNewAddress(`dpi(333D)`, function (error, address, resHeaders) {
+        if (error) {
+          var offline = 'offlineoverlay';
+          var offlinebtn = 'offlinebutton';
+          var address = 'Offline';
+          console.log(error);
+        } else {
+          var offline = 'onlineoverlay';
+          var offlinebtn = 'onlinebutton';
+        }
+    
+        var chaindl = 'nooverlay';
+        var chaindlbtn = 'nobtn';
 
         var qr = 'denarius:'+address
 
         QRCode.toDataURL(qr, function(err, data_url) {
 
-        res.render('account/newaddress', { title: 'New DNR Address', user: req.user, address: address, data_url: data_url });
+        res.render('account/newaddress', { title: 'New D Address', user: req.user, offline: offline, balance: balance, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn, address: address, data_url: data_url });
     });
+  });
   });
 };
 
@@ -489,6 +521,78 @@ exports.transactions = function (req, res) {
     res.render('account/tx', { title: 'Transactions', transactions: transactions, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
     });
 
+  });
+};
+
+
+//GET for FS Page
+exports.fs = function (req, res) {
+  //var username = req.user.email;
+
+  client.getBalance(function (error, info, resHeaders) {
+    if (error) {
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var balance = '0';
+      console.log(error);
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+    }
+
+    var chaindl = 'nooverlay';
+    var chaindlbtn = 'nobtn';
+
+    var balance = info;
+
+    if (balance <= 0) {
+      balance = 0;
+    }
+
+  client.fortunaStake('count', function (err, count, resHeaders) {
+    if (err) {
+      console.log(err);
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var count = 0;
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+
+    }
+
+  client.fortunaStake('status', function (err, statuss, resHeaders) {
+    if (err) {
+      console.log(err);
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var statuss = [];
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+    }
+
+  //List FortunaStakes
+  client.fortunaStake('list', 'full', function (err, fss, resHeaders) {
+      if (err) {
+        console.log(err);
+        var offline = 'offlineoverlay';
+        var offlinebtn = 'offlinebutton';
+        var fss = [];
+      } else {
+        
+        var offline = 'onlineoverlay';
+        var offlinebtn = 'onlinebutton';
+      }
+
+      var chaindl = 'nooverlay';
+      var chaindlbtn = 'nobtn';
+
+    res.render('account/fs', { title: 'FortunaStakes', fss: fss, count: count, statuss: statuss, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
+    });
+
+  });
+  });
   });
 };
 

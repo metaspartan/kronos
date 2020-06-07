@@ -233,11 +233,54 @@ footer {
   color: #ff4300;
 }
 
+.fsmain {
+  background-color: #222;
+  border: none;
+}
+
+.fsbody {
+  background-color: #333;
+  border: none;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+
+.fsheading {
+  border: none;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+.fsbody::after {
+  content: "";
+  background: url(../img/fs.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.5;
+  position: absolute;
+  z-index: -1;   
+}
+
 .blackinput {
   background-color: #333 !important;
   border-color: #444 !important;
   color: #FFF !important;
   width: 420px !important;
+}
+
+.blackinput::placeholder {
+  color: rgb(71, 71, 71);
+  opacity: 0.7;
+}
+
+.blackinput2::placeholder {
+  color: rgb(71, 71, 71);
+  opacity: 0.7;
+}
+
+.blackinput3::placeholder {
+  color: rgb(71, 71, 71);
+  opacity: 0.7;
 }
 
 .blackinput2 {
@@ -496,8 +539,8 @@ a.send {
 
 .panel-heading {
     font-size: 14px !important;
-    background-color: #717171 !important;
-    color: #fff !important;
+    background-color: #444 !important;
+    color: #aaa !important;
 }
 
 .res {

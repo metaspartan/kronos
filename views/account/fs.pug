@@ -1,0 +1,54 @@
+extends ../layout
+
+block content
+  .txheader.container
+    p
+      h3(align='center', style='margin-top:55px;margin-bottom:50px;')
+        i.fas.fa-th
+        |  Denarius FortunaStake Node List
+      .row
+        .col-md-6(align='center')
+          | Online FortunaStake Count
+          h1 !{count}
+          br
+          if (statuss)
+            each status in statuss
+              | FS Status: !{status.status}
+              if (status.length > 1)
+                ul
+                  li !{status.alias} - !{status.status} - !{status.ipaddr} - !{status.collateral}
+        .col-md-6(align='center')
+          button.btn.btn-default(onclick='#') FS Generate Key  
+          | &nbsp;&nbsp;
+          button.btn.btn-default(onclick='#') Start or Stop FS
+    .row
+    if (fss)
+      each fs in fss
+        if (fs.active == 1)
+          .col-sm-4
+            .panel.panel-default(style='border-color: #4e4e4e;').fsmain
+              .panel-heading.mb.fsheading
+                .pull-left
+                  | FortunaStake
+                  .date= new Date(fs.lastseen*1000).toUTCString()
+                .pull-right
+                  | Round Rank #!{fs.rank}
+                  br
+                  small Days Active: !{(fs.activeseconds / 3600 / 24).toFixed(2)}
+              .panel-body.fsbody
+                .row(align='center')
+                  strong !{fs.pubkey}
+                  img(src='../img/fs.png', height='250px', align='center')
+                  p(align='center')
+                    | TX ID: 
+                    a.txid(href="https://chainz.cryptoid.info/d/tx.dws?" + fs.txid, target='_blank') !{fs.txid.substring(0,30)}
+                    div(style='color: #5b7741;')
+                      | Round Earnings: !{fs.roundearnings / 100000000} D
+                      br
+                      | Daily Rate: !{fs.dailyrate / 100000000} D
+      else
+        br
+        h3(align='center', style='color: #bbb;') No FortunaStake List Available
+      p(align='center')
+        br
+        a.btn.btn-default(href='/') Go back to Dashboard

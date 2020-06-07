@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TEMP=/tmp/answer$$
-whiptail --title "dPi for Denarius"  --menu  "Installer for dPi Secondary Layer :" 20 0 0 1 "Install dPi" 2 "Install dPi with Denarius chaindata" 3 "Update/Upgrade dPi" 2>$TEMP
+whiptail --title "dPi for Denarius"  --menu  "Installer for dPi Secondary Layer :" 20 0 0 1 "Install dPi w/ Denarius" 2 "Install dPi w/ Denarius & Chaindata" 3 "Update & Upgrade dPi" 2>$TEMP
 choice=`cat $TEMP`
 case $choice in
 
@@ -202,7 +202,7 @@ echo "Starting Denarius"
 
 denarius.daemon
 
-progress_bar 10
+progress_bar 20
 
 echo "Installing dPi from Github"
 
@@ -467,7 +467,7 @@ echo "Starting Denarius"
 
 denarius.daemon
 
-progress_bar 10
+progress_bar 20
 
 echo "Installing dPi from Github"
 

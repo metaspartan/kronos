@@ -589,7 +589,7 @@ exports.lock = (req, res, next) => {
 
 			} else {
 
-				req.flash('success', { msg: `Your private key for address <strong>${addi}</strong> is <strong>${unlocked}</strong>` });
+				req.flash('success', { msg: `Your private key is <strong>${unlocked}</strong> for address ${addi}` });
 				req.toastr.success(`Successfully obtained the private key! ${unlocked}`, 'Success!', { positionClass: 'toast-bottom-right' });
 				return res.redirect('/addresses');
 

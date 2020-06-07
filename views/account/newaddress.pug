@@ -2,13 +2,16 @@ extends ../layout
 
 block content
   .container
-    if user
-    .page-header
-      h3(align='center')  New Denarius Address
+    .page-header(style='border:none;')
+      h3(align='center')  New Denarius Public Address
+      br
+      br
       .newaddy #{address}
-      .qrcode(align='center')
+      .qrcoded(align='center')
         a(href='denarius:' + address)
           img(src='' + data_url)
       br
+      br
+      br
       p(align='center')
-        a.btn.btn-default(href='/wallet', role='button') Go back to your wallet       
+        a.btn.btn-default(href='/', role='button') Go back to the Dashboard

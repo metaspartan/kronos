@@ -124,6 +124,11 @@ app.post('/privkey', homeController.privkey);
 app.post('/newaddress', walletController.address);
 app.get('/addresses', walletController.addresses);
 app.get('/transactions', walletController.transactions);
+
+app.get('/fs', walletController.fs);
+
+app.post('/getnewaddress', walletController.address);
+
 app.post('/withdraw/send', walletController.withdraw);
 app.get('/withdraw', walletController.getWithdraw);
 app.get('/rawtx', walletController.getRaw);
