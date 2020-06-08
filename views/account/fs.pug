@@ -28,11 +28,11 @@ block content
       table.sortable#fst
         thead
           tr
-            th FS
+            th IP
             th Collateral
             th TXID
             th Rank
-            th Last Seen
+            th Last Seen (GMT)
             th Days Active
             th Round Earnings
             th Daily Rate
@@ -42,13 +42,13 @@ block content
               if (fs.active == 1)
                 tr
                   td(align='center')
-                    img(src='../img/fs.png', height='50px')
+                    | !{fs.ip}
                   td(align='center')
                     a(href='https://www.coinexplorer.net/D/address/' + fs.pubkey, target='_blank', style='color: #fff8ad;') !{fs.pubkey}
                   td(align='center')
-                    a.txid(href="https://chainz.cryptoid.info/d/tx.dws?" + fs.txid, target='_blank') !{fs.txid}
+                    a(href="https://chainz.cryptoid.info/d/tx.dws?" + fs.txid, target='_blank', style='color: #777;font-size:11px;') !{fs.txid.substring(0,30)}...
                   td(align='center') !{fs.rank}
-                  td(align='center')= new Date(fs.lastseen*1000).toUTCString()
+                  td(align='center', style='font-size:11px;color: #777;')= new Date(fs.lastseen*1000).toUTCString().replace('GMT','')
                   td(align='center') !{(fs.activeseconds / 3600 / 24).toFixed(2)}
                   td(align='center') !{fs.roundearnings / 100000000} D
                   td(align='center') !{fs.dailyrate / 100000000} D
