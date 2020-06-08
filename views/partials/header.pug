@@ -50,6 +50,10 @@ div(class=chaindl)
             a(href='/') 
               i.fas.fa-tachometer-alt  
               |   Dashboard
+          li(class=(title == 'FortunaStakes') ? 'active' : undefined)
+            a(href='/fs') 
+              i.fas.fa-th   
+              |   FS
           li.dropdown(class=(title == 'Wallet') ? 'active' : undefined)
             a.dropdown-toggle(href='#', data-toggle='dropdown')
               span 
@@ -66,10 +70,6 @@ div(class=chaindl)
                 a(href='/addresses') 
                   i.fas.fa-at  
                   |   Addresses
-          li(class=(title == 'FortunaStakes') ? 'active' : undefined)
-            a(href='/fs') 
-              i.fas.fa-th   
-              |   FS
           li.dropdown(class=(title == 'Tools') ? 'active' : undefined)
             a.dropdown-toggle(href='#', data-toggle='dropdown')
               span 
@@ -124,4 +124,4 @@ div(class=chaindl)
                   i.fab.fa-discord 
                   |   Discord
           li(class=(title == 'Version') ? 'active' : undefined)
-            a(href='#') v1.0.7-Alpha
+            a(href='#') v1.0.8-Alpha

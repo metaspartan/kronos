@@ -129,6 +129,8 @@ app.get('/fs', walletController.fs);
 
 app.post('/getnewaddress', walletController.address);
 
+app.post('/getgenkey', walletController.genkey);
+
 app.post('/withdraw/send', walletController.withdraw);
 app.get('/withdraw', walletController.getWithdraw);
 app.get('/rawtx', walletController.getRaw);

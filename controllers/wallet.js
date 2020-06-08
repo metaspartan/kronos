@@ -419,6 +419,56 @@ exports.address = function (req, res) {
   });
 };
 
+
+//POST GET FS GEN KEY
+
+exports.genkey = function (req, res) {
+  //var username = req.user.email;
+
+  client.getBalance(function (error, info, resHeaders) {
+    if (error) {
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var balance = '0';
+      console.log(error);
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+    }
+
+    var chaindl = 'nooverlay';
+    var chaindlbtn = 'nobtn';
+
+    var balance = info;
+
+    if (balance <= 0) {
+      balance = 0;
+    }  
+
+  client.fortunaStake('genkey', function (error, genkey, resHeaders) {
+      if (error) {
+        var offline = 'offlineoverlay';
+        var offlinebtn = 'offlinebutton';
+        var genkey = 'Offline';
+        console.log(error);
+      } else {
+        var offline = 'onlineoverlay';
+        var offlinebtn = 'onlinebutton';
+      }
+  
+      var chaindl = 'nooverlay';
+      var chaindlbtn = 'nobtn';
+
+      var qr = 'denarius:'+genkey
+
+      QRCode.toDataURL(qr, function(err, data_url) {
+
+      res.render('account/genkey', { title: 'New D FS Key', user: req.user, offline: offline, balance: balance, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn, genkey: genkey, data_url: data_url });
+  });
+});
+});
+};
+
 /**
  * POST /withdraw
  * Send Denarius funds

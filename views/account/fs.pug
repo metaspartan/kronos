@@ -4,7 +4,7 @@ block content
   script(src='/js/reload.js')
   .txheader
     .fsheader(align='center')
-      p(style='margin-top:35px;')
+      p
         .row
           .col-md-4
             if (statuss)
@@ -17,37 +17,44 @@ block content
             .count(style='font-size:133px;font-weight:100;margin-bottom:-20px;', align='center') !{count}
             small(align='center', style='color: green;') FS Online
           .col-md-4
-            button.btn.btn-default(onclick='#') FS Generate Key  
-            | &nbsp;&nbsp;
+            form.form-horizontal(action='/getgenkey', method='POST', id='sendfs')
+              input(type='hidden', name='_csrf', value=_csrf)
+              button.btn.btn-default(type='submit', id='submit')
+                | Generate FS Key
+            p &nbsp;&nbsp;
             button.btn.btn-default(onclick='#') Start or Stop FS
     .row
-    if (fss)
-      each fs in fss
-        if (fs.active == 1)
-          .col-sm-4
-            .panel.panel-default(style='border-color: #4e4e4e;').fsmain
-              .panel-heading.mb.fsheading
-                .pull-left
-                  | FortunaStake
-                  .date= new Date(fs.lastseen*1000).toUTCString()
-                .pull-right
-                  | Round Rank #!{fs.rank}
-                  br
-                  small Days Active: !{(fs.activeseconds / 3600 / 24).toFixed(2)}
-              .panel-body.fsbody
-                .row(align='center')
-                  strong !{fs.pubkey}
-                  img(src='../img/fs.png', height='250px', align='center')
-                  p(align='center')
-                    | TX ID: 
-                    a.txid(href="https://chainz.cryptoid.info/d/tx.dws?" + fs.txid, target='_blank') !{fs.txid.substring(0,30)}
-                    div(style='color: #5b7741;')
-                      | Round Earnings: !{fs.roundearnings / 100000000} D
-                      br
-                      | Daily Rate: !{fs.dailyrate / 100000000} D
-      else
-        br
-        h3(align='center', style='color: #bbb;') No FortunaStake List Available
-      p(align='center')
-        br
-        a.btn.btn-default(href='/') Go back to Dashboard
+    div(style='overflow-x:auto;')
+      table.sortable#fst
+        thead
+          tr
+            th FS
+            th Collateral
+            th TXID
+            th Rank
+            th Last Seen
+            th Days Active
+            th Round Earnings
+            th Daily Rate
+        tbody
+          if (fss)
+            each fs in fss
+              if (fs.active == 1)
+                tr
+                  td(align='center')
+                    img(src='../img/fs.png', height='50px')
+                  td(align='center')
+                    a(href='https://www.coinexplorer.net/D/address/' + fs.pubkey, target='_blank', style='color: #fff8ad;') !{fs.pubkey}
+                  td(align='center')
+                    a.txid(href="https://chainz.cryptoid.info/d/tx.dws?" + fs.txid, target='_blank') !{fs.txid}
+                  td(align='center') !{fs.rank}
+                  td(align='center')= new Date(fs.lastseen*1000).toUTCString()
+                  td(align='center') !{(fs.activeseconds / 3600 / 24).toFixed(2)}
+                  td(align='center') !{fs.roundearnings / 100000000} D
+                  td(align='center') !{fs.dailyrate / 100000000} D
+          else
+            br
+            h3(align='center', style='color: #bbb;') No FortunaStake List Available
+    p(align='center')
+      br
+      a.btn.btn-default(href='/') Go back to Dashboard
