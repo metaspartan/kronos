@@ -10,7 +10,8 @@ block content
             if (statuss)
               each status in statuss
                 | FS Status: !{status.status}
-                if (status.length > 1)
+                br
+                if (status.alias != null)
                   ul
                     li !{status.alias} - !{status.status} - !{status.ipaddr} - !{status.collateral}
           .col-md-4
