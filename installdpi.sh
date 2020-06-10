@@ -427,13 +427,12 @@ case $(uname -m) in
     i386)   architecture="386" ;;
     i686)   architecture="386" ;;
     x86_64) architecture="amd64" ;;
-    armv7l) architecture="armhf" ;;
-    arm)    dpkg --print-architecture | grep -q "arm64" && architecture="arm64" || architecture="arm" ;;
+    arm*)    dpkg --print-architecture | grep -q "arm64" && architecture="arm64" || architecture="arm" ;;
 esac
 
 echo ${architecture}
 
-if [${architecture} == "arm" || "arm64" || "armhf"]; then
+if [${architecture} == "arm" || "arm64"]; then
 
   cd ~/snap/denarius/common/.denarius
   wget https://denarii.cloud/pichaindata.zip
