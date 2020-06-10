@@ -8,12 +8,14 @@ block content
         .row
           .col-md-4
             if (statuss)
+              h4 FS Status 
               each status in statuss
-                | FS Status: !{status.status}
-                br
+                if (status.alias == null)
+                  | !{status.status.toUpperCase()}
+                  br
                 if (status.alias != null)
-                  ul
-                    li !{status.alias} - !{status.status} - !{status.ipaddr} - !{status.collateral}
+                  .statuses !{status.alias} - !{status.status.toUpperCase()} - !{status.ipaddr} 
+                    a(href='https://www.coinexplorer.net/D/address/' + status.collateral, target='_blank', style='color: #fff8ad;') !{status.collateral}
           .col-md-4
             .count(style='font-size:133px;font-weight:100;margin-bottom:-20px;', align='center') !{count}
             small(align='center', style='color: green;') FS Online

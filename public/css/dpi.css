@@ -530,8 +530,20 @@ a.send {
 .fsheader {
   background-color: #111;
   width: 100%;
-  height: 330px;
+  min-height: 330px;
   padding: 50px;
+}
+
+.statuses {
+  background-color: rgb(46, 45, 41);
+  background-image: url('../img/fs.png');
+  background-position: left;
+  background-repeat: no-repeat;
+  background-size: contain;
+  padding: 5px;
+  padding-left: 25px;
+  margin: 5px;
+  border-radius: 15px;
 }
 
 #fst {
