@@ -432,7 +432,7 @@ esac
 
 echo ${architecture}
 
-if [${architecture} == "arm" || "arm64"]; then
+if [ ${architecture} == "arm" ] || [ ${architecture} == "arm64" ]; then
 
   cd ~/snap/denarius/common/.denarius
   wget https://denarii.cloud/pichaindata.zip
