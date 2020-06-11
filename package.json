@@ -47,7 +47,7 @@
     "toastr": "^2.1.4",
     "tribus-hashjs": "^1.0.3",
     "unirest": "^0.6.0",
-    "validator": "^13.0.0",
+    "validator": "^13.1.0",
     "wallet-address-validator": "git://github.com/carsenk/wallet-address-validator.git"
   },
   "devDependencies": {

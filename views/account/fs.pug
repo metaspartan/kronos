@@ -8,24 +8,24 @@ block content
         .row
           .col-md-4
             if (statuss)
-              h4 FS Status 
+              h4 My FS Status 
               each status in statuss
                 if (status.alias == null)
                   | !{status.status.toUpperCase()}
                   br
                 if (status.alias != null)
                   .statuses !{status.alias} - !{status.status.toUpperCase()} - !{status.ipaddr} 
-                    a(href='https://www.coinexplorer.net/D/address/' + status.collateral, target='_blank', style='color: #fff8ad;') !{status.collateral}
+                    a(href='https://www.coinexplorer.net/D/address/' + status.collateral, target='_blank', style='color: #42B905;') !{status.collateral}
           .col-md-4
             .count(style='font-size:133px;font-weight:100;margin-bottom:-20px;', align='center') !{count}
-            small(align='center', style='color: green;') FS Online
+            small(align='center', style='color: #42B905;') • FortunaStakes Online
           .col-md-4
             form.form-horizontal(action='/getgenkey', method='POST', id='sendfs')
               input(type='hidden', name='_csrf', value=_csrf)
               button.btn.btn-default(type='submit', id='submit')
                 | Generate FS Key
             p &nbsp;&nbsp;
-            button.btn.btn-default(onclick='#') Start or Stop FS
+            button.btn.btn-default(onclick='#', disabled) Start or Stop FS
     .row
     div(style='overflow-x:auto;')
       table.sortable#fst
@@ -47,7 +47,7 @@ block content
                   td(align='center')
                     | !{fs.ip}
                   td(align='center')
-                    a(href='https://www.coinexplorer.net/D/address/' + fs.pubkey, target='_blank', style='color: #fff8ad;') !{fs.pubkey}
+                    a(href='https://www.coinexplorer.net/D/address/' + fs.pubkey, target='_blank', style='color: #42B905;') !{fs.pubkey}
                   td(align='center')
                     a(href="https://chainz.cryptoid.info/d/tx.dws?" + fs.txid, target='_blank', style='color: #777;font-size:11px;') !{fs.txid.substring(0,30)}...
                   td(align='center') !{fs.rank}

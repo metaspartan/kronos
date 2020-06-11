@@ -90,8 +90,8 @@ div(class=chaindl)
                 a(href='/verify') 
                   i.fas.fa-certificate  
                   |   Verify a message
-              li.divider
-              li
+              li.divider(style=sendicon)
+              li(style=sendicon)
                 a(href='/rawtx') 
                   i.far.fa-paper-plane  
                   |   Send Raw Transaction
@@ -124,4 +124,4 @@ div(class=chaindl)
                   i.fab.fa-discord 
                   |   Discord
           li(class=(title == 'Version') ? 'active' : undefined)
-            a(href='#') v1.0.8-Alpha
+            a(href='#') v1.0.9-Alpha

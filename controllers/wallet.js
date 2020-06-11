@@ -26,6 +26,31 @@ var client = new bitcoin.Client({
  */
 exports.getWithdraw = (req, res) => {
   //var username = req.user.email;
+  client.walletStatus(function (err, ws, resHeaders) {
+    if (err) {
+      console.log(err);
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var ws = '';
+      var walletstatuss = 'locked';
+      var sendicon = 'display: none !important';
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+
+      var walletstatuss = ws.wallet_status;
+      var sendicon;
+      
+      if (walletstatuss == 'stakingonly') {
+				sendicon = 'display: none !important';
+			} else if (walletstatuss == 'unlocked') {
+				sendicon = 'display: visible !important;';
+			} else if (walletstatuss == 'unencrypted') {
+				sendicon = 'display: visible !important';
+			} else if (walletstatuss == 'locked') {
+				sendicon = 'display: none !important';
+			}
+    }
   client.getBalance(function (error, info, resHeaders) {
       if (error) {
         var offline = 'offlineoverlay';
@@ -47,16 +72,43 @@ exports.getWithdraw = (req, res) => {
     res.render('account/withdraw', {
         title: 'Send D',
         balance: balance,
+        sendicon: sendicon,
         offline: offline,
         offlinebtn: offlinebtn,
         chaindl: chaindl,
         chaindlbtn: chaindlbtn
     });
   });
+});
 };
 
 exports.getRaw = (req, res) => {
   //var username = req.user.email;
+  client.walletStatus(function (err, ws, resHeaders) {
+    if (err) {
+      console.log(err);
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var ws = '';
+      var walletstatuss = 'locked';
+      var sendicon = 'display: none !important';
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+
+      var walletstatuss = ws.wallet_status;
+      var sendicon;
+      
+      if (walletstatuss == 'stakingonly') {
+				sendicon = 'display: none !important';
+			} else if (walletstatuss == 'unlocked') {
+				sendicon = 'display: visible !important;';
+			} else if (walletstatuss == 'unencrypted') {
+				sendicon = 'display: visible !important';
+			} else if (walletstatuss == 'locked') {
+				sendicon = 'display: none !important';
+			}
+    }
   client.getBalance(function (error, info, resHeaders) {
       if (error) {
         var offline = 'offlineoverlay';
@@ -80,15 +132,42 @@ exports.getRaw = (req, res) => {
         title: 'Broadcast Raw TX',
         balance: balance,
         offline: offline,
+        sendicon: sendicon,
         offlinebtn: offlinebtn,
         chaindl: chaindl,
         chaindlbtn: chaindlbtn
     });
   });
+});
 };
 
 exports.getPriv = (req, res) => {
   //var username = req.user.email;
+  client.walletStatus(function (err, ws, resHeaders) {
+    if (err) {
+      console.log(err);
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var ws = '';
+      var walletstatuss = 'locked';
+      var sendicon = 'display: none !important';
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+
+      var walletstatuss = ws.wallet_status;
+      var sendicon;
+      
+      if (walletstatuss == 'stakingonly') {
+				sendicon = 'display: none !important';
+			} else if (walletstatuss == 'unlocked') {
+				sendicon = 'display: visible !important;';
+			} else if (walletstatuss == 'unencrypted') {
+				sendicon = 'display: visible !important';
+			} else if (walletstatuss == 'locked') {
+				sendicon = 'display: none !important';
+			}
+    }
   client.getBalance(function (error, info, resHeaders) {
       if (error) {
         var offline = 'offlineoverlay';
@@ -115,16 +194,43 @@ exports.getPriv = (req, res) => {
         title: 'Import Private Key',
         balance: balance,
         offline: offline,
+        sendicon: sendicon,
         offlinebtn: offlinebtn,
         chaindl: chaindl,
         chaindlbtn: chaindlbtn,
         info: info
     });
   });
+});
 };
 
 exports.getSign = (req, res) => {
   //var username = req.user.email;
+  client.walletStatus(function (err, ws, resHeaders) {
+    if (err) {
+      console.log(err);
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var ws = '';
+      var walletstatuss = 'locked';
+      var sendicon = 'display: none !important';
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+
+      var walletstatuss = ws.wallet_status;
+      var sendicon;
+      
+      if (walletstatuss == 'stakingonly') {
+				sendicon = 'display: none !important';
+			} else if (walletstatuss == 'unlocked') {
+				sendicon = 'display: visible !important;';
+			} else if (walletstatuss == 'unencrypted') {
+				sendicon = 'display: visible !important';
+			} else if (walletstatuss == 'locked') {
+				sendicon = 'display: none !important';
+			}
+    }
   client.getBalance(function (error, info, resHeaders) {
       if (error) {
         var offline = 'offlineoverlay';
@@ -148,15 +254,42 @@ exports.getSign = (req, res) => {
         title: 'Sign a Denarius Message',
         balance: balance,
         offline: offline,
+        sendicon: sendicon,
         offlinebtn: offlinebtn,
         chaindl: chaindl,
         chaindlbtn: chaindlbtn
     });
   });
+});
 };
 
 exports.getVerify = (req, res) => {
   //var username = req.user.email;
+  client.walletStatus(function (err, ws, resHeaders) {
+    if (err) {
+      console.log(err);
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var ws = '';
+      var walletstatuss = 'locked';
+      var sendicon = 'display: none !important';
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+
+      var walletstatuss = ws.wallet_status;
+      var sendicon;
+      
+      if (walletstatuss == 'stakingonly') {
+				sendicon = 'display: none !important';
+			} else if (walletstatuss == 'unlocked') {
+				sendicon = 'display: visible !important;';
+			} else if (walletstatuss == 'unencrypted') {
+				sendicon = 'display: visible !important';
+			} else if (walletstatuss == 'locked') {
+				sendicon = 'display: none !important';
+			}
+    }
   client.getBalance(function (error, info, resHeaders) {
       if (error) {
         var offline = 'offlineoverlay';
@@ -180,15 +313,43 @@ exports.getVerify = (req, res) => {
         title: 'Verify a Denarius Message',
         balance: balance,
         offline: offline,
+        sendicon: sendicon,
         offlinebtn: offlinebtn,
         chaindl: chaindl,
         chaindlbtn: chaindlbtn
     });
   });
+});
 };
 
 exports.getBackup = (req, res) => {
   //var username = req.user.email;
+  client.walletStatus(function (err, ws, resHeaders) {
+    if (err) {
+      console.log(err);
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var ws = '';
+      var walletstatuss = 'locked';
+      var sendicon = 'display: none !important';
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+
+      var walletstatuss = ws.wallet_status;
+      var sendicon;
+      
+      if (walletstatuss == 'stakingonly') {
+				sendicon = 'display: none !important';
+			} else if (walletstatuss == 'unlocked') {
+				sendicon = 'display: visible !important;';
+			} else if (walletstatuss == 'unencrypted') {
+				sendicon = 'display: visible !important';
+			} else if (walletstatuss == 'locked') {
+				sendicon = 'display: none !important';
+			}
+    }
+
   client.getBalance(function (error, info, resHeaders) {
       if (error) {
         var offline = 'offlineoverlay';
@@ -212,16 +373,44 @@ exports.getBackup = (req, res) => {
         title: 'Backup your D Wallet',
         balance: balance,
         offline: offline,
+        sendicon: sendicon,
         offlinebtn: offlinebtn,
         chaindl: chaindl,
         chaindlbtn: chaindlbtn
     });
   });
+});
 };
 
 
 exports.addresses = function (req, res) {
   //var username = req.user.email;
+
+  client.walletStatus(function (err, ws, resHeaders) {
+    if (err) {
+      console.log(err);
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var ws = '';
+      var walletstatuss = 'locked';
+      var sendicon = 'display: none !important';
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+
+      var walletstatuss = ws.wallet_status;
+      var sendicon;
+      
+      if (walletstatuss == 'stakingonly') {
+				sendicon = 'display: none !important';
+			} else if (walletstatuss == 'unlocked') {
+				sendicon = 'display: visible !important;';
+			} else if (walletstatuss == 'unencrypted') {
+				sendicon = 'display: visible !important';
+			} else if (walletstatuss == 'locked') {
+				sendicon = 'display: none !important';
+			}
+    }
 
   client.getBalance(function (error, info, resHeaders) {
     if (error) {
@@ -298,12 +487,12 @@ exports.addresses = function (req, res) {
         var chaindl = 'nooverlay';
         var chaindlbtn = 'nobtn';
 
-      res.render('account/addresses', { title: 'My Addresses', addyy: addyy, addresses: addresses, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
+      res.render('account/addresses', { title: 'My Addresses', addyy: addyy, addresses: addresses, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
 
   });
 });
 });
-
+});
 }
 
 exports.wallet = function (req, res) {
@@ -375,6 +564,32 @@ exports.wallet = function (req, res) {
 exports.address = function (req, res) {
     //var username = req.user.email;
 
+    client.walletStatus(function (err, ws, resHeaders) {
+      if (err) {
+        console.log(err);
+        var offline = 'offlineoverlay';
+        var offlinebtn = 'offlinebutton';
+        var ws = '';
+        var walletstatuss = 'locked';
+        var sendicon = 'display: none !important';
+      } else {
+        var offline = 'onlineoverlay';
+        var offlinebtn = 'onlinebutton';
+  
+        var walletstatuss = ws.wallet_status;
+        var sendicon;
+        
+        if (walletstatuss == 'stakingonly') {
+          sendicon = 'display: none !important';
+        } else if (walletstatuss == 'unlocked') {
+          sendicon = 'display: visible !important;';
+        } else if (walletstatuss == 'unencrypted') {
+          sendicon = 'display: visible !important';
+        } else if (walletstatuss == 'locked') {
+          sendicon = 'display: none !important';
+        }
+      }
+
     client.getBalance(function (error, info, resHeaders) {
       if (error) {
         var offline = 'offlineoverlay';
@@ -413,10 +628,11 @@ exports.address = function (req, res) {
 
         QRCode.toDataURL(qr, function(err, data_url) {
 
-        res.render('account/newaddress', { title: 'New D Address', user: req.user, offline: offline, balance: balance, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn, address: address, data_url: data_url });
+        res.render('account/newaddress', { title: 'New D Address', user: req.user, offline: offline, sendicon: sendicon, balance: balance, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn, address: address, data_url: data_url });
     });
   });
   });
+});
 };
 
 
@@ -424,6 +640,32 @@ exports.address = function (req, res) {
 
 exports.genkey = function (req, res) {
   //var username = req.user.email;
+
+  client.walletStatus(function (err, ws, resHeaders) {
+    if (err) {
+      console.log(err);
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var ws = '';
+      var walletstatuss = 'locked';
+      var sendicon = 'display: none !important';
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+
+      var walletstatuss = ws.wallet_status;
+      var sendicon;
+      
+      if (walletstatuss == 'stakingonly') {
+				sendicon = 'display: none !important';
+			} else if (walletstatuss == 'unlocked') {
+				sendicon = 'display: visible !important;';
+			} else if (walletstatuss == 'unencrypted') {
+				sendicon = 'display: visible !important';
+			} else if (walletstatuss == 'locked') {
+				sendicon = 'display: none !important';
+			}
+    }
 
   client.getBalance(function (error, info, resHeaders) {
     if (error) {
@@ -463,10 +705,11 @@ exports.genkey = function (req, res) {
 
       QRCode.toDataURL(qr, function(err, data_url) {
 
-      res.render('account/genkey', { title: 'New D FS Key', user: req.user, offline: offline, balance: balance, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn, genkey: genkey, data_url: data_url });
+      res.render('account/genkey', { title: 'New D FS Key', user: req.user, offline: offline, sendicon: sendicon, balance: balance, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn, genkey: genkey, data_url: data_url });
   });
 });
 });
+  });
 };
 
 /**
@@ -526,6 +769,32 @@ exports.withdraw = (req, res, next) => {
 exports.transactions = function (req, res) {
   //var username = req.user.email;
 
+  client.walletStatus(function (err, ws, resHeaders) {
+    if (err) {
+      console.log(err);
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var ws = '';
+      var walletstatuss = 'locked';
+      var sendicon = 'display: none !important';
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+
+      var walletstatuss = ws.wallet_status;
+      var sendicon;
+      
+      if (walletstatuss == 'stakingonly') {
+				sendicon = 'display: none !important';
+			} else if (walletstatuss == 'unlocked') {
+				sendicon = 'display: visible !important;';
+			} else if (walletstatuss == 'unencrypted') {
+				sendicon = 'display: visible !important';
+			} else if (walletstatuss == 'locked') {
+				sendicon = 'display: none !important';
+			}
+    }
+
   client.getBalance(function (error, info, resHeaders) {
     if (error) {
       var offline = 'offlineoverlay';
@@ -562,10 +831,11 @@ exports.transactions = function (req, res) {
       var chaindl = 'nooverlay';
       var chaindlbtn = 'nobtn';
 
-    res.render('account/tx', { title: 'Transactions', transactions: transactions, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
+    res.render('account/tx', { title: 'Transactions', transactions: transactions, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
     });
 
   });
+});
 };
 
 
@@ -605,6 +875,32 @@ exports.fs = function (req, res) {
 
     }
 
+  client.walletStatus(function (err, ws, resHeaders) {
+    if (err) {
+      console.log(err);
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var ws = '';
+      var walletstatuss = 'locked';
+      var sendicon = 'display: none !important';
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+
+      var walletstatuss = ws.wallet_status;
+      var sendicon;
+      
+      if (walletstatuss == 'stakingonly') {
+				sendicon = 'display: none !important';
+			} else if (walletstatuss == 'unlocked') {
+				sendicon = 'display: visible !important;';
+			} else if (walletstatuss == 'unencrypted') {
+				sendicon = 'display: visible !important';
+			} else if (walletstatuss == 'locked') {
+				sendicon = 'display: none !important';
+			}
+    }
+
   client.fortunaStake('status', function (err, statuss, resHeaders) {
     if (err) {
       console.log(err);
@@ -632,9 +928,10 @@ exports.fs = function (req, res) {
       var chaindl = 'nooverlay';
       var chaindlbtn = 'nobtn';
 
-    res.render('account/fs', { title: 'FortunaStakes', fss: fss, count: count, statuss: statuss, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
+    res.render('account/fs', { title: 'FortunaStakes', fss: fss, count: count, statuss: statuss, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
     });
 
+  });
   });
   });
   });
