@@ -5,6 +5,9 @@ const WAValidator = require('wallet-address-validator');
 const QRCode = require('qrcode');
 const unirest = require('unirest');
 const toastr = require('express-toastr');
+const ElectrumClient = require('electrum-cash').Client;
+const bs58 = require('bs58');
+const sha256 = require('sha256');
 
 var sendJSONResponse = function (res, status, content) {
     res.status(status);
@@ -382,9 +385,18 @@ exports.getBackup = (req, res) => {
 });
 };
 
-
+//GET Addresses Page
+//Fetches unspent and account addresses and then scripthashes them for ElectrumX Balance fetching
+// By Carsen Klock
 exports.addresses = function (req, res) {
   //var username = req.user.email;
+
+  //The used Electrumx Host, may swap to Clusters to run all x1-x4 nodes
+  // May move electrumx connections globally todo
+  //
+  const delectrumxhost = 'electrumx1.denarius.pro';
+  //
+  //
 
   client.walletStatus(function (err, ws, resHeaders) {
     if (err) {
@@ -433,7 +445,7 @@ exports.addresses = function (req, res) {
     }
 
   //List All Addresses
-  client.listReceivedByAddress(0, true, function (err, addresses, resHeaders) {
+  client.listUnspent(function (err, addresses, resHeaders) {
       if (err) {
         console.log(err);
         var offline = 'offlineoverlay';
@@ -444,52 +456,159 @@ exports.addresses = function (req, res) {
       var offline = 'onlineoverlay';
       var offlinebtn = 'onlinebutton';
 
-      //var addy1 = addresses.slice(-1)[0];
-
-      //var addy = addy1[0][0];
-
-      //var addresses = addresses[0];
-
-      //console.log(addy);
-
       var account = '333D'; //Needs work
 
-		client.getAddressesByAccount(`dpi(${account})`, function (err, addressess, resHeaders) {
-			if (err) {
+		  client.getAddressesByAccount(`dpi(${account})`, async function (err, addressess, resHeaders) { //this isnt used by the foreach below
+        if (err) {
 
-        console.log(err);
-				var addyy = 'Node Offline';
-        var qrcode = 'Node Offline';        
-        var offline = 'offlineoverlay';
-        var offlinebtn = 'offlinebutton';
-				var qr = 'Offline';
+          console.log(err);
+          var addyy = 'Node Offline';
+          var qrcode = 'Node Offline';        
+          var offline = 'offlineoverlay';
+          var offlinebtn = 'offlinebutton';
+          var qr = 'Offline';
 
-			} else {
+        } else {
 
-        var offline = 'onlineoverlay';
-        var offlinebtn = 'onlinebutton';
+          var offline = 'onlineoverlay';
+          var offlinebtn = 'onlinebutton';
 
-				var addyy = addressess.slice(-1)[0];
+          var addyy = addressess.slice(-1)[0];
 
-				if (typeof addyy == 'undefined') {
-					client.getNewAddress(`dpi(${account})`, function (error, addr, resHeaders) {
-					if (error) {
-						console.log(error);
-					}
-					addyy = addr;
-					});
-				}
+          if (typeof addyy == 'undefined') {
+            client.getNewAddress(`dpi(${account})`, function (error, addr, resHeaders) {
+            if (error) {
+              console.log(error);
+            }
+            addyy = addr;
+            });
+          }
 
-				var qr = 'denarius:'+addyy;
+          var qr = 'denarius:'+addyy;
 
-			}
+        }
 
+        //Global Vars
+        var addressed;
+        var scripthasharray = [];
+        var promises = [];
+
+        //Start ForEach Loops of Addresses to Scripthashes
+
+        addressess.forEach(address => {
+          const addressed = address;
+
+          //Convert Address to Scripthash for ElectrumX Balance Fetching
+          const bytes = bs58.decode(addressed)
+          const byteshex = bytes.toString('hex');
+          const remove00 = byteshex.substring(2);
+          const removechecksum = remove00.substring(0, remove00.length-8);
+          const HASH160 = "76A914" + removechecksum.toUpperCase() + "88AC";
+          const BUFFHASH160 = Buffer.from(HASH160, "hex");
+          const shaaddress = sha256(BUFFHASH160);
+          const changeEndianness = (string) => {
+                  const result = [];
+                  let len = string.length - 2;
+                  while (len >= 0) {
+                    result.push(string.substr(len, 2));
+                    len -= 2;
+                  }
+                  return result.join('');
+          }
+
+          const scripthash = changeEndianness(shaaddress);
+
+          const scripthashe = async () => {
+            // Initialize an electrum client.
+            const electrum = new ElectrumClient('dPi ElectrumX', '1.4.1', delectrumxhost);
+    
+            // Wait for the client to connect
+            await electrum.connect();  
+            
+            // Request the balance of the requested Scripthash D address
+            const balancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthash);
+
+            const balanceformatted = balancescripthash.confirmed;
+
+            const balancefinal = balanceformatted / 100000000;
+
+            await electrum.disconnect();
+    
+            return balancefinal;
+          } 
+
+          promises.push(new Promise((res, rej) => {
+            scripthashe().then(globalData => {
+              scripthasharray.push({address: addressed, scripthash: scripthash, balance: globalData});         
+              res({addressed, scripthash, globalData});     //now
+            });  
+          }) );
+          
+
+        });
+
+        addresses.forEach(address => {
+          const addressed = address.address; 
+
+          //Convert Address to Scripthash for ElectrumX Balance Fetching
+          const bytes = bs58.decode(addressed)
+          const byteshex = bytes.toString('hex');
+          const remove00 = byteshex.substring(2);
+          const removechecksum = remove00.substring(0, remove00.length-8);
+          const HASH160 = "76A914" + removechecksum.toUpperCase() + "88AC";
+          const BUFFHASH160 = Buffer.from(HASH160, "hex");
+          const shaaddress = sha256(BUFFHASH160);
+
+          const changeEndianness = (string) => {
+                  const result = [];
+                  let len = string.length - 2;
+                  while (len >= 0) {
+                    result.push(string.substr(len, 2));
+                    len -= 2;
+                  }
+                  return result.join('');
+          }
+
+          const scripthash = changeEndianness(shaaddress);
+
+          const scripthashe = async () => {
+            // Initialize an electrum client.
+            const electrum = new ElectrumClient('dPi ElectrumX', '1.4.1', delectrumxhost);
+    
+            // Wait for the client to connect
+            await electrum.connect();  
+            
+            // Request the balance of the requested Scripthash D address
+            const balancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthash);
+
+            const balanceformatted = balancescripthash.confirmed;
+
+            const balancefinal = balanceformatted / 100000000;
+
+            await electrum.disconnect();
+    
+            return balancefinal;
+          } 
+
+          promises.push(new Promise((res, rej) => {
+            scripthashe().then(globalData => {
+              scripthasharray.push({address: addressed, scripthash: scripthash, balance: globalData});         
+              res({addressed, scripthash, globalData});     //now
+            });  
+          }) );
+          
+
+        });
         var chaindl = 'nooverlay';
-        var chaindlbtn = 'nobtn';
+        var chaindlbtn = 'nobtn';        
 
-      res.render('account/addresses', { title: 'My Addresses', addyy: addyy, addresses: addresses, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
-
-  });
+        Promise.all(promises).then((values) => {
+          //console.log(scripthasharray);
+          res.render('account/addresses', { title: 'My Addresses', addyy: addyy, addresses: addresses, scripthasharray: scripthasharray, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
+        })     
+        
+      
+    });
 });
 });
 });

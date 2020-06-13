@@ -53,6 +53,7 @@ Features
 
 - Send and Receive D
 - Wallet Addresses
+- Address Balances Powered by Scripthash and ElectrumX (denarius.pro)
 - View all transactions
 - Stake your Denarius
 - Unlock/Lock/Encrypt your wallet
