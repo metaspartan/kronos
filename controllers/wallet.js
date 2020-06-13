@@ -599,15 +599,15 @@ exports.addresses = function (req, res) {
           
 
         });
+
         var chaindl = 'nooverlay';
         var chaindlbtn = 'nobtn';        
 
         Promise.all(promises).then((values) => {
           //console.log(scripthasharray);
+          scripthasharray.reduce(function(a,b){if(a.indexOf(b)<0)a.push(b);return a;},[]); //WIP
           res.render('account/addresses', { title: 'My Addresses', addyy: addyy, addresses: addresses, scripthasharray: scripthasharray, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
-        })     
-        
-      
+        });
     });
 });
 });
