@@ -12,7 +12,7 @@ Send and Receive Funds, Create new addresses, View Transactions, Unlock/Lock Wal
 
 This was built for the Raspberry Pi in mind and one with at least 2GB of RAM, 4GB and 8GB models are recommended! dPi will run on any Linux distro.
 
-Running the installer script below installs denarius via snap install and then modifies your .env in dPi and denarius.conf to a random rpcuser and rpcpass, dPi then generates you a password to login into dPi with, so be on the look out for that when the installer finishes. (Username is dpiadmin) as of v1.0.8-Alpha. dPi will then be running on your LAN (192.168.x.x:3000) on port 3000.
+Running the installer script below installs denarius via snap install and then modifies your .env in dPi and denarius.conf to a random rpcuser and rpcpass, dPi then generates you a password to login into dPi with, so be on the look out for that when the installer finishes. (Default Username is dpiadmin). dPi will then be running on your LAN (192.168.x.x:3000) on port 3000.
 
 Recommended Devices and OS
 -----------------
