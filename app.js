@@ -126,6 +126,7 @@ app.get('/addresses', walletController.addresses);
 app.get('/transactions', walletController.transactions);
 
 app.get('/fs', walletController.fs);
+app.post('/startfs', walletController.startfs);
 
 app.post('/getnewaddress', walletController.address);
 

@@ -561,7 +561,7 @@ exports.lock = (req, res, next) => {
   };
 
 
-  //Get private key
+  //POST Get private key
   exports.privkey = (req, res, next) => {
 	var addi = req.body.addi;
 	//var sendtoaddress = req.body.sendaddress;

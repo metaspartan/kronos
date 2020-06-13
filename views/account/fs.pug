@@ -2,32 +2,110 @@ extends ../layout
 
 block content
   script(src='/js/reload.js')
+  script.
+    function confirmedstart() {
+      $('#startfs').submit();
+    }
   .txheader
+    #DisplayModalStartFS.modal
+      .modal-dialog
+          .modal-content(style='color:#FFF !important;background-color:#111 !important; border-color: #444 !important;')
+              .modal-header(style='border-bottom: none !important;')
+                  button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+                  h4.modal-title Start a FortunaStake Node
+              .modal-body
+                .form-horizontal
+                  .row
+                    .col-sm-3(align='center')
+                      img(src='../img/fs.png', height='100px')
+                    .col-sm-9(style='margin-top:10px !important;')
+                      p(align='left')
+                        strong Start a new or offline FortunaStake Node
+                      p(align='left')
+                        | Enter your FortunaStake Node Alias below, this node must be configured within your denarius.conf and fortunastake.conf. You must also have ownership of the collateral address and private key in your wallet.
+                  br
+                  form.form-horizontal(action='/startfs', method='POST', id='startfs')
+                    input(type='hidden', name='_csrf', value=_csrf)
+                    .form-group
+                      label.col-sm-3.control-label(for='alias') FS Alias
+                      .col-sm-7
+                        input.form-control.blackinput(type='text', name='alias', id='alias', placeholder='FSALIAS1')
+              .modal-footer(style='border-top: none !important;')
+                  button.btn.btn-success(type='submit', id='submit', onclick='confirmedstart()') Start FS
+                  button.btn.btn-default(type='button', data-dismiss='modal') Close
     .fsheader(align='center')
       p
         .row
-          .col-md-4
-            if (statuss)
-              h4 My FS Status 
-              each status in statuss
-                if (status.alias == null)
-                  | !{status.status.toUpperCase()}
-                  br
-                if (status.alias != null)
-                  .statuses !{status.alias} - !{status.status.toUpperCase()} - !{status.ipaddr} 
-                    a(href='https://www.coinexplorer.net/D/address/' + status.collateral, target='_blank', style='color: #42B905;') !{status.collateral}
-          .col-md-4
-            .count(style='font-size:133px;font-weight:100;margin-bottom:-20px;', align='center') !{count}
+          .col-md-12
+            .count(style='font-size:133px;font-weight:100;margin-bottom:-25px;', align='center') !{count}
             small(align='center', style='color: #42B905;') • FortunaStakes Online
-          .col-md-4
-            form.form-horizontal(action='/getgenkey', method='POST', id='sendfs')
-              input(type='hidden', name='_csrf', value=_csrf)
-              button.btn.btn-default(type='submit', id='submit')
-                | Generate FS Key
-            p &nbsp;&nbsp;
-            button.btn.btn-default(onclick='#', disabled) Start or Stop FS
     .row
-    div(style='overflow-x:auto;')
+    div(style='overflow-x:auto;background-color:#111;')
+      if (statuss)
+        h1(align='center', style='font-weight:100;font-size:63px;margin:50px;') My FS Node Status
+        table.sortable#fst
+          thead
+            tr
+              th Alias
+              th Status
+              th IP
+              th Collateral
+              th Rank
+              th Round Earnings
+              th Options
+          tbody
+            each status in statuss
+              if (status.alias == null)
+                tr
+                  td(align='center')
+                    | LOCAL FS 
+                  td(align='center')
+                    if (status.status.toUpperCase() == 'ONLINE')
+                      .span(style='color: #42B905;') !{status.status.toUpperCase()}
+                    else
+                      | !{status.status.toUpperCase()} 
+                  td(align='center')
+                  td(align='center')
+                  td(align='center')
+                  td(align='center')
+              if (status.alias != null)
+                tr
+                  td(align='center')
+                    img(src='../img/fs.png', height='30px') 
+                    |  !{status.alias}
+                  td(align='center')
+                    if (status.status.toUpperCase() == 'ONLINE')
+                      .span(style='color: #42B905;') • !{status.status.toUpperCase()}
+                    else
+                      | !{status.status.toUpperCase()} 
+                  td(align='center')
+                    | !{status.ipaddr}
+                  td(align='center')
+                    if (status.collateral == 'Wallet is Locked')
+                      a(href='/', style='color: red;') !{status.collateral}
+                    else
+                      a(href='https://www.coinexplorer.net/D/address/' + status.collateral, target='_blank', style='color: #42B905;') !{status.collateral}
+                  td(align='center')
+                    | !{status.rank}
+                  td(align='center')
+                    | !{status.earnings / 100000000} D
+                  td(align='center')
+                    .row(style='width:230px;')
+                      .col-sm-6
+                        form.form-horizontal(action='/getgenkey', method='POST', id='sendfs')
+                          input(type='hidden', name='_csrf', value=_csrf)
+                          button.btn.btn-default.btn-sm(type='submit', id='submit')
+                            | Generate FS Key
+                      .col-sm-6
+                        if (status.status.toUpperCase() == 'ONLINE' || status.collateral != 'Wallet is Locked')
+                          button.btn.btn-sm.btn-default(type='button', disabled) Start FS
+                        else
+                          button.btn.btn-sm.btn-default(type='button', id='startfs', data-toggle='modal', data-target='#DisplayModalStartFS')
+                            | Start FS
+            else
+              br
+              h3(align='center', style='color: #bbb;') No FortunaStake Statuses Available     
+      h1(align='center', style='font-weight:100;font-size:63px;margin:50px;') FortunaStake Global List
       table.sortable#fst
         thead
           tr
@@ -45,7 +123,8 @@ block content
               if (fs.active == 1)
                 tr
                   td(align='center')
-                    | !{fs.ip}
+                    img(src='../img/fs.png', height='30px') 
+                    |  !{fs.ip}
                   td(align='center')
                     a(href='https://www.coinexplorer.net/D/address/' + fs.pubkey, target='_blank', style='color: #42B905;') !{fs.pubkey}
                   td(align='center')

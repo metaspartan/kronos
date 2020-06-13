@@ -958,6 +958,36 @@ exports.transactions = function (req, res) {
 };
 
 
+//POST for Starting FS from FS Page
+exports.startfs = (req, res, next) => {
+
+    var alias = req.body.alias;
+
+    client.fortunaStake('start-alias', `${alias}`, function (error, result, resHeaders) {
+      //if (error) return console.log(error);
+
+      if (error) {
+        req.toastr.error(`Something went wrong trying to start the FS ${alias} - ${error}`, 'Error!', { positionClass: 'toast-bottom-right' });
+        return res.redirect('/fs');
+      } else {
+
+        if (result.result == 'failed')
+        {
+          var resultfinal = 'FAILED'
+        } else {
+          var resultfinal = 'SUCCEEDED'
+        }
+
+        req.flash('success', { msg: `Ran start-alias on FS <strong>${alias}</strong> and it ${resultfinal}` });
+        req.toastr.success(`Ran start-alias on FS ${alias} and it ${resultfinal}`, 'Ran start-alias on FS', { positionClass: 'toast-bottom-right' });
+        return res.redirect('/fs');
+
+      }
+
+    });
+  
+};
+
 //GET for FS Page
 exports.fs = function (req, res) {
   //var username = req.user.email;
