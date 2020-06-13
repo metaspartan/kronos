@@ -46,7 +46,9 @@ Simply run this one command, then choose if you want to Install dPi with or with
 wget -qO- https://raw.githubusercontent.com/carsenk/dpi/master/installdpi.sh | bash
 ```
 
-![image](https://user-images.githubusercontent.com/10162347/83936439-dcc87a80-a780-11ea-9bd5-4ea28b2e441b.png)
+![image](https://user-images.githubusercontent.com/10162347/84561876-38f54680-ad0d-11ea-9be8-554c148a86c2.png)
+
+![image](https://user-images.githubusercontent.com/10162347/84561886-45799f00-ad0d-11ea-9f7f-0ed9c8b21375.png)
 
 Features
 --------
