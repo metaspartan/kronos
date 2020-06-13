@@ -50,8 +50,11 @@ block content
               th Status
               th IP
               th Collateral
+              th TXID
+              th Last Block Paid
               th Rank
               th Round Earnings
+              th Daily Rate
               th Options
           tbody
             each status in statuss
@@ -69,6 +72,13 @@ block content
                   td(align='center')
                   td(align='center')
                   td(align='center')
+                  td(align='center')
+                  td(align='center')
+                  td(align='center')
+                    form.form-horizontal(action='/getgenkey', method='POST', id='sendfs')
+                      input(type='hidden', name='_csrf', value=_csrf)
+                      button.btn.btn-default.btn-sm(type='submit', id='submit')
+                        | Generate FS Key
               if (status.alias != null)
                 tr
                   td(align='center')
@@ -87,22 +97,24 @@ block content
                     else
                       a(href='https://www.coinexplorer.net/D/address/' + status.collateral, target='_blank', style='color: #42B905;') !{status.collateral}
                   td(align='center')
+                    if (status.txid == 'Wallet is Locked')
+                      a(href='/', style='color: red;') !{status.txid}
+                    else
+                      a(href='https://www.coinexplorer.net/D/transaction/' + status.txid, target='_blank', style='color: #777;font-size:11px;') !{status.txid.substring(0,30)}...
+                  td(align='center')
+                    | !{status.lastpaidblock}
+                  td(align='center')
                     | !{status.rank}
                   td(align='center')
                     | !{status.earnings / 100000000} D
                   td(align='center')
-                    .row(style='width:230px;')
-                      .col-sm-6
-                        form.form-horizontal(action='/getgenkey', method='POST', id='sendfs')
-                          input(type='hidden', name='_csrf', value=_csrf)
-                          button.btn.btn-default.btn-sm(type='submit', id='submit')
-                            | Generate FS Key
-                      .col-sm-6
-                        if (status.status.toUpperCase() == 'ONLINE' || status.collateral != 'Wallet is Locked')
-                          button.btn.btn-sm.btn-default(type='button', disabled) Start FS
-                        else
-                          button.btn.btn-sm.btn-default(type='button', id='startfs', data-toggle='modal', data-target='#DisplayModalStartFS')
-                            | Start FS
+                    | !{status.daily / 100000000} D
+                  td(align='center')
+                    if (status.status.toUpperCase() == 'ONLINE' || status.collateral != 'Wallet is Locked')
+                      button.btn.btn-sm.btn-default(type='button', disabled) Start FS
+                    else
+                      button.btn.btn-sm.btn-default(type='button', id='startfs', data-toggle='modal', data-target='#DisplayModalStartFS')
+                        | Start FS
             else
               br
               h3(align='center', style='color: #bbb;') No FortunaStake Statuses Available     
