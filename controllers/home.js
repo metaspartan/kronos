@@ -235,7 +235,7 @@ si.currentLoad().then(data6 => {
 		}
 
 
-	QRCode.toDataURL(qr, function(err, qrcode) {
+	QRCode.toDataURL(qr, { color: { dark: '#000000FF', light:"#777777FF" } }, function(err, qrcode) {
 
 	client.getStakingInfo(function (error, stakeinfo, resHeaders) {
 

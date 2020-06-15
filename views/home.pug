@@ -208,7 +208,7 @@ block content
           br
           .qrcode(align='center')
             a(href='denarius:' + address)
-              img(src='' + qrcode)
+              img(src='' + qrcode, style='border-radius:10px;')
           br
         .col-md-2
           form.form-horizontal(action='/getnewaddress', method='POST', id='sendaddy', style='margin-top:55px;', align='center')
