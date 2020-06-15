@@ -44,15 +44,22 @@ block content
                   button.btn.btn-danger(type='submit', id='submit', onclick='confirmedpk()') Get Private Key
                   button.btn.btn-default(type='button', data-dismiss='modal') Close
   .container
-    h3(align='center')  Denarius Addresses
+    h1(align='center', style='font-size:73px;font-weight:100;margin-top:42px !important;')  Denarius Addresses
     p(align='center') 
-      | Main D Wallet Address
+      | These are your Denarius (D) addresses and their respective balances that you own.
+      br
+      br
+      br
       ul.list-group
         li.list-group-item(style='background-color: #151515;border-color:#444;')
           .row
-            .col-md-6.mt(align='center')
+            .col-md-2(align='center')
+              .qrcode(align='center')
+                a(href='denarius:' + addyy)
+                  img(src='' + addyqr, align='center', style='border-radius:10px; width:75px;')
+            .col-md-5(align='center', style='margin-top:25px;')
               strong #{addyy}
-            .col-md-6(align='center')
+            .col-md-5(align='center', style='margin-top:20px;')
               .row
                 .col-md-6
                   button.btn.btn-sm.btn-default(type='button', id='sendpk', data-toggle='modal', data-target='#DisplayModalPrivKey')
@@ -66,29 +73,23 @@ block content
         em Write down or import your private key into Denarius-QT or denariusd to access your main wallet address
         br
         strong #{privkey}
-    p(align='center')
-      h3(align='center') List of Addresses
-      p(align='center') These are addresses and their respective balances that you own.
-      li.list-group-item(style='background-color: #151515;border-color: #444;')
-        .row
-          .col-sm-4(align='center')
-            | Owned Addresses
-          .col-sm-4(align='center') Scripthash
-          .col-sm-4(align='center') Balance
-    ul.list-group
+  .row
     if (addresses)
-        each address in scripthasharray
-          li.list-group-item(style='background-color: #151515;border-color: #444;')
-            .row
-              .col-sm-4(align='center')
-                | #{address.address}
-              .col-sm-4(align='center')
-                .span(style='color: #777; font-size: 11px;') #{address.scripthash}
-              .col-sm-4(align='center')
-                | #{address.balance}
+      each address in scripthasharray
+        .col-lg-3
+          .addi(style='background-color: #151515;border-color: #444; padding:30px; margin: 10px; border-radius:15px;')
+            p(align='center')
+              .span(style='font-size:13px;text-align:center;color:#eee;') #{address.address}
+            p(align='center')
+              .qrcode(align='center')
+                a(href='denarius:' + address.address)
+                  img(src='' + address.qr, align='center', style='border-radius:10px;')
+            p(align='center')
+              .span(style='font-size:16px;text-align:center;color:#777;') Balance
+              .span(style='color:#999;font-size:21px;text-align:center;') #{address.balance} D
     else
       br
       h3(align='center', style='color: #bbb;') No Unspent Addresses Available
-    br
-    p(align='center')
-      a.btn.btn-default(href='/', role='button') Go back to the Dashboard     
+  br
+  p(align='center')
+    a.btn.btn-default(href='/', role='button') Go back to the Dashboard     

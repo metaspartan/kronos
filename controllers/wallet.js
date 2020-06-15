@@ -487,6 +487,9 @@ exports.addresses = function (req, res) {
           var qr = 'denarius:'+addyy;
 
         }
+      
+        
+        QRCode.toDataURL(addyy, { color: { dark: '#000000FF', light:"#333333FF" } }, function(err, addyqr) {
 
         //Global Vars
         var addressed;
@@ -535,15 +538,27 @@ exports.addresses = function (req, res) {
             await electrum.disconnect();
     
             return balancefinal;
-          } 
+          }
+
+          const qrcodeasync = async () => {
+            const qrcoded = await QRCode.toDataURL(address, { color: { dark: '#000000FF', light:"#333333FF" } });
+
+            //console.log(qrcoded)
+
+            return qrcoded;
+          }
+
 
           promises.push(new Promise((res, rej) => {
-            scripthashe().then(globalData => {
-              scripthasharray.push({address: addressed, scripthash: scripthash, balance: globalData});         
-              res({addressed, scripthash, globalData});     //now
+            qrcodeasync().then(qrcodedata => {
+              scripthashe().then(globalData => {
+              
+              scripthasharray.push({address: addressed, qr: qrcodedata, scripthash: scripthash, balance: globalData});
+              res({addressed, qr, scripthash, globalData});
+
+            });
             });  
           }) );
-          
 
         });
 
@@ -588,12 +603,24 @@ exports.addresses = function (req, res) {
             await electrum.disconnect();
     
             return balancefinal;
-          } 
+          }
+
+          const qrcodeasync = async () => {
+            const qrcoded = await QRCode.toDataURL(address.address, { color: { dark: '#000000FF', light:"#333333FF" } });
+
+            //console.log(qrcoded)
+
+            return qrcoded;
+          }
 
           promises.push(new Promise((res, rej) => {
-            scripthashe().then(globalData => {
-              scripthasharray.push({address: addressed, scripthash: scripthash, balance: globalData});         
-              res({addressed, scripthash, globalData});     //now
+            qrcodeasync().then(qrcodedata => {
+              scripthashe().then(globalData => {
+              
+              scripthasharray.push({address: addressed, qr: qrcodedata, scripthash: scripthash, balance: globalData});
+              res({addressed, qr, scripthash, globalData});
+
+            });
             });  
           }) );
           
@@ -612,13 +639,17 @@ exports.addresses = function (req, res) {
                 ).values()
             ]
           }
-  
+
           //Filter out all duplicate addresses from the combined scripthasharray
           var filteredscripthasharray = uniqByKeepLast(scripthasharray, it => it.address);
 
-          res.render('account/addresses', { title: 'My Addresses', addyy: addyy, addresses: addresses, scripthasharray: filteredscripthasharray, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
+          //console.log(filteredscripthasharray);
+
+          res.render('account/addresses', { title: 'My Addresses', addyy: addyy, addyqr: addyqr, addresses: addresses, scripthasharray: filteredscripthasharray, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
         });
+      
     });
+      });
 });
 });
 });
