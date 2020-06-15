@@ -11,20 +11,129 @@ const toastr = require('express-toastr');
 const exec = require('child_process').exec;
 const shell = require('shelljs');
 const sleep = require('system-sleep');
+const denarius = require('denariusjs');
+const CryptoJS = require("crypto-js");
+const level = require('level');
+const bip39 = require("bip39");
+const bip32 = require("bip32d");
 
-/**
- * GET /
- * Home page.
- */
+const SECRET_KEY = process.env.SECRET_KEY;
 
  //Connect to our D node
-var client = new bitcoin.Client({
+const client = new bitcoin.Client({
     host: process.env.DNRHOST,
     port: process.env.DNRPORT,
     user: process.env.DNRUSER,
     pass: process.env.DNRPASS,
     timeout: 30000
 });
+
+function shahash(key) {
+	key = CryptoJS.SHA256(key, SECRET_KEY);
+	return key.toString();
+}
+
+function encrypt(data) {
+	data = CryptoJS.AES.encrypt(data, SECRET_KEY);
+	data = data.toString();
+	return data;
+}
+
+function decrypt(data) {
+	data = CryptoJS.AES.decrypt(data, SECRET_KEY);
+	data = data.toString(CryptoJS.enc.Utf8);
+	return data;
+}
+
+// Testing Denarius (D) Mnemonic Seed Phrases - Major WIP
+//
+//
+//
+//
+
+var mnemonic;
+let seedaddresses = [];
+var db = level('dpileveldb') // LevelDB dPi Init Directory
+
+// Fetch the dPi LevelDB
+db.get('seedphrase', function (err, value) {
+	if (err) {
+		
+		// If seedphrase does not exist in levelDB then generate one
+		mnemonic = bip39.generateMnemonic();
+		console.log("~Generated Denarius Mnemonic~ ", mnemonic);
+
+		// Encrypt the seedphrase for storing in the DB
+		var encryptedmnemonic = encrypt(mnemonic);
+		console.log("Encrypted Mnemonic", encryptedmnemonic);
+
+		// Put the encrypted seedphrase in the DB
+		db.put('seedphrase', encryptedmnemonic, function (err) {
+			if (err) return console.log('Ooops!', err) // some kind of I/O error if so
+			//console.log('Inserted Encrypted Seed Phrase to DB');
+		});
+
+		return mnemonic;
+
+	} else {
+
+		var decryptedmnemonic = decrypt(value);
+		console.log("Decrypted Mnemonic", decryptedmnemonic);
+
+		mnemonic = decryptedmnemonic;
+
+		return mnemonic;
+
+	}	
+});
+
+//Wait under a half second to ensure the seedphrase to be grabbed from the LevelDB above
+setTimeout(function bip39seed() {
+
+	console.log("Stored Denarius Mnemonic: ", mnemonic);
+
+	//Convert our mnemonic seed phrase to BIP39 Seed Buffer 
+	const seed = bip39.mnemonicToSeedSync(mnemonic);
+	console.log("BIP39 Seed Phrase to Hex", seed.toString('hex'));
+	
+	// BIP32 From BIP39 Seed
+	const root = bip32.fromSeed(seed);
+
+	// Denarius Network Params Object
+	const network = {
+			messagePrefix: '\x19Denarius Signed Message:\n',
+			bech32: 'd',
+			bip32: {
+				public: 0x0488b21e,
+				private: 0x0488ade4
+			},
+			pubKeyHash: 0x1e,
+			scriptHash: 0x5a,
+			wif: 0x9e
+	};
+
+	// A for loop for how many addresses we want from the derivation path of the seed phrase
+	//
+	for (let i = 0; i < 10; i++) {
+
+		//Get 10 Addresses from the derived mnemonic
+		const addressPath = `m/44'/116'/0'/0/${i}`;
+
+		// Get the keypair from the address derivation path
+		const addressKeypair = root.derivePath(addressPath);
+
+		// Get the p2pkh base58 public address of the keypair
+		const p2pkhaddy = denarius.payments.p2pkh({ pubkey: addressKeypair.publicKey, network }).address;
+	
+		//New Array called seedaddresses that is filled with address and path data currently, WIP and TODO
+		seedaddresses.push({ address: p2pkhaddy, path: addressPath });
+	}
+
+	// Console Log the full array - want to eventually push these into scripthash hashing and retrieve balances and then send from them
+	console.log("Seed Address Array", seedaddresses);
+
+}, 300);
+
 
 //Get information
 exports.index = (req, res) => {

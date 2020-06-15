@@ -12,6 +12,7 @@ pids
 logs
 results
 tmp
+dpileveldb
 
 # Dependency directory
 node_modules

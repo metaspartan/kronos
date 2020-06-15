@@ -601,12 +601,22 @@ exports.addresses = function (req, res) {
         });
 
         var chaindl = 'nooverlay';
-        var chaindlbtn = 'nobtn';        
+        var chaindlbtn = 'nobtn';
 
         Promise.all(promises).then((values) => {
-          //console.log(scripthasharray);
-          scripthasharray.reduce(function(a,b){if(a.indexOf(b)<0)a.push(b);return a;},[]); //WIP
-          res.render('account/addresses', { title: 'My Addresses', addyy: addyy, addresses: addresses, scripthasharray: scripthasharray, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
+
+          function uniqByKeepLast(data, key) {
+            return [
+                ...new Map(
+                    data.map(x => [key(x), x])
+                ).values()
+            ]
+          }
+  
+          //Filter out all duplicate addresses from the combined scripthasharray
+          var filteredscripthasharray = uniqByKeepLast(scripthasharray, it => it.address);
+
+          res.render('account/addresses', { title: 'My Addresses', addyy: addyy, addresses: addresses, scripthasharray: filteredscripthasharray, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
         });
     });
 });
@@ -1132,7 +1142,7 @@ exports.importPriv = (req, res, next) => {
 
       var balance = info;
 
-      client.importPrivKey(`${privkey}`, 'imported', 'false', function (error, success, resHeaders) {
+      client.importPrivKey(`${privkey}`, 'imported', false, function (error, success, resHeaders) {
           if (error) {
               req.toastr.error('Invalid Private Key or Wrong Format!', 'Invalid!', { positionClass: 'toast-bottom-right' });
               //req.flash('errors', { msg: 'Insufficient Funds or Invalid Amount!' });

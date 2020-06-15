@@ -158,7 +158,7 @@ wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 source ~/.nvm/nvm.sh
 source ~/.profile
 source ~/.bashrc
-nvm install v8
+nvm install v10
 npm install -g npm
 #fi
 
@@ -178,6 +178,8 @@ progress_bar 30
 PWUD1=$(pwgen 13 1)
 
 PWPD2=$(pwgen 33 1)
+
+PWPD3=$(pwgen 50 1)
 
 echo "Generated random username and password..."
 
@@ -219,6 +221,9 @@ echo "Updating Enviroment..."
 sed -i "s/.*DNRUSER=.*/DNRUSER="${PWUD1}"/" .env
 
 sed -i "s/.*DNRPASS=.*/DNRPASS="${PWPD2}"/" .env
+
+sed -i "s/.*SECRET_KEY=.*/SECRET_KEY="${PWPD3}"/" .env
+
 echo "Successfully injected generated username and password to dPi"
 
 PWDPI3=$(pwgen 15 1)
@@ -393,7 +398,7 @@ wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 source ~/.nvm/nvm.sh
 source ~/.profile
 source ~/.bashrc
-nvm install v8
+nvm install v10
 npm install -g npm
 #fi
 
@@ -413,6 +418,8 @@ progress_bar 30
 PWUD1=$(pwgen 13 1)
 
 PWPD2=$(pwgen 33 1)
+
+PWPD3=$(pwgen 50 1)
 
 echo "Generated random username and password..."
 
@@ -484,6 +491,9 @@ echo "Updating Enviroment..."
 sed -i "s/.*DNRUSER=.*/DNRUSER="${PWUD1}"/" .env
 
 sed -i "s/.*DNRPASS=.*/DNRPASS="${PWPD2}"/" .env
+
+sed -i "s/.*SECRET_KEY=.*/SECRET_KEY="${PWPD3}"/" .env
+
 echo "Successfully injected generated username and password to dPi"
 
 PWDPI3=$(pwgen 15 1)
@@ -511,7 +521,7 @@ wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 source ~/.nvm/nvm.sh
 source ~/.profile
 source ~/.bashrc
-nvm install v8
+nvm install v10
 npm install -g npm
 
 cd dpi
@@ -524,6 +534,8 @@ sudo rm -rf package.json
 
 mv .env ~/.env
 
+mv dpileveldb ~/dpileveldb
+
 git checkout .
 
 git pull
@@ -531,6 +543,8 @@ git pull
 sudo rm -rf .env
 
 mv ~/.env .env
+
+mv ~/dpileveldb dpileveldb
 
 NODEPID=$(pidof node)
 
