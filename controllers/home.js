@@ -189,7 +189,11 @@ exports.getDebugLog = (req, res) => {
 				balance = 0;
 			  }
 
-		var file = debuglog.toString();
+		if (debuglog == null) {
+			var file = 'Cant find debug log';
+		} else {
+			var file = debuglog.toString();
+		}
 
 		const lines = file.split('\n');
 		
