@@ -18,6 +18,7 @@ const bip39 = require("bip39");
 const bip32 = require("bip32d");
 const fs = require('fs');
 const split = require('split');
+const os = require('os');
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
@@ -139,10 +140,21 @@ setTimeout(function bip39seed() {
 // GET Denarius Debug Log File
 exports.getDebugLog = (req, res) => {
 
-	const debugloc = '~/snap/denarius/common/.denarius/debug.log';
-	//const testdebugloc = 'C:/Users/carse/AppData/Roaming/Denarius/debug.log';
+	console.log("HOME DIRECTORY:", os.homedir());
+
+	// if (os.platform() == 'win32') {
+	// 	var debugloc = os.homedir() + '\AppData\Roaming\Denarius\debug.log';
+	// } else {
+	// 	var debugloc = os.homedir() + '\snap\denarius\common\.denarius\debug.log';
+	// }
+	
+	var debugloc = ((os.platform() == 'win32') ? os.homedir() + '/AppData/Roaming/Denarius/debug.log' : os.homedir() + '/snap/denarius/common/.denarius/debug.log');
+
+	console.log("FULL DIRECTORY", debugloc);
 
 	fs.readFile(debugloc, (e, debuglog) => {
+
+		//console.log("Debug Log Error", e);
 
 		client.walletStatus(function (err, ws, resHeaders) {
 			if (err) {
@@ -197,7 +209,7 @@ exports.getDebugLog = (req, res) => {
 
 		const lines = file.split('\n');
 		
-		res.render('debug', {title: 'Denarius Debug Log', lines: lines, balance: balance, chaindl: chaindl, chaindlbtn: chaindlbtn, offline: offline, offlinebtn: offlinebtn, sendicon: sendicon});
+		res.render('debug', {title: 'Denarius Debug Log', lines: lines, debugloc: debugloc, balance: balance, chaindl: chaindl, chaindlbtn: chaindlbtn, offline: offline, offlinebtn: offlinebtn, sendicon: sendicon});
 	});
 });
 });
