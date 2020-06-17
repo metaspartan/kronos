@@ -58,17 +58,22 @@ block content
               th Options
           tbody
             each status in statuss
-              if (status.alias == null)
+              if (status.service != null)
                 tr
                   td(align='center')
                     | LOCAL FS 
                   td(align='center')
-                    if (status.status.toUpperCase() == 'ONLINE')
-                      .span(style='color: #42B905;') !{status.status.toUpperCase()}
+                    if (status.local_status != null)
+                      if (status.local_status.toUpperCase() == 'REGISTERED')
+                        .span(style='color: #42B905;') !{status.network_status.toUpperCase()}
+                      else
+                        | !{status.network_status.toUpperCase()} 
                     else
-                      | !{status.status.toUpperCase()} 
+                      | UNCONFIGURED
                   td(align='center')
+                    | !{status.service} 
                   td(align='center')
+                    | !{status.payment_address} 
                   td(align='center')
                   td(align='center')
                   td(align='center')
@@ -117,7 +122,7 @@ block content
                         | Start FS
             else
               br
-              h3(align='center', style='color: #bbb;') No FortunaStake Statuses Available     
+              h3(align='center', style='color: #bbb;') No FortunaStake Statuses Available
       h1(align='center', style='font-weight:100;font-size:63px;margin:50px;') FortunaStake Global List
       table.sortable#fst
         thead

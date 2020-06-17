@@ -433,6 +433,7 @@ si.currentLoad().then(data6 => {
 				walleticon = 'fa fa-5x fa-unlock-alt colory';
 				walletstatus = 'Unlocked for Staking Only';
 				walletlink = '#DisplayModalLock';
+				sendicon = 'display: none !important';
 			} else if (walletstatuss == 'unlocked') {
 				walleticon = 'fa fa-5x fa-unlock coloru';
 				walletstatus = 'Unlocked';
