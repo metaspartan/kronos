@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  .maincontent(style='border: none !important;')
+    .container(style='width:90%')
+      p(align='center')
+        h1(align='center', style='margin:30px;')
+          | Denarius Debug Log
+        p(align='center') Located at ~/snap/denarius/common/.denarius/debug.log
+      .row(class='rowclass')
+        .col-md-12(style='height:500px;overflow-y:auto;background-color:#000;border-radius:15px;')
+          if (lines)
+            each line in lines
+              | #{line}
+              br
+          else
+            p(align='center') Your Denarius daemon is using a different data directory than ~/snap/denarius/common/.denarius/

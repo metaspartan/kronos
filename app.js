@@ -30,6 +30,7 @@ const passwordProtected = require('express-password-protect');
 const upload = multer({ dest: path.join(__dirname, 'uploads') });
 const ip = require('ip');
 const shell = require('shelljs');
+const fs = require('fs');
 
 console.log('Your LAN', ip.address());
 
@@ -148,6 +149,8 @@ app.post('/verifymsg', walletController.verifyMsg);
 
 app.get('/backup', walletController.getBackup);
 app.post('/backupwallet', walletController.backupWallet);
+
+app.get('/ddebug', homeController.getDebugLog);
 
 /**
  * Error Handler.

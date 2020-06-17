@@ -16,6 +16,8 @@ const CryptoJS = require("crypto-js");
 const level = require('level');
 const bip39 = require("bip39");
 const bip32 = require("bip32d");
+const fs = require('fs');
+const split = require('split');
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
@@ -134,6 +136,68 @@ setTimeout(function bip39seed() {
 
 }, 300);
 
+// GET Denarius Debug Log File
+exports.getDebugLog = (req, res) => {
+
+	const debugloc = '~/snap/denarius/common/.denarius/debug.log';
+	//const testdebugloc = 'C:/Users/carse/AppData/Roaming/Denarius/debug.log';
+
+	fs.readFile(debugloc, (e, debuglog) => {
+
+		client.walletStatus(function (err, ws, resHeaders) {
+			if (err) {
+			  console.log(err);
+			  var offline = 'offlineoverlay';
+			  var offlinebtn = 'offlinebutton';
+			  var ws = '';
+			  var walletstatuss = 'locked';
+			  var sendicon = 'display: none !important';
+			} else {
+			  var offline = 'onlineoverlay';
+			  var offlinebtn = 'onlinebutton';
+		
+			  var walletstatuss = ws.wallet_status;
+			  var sendicon;
+			  
+			  if (walletstatuss == 'stakingonly') {
+						sendicon = 'display: none !important';
+					} else if (walletstatuss == 'unlocked') {
+						sendicon = 'display: visible !important;';
+					} else if (walletstatuss == 'unencrypted') {
+						sendicon = 'display: visible !important';
+					} else if (walletstatuss == 'locked') {
+						sendicon = 'display: none !important';
+					}
+			}
+		  client.getBalance(function (error, info, resHeaders) {
+			  if (error) {
+				var offline = 'offlineoverlay';
+				var offlinebtn = 'offlinebutton';
+				var balance = '0';
+				console.log(error);
+			  } else {
+				var offline = 'onlineoverlay';
+						var offlinebtn = 'onlinebutton';
+			  }
+		
+			  var chaindl = 'nooverlay';
+			  var chaindlbtn = 'nobtn';
+		
+			  var balance = info;
+		
+			  if (balance <= 0) {
+				balance = 0;
+			  }
+
+		var file = debuglog.toString();
+
+		const lines = file.split('\n');
+		
+		res.render('debug', {title: 'Denarius Debug Log', lines: lines, balance: balance, chaindl: chaindl, chaindlbtn: chaindlbtn, offline: offline, offlinebtn: offlinebtn, sendicon: sendicon});
+	});
+});
+});
+};
 
 //Get information
 exports.index = (req, res) => {
