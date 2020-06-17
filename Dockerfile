@@ -1,14 +1,14 @@
-FROM node:6-slim
+FROM node:10-slim
 
 COPY . /starter
 COPY package.json /starter/package.json
-COPY .env.example /starter/.env.example
+COPY .env /starter/.env
 
 WORKDIR /starter
 
 ENV NODE_ENV production
-RUN yarn install --production
+RUN npm install --production
 
 CMD ["npm","start"]
 
-EXPOSE 8888
+EXPOSE 3000
