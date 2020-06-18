@@ -398,6 +398,12 @@ exports.addresses = function (req, res) {
   //
   //
 
+  //Global Vars
+  var addressed;
+  var scripthasharray = [];
+  var promises = [];
+  var qr;
+
   client.walletStatus(function (err, ws, resHeaders) {
     if (err) {
       console.log(err);
@@ -456,6 +462,147 @@ exports.addresses = function (req, res) {
       var offline = 'onlineoverlay';
       var offlinebtn = 'onlinebutton';
 
+      addresses.forEach(address => {
+        const addressed = address.address; 
+
+        //Convert Address to Scripthash for ElectrumX Balance Fetching
+        const bytes = bs58.decode(addressed)
+        const byteshex = bytes.toString('hex');
+        const remove00 = byteshex.substring(2);
+        const removechecksum = remove00.substring(0, remove00.length-8);
+        const HASH160 = "76A914" + removechecksum.toUpperCase() + "88AC";
+        const BUFFHASH160 = Buffer.from(HASH160, "hex");
+        const shaaddress = sha256(BUFFHASH160);
+
+        const changeEndianness = (string) => {
+                const result = [];
+                let len = string.length - 2;
+                while (len >= 0) {
+                  result.push(string.substr(len, 2));
+                  len -= 2;
+                }
+                return result.join('');
+        }
+
+        const scripthash = changeEndianness(shaaddress);
+
+        const scripthasha = async () => {
+          // Initialize an electrum client.
+          const electrum = new ElectrumClient('dPi ElectrumX', '1.4.1', delectrumxhost);
+  
+          // Wait for the client to connect
+          await electrum.connect();  
+          
+          // Request the balance of the requested Scripthash D address
+          const balancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthash);
+
+          const balanceformatted = balancescripthash.confirmed;
+
+          const balancefinal = balanceformatted / 100000000;
+
+          await electrum.disconnect();
+  
+          return balancefinal;
+        }
+
+        const qrcodeasync = async () => {
+          const qrcoded = await QRCode.toDataURL(address.address, { color: { dark: '#000000FF', light:"#333333FF" } });
+
+          //console.log(qrcoded)
+
+          return qrcoded;
+        }
+
+        promises.push(new Promise((res, rej) => {
+          qrcodeasync().then(qrcodedata => {
+            scripthasha().then(globalData => {
+            
+            scripthasharray.push({address: addressed, qr: qrcodedata, scripthash: scripthash, balance: globalData});
+            res({addressed, qrcodedata, scripthash, globalData});
+
+          });
+          });  
+        }) );
+        
+
+      });
+
+      client.listReceivedByAddress(0, true, false, function (err, listaddresses, resHeaders) {
+        if (err) {
+          console.log(err);
+          var offline = 'offlineoverlay';
+          var offlinebtn = 'offlinebutton';
+          var addresses = 'Offline';
+        }
+  
+        var offline = 'onlineoverlay';
+        var offlinebtn = 'onlinebutton';
+
+        listaddresses.forEach(addi => {
+          const addressedd = addi.address;
+
+          //Convert Address to Scripthash for ElectrumX Balance Fetching
+          const bytes1 = bs58.decode(addressedd)
+          const byteshex1 = bytes1.toString('hex');
+          const remove001 = byteshex1.substring(2);
+          const removechecksum1 = remove001.substring(0, remove001.length-8);
+          const HASH1601 = "76A914" + removechecksum1.toUpperCase() + "88AC";
+          const BUFFHASH1601 = Buffer.from(HASH1601, "hex");
+          const shaaddress1 = sha256(BUFFHASH1601);
+
+          const changeEndianness = (string) => {
+                  const result = [];
+                  let len = string.length - 2;
+                  while (len >= 0) {
+                    result.push(string.substr(len, 2));
+                    len -= 2;
+                  }
+                  return result.join('');
+          }
+
+          const scripthash1 = changeEndianness(shaaddress1);
+
+          const scripthashb = async () => {
+            // Initialize an electrum client.
+            const electrum = new ElectrumClient('dPi ElectrumX', '1.4.1', delectrumxhost);
+    
+            // Wait for the client to connect
+            await electrum.connect();  
+            
+            // Request the balance of the requested Scripthash D address
+            const balancescripthash1 = await electrum.request('blockchain.scripthash.get_balance', scripthash1);
+
+            const balanceformatted1 = balancescripthash1.confirmed;
+
+            const balancefinal1 = balanceformatted1 / 100000000;
+
+            await electrum.disconnect();
+    
+            return balancefinal1;
+          }
+
+          const qrcodeasync = async () => {
+            const qrcoded1 = await QRCode.toDataURL(addi.address, { color: { dark: '#000000FF', light:"#333333FF" } });
+
+            //console.log(qrcoded)
+
+            return qrcoded1;
+          }
+
+          promises.push(new Promise((res, rej) => {
+            qrcodeasync().then(qrcodedata1 => {
+              scripthashb().then(globalData1 => {
+              
+              scripthasharray.push({address: addressedd, qr: qrcodedata1, scripthash: scripthash1, balance: globalData1});
+              res({addressed, qrcodedata1, scripthash1, globalData1});
+
+            });
+            });  
+          }) );
+          
+
+        });
+
       var account = '333D'; //Needs work
 
 		  client.getAddressesByAccount(`dpi(${account})`, async function (err, addressess, resHeaders) { //this isnt used by the foreach below
@@ -491,24 +638,19 @@ exports.addresses = function (req, res) {
         
         QRCode.toDataURL(addyy, { color: { dark: '#000000FF', light:"#333333FF" } }, function(err, addyqr) {
 
-        //Global Vars
-        var addressed;
-        var scripthasharray = [];
-        var promises = [];
-
         //Start ForEach Loops of Addresses to Scripthashes
 
-        addressess.forEach(address => {
-          const addressed = address;
+        addressess.forEach(addii => {
+          const addressed2 = addii;
 
           //Convert Address to Scripthash for ElectrumX Balance Fetching
-          const bytes = bs58.decode(addressed)
-          const byteshex = bytes.toString('hex');
-          const remove00 = byteshex.substring(2);
-          const removechecksum = remove00.substring(0, remove00.length-8);
-          const HASH160 = "76A914" + removechecksum.toUpperCase() + "88AC";
-          const BUFFHASH160 = Buffer.from(HASH160, "hex");
-          const shaaddress = sha256(BUFFHASH160);
+          const bytes2 = bs58.decode(addressed2)
+          const byteshex2 = bytes2.toString('hex');
+          const remove002 = byteshex2.substring(2);
+          const removechecksum2 = remove002.substring(0, remove002.length-8);
+          const HASH1602 = "76A914" + removechecksum2.toUpperCase() + "88AC";
+          const BUFFHASH1602 = Buffer.from(HASH1602, "hex");
+          const shaaddress2 = sha256(BUFFHASH1602);
           const changeEndianness = (string) => {
                   const result = [];
                   let len = string.length - 2;
@@ -519,7 +661,7 @@ exports.addresses = function (req, res) {
                   return result.join('');
           }
 
-          const scripthash = changeEndianness(shaaddress);
+          const scripthash2 = changeEndianness(shaaddress2);
 
           const scripthashe = async () => {
             // Initialize an electrum client.
@@ -529,101 +671,36 @@ exports.addresses = function (req, res) {
             await electrum.connect();  
             
             // Request the balance of the requested Scripthash D address
-            const balancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthash);
+            const balancescripthash2 = await electrum.request('blockchain.scripthash.get_balance', scripthash2);
 
-            const balanceformatted = balancescripthash.confirmed;
+            const balanceformatted2 = balancescripthash2.confirmed;
 
-            const balancefinal = balanceformatted / 100000000;
+            const balancefinal2 = balanceformatted2 / 100000000;
 
             await electrum.disconnect();
     
-            return balancefinal;
+            return balancefinal2;
           }
 
           const qrcodeasync = async () => {
-            const qrcoded = await QRCode.toDataURL(address, { color: { dark: '#000000FF', light:"#333333FF" } });
+            const qrcoded2 = await QRCode.toDataURL(addii, { color: { dark: '#000000FF', light:"#333333FF" } });
 
             //console.log(qrcoded)
 
-            return qrcoded;
+            return qrcoded2;
           }
 
 
           promises.push(new Promise((res, rej) => {
-            qrcodeasync().then(qrcodedata => {
-              scripthashe().then(globalData => {
+            qrcodeasync().then(qrcodedata2 => {
+              scripthashe().then(globalData2 => {
               
-              scripthasharray.push({address: addressed, qr: qrcodedata, scripthash: scripthash, balance: globalData});
-              res({addressed, qr, scripthash, globalData});
+              scripthasharray.push({address: addressed2, qr: qrcodedata2, scripthash: scripthash2, balance: globalData2});
+              res({addressed2, qrcodedata2, scripthash2, globalData2});
 
             });
             });  
           }) );
-
-        });
-
-        addresses.forEach(address => {
-          const addressed = address.address; 
-
-          //Convert Address to Scripthash for ElectrumX Balance Fetching
-          const bytes = bs58.decode(addressed)
-          const byteshex = bytes.toString('hex');
-          const remove00 = byteshex.substring(2);
-          const removechecksum = remove00.substring(0, remove00.length-8);
-          const HASH160 = "76A914" + removechecksum.toUpperCase() + "88AC";
-          const BUFFHASH160 = Buffer.from(HASH160, "hex");
-          const shaaddress = sha256(BUFFHASH160);
-
-          const changeEndianness = (string) => {
-                  const result = [];
-                  let len = string.length - 2;
-                  while (len >= 0) {
-                    result.push(string.substr(len, 2));
-                    len -= 2;
-                  }
-                  return result.join('');
-          }
-
-          const scripthash = changeEndianness(shaaddress);
-
-          const scripthashe = async () => {
-            // Initialize an electrum client.
-            const electrum = new ElectrumClient('dPi ElectrumX', '1.4.1', delectrumxhost);
-    
-            // Wait for the client to connect
-            await electrum.connect();  
-            
-            // Request the balance of the requested Scripthash D address
-            const balancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthash);
-
-            const balanceformatted = balancescripthash.confirmed;
-
-            const balancefinal = balanceformatted / 100000000;
-
-            await electrum.disconnect();
-    
-            return balancefinal;
-          }
-
-          const qrcodeasync = async () => {
-            const qrcoded = await QRCode.toDataURL(address.address, { color: { dark: '#000000FF', light:"#333333FF" } });
-
-            //console.log(qrcoded)
-
-            return qrcoded;
-          }
-
-          promises.push(new Promise((res, rej) => {
-            qrcodeasync().then(qrcodedata => {
-              scripthashe().then(globalData => {
-              
-              scripthasharray.push({address: addressed, qr: qrcodedata, scripthash: scripthash, balance: globalData});
-              res({addressed, qr, scripthash, globalData});
-
-            });
-            });  
-          }) );
-          
 
         });
 
@@ -650,6 +727,7 @@ exports.addresses = function (req, res) {
       
     });
       });
+});
 });
 });
 });

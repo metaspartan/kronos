@@ -74,7 +74,7 @@ block content
         br
         strong #{privkey}
   .row
-    if (addresses)
+    if (scripthasharray)
       each address in scripthasharray
         .col-lg-3
           .addi(style='background-color: #151515;border-color: #444; padding:30px; margin: 10px; border-radius:15px;')
@@ -89,7 +89,7 @@ block content
               .span(style='color:#999;font-size:21px;text-align:center;') #{address.balance} D
     else
       br
-      h3(align='center', style='color: #bbb;') No Unspent Addresses Available
+      h3(align='center', style='color: #bbb;') No Addresses Available
   br
   p(align='center')
     a.btn.btn-default(href='/', role='button') Go back to the Dashboard     
