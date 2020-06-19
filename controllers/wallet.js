@@ -477,9 +477,7 @@ exports.addresses = function (req, res) {
         //Convert P2PK Address to Scripthash for ElectrumX Balance Fetching
         const bytesp = bs58.decode(addressed)
         const byteshexp = bytesp.toString('hex');
-        const remove00p = byteshexp.substring(2);
-        const removechecksump = remove00p.substring(0, remove00p.length-8);
-        const HASH160p = "21" + removechecksump.toUpperCase() + "AC";
+        const HASH160p = "21" + byteshexp.toUpperCase() + "AC";
         const BUFFHASH160p = Buffer.from(HASH160p, "hex");
         const shaaddressp = sha256(BUFFHASH160p);
 
@@ -609,9 +607,7 @@ exports.addresses = function (req, res) {
             //Convert P2PK Address to Scripthash for ElectrumX Balance Fetching
             const bytes1p = bs58.decode(addressedd)
             const byteshex1p = bytes1p.toString('hex');
-            const remove001p = byteshex1p.substring(2);
-            const removechecksum1p = remove001p.substring(0, remove001p.length-8);
-            const HASH1601p = "21" + removechecksum1p.toUpperCase() + "AC";
+            const HASH1601p = "21" + byteshex1p.toUpperCase() + "AC";
             const BUFFHASH1601p = Buffer.from(HASH1601p, "hex");
             const shaaddress1p = sha256(BUFFHASH1601p);
 
@@ -736,9 +732,7 @@ exports.addresses = function (req, res) {
           //Convert P2PK Address to Scripthash for ElectrumX Balance Fetching
           const bytes2p = bs58.decode(addressed2)
           const byteshex2p = bytes2p.toString('hex');
-          const remove002p = byteshex2p.substring(2);
-          const removechecksum2p = remove002p.substring(0, remove002p.length-8);
-          const HASH1602p = "21" + removechecksum2p.toUpperCase() + "AC";
+          const HASH1602p = "21" + byteshex2p.toUpperCase() + "AC";
           const BUFFHASH1602p = Buffer.from(HASH1602p, "hex");
           const shaaddress2p = sha256(BUFFHASH1602p);
 
