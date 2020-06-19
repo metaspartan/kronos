@@ -491,7 +491,19 @@ exports.addresses = function (req, res) {
           const electrum = new ElectrumClient('dPi ElectrumX', '1.4.1', delectrumxhost);
   
           // Wait for the client to connect
-          await electrum.connect();  
+          await electrum.connect();
+
+          // Initialize an Electrum cluster where 1 out of 4 needs to be consistent, polled randomly with fail-over.
+          // const electrum = new ElectrumCluster('dPi ElectrumX Cluster', '1.4.1', 1, 4, ElectrumCluster.ORDER.RANDOM);
+          
+          // Add some servers to the cluster.
+          // electrum.addServer('electrumx1.denarius.pro');
+          // electrum.addServer('electrumx2.denarius.pro');
+          // electrum.addServer('electrumx3.denarius.pro');
+          // electrum.addServer('electrumx4.denarius.pro');
+          
+          // Wait for enough connections to be available.
+          // await electrum.ready();
           
           // Request the balance of the requested Scripthash D address
           const balancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthash);
@@ -501,6 +513,7 @@ exports.addresses = function (req, res) {
           const balancefinal = balanceformatted / 100000000;
 
           await electrum.disconnect();
+          // await electrum.shutdown();
   
           return balancefinal;
         }
@@ -539,7 +552,29 @@ exports.addresses = function (req, res) {
         var offlinebtn = 'onlinebutton';
 
         listaddresses.forEach(addi => {
-          const addressedd = addi.address;
+          var addressedd = addi.address;
+
+          client.validateAddress(addressedd, function (error, returnedaddy, resHeaders) {
+            if (error) {
+              var offline = 'offlineoverlay';
+              var offlinebtn = 'offlinebutton';
+              var returnedaddy = 'Offline';
+              console.log(error);
+            } else {
+              var offline = 'onlineoverlay';
+              var offlinebtn = 'onlinebutton';
+            }
+        
+            var chaindl = 'nooverlay';
+            var chaindlbtn = 'nobtn';
+        
+            var validationdata = returnedaddy.ismine;
+
+            if (validationdata == true) {
+              addressedd = addi.address;
+            } else {
+              addressedd = '';
+            }       
 
           //Convert Address to Scripthash for ElectrumX Balance Fetching
           const bytes1 = bs58.decode(addressedd)
@@ -599,7 +634,7 @@ exports.addresses = function (req, res) {
             });
             });  
           }) );
-          
+        });
 
         });
 

@@ -1,6 +1,7 @@
 extends ../layout
 
 block content
+  script(src='//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js')
   script.
     function show() {
       var x = document.getElementById('box');
@@ -16,6 +17,15 @@ block content
     function getaddress() {
       $('#sendaddy').submit();
     }
+    function toggle() {
+      if ($('#toggle').is(":checked")) {
+        $("#menu1").show();
+        $("#menu2").hide();
+      } else {
+        $("#menu1").hide();
+        $("#menu2").show();
+      }
+    };
   .mainDiv
     #DisplayModalPrivKey.modal
       .modal-dialog
@@ -73,7 +83,12 @@ block content
         em Write down or import your private key into Denarius-QT or denariusd to access your main wallet address
         br
         strong #{privkey}
-  .row
+    .row
+      .col-md-12(align='center')
+        label.switch(align='center')
+          input(type='checkbox', id='toggle', checked='true', onclick='toggle()')
+          span.slider.round(align='center')
+  .row(id="menu1")
     if (scripthasharray)
       each address in scripthasharray
         .col-lg-3
@@ -87,6 +102,25 @@ block content
             p(align='center')
               .span(style='font-size:16px;text-align:center;color:#777;') Balance
               .span(style='color:#999;font-size:21px;text-align:center;') #{address.balance} D
+    else
+      br
+      h3(align='center', style='color: #bbb;') No Addresses Available
+  .row.container(id="menu2", style='margin: 0 auto; margin-top:15px;')
+    if (scripthasharray)
+      table.sortable#fst
+        thead
+          tr
+            th QR
+            th Addresss
+            th Balance
+        tbody
+          each address in scripthasharray
+            tr
+              td(align='center')
+                a(href='denarius:' + address.address)
+                  img(src='' + address.qr, align='center', style='width:75px;border-radius:10px;')
+              td(align='center') #{address.address}
+              td(align='center') #{address.balance} D
     else
       br
       h3(align='center', style='color: #bbb;') No Addresses Available
