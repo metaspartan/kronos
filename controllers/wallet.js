@@ -577,64 +577,71 @@ exports.addresses = function (req, res) {
             }       
 
           //Convert Address to Scripthash for ElectrumX Balance Fetching
-          const bytes1 = bs58.decode(addressedd)
-          const byteshex1 = bytes1.toString('hex');
-          const remove001 = byteshex1.substring(2);
-          const removechecksum1 = remove001.substring(0, remove001.length-8);
-          const HASH1601 = "76A914" + removechecksum1.toUpperCase() + "88AC";
-          const BUFFHASH1601 = Buffer.from(HASH1601, "hex");
-          const shaaddress1 = sha256(BUFFHASH1601);
+          if (addressedd != '') {
+            const bytes1 = bs58.decode(addressedd)
+            const byteshex1 = bytes1.toString('hex');
+            const remove001 = byteshex1.substring(2);
+            const removechecksum1 = remove001.substring(0, remove001.length-8);
+            const HASH1601 = "76A914" + removechecksum1.toUpperCase() + "88AC";
+            const BUFFHASH1601 = Buffer.from(HASH1601, "hex");
+            const shaaddress1 = sha256(BUFFHASH1601);
 
-          const changeEndianness = (string) => {
-                  const result = [];
-                  let len = string.length - 2;
-                  while (len >= 0) {
-                    result.push(string.substr(len, 2));
-                    len -= 2;
-                  }
-                  return result.join('');
-          }
+            const changeEndianness = (string) => {
+                    const result = [];
+                    let len = string.length - 2;
+                    while (len >= 0) {
+                      result.push(string.substr(len, 2));
+                      len -= 2;
+                    }
+                    return result.join('');
+            }
 
-          const scripthash1 = changeEndianness(shaaddress1);
+            const scripthash1 = changeEndianness(shaaddress1);
 
-          const scripthashb = async () => {
-            // Initialize an electrum client.
-            const electrum = new ElectrumClient('dPi ElectrumX', '1.4.1', delectrumxhost);
-    
-            // Wait for the client to connect
-            await electrum.connect();  
-            
-            // Request the balance of the requested Scripthash D address
-            const balancescripthash1 = await electrum.request('blockchain.scripthash.get_balance', scripthash1);
-
-            const balanceformatted1 = balancescripthash1.confirmed;
-
-            const balancefinal1 = balanceformatted1 / 100000000;
-
-            await electrum.disconnect();
-    
-            return balancefinal1;
-          }
-
-          const qrcodeasync = async () => {
-            const qrcoded1 = await QRCode.toDataURL(addi.address, { color: { dark: '#000000FF', light:"#333333FF" } });
-
-            //console.log(qrcoded)
-
-            return qrcoded1;
-          }
-
-          promises.push(new Promise((res, rej) => {
-            qrcodeasync().then(qrcodedata1 => {
-              scripthashb().then(globalData1 => {
+            const scripthashb = async () => {
+              // Initialize an electrum client.
+              const electrum = new ElectrumClient('dPi ElectrumX', '1.4.1', delectrumxhost);
+      
+              // Wait for the client to connect
+              await electrum.connect();  
               
-              scripthasharray.push({address: addressedd, qr: qrcodedata1, scripthash: scripthash1, balance: globalData1});
-              res({addressed, qrcodedata1, scripthash1, globalData1});
+              // Request the balance of the requested Scripthash D address
+              const balancescripthash1 = await electrum.request('blockchain.scripthash.get_balance', scripthash1);
 
-            });
-            });  
-          }) );
+              const balanceformatted1 = balancescripthash1.confirmed;
+
+              const balancefinal1 = balanceformatted1 / 100000000;
+
+              await electrum.disconnect();
+      
+              return balancefinal1;
+            }
+
+            const qrcodeasync = async () => {
+              if (addressedd != '') {
+                const qrcoded1 = await QRCode.toDataURL(addressedd, { color: { dark: '#000000FF', light:"#333333FF" } });
+
+                return qrcoded1;
+              } else {
+                const qrcoded1 = '';
+
+                return qrcoded1;
+              }
+            }
+
+            promises.push(new Promise((res, rej) => {
+              qrcodeasync().then(qrcodedata1 => {
+                scripthashb().then(globalData1 => {
+                
+                scripthasharray.push({address: addressedd, qr: qrcodedata1, scripthash: scripthash1, balance: globalData1});
+                res({addressed, qrcodedata1, scripthash1, globalData1});
+
+              });
+              });  
+            }) );
+          }
         });
+        
 
         });
 
