@@ -465,7 +465,7 @@ exports.addresses = function (req, res) {
       addresses.forEach(address => {
         const addressed = address.address; 
 
-        //Convert Address to Scripthash for ElectrumX Balance Fetching
+        //Convert P2PKH Address to Scripthash for ElectrumX Balance Fetching
         const bytes = bs58.decode(addressed)
         const byteshex = bytes.toString('hex');
         const remove00 = byteshex.substring(2);
@@ -473,6 +473,15 @@ exports.addresses = function (req, res) {
         const HASH160 = "76A914" + removechecksum.toUpperCase() + "88AC";
         const BUFFHASH160 = Buffer.from(HASH160, "hex");
         const shaaddress = sha256(BUFFHASH160);
+
+        //Convert P2PK Address to Scripthash for ElectrumX Balance Fetching
+        const bytesp = bs58.decode(addressed)
+        const byteshexp = bytesp.toString('hex');
+        const remove00p = byteshexp.substring(2);
+        const removechecksump = remove00p.substring(0, remove00p.length-8);
+        const HASH160p = "21" + removechecksump.toUpperCase() + "AC";
+        const BUFFHASH160p = Buffer.from(HASH160p, "hex");
+        const shaaddressp = sha256(BUFFHASH160p);
 
         const changeEndianness = (string) => {
                 const result = [];
@@ -485,6 +494,7 @@ exports.addresses = function (req, res) {
         }
 
         const scripthash = changeEndianness(shaaddress);
+        const scripthashp2pk = changeEndianness(shaaddressp);
 
         const scripthasha = async () => {
           // Initialize an electrum client.
@@ -508,14 +518,22 @@ exports.addresses = function (req, res) {
           // Request the balance of the requested Scripthash D address
           const balancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthash);
 
+          const p2pkbalancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthashp2pk);
+
           const balanceformatted = balancescripthash.confirmed;
 
+          const p2pkbalanceformatted = p2pkbalancescripthash.confirmed;
+
           const balancefinal = balanceformatted / 100000000;
+
+          const p2pkbalancefinal = p2pkbalanceformatted / 100000000;
+
+          const addedbalance = balancefinal + p2pkbalancefinal;
 
           await electrum.disconnect();
           // await electrum.shutdown();
   
-          return balancefinal;
+          return addedbalance;
         }
 
         const qrcodeasync = async () => {
@@ -576,8 +594,10 @@ exports.addresses = function (req, res) {
               addressedd = '';
             }       
 
-          //Convert Address to Scripthash for ElectrumX Balance Fetching
+
           if (addressedd != '') {
+
+            //Convert P2PKH Address to Scripthash for ElectrumX Balance Fetching
             const bytes1 = bs58.decode(addressedd)
             const byteshex1 = bytes1.toString('hex');
             const remove001 = byteshex1.substring(2);
@@ -585,6 +605,15 @@ exports.addresses = function (req, res) {
             const HASH1601 = "76A914" + removechecksum1.toUpperCase() + "88AC";
             const BUFFHASH1601 = Buffer.from(HASH1601, "hex");
             const shaaddress1 = sha256(BUFFHASH1601);
+
+            //Convert P2PK Address to Scripthash for ElectrumX Balance Fetching
+            const bytes1p = bs58.decode(addressedd)
+            const byteshex1p = bytes1p.toString('hex');
+            const remove001p = byteshex1p.substring(2);
+            const removechecksum1p = remove001p.substring(0, remove001p.length-8);
+            const HASH1601p = "21" + removechecksum1p.toUpperCase() + "AC";
+            const BUFFHASH1601p = Buffer.from(HASH1601p, "hex");
+            const shaaddress1p = sha256(BUFFHASH1601p);
 
             const changeEndianness = (string) => {
                     const result = [];
@@ -598,6 +627,8 @@ exports.addresses = function (req, res) {
 
             const scripthash1 = changeEndianness(shaaddress1);
 
+            const p2pkscripthash1 = changeEndianness(shaaddress1p);
+
             const scripthashb = async () => {
               // Initialize an electrum client.
               const electrum = new ElectrumClient('dPi ElectrumX', '1.4.1', delectrumxhost);
@@ -607,14 +638,22 @@ exports.addresses = function (req, res) {
               
               // Request the balance of the requested Scripthash D address
               const balancescripthash1 = await electrum.request('blockchain.scripthash.get_balance', scripthash1);
+              
+              const p2pkbalancescripthash1 = await electrum.request('blockchain.scripthash.get_balance', p2pkscripthash1);
 
               const balanceformatted1 = balancescripthash1.confirmed;
 
+              const p2pkbalanceformatted1 = p2pkbalancescripthash1.confirmed;
+
               const balancefinal1 = balanceformatted1 / 100000000;
+
+              const p2pkbalancefinal1 = p2pkbalanceformatted1 / 100000000;
+
+              const addedbalance1 = balancefinal1 + p2pkbalancefinal1;
 
               await electrum.disconnect();
       
-              return balancefinal1;
+              return addedbalance1;
             }
 
             const qrcodeasync = async () => {
@@ -685,7 +724,7 @@ exports.addresses = function (req, res) {
         addressess.forEach(addii => {
           const addressed2 = addii;
 
-          //Convert Address to Scripthash for ElectrumX Balance Fetching
+          //Convert P2PKH Address to Scripthash for ElectrumX Balance Fetching
           const bytes2 = bs58.decode(addressed2)
           const byteshex2 = bytes2.toString('hex');
           const remove002 = byteshex2.substring(2);
@@ -693,6 +732,16 @@ exports.addresses = function (req, res) {
           const HASH1602 = "76A914" + removechecksum2.toUpperCase() + "88AC";
           const BUFFHASH1602 = Buffer.from(HASH1602, "hex");
           const shaaddress2 = sha256(BUFFHASH1602);
+
+          //Convert P2PK Address to Scripthash for ElectrumX Balance Fetching
+          const bytes2p = bs58.decode(addressed2)
+          const byteshex2p = bytes2p.toString('hex');
+          const remove002p = byteshex2p.substring(2);
+          const removechecksum2p = remove002p.substring(0, remove002p.length-8);
+          const HASH1602p = "21" + removechecksum2p.toUpperCase() + "AC";
+          const BUFFHASH1602p = Buffer.from(HASH1602p, "hex");
+          const shaaddress2p = sha256(BUFFHASH1602p);
+
           const changeEndianness = (string) => {
                   const result = [];
                   let len = string.length - 2;
@@ -705,6 +754,8 @@ exports.addresses = function (req, res) {
 
           const scripthash2 = changeEndianness(shaaddress2);
 
+          const p2pkscripthash2 = changeEndianness(shaaddress2p);
+
           const scripthashe = async () => {
             // Initialize an electrum client.
             const electrum = new ElectrumClient('dPi ElectrumX', '1.4.1', delectrumxhost);
@@ -714,14 +765,22 @@ exports.addresses = function (req, res) {
             
             // Request the balance of the requested Scripthash D address
             const balancescripthash2 = await electrum.request('blockchain.scripthash.get_balance', scripthash2);
+              
+            const p2pkbalancescripthash2 = await electrum.request('blockchain.scripthash.get_balance', p2pkscripthash2);
 
             const balanceformatted2 = balancescripthash2.confirmed;
 
+            const p2pkbalanceformatted2 = p2pkbalancescripthash2.confirmed;
+
             const balancefinal2 = balanceformatted2 / 100000000;
+
+            const p2pkbalancefinal2 = p2pkbalanceformatted2 / 100000000;
+
+            const addedbalance2 = balancefinal2 + p2pkbalancefinal2;
 
             await electrum.disconnect();
     
-            return balancefinal2;
+            return addedbalance2;
           }
 
           const qrcodeasync = async () => {

@@ -1,7 +1,6 @@
 extends ../layout
 
 block content
-  script(src='/js/reload.js')
   script.
     function confirmedstart() {
       $('#startfs').submit();
@@ -41,6 +40,19 @@ block content
             small(align='center', style='color: #42B905;') • FortunaStakes Online
     .row
     div(style='overflow-x:auto;background-color:#111;')
+      div(align='center', style='top: 17px;position:relative;padding-right:15px;float:right;')
+        span(style='margin-right:10px;position:relative;top:-16px;') Auto Refresh
+        label.switch2(align='center')
+          input#autoRefreshCheckbox(type='checkbox', value='true', checked='checked')
+          span.slider2.round(align='center')
+        script(type='text/javascript').
+          setInterval(function ()
+          {
+          if (document.getElementById('autoRefreshCheckbox').checked)
+          {
+          window.location=window.location;
+          }
+          }, 30000); // 30 seconds for auto refresh enabled
       if (statuss)
         h1(align='center', style='font-weight:100;font-size:63px;margin:50px;') My FS Node Status
         table.sortable#fst
