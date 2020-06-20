@@ -487,7 +487,7 @@ exports.addresses = function (req, res) {
             var compressedpubkey = returnedaddi.pubkey;
           } else {
             addressed = '';
-          }    
+          }
 
         //Convert P2PKH Address to Scripthash for ElectrumX Balance Fetching
         const bytes = bs58.decode(addressed)
@@ -531,7 +531,7 @@ exports.addresses = function (req, res) {
 
           // const bytes1p = uncompressedpubkey;
           const byteshex1 = instantiateSecp256k1.binToHex(uncompressedpubkey);
-          const HASH1601 = compressedpubkey.toUpperCase() + "AC"; // "41 or 21" before? OP_CHECKSIG
+          const HASH1601 =  "21" + compressedpubkey.toUpperCase() + "AC"; // 21 + COMPRESSED PUBKEY + OP_CHECKSIG = P2PK
           const BUFFHASH1601 = Buffer.from(HASH1601, "hex");
           const shaaddress1 = sha256(BUFFHASH1601);
 
@@ -560,6 +560,7 @@ exports.addresses = function (req, res) {
           // await electrum.ready();
           
           // Request the balance of the requested Scripthash D address
+
           const balancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthash);
 
           const p2pkbalancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthashp2pk);
@@ -685,7 +686,7 @@ exports.addresses = function (req, res) {
 
               // const bytes1p = uncompressedpubkey;
               const byteshex1p = instantiateSecp256k1.binToHex(uncompressedpubkey);
-              const HASH1601p = compressedpubkey.toUpperCase() + "AC"; // "41 or 21" before? OP_CHECKSIG
+              const HASH1601p = "21" + compressedpubkey.toUpperCase() + "AC"; // 21 + COMPRESSED PUBKEY + OP_CHECKSIG = P2PK
               const BUFFHASH1601p = Buffer.from(HASH1601p, "hex");
               const shaaddress1p = sha256(BUFFHASH1601p);
 
@@ -855,7 +856,7 @@ exports.addresses = function (req, res) {
             //console.log(instantiateSecp256k1.binToHex(uncompressedpubkey));
 
             const byteshex2p = instantiateSecp256k1.binToHex(uncompressedpubkey);
-            const HASH1602p = compressedpubkey2.toUpperCase() + "AC"; // "41 or 21" before? OP_CHECKSIG
+            const HASH1602p = "21" + compressedpubkey2.toUpperCase() + "AC"; // "21" + COMPRESSED PUB KEY + OP_CHECKSIG
             const BUFFHASH1602p = Buffer.from(HASH1602p, "hex");
             const shaaddress2p = sha256(BUFFHASH1602p);
 

@@ -1,6 +1,6 @@
 {
   "name": "dPi",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "A Dashboard styled wallet for denariusd in NodeJS for Raspberry Pis & other Linux distros",
   "repository": {
     "type": "git",
