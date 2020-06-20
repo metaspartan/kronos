@@ -520,9 +520,9 @@ exports.addresses = function (req, res) {
 
           //Convert P2PK Address to Scripthash for ElectrumX Balance Fetching
           //Convert Compressed Pub Key to Uncompressed
-          const secp256k1 = await  instantiateSecp256k1.instantiateSecp256k1();
+          const secp256k1 = await instantiateSecp256k1.instantiateSecp256k1();
 
-          const compressed = instantiateSecp256k1.hexToBin(compressedpubkey);
+          const compressed = await instantiateSecp256k1.hexToBin(compressedpubkey);
 
           const uncompressedpubkey = secp256k1.uncompressPublicKey(compressed);
 
@@ -531,7 +531,7 @@ exports.addresses = function (req, res) {
 
           // const bytes1p = uncompressedpubkey;
           const byteshex1 = instantiateSecp256k1.binToHex(uncompressedpubkey);
-          const HASH1601 = "41" + byteshex1.toUpperCase() + "AC"; // "41 or 21" before?
+          const HASH1601 = byteshex1.toUpperCase() + "AC"; // "41 or 21" before? OP_CHECKSIG
           const BUFFHASH1601 = Buffer.from(HASH1601, "hex");
           const shaaddress1 = sha256(BUFFHASH1601);
 
@@ -674,9 +674,9 @@ exports.addresses = function (req, res) {
 
               //Convert P2PK Address to Scripthash for ElectrumX Balance Fetching
               //Convert Compressed Pub Key to Uncompressed
-              const secp256k1 = await  instantiateSecp256k1.instantiateSecp256k1();
+              const secp256k1 = await instantiateSecp256k1.instantiateSecp256k1();
 
-              const compressed = instantiateSecp256k1.hexToBin(compressedpubkey);
+              const compressed = await instantiateSecp256k1.hexToBin(compressedpubkey);
 
               const uncompressedpubkey = secp256k1.uncompressPublicKey(compressed);
 
@@ -685,7 +685,7 @@ exports.addresses = function (req, res) {
 
               // const bytes1p = uncompressedpubkey;
               const byteshex1p = instantiateSecp256k1.binToHex(uncompressedpubkey);
-              const HASH1601p = "41" + byteshex1p.toUpperCase() + "AC"; // "41 or 21" before?
+              const HASH1601p = byteshex1p.toUpperCase() + "AC"; // "41 or 21" before? OP_CHECKSIG
               const BUFFHASH1601p = Buffer.from(HASH1601p, "hex");
               const shaaddress1p = sha256(BUFFHASH1601p);
 
@@ -740,7 +740,9 @@ exports.addresses = function (req, res) {
                 scripthasharray.push({address: addressedd, qr: qrcodedata1, scripthash: scripthash1, balance: globalData1});
                 res({addressed, qrcodedata1, scripthash1, globalData1});
 
-              });
+              }).catch(function(err) {
+                console.log("Error", err);
+            });
               });  
             }) );
           }
@@ -787,7 +789,30 @@ exports.addresses = function (req, res) {
         //Start ForEach Loops of Addresses to Scripthashes
 
         addressess.forEach(addii => {
-          const addressed2 = addii;
+          var addressed2 = addii;
+
+          client.validateAddress(addressed2, function (error, returnedaddii, resHeaders) {
+            if (error) {
+              var offline = 'offlineoverlay';
+              var offlinebtn = 'offlinebutton';
+              var returnedaddii = 'Offline';
+              console.log(error);
+            } else {
+              var offline = 'onlineoverlay';
+              var offlinebtn = 'onlinebutton';
+            }
+        
+            var chaindl = 'nooverlay';
+            var chaindlbtn = 'nobtn';
+        
+            var validationdata = returnedaddii.ismine;
+  
+            if (validationdata == true) {
+              addressed2 = addii;              
+              var compressedpubkey2 = returnedaddii.pubkey;
+            } else {
+              addressed2 = '';
+            }
 
           //Convert P2PKH Address to Scripthash for ElectrumX Balance Fetching
           const bytes2 = bs58.decode(addressed2)
@@ -821,49 +846,49 @@ exports.addresses = function (req, res) {
 
             //Convert P2PK Address to Scripthash for ElectrumX Balance Fetching
             //Convert Compressed Pub Key to Uncompressed
-            // const secp256k1 = await  instantiateSecp256k1.instantiateSecp256k1();
+            const secp256k1 = await instantiateSecp256k1.instantiateSecp256k1();
 
-            // const compressed = instantiateSecp256k1.hexToBin(compressedpubkey);
+            const compressed = await instantiateSecp256k1.hexToBin(compressedpubkey2);
 
-            // const uncompressedpubkey = secp256k1.uncompressPublicKey(compressed);
+            const uncompressedpubkey = secp256k1.uncompressPublicKey(compressed);
 
-            // console.log(instantiateSecp256k1.binToHex(uncompressedpubkey));
+            //console.log(instantiateSecp256k1.binToHex(uncompressedpubkey));
 
-            // const byteshex2p = instantiateSecp256k1.binToHex(uncompressedpubkey);
-            // const HASH1602p = "41" + byteshex2p.toUpperCase() + "AC"; // "41 or 21" before?
-            // const BUFFHASH1602p = Buffer.from(HASH1602p, "hex");
-            // const shaaddress2p = sha256(BUFFHASH1602p);
+            const byteshex2p = instantiateSecp256k1.binToHex(uncompressedpubkey);
+            const HASH1602p = byteshex2p.toUpperCase() + "AC"; // "41 or 21" before? OP_CHECKSIG
+            const BUFFHASH1602p = Buffer.from(HASH1602p, "hex");
+            const shaaddress2p = sha256(BUFFHASH1602p);
 
-            // const changeEndianness = (string) => {
-            //         const result = [];
-            //         let len = string.length - 2;
-            //         while (len >= 0) {
-            //           result.push(string.substr(len, 2));
-            //           len -= 2;
-            //         }
-            //         return result.join('');
-            // }
+            const changeEndianness = (string) => {
+                    const result = [];
+                    let len = string.length - 2;
+                    while (len >= 0) {
+                      result.push(string.substr(len, 2));
+                      len -= 2;
+                    }
+                    return result.join('');
+            }
             
-            // const p2pkscripthash2 = changeEndianness(shaaddress2p);
+            const p2pkscripthash2 = changeEndianness(shaaddress2p);
             
             // Request the balance of the requested Scripthash D address
             const balancescripthash2 = await electrum.request('blockchain.scripthash.get_balance', scripthash2);
               
-            // const p2pkbalancescripthash2 = await electrum.request('blockchain.scripthash.get_balance', p2pkscripthash2);
+            const p2pkbalancescripthash2 = await electrum.request('blockchain.scripthash.get_balance', p2pkscripthash2);
 
             const balanceformatted2 = balancescripthash2.confirmed;
 
-            // const p2pkbalanceformatted2 = p2pkbalancescripthash2.confirmed;
+            const p2pkbalanceformatted2 = p2pkbalancescripthash2.confirmed;
 
             const balancefinal2 = balanceformatted2 / 100000000;
 
-            // const p2pkbalancefinal2 = p2pkbalanceformatted2 / 100000000;
+            const p2pkbalancefinal2 = p2pkbalanceformatted2 / 100000000;
 
-            // const addedbalance2 = balancefinal2 + p2pkbalancefinal2;
+            const addedbalance2 = balancefinal2 + p2pkbalancefinal2;
 
             await electrum.disconnect();
     
-            return balancefinal2;
+            return addedbalance2;
           }
 
           const qrcodeasync = async () => {
@@ -882,9 +907,13 @@ exports.addresses = function (req, res) {
               scripthasharray.push({address: addressed2, qr: qrcodedata2, scripthash: scripthash2, balance: globalData2});
               res({addressed2, qrcodedata2, scripthash2, globalData2});
 
-            });
+            }).catch(function(err) {
+              console.log("Error", err);
+          });
             });  
           }) );
+
+        });
 
         });
 
