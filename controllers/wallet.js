@@ -531,7 +531,7 @@ exports.addresses = function (req, res) {
 
           // const bytes1p = uncompressedpubkey;
           const byteshex1 = instantiateSecp256k1.binToHex(uncompressedpubkey);
-          const HASH1601 = byteshex1.toUpperCase() + "AC"; // "41 or 21" before? OP_CHECKSIG
+          const HASH1601 = "21" + byteshex1.toUpperCase() + "AC"; // "41 or 21" before? OP_CHECKSIG
           const BUFFHASH1601 = Buffer.from(HASH1601, "hex");
           const shaaddress1 = sha256(BUFFHASH1601);
 
@@ -685,7 +685,7 @@ exports.addresses = function (req, res) {
 
               // const bytes1p = uncompressedpubkey;
               const byteshex1p = instantiateSecp256k1.binToHex(uncompressedpubkey);
-              const HASH1601p = byteshex1p.toUpperCase() + "AC"; // "41 or 21" before? OP_CHECKSIG
+              const HASH1601p = "21" + byteshex1p.toUpperCase() + "AC"; // "41 or 21" before? OP_CHECKSIG
               const BUFFHASH1601p = Buffer.from(HASH1601p, "hex");
               const shaaddress1p = sha256(BUFFHASH1601p);
 
@@ -855,7 +855,7 @@ exports.addresses = function (req, res) {
             //console.log(instantiateSecp256k1.binToHex(uncompressedpubkey));
 
             const byteshex2p = instantiateSecp256k1.binToHex(uncompressedpubkey);
-            const HASH1602p = byteshex2p.toUpperCase() + "AC"; // "41 or 21" before? OP_CHECKSIG
+            const HASH1602p = "21" + byteshex2p.toUpperCase() + "AC"; // "41 or 21" before? OP_CHECKSIG
             const BUFFHASH1602p = Buffer.from(HASH1602p, "hex");
             const shaaddress2p = sha256(BUFFHASH1602p);
 
