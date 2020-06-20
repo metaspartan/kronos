@@ -509,7 +509,6 @@ exports.addresses = function (req, res) {
         }
 
         const scripthash = changeEndianness(shaaddress);
-        // const scripthashp2pk = changeEndianness(shaaddressp);
 
         const scripthasha = async () => {
           // Initialize an electrum client.
@@ -520,17 +519,6 @@ exports.addresses = function (req, res) {
 
           //Convert P2PK Address to Scripthash for ElectrumX Balance Fetching
           //Convert Compressed Pub Key to Uncompressed
-          const secp256k1 = await instantiateSecp256k1.instantiateSecp256k1();
-
-          const compressed = await instantiateSecp256k1.hexToBin(compressedpubkey);
-
-          const uncompressedpubkey = secp256k1.uncompressPublicKey(compressed);
-
-          //console.log(instantiateSecp256k1.binToHex(uncompressedpubkey));
-          // => 04ad90e5b6bc86b3ec7fac2c5fbda7423fc8ef0d58df594c773fa05e2c281b2bfe877677c668bd13603944e34f4818ee03cadd81a88542b8b4d5431264180e2c28
-
-          // const bytes1p = uncompressedpubkey;
-          const byteshex1 = instantiateSecp256k1.binToHex(uncompressedpubkey);
           const HASH1601 =  "21" + compressedpubkey.toUpperCase() + "AC"; // 21 + COMPRESSED PUBKEY + OP_CHECKSIG = P2PK
           const BUFFHASH1601 = Buffer.from(HASH1601, "hex");
           const shaaddress1 = sha256(BUFFHASH1601);
@@ -664,8 +652,6 @@ exports.addresses = function (req, res) {
 
             const scripthash1 = changeEndianness(shaaddress1);
 
-            // const p2pkscripthash1 = changeEndianness(shaaddress1p);
-
             const scripthashb = async () => {
               // Initialize an electrum client.
               const electrum = new ElectrumClient('dPi ElectrumX', '1.4.1', delectrumxhost);
@@ -674,18 +660,7 @@ exports.addresses = function (req, res) {
               await electrum.connect();
 
               //Convert P2PK Address to Scripthash for ElectrumX Balance Fetching
-              //Convert Compressed Pub Key to Uncompressed
-              const secp256k1 = await instantiateSecp256k1.instantiateSecp256k1();
-
-              const compressed = await instantiateSecp256k1.hexToBin(compressedpubkey);
-
-              const uncompressedpubkey = secp256k1.uncompressPublicKey(compressed);
-
-              //console.log(instantiateSecp256k1.binToHex(uncompressedpubkey));
-              // => 04ad90e5b6bc86b3ec7fac2c5fbda7423fc8ef0d58df594c773fa05e2c281b2bfe877677c668bd13603944e34f4818ee03cadd81a88542b8b4d5431264180e2c28
-
-              // const bytes1p = uncompressedpubkey;
-              const byteshex1p = instantiateSecp256k1.binToHex(uncompressedpubkey);
+              //Convert Compressed Pub Key
               const HASH1601p = "21" + compressedpubkey.toUpperCase() + "AC"; // 21 + COMPRESSED PUBKEY + OP_CHECKSIG = P2PK
               const BUFFHASH1601p = Buffer.from(HASH1601p, "hex");
               const shaaddress1p = sha256(BUFFHASH1601p);
@@ -847,15 +822,6 @@ exports.addresses = function (req, res) {
 
             //Convert P2PK Address to Scripthash for ElectrumX Balance Fetching
             //Convert Compressed Pub Key to Uncompressed
-            const secp256k1 = await instantiateSecp256k1.instantiateSecp256k1();
-
-            const compressed = await instantiateSecp256k1.hexToBin(compressedpubkey2);
-
-            const uncompressedpubkey = secp256k1.uncompressPublicKey(compressed);
-
-            //console.log(instantiateSecp256k1.binToHex(uncompressedpubkey));
-
-            const byteshex2p = instantiateSecp256k1.binToHex(uncompressedpubkey);
             const HASH1602p = "21" + compressedpubkey2.toUpperCase() + "AC"; // "21" + COMPRESSED PUB KEY + OP_CHECKSIG
             const BUFFHASH1602p = Buffer.from(HASH1602p, "hex");
             const shaaddress2p = sha256(BUFFHASH1602p);

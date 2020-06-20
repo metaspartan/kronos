@@ -1,73 +1,180 @@
 extends ../layout
 
 block content
-  .txheader.container
+  script. 
+    function toggle() {
+      if ($('#toggle').is(":checked")) {
+        $("#menu1").show();
+        $("#menu2").hide();
+      } else {
+        $("#menu1").hide();
+        $("#menu2").show();
+      }
+    };
+  .txheader
     p
-      h3(align='center', style='margin-top:55px;margin-bottom:50px;')
-        i.fa.fa-exchange-alt
-        |  Denarius Wallet Transactions
+      h1(align='center', style='font-size:73px;font-weight:100;margin-top:42px !important;') Denarius Transactions
+      p(align='center') 
+        | This is your Denarius (D) wallet transaction activity information.
+      br
+      .row
+        .col-md-12(align='center')
+          label.switch(align='center')
+            input(type='checkbox', id='toggle', checked='true', onclick='toggle()')
+            span.slider.round(align='center')
     if (transactions)
-      - transactions.sort((a, b)=>{a = new Date(a.timereceived);b = new Date(b.timereceived);return a>b ? -1 : a<b ? 1 : 0;})
-      each transaction in transactions
-        .panel.panel-default(style='border-color: #4e4e4e;')
-          if (transaction.category == 'receive')
-            .panel-heading.txreceive.mb
-              .pull-left
-                | Transaction Received
-                .date= new Date(transaction.timereceived*1000).toUTCString()
-              .pull-right
-                strong Confirmations !{transaction.confirmations}
-            .panel-body(style='background-color: #333;')
-              p(align='center')
-                strong.txamount !{transaction.amount.toFixed(8)}
-                  small(style='color:#777;')  D
-              p(align='center')
-                .txaddress !{transaction.address}
-              p(align='center') 
-                | TX ID: 
-                a.txid(href="https://chainz.cryptoid.info/d/tx.dws?" + transaction.txid, target='_blank') !{transaction.txid.substring(0,30)}
-          else if (transaction.category == 'send')
-            .panel-heading.txsent.mb
-              .pull-left
-                | Transaction Sent
-                .date= new Date(transaction.timereceived*1000).toUTCString()
-              .pull-right
-                strong Confirmations !{transaction.confirmations}
-            .panel-body(style='background-color: #333;')
-              p(align='center')
-                strong.txamount !{transaction.amount.toFixed(8)}
-                  small(style='color:#777;')  D
-              p(align='center')
-                .txaddress !{transaction.address}
-              p(align='center') 
-                | TX ID: 
-                a.txid(href="https://chainz.cryptoid.info/d/tx.dws?" + transaction.txid, target='_blank') !{transaction.txid.substring(0,30)}
-          else
-            .panel-heading.txreceive.mb
-              .pull-left
-                | Staked, Mined, or FS
-                .date= new Date(transaction.timereceived*1000).toUTCString()
-              .pull-right
-                strong Confirmations !{transaction.confirmations}
-            .panel-body(style='background-color: #333;')
-              p(align='center')
-                if (transaction.reward)
-                  strong.txamount Rewarded +!{transaction.reward.toFixed(8)} 
+      - transactions.sort((b, a)=>{a = new Date(a.confirmations);b = new Date(b.confirmations);return a>b ? -1 : a<b ? 1 : 0;})
+      .row(id='menu1', style='margin: 0 auto;').container
+        each transaction in transactions
+          .panel.panel-default(style='border-color: #4e4e4e;')
+            if (transaction.category == 'receive')
+              .panel-heading.txreceive.mb
+                .pull-left
+                  | Transaction Received
+                  .date= new Date(transaction.time*1000).toUTCString()
+                .pull-right
+                  strong Confirmations !{transaction.confirmations}
+              .panel-body(style='background-color: #333;')
+                p(align='center')
+                  strong.txamount !{transaction.amount.toFixed(8)}
                     small(style='color:#777;')  D
-                if (transaction.amount)
-                  strong.txamount !{transaction.amount.toFixed(8)} 
+                p(align='center')
+                  .txaddress !{transaction.address}
+                p(align='center') 
+                  | TX ID: 
+                  a.txid(href="https://chainz.cryptoid.info/d/tx.dws?" + transaction.txid, target='_blank') !{transaction.txid.substring(0,30)}
+            else if (transaction.category == 'send')
+              .panel-heading.txsent.mb
+                .pull-left
+                  | Transaction Sent
+                  .date= new Date(transaction.time*1000).toUTCString()
+                .pull-right
+                  strong Confirmations !{transaction.confirmations}
+              .panel-body(style='background-color: #333;')
+                p(align='center')
+                  strong.txamount !{transaction.amount.toFixed(8)}
                     small(style='color:#777;')  D
-                if (!transaction.amount && !transaction.reward)
-                  strong.txamount No reward 0.00000000
-                    small(style='color:#777;')  D
-              p(align='center')
-                .txaddress !{transaction.address}
-              p(align='center') 
-                | TX ID: 
-                a.txid(href="https://chainz.cryptoid.info/d/tx.dws?" + transaction.txid, target='_blank') !{transaction.txid.substring(0,30)}
-      else
-        br
-        h3(align='center', style='color: #bbb;') No Transactions Available
-      p(align='center')
-        br
-        a.btn.btn-default(href='/') Go back to Dashboard
+                p(align='center')
+                  .txaddress !{transaction.address}
+                p(align='center') 
+                  | TX ID: 
+                  a.txid(href="https://chainz.cryptoid.info/d/tx.dws?" + transaction.txid, target='_blank') !{transaction.txid.substring(0,30)}
+            else
+              .panel-heading.txreceive.mb
+                .pull-left
+                  | Staked, Mined, or FS
+                  .date= new Date(transaction.time*1000).toUTCString()
+                .pull-right
+                  strong Confirmations !{transaction.confirmations}
+              .panel-body(style='background-color: #333;')
+                p(align='center')
+                  if (transaction.reward)
+                    strong.txamount Rewarded +!{transaction.reward.toFixed(8)} 
+                      small(style='color:#777;')  D
+                  if (transaction.amount)
+                    p(align='center')
+                      strong.txamount !{transaction.amount.toFixed(8)} 
+                        small(style='color:#777;')  D
+                  if (!transaction.amount && !transaction.reward)
+                    strong.txamount No reward 0.00000000
+                      small(style='color:#777;')  D
+                p(align='center')
+                  .txaddress !{transaction.address}
+                p(align='center') 
+                  | TX ID: 
+                  a.txid(href="https://chainz.cryptoid.info/d/tx.dws?" + transaction.txid, target='_blank') !{transaction.txid.substring(0,30)}
+    else
+      br
+      h3(align='center', style='color: #bbb;') No Transactions Available
+    if (transactions)
+      - transactions.sort((b, a)=>{a = new Date(a.confirmations);b = new Date(b.confirmations);return a>b ? -1 : a<b ? 1 : 0;})
+      .row(id='menu2', style='width:90%;margin:0 auto;')
+        table.sortable#fst
+          thead
+            tr
+              th Transaction Status
+              th.sorttable_nosort Time (GMT)
+              th Confirmations
+              th Address
+              th TXID
+              th Amount
+          tbody
+            each transaction in transactions
+              if (transaction.category == 'receive')
+                tr(style='background-color: rgba(62, 115, 14, 0.2);')
+                  td(align='center')
+                    if (transaction.category == 'receive')
+                      .label.label-success(style='background-color: #3E730E;') Received
+                    else if (transaction.category == 'send')
+                      .label.label-danger Sent
+                    else
+                      .label.label-primary Staked, Mined, or FS
+                  td(align='center') 
+                    .date= new Date(transaction.time*1000).toUTCString().replace('GMT','')
+                  td(align='center') 
+                    .label.label-success(style='background: none;') !{transaction.confirmations}
+                  td(align='center') !{transaction.address}
+                  td(align='center') 
+                    a.txid(href="https://chainz.cryptoid.info/d/tx.dws?" + transaction.txid, target='_blank') !{transaction.txid}
+                  td(align='center') 
+                    if (transaction.reward)
+                      .label.label-primary !{transaction.reward.toFixed(8)} D
+                    else
+                      if (transaction.category == 'receive')
+                         .label.label-success(style='background-color: #3E730E;') !{transaction.amount.toFixed(8)} D
+                      else if (transaction.category == 'send')
+                        .label.label-danger !{transaction.amount.toFixed(8)} D
+              else if (transaction.category == 'send')
+                tr(style='background-color: rgba(217, 83, 79, 0.2);')
+                  td(align='center')
+                    if (transaction.category == 'receive')
+                      .label.label-success(style='background-color: #3E730E;') Received
+                    else if (transaction.category == 'send')
+                      .label.label-danger Sent
+                    else
+                      .label.label-primary Staked, Mined, or FS
+                  td(align='center') 
+                    .date= new Date(transaction.time*1000).toUTCString().replace('GMT','')
+                  td(align='center') 
+                    .label.label-success(style='background: none;') !{transaction.confirmations}
+                  td(align='center') !{transaction.address}
+                  td(align='center') 
+                    a.txid(href="https://chainz.cryptoid.info/d/tx.dws?" + transaction.txid, target='_blank') !{transaction.txid}
+                  td(align='center') 
+                    if (transaction.reward)
+                      .label.label-primary !{transaction.reward.toFixed(8)} D
+                    else
+                      if (transaction.category == 'receive')
+                         .label.label-success(style='background-color: #3E730E;') !{transaction.amount.toFixed(8)} D
+                      else if (transaction.category == 'send')
+                        .label.label-danger !{transaction.amount.toFixed(8)} D
+              else
+                tr(style='background-color: rgba(50, 93, 136, 0.2);')
+                  td(align='center')
+                    if (transaction.category == 'receive')
+                      .label.label-success(style='background-color: #3E730E;') Received
+                    else if (transaction.category == 'send')
+                      .label.label-danger Sent
+                    else
+                      .label.label-primary Staked, Mined, or FS
+                  td(align='center') 
+                    .date= new Date(transaction.time*1000).toUTCString().replace('GMT','')
+                  td(align='center') 
+                    .label.label-success(style='background: none;') !{transaction.confirmations}
+                  td(align='center') !{transaction.address}
+                  td(align='center') 
+                    a.txid(href="https://chainz.cryptoid.info/d/tx.dws?" + transaction.txid, target='_blank') !{transaction.txid}
+                  td(align='center') 
+                    if (transaction.reward)
+                      .label.label-primary !{transaction.reward.toFixed(8)} D
+                    else
+                      if (transaction.category == 'receive')
+                         .label.label-success(style='background-color: #3E730E;') !{transaction.amount.toFixed(8)} D
+                      else if (transaction.category == 'send')
+                        .label.label-danger !{transaction.amount.toFixed(8)} D
+    else
+      br
+      h3(align='center', style='color: #bbb;') No Transactions Available
+    p(align='center')
+      br
+      a.btn.btn-default(href='/') Go back to Dashboard
