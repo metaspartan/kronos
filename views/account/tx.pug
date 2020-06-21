@@ -17,11 +17,10 @@ block content
       p(align='center') 
         | This is your Denarius (D) wallet transaction activity information.
       br
-      .row
-        .col-md-12(align='center')
-          label.switch(align='center')
-            input(type='checkbox', id='toggle', checked='true', onclick='toggle()')
-            span.slider.round(align='center')
+      .div(align='center', style='margin: 0 auto;')
+        label.switch(align='center')
+          input(type='checkbox', id='toggle', checked='true', onclick='toggle()')
+          span.slider.round(align='center')
     if (transactions)
       - transactions.sort((b, a)=>{a = new Date(a.confirmations);b = new Date(b.confirmations);return a>b ? -1 : a<b ? 1 : 0;})
       .row(id='menu1', style='margin: 0 auto;').container.animate__animated.animate__fadeIn

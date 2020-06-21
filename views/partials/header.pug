@@ -105,7 +105,7 @@ div(class=chaindl)
                   i.fas.fa-key   
                   |   Import a private key
           li
-            a(href='/status') #{balance} D
+            a(href='#', style='font-size:14px;color:#FFF;background-color: rgba(0, 0, 0, 0.2);') #{balance} D
       ul.nav.navbar-nav.navbar-right
           li(style=sendicon,class=(title == 'Send D') ? 'active' : undefined)
             a(href='/withdraw')
@@ -128,4 +128,4 @@ div(class=chaindl)
                   i.fab.fa-discord 
                   |   Discord
           li(class=(title == 'Version') ? 'active' : undefined)
-            a(href='#') v1.2.2-Alpha
+            a(href='https://github.com/carsenk/dpi') v1.2.3-Alpha

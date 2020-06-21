@@ -404,7 +404,7 @@ textarea {
 
 .navbar-nav img {
   width: 30px;
-  height: 30px;
+  height: 33px;
   margin: -15px 15px -15px;
 }
 
@@ -412,6 +412,10 @@ textarea {
   background-image: url("../img/bg.png") !important;
   background-repeat: repeat-x;
   background-color: #191919 !important;
+}
+
+.nav > li > a {
+  font-size: 13px !important;
 }
 
 // Alerts
