@@ -24,7 +24,7 @@ block content
             span.slider.round(align='center')
     if (transactions)
       - transactions.sort((b, a)=>{a = new Date(a.confirmations);b = new Date(b.confirmations);return a>b ? -1 : a<b ? 1 : 0;})
-      .row(id='menu1', style='margin: 0 auto;').container
+      .row(id='menu1', style='margin: 0 auto;').container.animate__animated.animate__fadeIn
         each transaction in transactions
           .panel.panel-default(style='border-color: #4e4e4e;')
             if (transaction.category == 'receive')
@@ -88,7 +88,7 @@ block content
       h3(align='center', style='color: #bbb;') No Transactions Available
     if (transactions)
       - transactions.sort((b, a)=>{a = new Date(a.confirmations);b = new Date(b.confirmations);return a>b ? -1 : a<b ? 1 : 0;})
-      .row(id='menu2', style='width:90%;margin:0 auto;')
+      .row(id='menu2', style='width:90%;margin:0 auto;').animate__animated.animate__fadeIn
         table.sortable#fst
           thead
             tr

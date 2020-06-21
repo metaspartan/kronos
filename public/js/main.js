@@ -11,7 +11,7 @@ var bar = new ProgressBar.Circle(document.getElementById('container'), {
     color: '#444',
     // This has to be the same size as the maximum width to
     // prevent clipping
-    strokeWidth: 16,
+    strokeWidth: 10,
     trailWidth: 1,
     trailColor: '#444',
     easing: 'easeInOut',
@@ -20,7 +20,7 @@ var bar = new ProgressBar.Circle(document.getElementById('container'), {
       autoStyleContainer: false
     },
     from: { color: '#ffd800', width: 1 },
-    to: { color: '#ffd800', width: 16 },
+    to: { color: '#ffd800', width: 10 },
     // Set default step function for all animate calls
     step: function(state, circle) {
       circle.path.setAttribute('stroke', state.color);

@@ -101,10 +101,57 @@ block content
                   button.btn.btn-default(type='button', data-dismiss='modal') Close
     .container(style='width:90%')
       p(align='center')
-        h3(align='center', style='margin:30px;')
+        h3(align='center', style='margin:30px;').animate__animated.animate__bounce
           | Everything is 
           span(style='color: #42B905;') Great!
-      .row(class='rowclass')
+      .row(class='rowclass balancerow').animate__animated.animate__fadeIn
+        .col-sm-6
+          h3(style='font-size:48px;color: #393939;margin-top:0px;') 
+            i.fas.fa-wallet 
+            |  Balance
+          p 
+          .bal(style='font-size:2.5em;') #{balance}
+            small(style='font-size:16px;')  D
+          p
+          .bal(style='font-size:1.6em;color:#888;') $#{usdbalance}
+            small(style='font-size:16px;')  USD @ $#{currentprice} ea
+        .col-sm-3
+          h3(style='font-weight:light;font-size:28px;color: #393939;margin-top:15px;') Unconfirmed
+          p 
+          .bal(style='font-size:1.7em;') #{unbalance}
+            small(style='font-size:16px;')  D
+        .col-sm-3
+          h3(style='font-weight:light;font-size:28px;color: #393939;margin-top:15px;') In Stake
+          p 
+          .bal(style='font-size:1.7em;') #{instake}
+            small(style='font-size:16px;')  D
+      .row(class='rowclass').animate__animated.animate__fadeIn
+        .col-md-6
+          .bal(style='font-size:1.9vw;font-weight:100;text-align:center;', align='center') #{address}
+          br
+          .qrcode(align='center')
+            a(href='denarius:' + address)
+              img(src='' + qrcode, style='border-radius:10px;')
+          br
+        .col-md-2
+          form.form-horizontal(action='/getnewaddress', method='POST', id='sendaddy', style='margin-top:55px;', align='center')
+            input(type='hidden', name='_csrf', value=_csrf)
+            button.btn.btn-default(type='submit', id='sendu', onclick='getaddress()')
+              i(class='fa fa-5x fa-address-card', align='center')
+            br
+            br
+            | Get New Address
+        .col-md-2
+          p(align='center', style='margin-top:55px;')
+            button.btn.btn-default(type='button', id='sendu', data-toggle='modal', data-target=walletlink)
+              i(class=walleticon, align='center')
+            br
+            br
+            | Wallet is #{walletstatus}
+        .col-md-2
+          p(align='center')
+            !=sending
+      .row(class='rowclass').animate__animated.animate__fadeIn
           .col-md-3
             h3(style='font-weight:light;font-size:48px;color: #393939;margin-top:0px;margin-bottom:15px;') 
               i.fas.fa-hdd 
@@ -131,28 +178,7 @@ block content
                 #container(name='container') &nbsp;
               .col-sm-6(align='center')
                 #container2(name='container2') &nbsp;
-      .row(class='rowclass balancerow')
-        .col-sm-6
-          h3(style='font-size:48px;color: #393939;margin-top:0px;') 
-            i.fas.fa-wallet 
-            |  Balance
-          p 
-          .bal(style='font-size:2.5em;') #{balance}
-            small(style='font-size:16px;')  D
-          p
-          .bal(style='font-size:1.6em;color:#888;') $#{usdbalance}
-            small(style='font-size:16px;')  USD @ $#{currentprice} ea
-        .col-sm-3
-          h3(style='font-weight:light;font-size:28px;color: #393939;margin-top:15px;') Unconfirmed
-          p 
-          .bal(style='font-size:1.7em;') #{unbalance}
-            small(style='font-size:16px;')  D
-        .col-sm-3
-          h3(style='font-weight:light;font-size:28px;color: #393939;margin-top:15px;') In Stake
-          p 
-          .bal(style='font-size:1.7em;') #{instake}
-            small(style='font-size:16px;')  D
-      .row(class='rowclass')
+      .row(class='rowclass').animate__animated.animate__fadeIn
         .col-sm-3
           p
             | PoW Mining Hashrate 
@@ -202,33 +228,7 @@ block content
             i.fas.fa-hourglass-half 
             |  Upload Target Limit 
             strong #{target} 
-      .row(class='rowclass')
-        .col-md-6
-          .bal(style='font-size:1.9vw;font-weight:100;text-align:center;', align='center') #{address}
-          br
-          .qrcode(align='center')
-            a(href='denarius:' + address)
-              img(src='' + qrcode, style='border-radius:10px;')
-          br
-        .col-md-2
-          form.form-horizontal(action='/getnewaddress', method='POST', id='sendaddy', style='margin-top:55px;', align='center')
-            input(type='hidden', name='_csrf', value=_csrf)
-            button.btn.btn-default(type='submit', id='sendu', onclick='getaddress()')
-              i(class='fa fa-5x fa-address-card', align='center')
-            br
-            br
-            | Get New Address
-        .col-md-2
-          p(align='center', style='margin-top:55px;')
-            button.btn.btn-default(type='button', id='sendu', data-toggle='modal', data-target=walletlink)
-              i(class=walleticon, align='center')
-            br
-            br
-            | Wallet is #{walletstatus}
-        .col-md-2
-          p(align='center')
-            !=sending
-      .row(class='rowclass', style='margin-bottom:150px;')
+      .row(class='rowclass', style='margin-bottom:150px;').animate__animated.animate__fadeIn
         h3(style='font-weight:light;font-size:48px;color: #393939;margin-top:0px;margin-bottom:30px;') 
           i.fas.fa-microchip 
           |  System Info

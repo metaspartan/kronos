@@ -88,7 +88,7 @@ block content
         label.switch(align='center')
           input(type='checkbox', id='toggle', checked='true', onclick='toggle()')
           span.slider.round(align='center')
-  .row(id="menu1")
+  .row(id="menu1").animate__animated.animate__fadeIn
     if (scripthasharray)
       each address in scripthasharray
         .col-lg-3
@@ -107,7 +107,7 @@ block content
       h3(align='center', style='color: #bbb;') No Addresses Available
   .row.container(id="menu2", style='margin: 0 auto; margin-top:15px;')
     if (scripthasharray)
-      table.sortable#fst
+      table.sortable#fst.animate__animated.animate__fadeIn
         thead
           tr
             th QR

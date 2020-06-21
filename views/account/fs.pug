@@ -36,7 +36,7 @@ block content
       p
         .row
           .col-md-12
-            .count(style='font-size:133px;font-weight:100;margin-bottom:-25px;', align='center') !{count}
+            .count(style='font-size:133px;font-weight:100;margin-bottom:-25px;', align='center').animate__animated.animate__bounce !{count}
             small(align='center', style='color: #42B905;') • FortunaStakes Online
     .row
     div(style='overflow-x:auto;background-color:#111;')
@@ -55,7 +55,7 @@ block content
           }, 30000); // 30 seconds for auto refresh enabled
       if (statuss)
         h1(align='center', style='font-weight:100;font-size:63px;margin:50px;') My FS Node Status
-        table.sortable#fst
+        table.sortable#fst.animate__animated.animate__fadeIn
           thead
             tr
               th Alias
@@ -136,7 +136,7 @@ block content
               br
               h3(align='center', style='color: #bbb;') No FortunaStake Statuses Available
       h1(align='center', style='font-weight:100;font-size:63px;margin:50px;') FortunaStake Global List
-      table.sortable#fst
+      table.sortable#fst.animate__animated.animate__fadeIn
         thead
           tr
             th IP
