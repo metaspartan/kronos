@@ -392,6 +392,19 @@ footer {
   top: 58%;
 }
 
+.autorefresh {
+  margin-right:10px;
+  position:relative;
+  top:-16px;
+}
+
+@media (max-width: 800px) {
+  .autorefresh {
+    display: none;
+  }
+}
+
+
 // Input Fields
 // -------------------------
 

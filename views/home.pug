@@ -21,7 +21,6 @@ block content
         x.style.display = "none";
       }
     }
-  script(src='/js/reload.js')
   .maincontent(style='border: none !important;')
     #DisplayModalUnlock.modal
       .modal-dialog
@@ -104,6 +103,19 @@ block content
         h3(align='center', style='margin:30px;').animate__animated.animate__bounce
           | Everything is 
           span(style='color: #42B905;') Great!
+      div(align='center', style='top: -62px;position:relative;padding-right:15px;float:right;')
+        span(class='autorefresh') Auto Refresh
+        label.switch2(align='center')
+          input#autoRefreshCheckbox(type='checkbox', value='true', checked='checked')
+          span.slider2.round(align='center')
+          script(type='text/javascript').
+            setInterval(function ()
+            {
+            if (document.getElementById('autoRefreshCheckbox').checked)
+            {
+            window.location=window.location;
+            }
+            }, 30000); // 30 seconds for auto refresh enabled
       .row(class='rowclass balancerow').animate__animated.animate__fadeIn
         .col-sm-6
           h3(style='font-size:48px;color: #393939;margin-top:0px;') 
