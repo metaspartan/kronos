@@ -1385,6 +1385,91 @@ exports.fs = function (req, res) {
   });
 };
 
+
+//GET for Peers Page
+exports.peers = function (req, res) {
+  //var username = req.user.email;
+
+  client.getBalance(function (error, info, resHeaders) {
+    if (error) {
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var balance = '0';
+      console.log(error);
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+    }
+
+    var chaindl = 'nooverlay';
+    var chaindlbtn = 'nobtn';
+
+    var balance = info;
+
+    if (balance <= 0) {
+      balance = 0;
+    }
+
+  client.getPeerInfo(function (err, peers, resHeaders) {
+    if (err) {
+      console.log(err);
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var peers = '';
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+
+    }
+
+  client.walletStatus(function (err, ws, resHeaders) {
+    if (err) {
+      console.log(err);
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var ws = '';
+      var walletstatuss = 'locked';
+      var sendicon = 'display: none !important';
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+
+      var walletstatuss = ws.wallet_status;
+      var sendicon;
+      
+      if (walletstatuss == 'stakingonly') {
+				sendicon = 'display: none !important';
+			} else if (walletstatuss == 'unlocked') {
+				sendicon = 'display: visible !important;';
+			} else if (walletstatuss == 'unencrypted') {
+				sendicon = 'display: visible !important';
+			} else if (walletstatuss == 'locked') {
+				sendicon = 'display: none !important';
+			}
+    }
+
+  client.getNetworkInfo(function (err, networkinfo, resHeaders) {
+    if (err) {
+      console.log(err);
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var statuss = [];
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+    }
+
+      var chaindl = 'nooverlay';
+      var chaindlbtn = 'nobtn';
+
+    res.render('account/peers', { title: 'Peers', peers: peers, networkinfo: networkinfo, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
+    });
+
+  });
+  });
+  });
+};
+
 /**
  * POST /sendraw
  * Send Raw Transaction to D network

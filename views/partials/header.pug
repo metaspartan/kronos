@@ -54,6 +54,10 @@ div(class=chaindl)
             a(href='/fs') 
               i.fas.fa-th   
               |   FS
+          li(class=(title == 'Peers') ? 'active' : undefined)
+            a(href='/peers') 
+              i.fas.fa-network-wired    
+              |   Peers
           li.dropdown(class=(title == 'Wallet') ? 'active' : undefined)
             a.dropdown-toggle(href='#', data-toggle='dropdown')
               span 

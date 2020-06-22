@@ -1,0 +1,108 @@
+extends ../layout
+
+block content
+  script(src='//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js')
+  script.
+    function show() {
+      var x = document.getElementById('box');
+      if (x.style.display === 'none') {
+          x.style.display = 'block';
+      } else {
+          x.style.display = 'none';
+      }
+    }
+    function confirmedpk() {
+      $('#sendpriv').submit();
+    }
+    function getaddress() {
+      $('#sendaddy').submit();
+    }
+    function toggle() {
+      if ($('#toggle').is(":checked")) {
+        $("#menu1").show();
+        $("#menu2").hide();
+      } else {
+        $("#menu1").hide();
+        $("#menu2").show();
+      }
+    };
+  .mainDiv
+  .container
+    h1(align='center', style='font-size:73px;font-weight:100;margin-top:42px !important;')  Denarius Peers
+    p(align='center') 
+      | These are your current connected Denarius nodes. Currently 
+      strong #{peers.length} 
+      | connected.
+      br
+      br
+      ul.list-group
+        li.list-group-item(style='background-color: #151515;border-color:#444;')
+          .row              
+            .col-md-6(align='center', style='margin-top:6px;')
+              | My Node IP Address:  
+              strong  #{networkinfo.localaddresses[0].address}:#{networkinfo.localaddresses[0].port}
+            .col-md-6(align='center')
+              button.btn.btn-sm.btn-default(type='button', id='sendpk', data-toggle='modal', data-target='#DisplayModalAddNode', disabled)
+                | Add A Node
+    .row
+      .col-md-12(align='center')
+        label.switch(align='center')
+          input(type='checkbox', id='toggle', checked='true', onclick='toggle()')
+          span.slider.round(align='center')
+  .row(id="menu1").animate__animated.animate__fadeIn
+    if (peers)
+      each peer in peers
+        .col-lg-3
+          .addi(style='background-color: #151515; background-image: url("../img/fadedd.png");background-repeat: no-repeat;background-position: center;border-color: #444; padding:30px; margin: 10px; border-radius:15px;')
+            p(align='center')
+              .span(style='font-size:13px;text-align:center;color:#eee;') #{peer.addr}
+            p(align='center')
+              .span(style='font-size:13px;text-align:center;color:#eee;') Version #{peer.subver}
+            .row
+              .col-md-6(align='center')
+                .span(style='font-size:13px;text-align:center;color:#eee;') 
+                  i.fa.fa-arrow-up 
+                  |  #{(peer.bytessend / 1000000).toFixed(2)} MB
+              .col-md-6(align='center')
+                .span(style='font-size:13px;text-align:center;color:#eee;') 
+                  i.fa.fa-arrow-down
+                  |  #{(peer.bytesrecv / 1000000).toFixed(2)} MB
+            p(align='center')
+              .span(style='font-size:13px;text-align:center;color:#eee;') Peer Height: #{peer.chainheight}
+            p(align='center')
+              .span(style='font-size:16px;text-align:center;color:#777;') Protocol
+              .span(style='color:#999;font-size:21px;text-align:center;') #{peer.version}
+    else
+      br
+      h3(align='center', style='color: #bbb;') No Peers Available
+  .row.container(id="menu2", style='margin: 0 auto; margin-top:15px;')
+    if (peers)
+      table.sortable#fst.animate__animated.animate__fadeIn
+        thead
+          tr
+            th Peer IP Address
+            th Version
+            th Protocol
+            th Data Sent (MB)
+            th Data Received (MB)
+            th Peer Block Height
+            th Options
+        tbody
+          each peer in peers
+            tr
+              td(align='center') #{peer.addr}
+              td(align='center') #{peer.subver}
+              td(align='center') #{peer.version} 
+              td(align='center') #{(peer.bytessend / 1000000).toFixed(2)} 
+                i.fa.fa-arrow-up
+              td(align='center') #{(peer.bytesrecv / 1000000).toFixed(2)} 
+                i.fa.fa-arrow-down
+              td(align='center') #{peer.chainheight}
+              td(align='center')
+                button.btn.btn-sm.btn-danger(disabled) Ban Node
+    else
+      br
+      h3(align='center', style='color: #bbb;') No Peers Available
+  br
+  p(align='center')
+    a.btn.btn-default(href='/', role='button') Go back to the Dashboard     
