@@ -127,7 +127,7 @@ block content
                   td(align='center')
                     | !{status.daily / 100000000} D
                   td(align='center')
-                    if (status.status.toUpperCase() == 'ONLINE' || status.collateral != 'Wallet is Locked')
+                    if (status.collateral == 'Wallet is Locked')
                       button.btn.btn-sm.btn-default(type='button', disabled) Start FS
                     else
                       button.btn.btn-sm.btn-default(type='button', id='startfs', data-toggle='modal', data-target='#DisplayModalStartFS')
