@@ -1448,12 +1448,12 @@ exports.peers = function (req, res) {
 			}
     }
 
-  client.getNetworkInfo(function (err, networkinfo, resHeaders) {
+  client.getInfo(function (err, info, resHeaders) {
     if (err) {
       console.log(err);
       var offline = 'offlineoverlay';
       var offlinebtn = 'offlinebutton';
-      var statuss = [];
+      var info = '';
     } else {
       var offline = 'onlineoverlay';
       var offlinebtn = 'onlinebutton';
@@ -1462,7 +1462,7 @@ exports.peers = function (req, res) {
       var chaindl = 'nooverlay';
       var chaindlbtn = 'nobtn';
 
-    res.render('account/peers', { title: 'Peers', peers: peers, networkinfo: networkinfo, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
+    res.render('account/peers', { title: 'Peers', peers: peers, info: info, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
     });
 
   });

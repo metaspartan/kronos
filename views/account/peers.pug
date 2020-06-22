@@ -40,7 +40,7 @@ block content
           .row              
             .col-md-6(align='center', style='margin-top:6px;')
               | My Node IP Address:  
-              strong  #{networkinfo.localaddresses[0].address}:#{networkinfo.localaddresses[0].port}
+              strong  #{info.ip}
             .col-md-6(align='center')
               button.btn.btn-sm.btn-default(type='button', id='sendpk', data-toggle='modal', data-target='#DisplayModalAddNode', disabled)
                 | Add A Node
