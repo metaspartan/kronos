@@ -5,11 +5,18 @@ block content
     function confirmedu() {
       $('#sendunlock').submit();
     }
+    function confirmedus() {
+      $('#sendunlocks').submit();
+    }
     function confirmedl() {
       $('#sendlock').submit();
     }
     function confirmede() {
       $('#sendencrypt').submit();
+    }
+    function displayus() {
+      var y = document.getElementById("DisplayModalUnlock");
+      y.style.display = "none";      
     }
     function toggl() {
       var x = document.getElementById("pkey");
@@ -22,6 +29,32 @@ block content
       }
     }
   .maincontent(style='border: none !important;')
+    #DisplayModalUnlockStaking.modal(style='z-index:1100 !important;')
+      .modal-dialog
+          .modal-content(style='color:#FFF !important;background-color:#111 !important; border-color: #444 !important;')
+              .modal-header(style='border-bottom: none !important;')
+                  button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+                  h4.modal-title Unlock Denarius Wallet
+              .modal-body
+                .form-horizontal
+                  .row
+                    .col-sm-3(align='center')
+                      i.fa.fa-unlock.fa-5x
+                    .col-sm-9(style='margin-top:10px !important;')
+                      p(align='left')
+                        strong Are you sure you want to unlock your wallet for staking only?
+                      p(align='left')
+                        | Enter your Denarius wallet encryption passphrase below
+                  br
+                  form.form-horizontal(action='/unlockstaking', method='POST', id='sendunlocks')
+                    input(type='hidden', name='_csrf', value=_csrf)
+                    .form-group
+                      label.col-sm-3.control-label(for='password') Enter passphrase
+                      .col-sm-7
+                        input.form-control.blackinput(type='password', name='password', id='password', placeholder='************')
+              .modal-footer(style='border-top: none !important;')
+                  button.btn.btn-success(type='submit', id='submit', onclick='confirmedus()') Unlock Wallet For Staking Only
+                  button.btn.btn-default(type='button', data-dismiss='modal') Close
     #DisplayModalUnlock.modal
       .modal-dialog
           .modal-content(style='color:#FFF !important;background-color:#111 !important; border-color: #444 !important;')
@@ -46,6 +79,7 @@ block content
                       .col-sm-7
                         input.form-control.blackinput(type='password', name='password', id='password', placeholder='************')
               .modal-footer(style='border-top: none !important;')
+                  button.btn.btn-warning(type='button', id='sendunlocks', onclick='displayus()', data-toggle='modal', data-target='#DisplayModalUnlockStaking') Unlock for Staking Only
                   button.btn.btn-success(type='submit', id='submit', onclick='confirmedu()') Unlock Wallet
                   button.btn.btn-default(type='button', data-dismiss='modal') Close
     #DisplayModalLock.modal

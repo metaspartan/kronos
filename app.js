@@ -116,6 +116,7 @@ app.post('/', homeController.index);
 
 //POST Routes
 app.post('/unlock', homeController.unlock);
+app.post('/unlockstaking', homeController.unlockstaking);
 app.post('/lock', homeController.lock);
 app.post('/encrypt', homeController.encrypt);
 app.post('/reboot', homeController.reboot);

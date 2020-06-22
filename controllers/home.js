@@ -673,6 +673,28 @@ exports.unlock = (req, res, next) => {
 });
 };
 
+//Unlock for Staking Only Wallet
+exports.unlockstaking = (req, res, next) => {
+	var password = req.body.password;
+	//var sendtoaddress = req.body.sendaddress;
+	//var amount = req.body.amount;
+  
+	client.walletPassphrase(`${password}`, 9999999, true, function (error, unlocked, resHeaders) {
+	  //if (error) return console.log(error);
+  
+	  if (error) {
+		  //req.flash('errors', { msg: 'Incorrect password!'});
+		  req.toastr.error('Wallet Unlock Error', 'Incorrect Password!', { positionClass: 'toast-bottom-right' });
+		  return res.redirect('/');
+	  } else {
+		  //req.flash('success', { msg: `Wallet Unlocked!` });
+		  req.toastr.success('Success!', 'Wallet Unlocked for Staking Only', { positionClass: 'toast-bottom-right' });
+		  return res.redirect('/');
+	  }
+  
+  });
+  };
+
 //Lock Wallet
 exports.lock = (req, res, next) => {
 	//var password = req.body.password;
