@@ -206,6 +206,11 @@ footer {
   font-weight: bold;
 }
 
+.Configured {
+  color: green;
+  font-weight: bold;
+}
+
 .Disabled {
   color: red;
   font-weight: bold;

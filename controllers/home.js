@@ -135,7 +135,7 @@ setTimeout(function bip39seed() {
 	// Console Log the full array - want to eventually push these into scripthash hashing and retrieve balances and then send from them
 	console.log("Seed Address Array", seedaddresses);
 
-}, 300);
+}, 1000);
 
 // GET Denarius Debug Log File
 exports.getDebugLog = (req, res) => {
@@ -201,6 +201,49 @@ exports.getDebugLog = (req, res) => {
 				balance = 0;
 			  }
 
+			  client.getStakingInfo(function (error, stakeinfo, resHeaders) {
+
+				if (error) {
+					var enabled = 'Node Offline';
+					var staking = 'Node Offline';
+					var yourweight = 'Node Offline';
+					var netweight = 'Node Offline';
+					var expected = 'Node Offline';
+					var stakediff = 'Node Offline';
+		
+					var offline = 'offlineoverlay';
+		
+					var offlinebtn = 'offlinebutton';
+		
+					console.log(error);
+		
+				} else {
+					var enabled = stakeinfo.enabled;
+					var staking = stakeinfo.staking;
+					var yourweight = stakeinfo.weight;
+					var netweight = stakeinfo.netstakeweight;
+					var expected = stakeinfo.expectedtime;
+					var stakediff = stakeinfo.difficulty;
+		
+					var offline = 'onlineoverlay';
+					var offlinebtn = 'onlinebutton';
+		
+					var staketoggle;
+					var enabletoggle;
+		
+					if (enabled == true) {
+						enabletoggle = 'Configured';
+					} else {
+						enabletoggle = 'Disabled';
+					}
+		
+					if (staking == true) {
+						staketoggle = 'Staking';
+					} else {
+						staketoggle = 'Not Yet Staking';
+					}
+				}
+
 		if (debuglog == null) {
 			var file = 'Cant find debug log';
 		} else {
@@ -209,8 +252,9 @@ exports.getDebugLog = (req, res) => {
 
 		const lines = file.split('\n');
 		
-		res.render('debug', {title: 'Denarius Debug Log', lines: lines, debugloc: debugloc, balance: balance, chaindl: chaindl, chaindlbtn: chaindlbtn, offline: offline, offlinebtn: offlinebtn, sendicon: sendicon});
+		res.render('debug', {title: 'Denarius Debug Log', lines: lines, debugloc: debugloc, staketoggle: staketoggle, balance: balance, chaindl: chaindl, chaindlbtn: chaindlbtn, offline: offline, offlinebtn: offlinebtn, sendicon: sendicon});
 	});
+});
 });
 });
 };
@@ -224,14 +268,18 @@ si.cpu(function (data) {
 
 	var cores = data.physicalCores;
 	var threads = data.cores;
+	res.locals.cores = cores;
+	res.locals.threads = threads;
+	res.locals.brand = brand;
+});
 
-	si.cpuCurrentspeed(function (data2) {
+si.cpuCurrentspeed(async function (data2) {
 
 	var min = data2.min;
 	var avg = data2.avg;
 	var max = data2.max;
 
-	si.cpuTemperature(function (data3) {
+si.cpuTemperature(async function (data3) {
 	var tempp = data3.main;
 	var temppp = tempp.toFixed(0);
 
@@ -241,7 +289,7 @@ si.cpu(function (data) {
 		var temp = temppp;
 	}
 
-si.mem(function (data1) {
+si.mem(async function (data1) {
 
 	var bytes = 1073741824;
 	var memtt = data1.total;
@@ -264,7 +312,7 @@ si.mem(function (data1) {
 	var memppp = memp / 100;
 	var mempp = memppp;
 
-si.osInfo(function (data4) {
+si.osInfo(async function (data4) {
 
 	var osname = data4.distro;
 	var kernel = data4.kernel;
@@ -273,7 +321,7 @@ si.osInfo(function (data4) {
 	var hostname = data4.hostname;
 	var arch = data4.arch;
 
-si.system(function (data9) {
+si.system(async function (data9) {
 
 	var manu = data9.manufacturer;
 	var model = data9.model;
@@ -348,7 +396,7 @@ si.currentLoad().then(data6 => {
 			var enabletoggle;
 
 			if (enabled == true) {
-				enabletoggle = 'Enabled';
+				enabletoggle = 'Configured';
 			} else {
 				enabletoggle = 'Disabled';
 			}
@@ -356,7 +404,7 @@ si.currentLoad().then(data6 => {
 			if (staking == true) {
 				staketoggle = 'Staking';
 			} else {
-				staketoggle = 'Not Staking';
+				staketoggle = 'Not Yet Staking';
 			}
 		}
 
@@ -558,10 +606,6 @@ si.currentLoad().then(data6 => {
 		//Render the page with the dynamic variables
         res.render('home', {
 			title: 'Home',
-			brand: brand,
-			data1: data1,
-			cores: cores,
-			threads: threads,
 			min: min,
 			avg: avg,
 			max: max,
@@ -634,7 +678,6 @@ si.currentLoad().then(data6 => {
         	});
 		});
 	});
-});
 });
 });
 });
@@ -768,7 +811,7 @@ exports.lock = (req, res, next) => {
 
 	//sleep(120000); // sleep for 120 seconds
 
-	return res.redirect('/');
+	//return res.redirect('/');
 
   };
 

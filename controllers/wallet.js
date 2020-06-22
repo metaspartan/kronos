@@ -55,6 +55,48 @@ exports.getWithdraw = (req, res) => {
 				sendicon = 'display: none !important';
 			}
     }
+  client.getStakingInfo(function (error, stakeinfo, resHeaders) {
+
+      if (error) {
+        var enabled = 'Node Offline';
+        var staking = 'Node Offline';
+        var yourweight = 'Node Offline';
+        var netweight = 'Node Offline';
+        var expected = 'Node Offline';
+        var stakediff = 'Node Offline';
+  
+        var offline = 'offlineoverlay';
+  
+        var offlinebtn = 'offlinebutton';
+  
+        console.log(error);
+  
+      } else {
+        var enabled = stakeinfo.enabled;
+        var staking = stakeinfo.staking;
+        var yourweight = stakeinfo.weight;
+        var netweight = stakeinfo.netstakeweight;
+        var expected = stakeinfo.expectedtime;
+        var stakediff = stakeinfo.difficulty;
+  
+        var offline = 'onlineoverlay';
+        var offlinebtn = 'onlinebutton';
+  
+        var staketoggle;
+        var enabletoggle;
+  
+        if (enabled == true) {
+          enabletoggle = 'Configured';
+        } else {
+          enabletoggle = 'Disabled';
+        }
+  
+        if (staking == true) {
+          staketoggle = 'Staking';
+        } else {
+          staketoggle = 'Not Yet Staking';
+        }
+      }
   client.getBalance(function (error, info, resHeaders) {
       if (error) {
         var offline = 'offlineoverlay';
@@ -79,10 +121,12 @@ exports.getWithdraw = (req, res) => {
         sendicon: sendicon,
         offline: offline,
         offlinebtn: offlinebtn,
+        staketoggle: staketoggle,
         chaindl: chaindl,
         chaindlbtn: chaindlbtn
     });
   });
+});
 });
 };
 
@@ -113,6 +157,48 @@ exports.getRaw = (req, res) => {
 				sendicon = 'display: none !important';
 			}
     }
+  client.getStakingInfo(function (error, stakeinfo, resHeaders) {
+
+      if (error) {
+        var enabled = 'Node Offline';
+        var staking = 'Node Offline';
+        var yourweight = 'Node Offline';
+        var netweight = 'Node Offline';
+        var expected = 'Node Offline';
+        var stakediff = 'Node Offline';
+  
+        var offline = 'offlineoverlay';
+  
+        var offlinebtn = 'offlinebutton';
+  
+        console.log(error);
+  
+      } else {
+        var enabled = stakeinfo.enabled;
+        var staking = stakeinfo.staking;
+        var yourweight = stakeinfo.weight;
+        var netweight = stakeinfo.netstakeweight;
+        var expected = stakeinfo.expectedtime;
+        var stakediff = stakeinfo.difficulty;
+  
+        var offline = 'onlineoverlay';
+        var offlinebtn = 'onlinebutton';
+  
+        var staketoggle;
+        var enabletoggle;
+  
+        if (enabled == true) {
+          enabletoggle = 'Configured';
+        } else {
+          enabletoggle = 'Disabled';
+        }
+  
+        if (staking == true) {
+          staketoggle = 'Staking';
+        } else {
+          staketoggle = 'Not Yet Staking';
+        }
+      }
   client.getBalance(function (error, info, resHeaders) {
       if (error) {
         var offline = 'offlineoverlay';
@@ -138,10 +224,12 @@ exports.getRaw = (req, res) => {
         offline: offline,
         sendicon: sendicon,
         offlinebtn: offlinebtn,
+        staketoggle: staketoggle,
         chaindl: chaindl,
         chaindlbtn: chaindlbtn
     });
   });
+});
 });
 };
 
@@ -172,6 +260,48 @@ exports.getPriv = (req, res) => {
 				sendicon = 'display: none !important';
 			}
     }
+  client.getStakingInfo(function (error, stakeinfo, resHeaders) {
+
+      if (error) {
+        var enabled = 'Node Offline';
+        var staking = 'Node Offline';
+        var yourweight = 'Node Offline';
+        var netweight = 'Node Offline';
+        var expected = 'Node Offline';
+        var stakediff = 'Node Offline';
+  
+        var offline = 'offlineoverlay';
+  
+        var offlinebtn = 'offlinebutton';
+  
+        console.log(error);
+  
+      } else {
+        var enabled = stakeinfo.enabled;
+        var staking = stakeinfo.staking;
+        var yourweight = stakeinfo.weight;
+        var netweight = stakeinfo.netstakeweight;
+        var expected = stakeinfo.expectedtime;
+        var stakediff = stakeinfo.difficulty;
+  
+        var offline = 'onlineoverlay';
+        var offlinebtn = 'onlinebutton';
+  
+        var staketoggle;
+        var enabletoggle;
+  
+        if (enabled == true) {
+          enabletoggle = 'Configured';
+        } else {
+          enabletoggle = 'Disabled';
+        }
+  
+        if (staking == true) {
+          staketoggle = 'Staking';
+        } else {
+          staketoggle = 'Not Yet Staking';
+        }
+      }
   client.getBalance(function (error, info, resHeaders) {
       if (error) {
         var offline = 'offlineoverlay';
@@ -200,11 +330,13 @@ exports.getPriv = (req, res) => {
         offline: offline,
         sendicon: sendicon,
         offlinebtn: offlinebtn,
+        staketoggle: staketoggle,
         chaindl: chaindl,
         chaindlbtn: chaindlbtn,
         info: info
     });
   });
+});
 });
 };
 
@@ -235,6 +367,48 @@ exports.getSign = (req, res) => {
 				sendicon = 'display: none !important';
 			}
     }
+  client.getStakingInfo(function (error, stakeinfo, resHeaders) {
+
+      if (error) {
+        var enabled = 'Node Offline';
+        var staking = 'Node Offline';
+        var yourweight = 'Node Offline';
+        var netweight = 'Node Offline';
+        var expected = 'Node Offline';
+        var stakediff = 'Node Offline';
+  
+        var offline = 'offlineoverlay';
+  
+        var offlinebtn = 'offlinebutton';
+  
+        console.log(error);
+  
+      } else {
+        var enabled = stakeinfo.enabled;
+        var staking = stakeinfo.staking;
+        var yourweight = stakeinfo.weight;
+        var netweight = stakeinfo.netstakeweight;
+        var expected = stakeinfo.expectedtime;
+        var stakediff = stakeinfo.difficulty;
+  
+        var offline = 'onlineoverlay';
+        var offlinebtn = 'onlinebutton';
+  
+        var staketoggle;
+        var enabletoggle;
+  
+        if (enabled == true) {
+          enabletoggle = 'Configured';
+        } else {
+          enabletoggle = 'Disabled';
+        }
+  
+        if (staking == true) {
+          staketoggle = 'Staking';
+        } else {
+          staketoggle = 'Not Yet Staking';
+        }
+      }
   client.getBalance(function (error, info, resHeaders) {
       if (error) {
         var offline = 'offlineoverlay';
@@ -260,10 +434,12 @@ exports.getSign = (req, res) => {
         offline: offline,
         sendicon: sendicon,
         offlinebtn: offlinebtn,
+        staketoggle: staketoggle,
         chaindl: chaindl,
         chaindlbtn: chaindlbtn
     });
   });
+});
 });
 };
 
@@ -294,6 +470,48 @@ exports.getVerify = (req, res) => {
 				sendicon = 'display: none !important';
 			}
     }
+  client.getStakingInfo(function (error, stakeinfo, resHeaders) {
+
+      if (error) {
+        var enabled = 'Node Offline';
+        var staking = 'Node Offline';
+        var yourweight = 'Node Offline';
+        var netweight = 'Node Offline';
+        var expected = 'Node Offline';
+        var stakediff = 'Node Offline';
+  
+        var offline = 'offlineoverlay';
+  
+        var offlinebtn = 'offlinebutton';
+  
+        console.log(error);
+  
+      } else {
+        var enabled = stakeinfo.enabled;
+        var staking = stakeinfo.staking;
+        var yourweight = stakeinfo.weight;
+        var netweight = stakeinfo.netstakeweight;
+        var expected = stakeinfo.expectedtime;
+        var stakediff = stakeinfo.difficulty;
+  
+        var offline = 'onlineoverlay';
+        var offlinebtn = 'onlinebutton';
+  
+        var staketoggle;
+        var enabletoggle;
+  
+        if (enabled == true) {
+          enabletoggle = 'Configured';
+        } else {
+          enabletoggle = 'Disabled';
+        }
+  
+        if (staking == true) {
+          staketoggle = 'Staking';
+        } else {
+          staketoggle = 'Not Yet Staking';
+        }
+      }
   client.getBalance(function (error, info, resHeaders) {
       if (error) {
         var offline = 'offlineoverlay';
@@ -319,10 +537,12 @@ exports.getVerify = (req, res) => {
         offline: offline,
         sendicon: sendicon,
         offlinebtn: offlinebtn,
+        staketoggle: staketoggle,
         chaindl: chaindl,
         chaindlbtn: chaindlbtn
     });
   });
+});
 });
 };
 
@@ -354,6 +574,49 @@ exports.getBackup = (req, res) => {
 			}
     }
 
+  client.getStakingInfo(function (error, stakeinfo, resHeaders) {
+
+      if (error) {
+        var enabled = 'Node Offline';
+        var staking = 'Node Offline';
+        var yourweight = 'Node Offline';
+        var netweight = 'Node Offline';
+        var expected = 'Node Offline';
+        var stakediff = 'Node Offline';
+  
+        var offline = 'offlineoverlay';
+  
+        var offlinebtn = 'offlinebutton';
+  
+        console.log(error);
+  
+      } else {
+        var enabled = stakeinfo.enabled;
+        var staking = stakeinfo.staking;
+        var yourweight = stakeinfo.weight;
+        var netweight = stakeinfo.netstakeweight;
+        var expected = stakeinfo.expectedtime;
+        var stakediff = stakeinfo.difficulty;
+  
+        var offline = 'onlineoverlay';
+        var offlinebtn = 'onlinebutton';
+  
+        var staketoggle;
+        var enabletoggle;
+  
+        if (enabled == true) {
+          enabletoggle = 'Configured';
+        } else {
+          enabletoggle = 'Disabled';
+        }
+  
+        if (staking == true) {
+          staketoggle = 'Staking';
+        } else {
+          staketoggle = 'Not Yet Staking';
+        }
+      }
+
   client.getBalance(function (error, info, resHeaders) {
       if (error) {
         var offline = 'offlineoverlay';
@@ -379,10 +642,12 @@ exports.getBackup = (req, res) => {
         offline: offline,
         sendicon: sendicon,
         offlinebtn: offlinebtn,
+        staketoggle: staketoggle,
         chaindl: chaindl,
         chaindlbtn: chaindlbtn
     });
   });
+});
 });
 };
 
@@ -450,6 +715,49 @@ exports.addresses = function (req, res) {
     if (balance <= 0) {
       balance = 0;
     }
+
+  client.getStakingInfo(function (error, stakeinfo, resHeaders) {
+
+      if (error) {
+        var enabled = 'Node Offline';
+        var staking = 'Node Offline';
+        var yourweight = 'Node Offline';
+        var netweight = 'Node Offline';
+        var expected = 'Node Offline';
+        var stakediff = 'Node Offline';
+  
+        var offline = 'offlineoverlay';
+  
+        var offlinebtn = 'offlinebutton';
+  
+        console.log(error);
+  
+      } else {
+        var enabled = stakeinfo.enabled;
+        var staking = stakeinfo.staking;
+        var yourweight = stakeinfo.weight;
+        var netweight = stakeinfo.netstakeweight;
+        var expected = stakeinfo.expectedtime;
+        var stakediff = stakeinfo.difficulty;
+  
+        var offline = 'onlineoverlay';
+        var offlinebtn = 'onlinebutton';
+  
+        var staketoggle;
+        var enabletoggle;
+  
+        if (enabled == true) {
+          enabletoggle = 'Configured';
+        } else {
+          enabletoggle = 'Disabled';
+        }
+  
+        if (staking == true) {
+          staketoggle = 'Staking';
+        } else {
+          staketoggle = 'Not Yet Staking';
+        }
+      }
 
   //List All Addresses
   client.listUnspent(function (err, addresses, resHeaders) {
@@ -902,11 +1210,12 @@ exports.addresses = function (req, res) {
 
           //console.log(filteredscripthasharray);
 
-          res.render('account/addresses', { title: 'My Addresses', addyy: addyy, addyqr: addyqr, addresses: addresses, scripthasharray: filteredscripthasharray, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
+          res.render('account/addresses', { title: 'My Addresses', addyy: addyy, addyqr: addyqr, addresses: addresses, scripthasharray: filteredscripthasharray, sendicon: sendicon, staketoggle: staketoggle, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
         });
       
     });
       });
+});
 });
 });
 });
@@ -1008,6 +1317,49 @@ exports.address = function (req, res) {
         }
       }
 
+    client.getStakingInfo(function (error, stakeinfo, resHeaders) {
+
+        if (error) {
+          var enabled = 'Node Offline';
+          var staking = 'Node Offline';
+          var yourweight = 'Node Offline';
+          var netweight = 'Node Offline';
+          var expected = 'Node Offline';
+          var stakediff = 'Node Offline';
+    
+          var offline = 'offlineoverlay';
+    
+          var offlinebtn = 'offlinebutton';
+    
+          console.log(error);
+    
+        } else {
+          var enabled = stakeinfo.enabled;
+          var staking = stakeinfo.staking;
+          var yourweight = stakeinfo.weight;
+          var netweight = stakeinfo.netstakeweight;
+          var expected = stakeinfo.expectedtime;
+          var stakediff = stakeinfo.difficulty;
+    
+          var offline = 'onlineoverlay';
+          var offlinebtn = 'onlinebutton';
+    
+          var staketoggle;
+          var enabletoggle;
+    
+          if (enabled == true) {
+            enabletoggle = 'Configured';
+          } else {
+            enabletoggle = 'Disabled';
+          }
+    
+          if (staking == true) {
+            staketoggle = 'Staking';
+          } else {
+            staketoggle = 'Not Yet Staking';
+          }
+        }
+
     client.getBalance(function (error, info, resHeaders) {
       if (error) {
         var offline = 'offlineoverlay';
@@ -1046,10 +1398,11 @@ exports.address = function (req, res) {
 
         QRCode.toDataURL(qr, function(err, data_url) {
 
-        res.render('account/newaddress', { title: 'New D Address', user: req.user, offline: offline, sendicon: sendicon, balance: balance, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn, address: address, data_url: data_url });
+        res.render('account/newaddress', { title: 'New D Address', user: req.user, offline: offline, sendicon: sendicon, staketoggle: staketoggle, balance: balance, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn, address: address, data_url: data_url });
     });
   });
   });
+});
 });
 };
 
@@ -1084,6 +1437,49 @@ exports.genkey = function (req, res) {
 				sendicon = 'display: none !important';
 			}
     }
+
+  client.getStakingInfo(function (error, stakeinfo, resHeaders) {
+
+      if (error) {
+        var enabled = 'Node Offline';
+        var staking = 'Node Offline';
+        var yourweight = 'Node Offline';
+        var netweight = 'Node Offline';
+        var expected = 'Node Offline';
+        var stakediff = 'Node Offline';
+  
+        var offline = 'offlineoverlay';
+  
+        var offlinebtn = 'offlinebutton';
+  
+        console.log(error);
+  
+      } else {
+        var enabled = stakeinfo.enabled;
+        var staking = stakeinfo.staking;
+        var yourweight = stakeinfo.weight;
+        var netweight = stakeinfo.netstakeweight;
+        var expected = stakeinfo.expectedtime;
+        var stakediff = stakeinfo.difficulty;
+  
+        var offline = 'onlineoverlay';
+        var offlinebtn = 'onlinebutton';
+  
+        var staketoggle;
+        var enabletoggle;
+  
+        if (enabled == true) {
+          enabletoggle = 'Configured';
+        } else {
+          enabletoggle = 'Disabled';
+        }
+  
+        if (staking == true) {
+          staketoggle = 'Staking';
+        } else {
+          staketoggle = 'Not Yet Staking';
+        }
+      }
 
   client.getBalance(function (error, info, resHeaders) {
     if (error) {
@@ -1123,10 +1519,11 @@ exports.genkey = function (req, res) {
 
       QRCode.toDataURL(qr, function(err, data_url) {
 
-      res.render('account/genkey', { title: 'New D FS Key', user: req.user, offline: offline, sendicon: sendicon, balance: balance, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn, genkey: genkey, data_url: data_url });
+      res.render('account/genkey', { title: 'New D FS Key', user: req.user, offline: offline, staketoggle: staketoggle, sendicon: sendicon, balance: balance, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn, genkey: genkey, data_url: data_url });
   });
 });
 });
+  });
   });
 };
 
@@ -1248,11 +1645,54 @@ exports.transactions = function (req, res) {
 
       var chaindl = 'nooverlay';
       var chaindlbtn = 'nobtn';
+  client.getStakingInfo(function (error, stakeinfo, resHeaders) {
 
-    res.render('account/tx', { title: 'Transactions', transactions: transactions, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
+        if (error) {
+          var enabled = 'Node Offline';
+          var staking = 'Node Offline';
+          var yourweight = 'Node Offline';
+          var netweight = 'Node Offline';
+          var expected = 'Node Offline';
+          var stakediff = 'Node Offline';
+    
+          var offline = 'offlineoverlay';
+    
+          var offlinebtn = 'offlinebutton';
+    
+          console.log(error);
+    
+        } else {
+          var enabled = stakeinfo.enabled;
+          var staking = stakeinfo.staking;
+          var yourweight = stakeinfo.weight;
+          var netweight = stakeinfo.netstakeweight;
+          var expected = stakeinfo.expectedtime;
+          var stakediff = stakeinfo.difficulty;
+    
+          var offline = 'onlineoverlay';
+          var offlinebtn = 'onlinebutton';
+    
+          var staketoggle;
+          var enabletoggle;
+    
+          if (enabled == true) {
+            enabletoggle = 'Configured';
+          } else {
+            enabletoggle = 'Disabled';
+          }
+    
+          if (staking == true) {
+            staketoggle = 'Staking';
+          } else {
+            staketoggle = 'Not Yet Staking';
+          }
+        }
+
+    res.render('account/tx', { title: 'Transactions', transactions: transactions, sendicon: sendicon, staketoggle: staketoggle, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
     });
 
   });
+});
 });
 };
 
@@ -1376,9 +1816,53 @@ exports.fs = function (req, res) {
       var chaindl = 'nooverlay';
       var chaindlbtn = 'nobtn';
 
-    res.render('account/fs', { title: 'FortunaStakes', fss: fss, count: count, statuss: statuss, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
+  client.getStakingInfo(function (error, stakeinfo, resHeaders) {
+
+        if (error) {
+          var enabled = 'Node Offline';
+          var staking = 'Node Offline';
+          var yourweight = 'Node Offline';
+          var netweight = 'Node Offline';
+          var expected = 'Node Offline';
+          var stakediff = 'Node Offline';
+    
+          var offline = 'offlineoverlay';
+    
+          var offlinebtn = 'offlinebutton';
+    
+          console.log(error);
+    
+        } else {
+          var enabled = stakeinfo.enabled;
+          var staking = stakeinfo.staking;
+          var yourweight = stakeinfo.weight;
+          var netweight = stakeinfo.netstakeweight;
+          var expected = stakeinfo.expectedtime;
+          var stakediff = stakeinfo.difficulty;
+    
+          var offline = 'onlineoverlay';
+          var offlinebtn = 'onlinebutton';
+    
+          var staketoggle;
+          var enabletoggle;
+    
+          if (enabled == true) {
+            enabletoggle = 'Configured';
+          } else {
+            enabletoggle = 'Disabled';
+          }
+    
+          if (staking == true) {
+            staketoggle = 'Staking';
+          } else {
+            staketoggle = 'Not Yet Staking';
+          }
+        }
+
+    res.render('account/fs', { title: 'FortunaStakes', fss: fss, count: count, staketoggle: staketoggle, statuss: statuss, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
     });
 
+  });
   });
   });
   });
@@ -1461,11 +1945,54 @@ exports.peers = function (req, res) {
 
       var chaindl = 'nooverlay';
       var chaindlbtn = 'nobtn';
+  client.getStakingInfo(function (error, stakeinfo, resHeaders) {
 
-    res.render('account/peers', { title: 'Peers', peers: peers, info: info, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
+        if (error) {
+          var enabled = 'Node Offline';
+          var staking = 'Node Offline';
+          var yourweight = 'Node Offline';
+          var netweight = 'Node Offline';
+          var expected = 'Node Offline';
+          var stakediff = 'Node Offline';
+    
+          var offline = 'offlineoverlay';
+    
+          var offlinebtn = 'offlinebutton';
+    
+          console.log(error);
+    
+        } else {
+          var enabled = stakeinfo.enabled;
+          var staking = stakeinfo.staking;
+          var yourweight = stakeinfo.weight;
+          var netweight = stakeinfo.netstakeweight;
+          var expected = stakeinfo.expectedtime;
+          var stakediff = stakeinfo.difficulty;
+    
+          var offline = 'onlineoverlay';
+          var offlinebtn = 'onlinebutton';
+    
+          var staketoggle;
+          var enabletoggle;
+    
+          if (enabled == true) {
+            enabletoggle = 'Configured';
+          } else {
+            enabletoggle = 'Disabled';
+          }
+    
+          if (staking == true) {
+            staketoggle = 'Staking';
+          } else {
+            staketoggle = 'Not Yet Staking';
+          }
+        }
+
+    res.render('account/peers', { title: 'Peers', peers: peers, info: info, staketoggle: staketoggle, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
     });
 
   });
+});
   });
   });
 };
