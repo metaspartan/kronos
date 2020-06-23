@@ -1,6 +1,7 @@
 extends layout
 
 block content
+  script(src='../js/lib/jquery-3.1.1.min.js')
   script. 
     function confirmedu() {
       $('#sendunlock').submit();
@@ -13,6 +14,10 @@ block content
     }
     function confirmede() {
       $('#sendencrypt').submit();
+    }
+    function closeNotify() {
+      var c = document.getElementById("notificationtx")
+      c.style.display = "none";
     }
     function displayus() {
       var y = document.getElementById("DisplayModalUnlock");
@@ -28,6 +33,13 @@ block content
         x.style.display = "none";
       }
     }
+  if (notify != '')
+    #notificationtx.notifytx.animate__animated.animate__zoomInRight(style='background-color:#000000e8;border:3px solid #ffffff3d;border-radius:15px;padding:30px;font-size:13px;width:600px;position:fixed;right:0;bottom:5px;z-index:9999999;display:visible;', align='center')
+      | Denarius TX Notification
+      br
+      a(href='/transactions', style='color:#999;font-size:0.85rem;') #{notify.toString()}
+      #buttonfloat(style='top:36px;position:absolute;right:15px;', onclick='closeNotify()')
+        button(type='submit', style='background-color:transparent;color:#666;border:none;', onclick='closeNotify()') X
   .maincontent(style='border: none !important;')
     #DisplayModalUnlockStaking.modal(style='z-index:1100 !important;')
       .modal-dialog

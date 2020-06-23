@@ -31,6 +31,8 @@ const upload = multer({ dest: path.join(__dirname, 'uploads') });
 const ip = require('ip');
 const shell = require('shelljs');
 const fs = require('fs');
+const dbr = require('./db.js');
+const db = dbr.db;
 
 console.log('Your LAN', ip.address());
 
@@ -122,7 +124,6 @@ app.post('/encrypt', homeController.encrypt);
 app.post('/reboot', homeController.reboot);
 app.post('/privkey', homeController.privkey);
 
-
 app.post('/newaddress', walletController.address);
 app.get('/addresses', walletController.addresses);
 app.get('/transactions', walletController.transactions);
@@ -169,6 +170,36 @@ app.listen(app.get('port'), '0.0.0.0', () => {
   console.log('✓ dPi Interface is running at http://' + ip.address() + ':%d in %s mode', app.get('port'), app.get('env'));
   console.log('✓ Open the URL above in your web browser on your local network to use dPi!\n');
 });
+
+var http = require('http');
+http.createServer(function (req, res) {
+  var data = '';
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.write('Got your notify!');
+
+  req.on('data', chunk => {
+
+    data += chunk;
+
+    //console.log(data.toString());
+    console.log('Transaction Notify Received:', chunk.toString());
+    db.put('txid', chunk.toString(), function (err) {
+			if (err) return console.log('Ooops!', err) // some kind of I/O error if so
+    });
+    
+    fs.writeFile('notifies.txt', chunk.toString(), function (err) {
+      if (err) throw err;
+      //console.log('Loaded, Written to File');
+    });
+
+  });
+
+  console.log(data.toString());
+
+  res.end();
+
+}).listen(3333);
+console.log('✓ Started Wallet Notify Server on Port 3333');
 
 module.exports = app;
 

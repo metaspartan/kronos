@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@bitauth/libauth": "^1.15.3",
+    "app-root-path": "^3.0.0",
     "bip32d": "git://github.com/carsenk/bip32d.git",
     "bip39": "^3.0.2",
     "bitcoin": "git://github.com/carsenk/node-bitcoin.git",

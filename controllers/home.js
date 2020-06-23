@@ -13,12 +13,14 @@ const shell = require('shelljs');
 const sleep = require('system-sleep');
 const denarius = require('denariusjs');
 const CryptoJS = require("crypto-js");
-const level = require('level');
 const bip39 = require("bip39");
 const bip32 = require("bip32d");
-const fs = require('fs');
+const files = require('fs');
+const appRoot = require('app-root-path');
 const split = require('split');
 const os = require('os');
+const dbr = require('../db.js');
+const db = dbr.db;
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
@@ -56,7 +58,7 @@ function decrypt(data) {
 
 var mnemonic;
 let seedaddresses = [];
-var db = level('dpileveldb') // LevelDB dPi Init Directory
+// const db = level('dpileveldb'); // LevelDB dPi Init Directory
 
 // Fetch the dPi LevelDB
 db.get('seedphrase', function (err, value) {
@@ -152,7 +154,7 @@ exports.getDebugLog = (req, res) => {
 
 	console.log("FULL DIRECTORY", debugloc);
 
-	fs.readFile(debugloc, (e, debuglog) => {
+	files.readFile(debugloc, (e, debuglog) => {
 
 		//console.log("Debug Log Error", e);
 
@@ -594,18 +596,41 @@ si.currentLoad().then(data6 => {
 		unirest.get("https://api.coingecko.com/api/v3/coins/denarius?tickers=true&market_data=true&community_data=false&developer_data=true")
 			.headers({'Accept': 'application/json'})
 			.end(function (result) {
-				var usdbalance = result.body['market_data']['current_price']['usd'] * balance;
-				var currentprice = result.body['market_data']['current_price']['usd'];
+				if (result.body['market_data']['current_price'] != undefined) {
+					var usdbalance = result.body['market_data']['current_price']['usd'] * balance;
+					var currentprice = result.body['market_data']['current_price']['usd'];
+				} else {
+					usdbalance = '~';
+					currentprice = '~';
+				}
 
 		if (blockheight >= 0 && cryptoidblocks >= 0) {
 			var blockpercent = blockheight / cryptoidblocks;
 			var blockpercc = blockheight / cryptoidblocks * 100;
 			var blockperc = blockpercc.toFixed(2);
 		}
+
+		var thedir = appRoot + '/notifies.txt';
+
+		var thedb = files.readFileSync(thedir).toString();
+
+		if (thedb == '') {
+			notifydb = '';
+		} else {
+			notifydb = thedb;
+			//req.toastr.success('Success!', 'TX RECEIVED', { positionClass: 'toast-bottom-right' });
+			files.writeFile('notifies.txt', '', function (err) {
+				if (err) throw err;
+				console.log('Notification Cleared!');
+			});
+		}
+
+		console.log("NOTIFY UI", notifydb);
 		
 		//Render the page with the dynamic variables
         res.render('home', {
 			title: 'Home',
+			notify: notifydb,
 			min: min,
 			avg: avg,
 			max: max,

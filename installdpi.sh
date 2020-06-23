@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TEMP=/tmp/answer$$
-whiptail --title "dPi for Denarius"  --menu  "Installer for dPi Secondary Layer :" 20 0 0 1 "Install dPi w/ Denarius" 2 "Install dPi w/ Denarius & Chaindata" 3 "Update & Upgrade dPi" 2>$TEMP
+whiptail --title "dPi for Denarius"  --menu  "Installer for dPi Secondary Layer :" 20 0 0 1 "Install dPi w/ Denarius" 2 "Install dPi w/ Denarius & Chaindata" 3 "Update & Upgrade dPi v1.2.4-Alpha" 2>$TEMP
 choice=`cat $TEMP`
 case $choice in
 
@@ -190,6 +190,16 @@ touch ~/snap/denarius/common/.denarius/denarius.conf
 sed -i "s/.*rpcuser=.*/rpcuser="${PWUD1}"/" ~/snap/denarius/common/.denarius/denarius.conf
 
 sed -i "s/.*rpcpassword=.*/rpcpassword="${PWPD2}"/" ~/snap/denarius/common/.denarius/denarius.conf
+
+if [ ! -f ~/snap/denarius/common/.denarius/walletnotify.sh ]; then
+touch ~/snap/denarius/common/.denarius/walletnotify.sh
+
+sed -i '$a #!/bin/sh' ~/snap/denarius/common/.denarius/walletnotify.sh
+
+sed -i '$a curl "http://127.0.0.1:3333" -d "$@"' ~/snap/denarius/common/.denarius/walletnotify.sh
+
+sed -i '$a walletnotify=curl http://127.0.0.1:3333 -d "%s"' ~/snap/denarius/common/.denarius/denarius.conf
+fi
 
 echo "Injected newly generated username and password..."
 
@@ -461,6 +471,16 @@ sed -i "s/.*rpcuser=.*/rpcuser="${PWUD1}"/" ~/snap/denarius/common/.denarius/den
 
 sed -i "s/.*rpcpassword=.*/rpcpassword="${PWPD2}"/" ~/snap/denarius/common/.denarius/denarius.conf
 
+if [ ! -f ~/snap/denarius/common/.denarius/walletnotify.sh ]; then
+touch ~/snap/denarius/common/.denarius/walletnotify.sh
+
+sed -i '$a #!/bin/sh' ~/snap/denarius/common/.denarius/walletnotify.sh
+
+sed -i '$a curl "http://127.0.0.1:3333" -d "$@"' ~/snap/denarius/common/.denarius/walletnotify.sh
+
+sed -i '$a walletnotify=curl http://127.0.0.1:3333 -d "%s"' ~/snap/denarius/common/.denarius/denarius.conf
+fi
+
 echo "Injected newly generated username and password..."
 
 echo "Starting Denarius"
@@ -523,6 +543,16 @@ source ~/.profile
 source ~/.bashrc
 nvm install v10
 npm install -g npm
+
+if [ ! -f ~/snap/denarius/common/.denarius/walletnotify.sh ]; then
+touch ~/snap/denarius/common/.denarius/walletnotify.sh
+
+sed -i '$a #!/bin/sh' ~/snap/denarius/common/.denarius/walletnotify.sh
+
+sed -i '$a curl http://127.0.0.1:3333 -d "$@"' ~/snap/denarius/common/.denarius/walletnotify.sh
+
+sed -i '$a walletnotify=curl http://127.0.0.1:3333 -d "%s"' ~/snap/denarius/common/.denarius/denarius.conf
+fi
 
 cd dpi
 
