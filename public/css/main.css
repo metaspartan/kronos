@@ -5,8 +5,7 @@
  * Licensed under MIT (https://github.com/twbs/blob/master/LICENSE)
  */
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
-@import url("https://fonts.googleapis.com/css?family=Roboto:400,500,700");
-@import url("https://fonts.googleapis.com/css?family=Lato:100,400|Quicksand:300|Roboto:100,300|Open Sans:100,300");
+
 html {
   font-family: sans-serif;
   -ms-text-size-adjust: 100%;

@@ -24,6 +24,7 @@ const db = dbr.db;
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
+
  //Connect to our D node
 const client = new bitcoin.Client({
     host: process.env.DNRHOST,
@@ -320,6 +321,11 @@ exports.getDebugLog = (req, res) => {
 
 //Get information
 exports.index = (req, res) => {
+
+	const ip = require('ip');
+	const ipaddy = ip.address();
+
+	res.locals.lanip = ipaddy;
 
 // WIP for getInfo Realtime Calls
 // var delay = 30000;

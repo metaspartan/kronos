@@ -542,6 +542,7 @@ source ~/.nvm/nvm.sh
 source ~/.profile
 source ~/.bashrc
 nvm install v12
+nvm use v12
 npm install -g npm
 
 if [ ! -f ~/snap/denarius/common/.denarius/walletnotify.sh ]; then

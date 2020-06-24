@@ -1,10 +1,12 @@
 extends layout
 
 block content
+  span#lanip(data-value=lanip)
   script(src='../js/lib/jquery-3.1.1.min.js')  
   script(src="/socket.io/socket.io.js")
   script.
-    var socket = io('//localhost:3300');
+    var lanip = document.getElementById("lanip").getAttribute("data-value");
+    var socket = io('//'+ lanip +':3300');
     socket.on('cpudata', function (data) {
       // console.log(data);
       $('#cores').html(data.cores);
@@ -309,6 +311,8 @@ block content
                 strong#peers
           .col-md-3
             p(style='margin-top:62px;') Node IP Address: #{ip}:33369
+              p LAN IP: 
+                span#lanip(data-value=lanip) #{lanip}
               p FortunaStakes Online: 
                 strong #{fscount}
               p Fortunastake Node: #{fs}
