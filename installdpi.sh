@@ -159,6 +159,7 @@ source ~/.nvm/nvm.sh
 source ~/.profile
 source ~/.bashrc
 nvm install v12
+nvm use v12
 npm install -g npm
 #fi
 
@@ -409,6 +410,7 @@ source ~/.nvm/nvm.sh
 source ~/.profile
 source ~/.bashrc
 nvm install v12
+nvm use v12
 npm install -g npm
 #fi
 

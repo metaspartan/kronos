@@ -1586,6 +1586,11 @@ exports.withdraw = (req, res, next) => {
 exports.transactions = function (req, res) {
   //var username = req.user.email;
 
+  const ip = require('ip');
+	const ipaddy = ip.address();
+
+	res.locals.lanip = ipaddy;
+
   client.walletStatus(function (err, ws, resHeaders) {
     if (err) {
       console.log(err);
