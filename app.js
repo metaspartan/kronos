@@ -196,10 +196,10 @@ app.use(errorHandler());
 /**
  * Start Express server.
  */
-app.listen(app.get('port'), '0.0.0.0', () => {
+app.listen(3000, '0.0.0.0', () => {
   var tri = tribus.digest('Denarius');
   console.log('✓ Tribus Hash of "Denarius"', tri);
-  console.log('✓ dPi Interface is running at http://' + ip.address() + ':%d in %s mode', app.get('port'), app.get('env'));
+  console.log('✓ dPi Interface is running at http://' + ip.address() + ':%d in %s mode', '3000', app.get('env'));
   console.log('✓ Open the URL above in your web browser on your local network to use dPi!\n');
 });
 

@@ -4,7 +4,7 @@ block content
   script(src='../js/lib/jquery-3.1.1.min.js')  
   script(src="/socket.io/socket.io.js")
   script.
-    var socket = io('//localhost:3000');
+    var socket = io('//localhost:3300');
     socket.on('notifications', function (data) {
       console.log(data.notifydb);
       if (data.notifydb != '') {
