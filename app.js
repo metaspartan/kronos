@@ -32,8 +32,12 @@ const ip = require('ip');
 const shell = require('shelljs');
 const fs = require('fs');
 const dbr = require('./db.js');
+const appRoot = require('app-root-path');
+const files = require('fs');
 const db = dbr.db;
 
+
+//Print in console your LAN IP
 console.log('Your LAN', ip.address());
 
 /**
@@ -53,6 +57,10 @@ const walletController = require('./controllers/wallet');
  * Create Express server.
  */
 const app = express();
+
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
+io.setMaxListeners(333);
 
 /**
  * Express configuration.
@@ -78,6 +86,30 @@ app.use(flash());
 app.use(lusca.xframe('SAMEORIGIN'));
 
 app.use(lusca.xssProtection(true));
+
+app.use((req, res, next) => {
+  res.io = io;
+  //Emit to our Socket.io Server for Notifications
+  res.io.on('connection', function (socket) {
+    setInterval(() => {
+      var notifydb;
+      var thedir = appRoot + '/notifies.txt';
+      var thedb = files.readFileSync(thedir).toString();
+      if (thedb == '') {
+        notifydb = '';
+      } else {
+        notifydb = thedb;        
+        socket.emit("notifications", {notifydb: notifydb});
+        files.writeFile('notifies.txt', '', function (err) {
+          if (err) throw err;
+          console.log('Notification Cleared!');
+        });
+      }
+      //socket.emit("notifications", {notifydb: notifydb});
+    }, 300);
+  });
+  next();
+});
 
 app.use((req, res, next) => {
   res.locals.user = req.user;
@@ -180,9 +212,8 @@ http.createServer(function (req, res) {
   req.on('data', chunk => {
 
     data += chunk;
-
-    //console.log(data.toString());
     console.log('Transaction Notify Received:', chunk.toString());
+
     db.put('txid', chunk.toString(), function (err) {
 			if (err) return console.log('Ooops!', err) // some kind of I/O error if so
     });
@@ -201,7 +232,7 @@ http.createServer(function (req, res) {
 }).listen(3333);
 console.log('✓ Started Wallet Notify Server on Port 3333');
 
-module.exports = app;
+module.exports = {app: app, server: server};
 
 //The 404 Route (ALWAYS Keep this as the last route)
 app.get('*', function (req, res) {

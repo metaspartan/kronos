@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TEMP=/tmp/answer$$
-whiptail --title "dPi for Denarius"  --menu  "Installer for dPi Secondary Layer :" 20 0 0 1 "Install dPi w/ Denarius" 2 "Install dPi w/ Denarius & Chaindata" 3 "Update & Upgrade dPi v1.2.4-Alpha" 2>$TEMP
+whiptail --title "dPi for Denarius"  --menu  "Installer for dPi Secondary Layer :" 20 0 0 1 "Install dPi w/ Denarius" 2 "Install dPi w/ Denarius & Chaindata" 3 "Update & Upgrade dPi v1.2.5-Alpha" 2>$TEMP
 choice=`cat $TEMP`
 case $choice in
 

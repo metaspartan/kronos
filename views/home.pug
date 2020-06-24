@@ -1,7 +1,89 @@
 extends layout
 
 block content
-  script(src='../js/lib/jquery-3.1.1.min.js')
+  script(src='../js/lib/jquery-3.1.1.min.js')  
+  script(src="/socket.io/socket.io.js")
+  script.
+    var socket = io('//localhost:3000');
+    socket.on('cpudata', function (data) {
+      // console.log(data);
+      $('#cores').html(data.cores);
+      $('#threads').html(data.threads);
+    });
+    socket.on('notifications', function (data) {
+      // console.log(data);
+      if (data.notifydb != '') {
+        $('#notify').html("<div class='notifytx animate__animated animate__zoomInRight' id='notificationtx' style='background-color:#000000e8;border:3px solid #ffffff3d;border-radius:15px;padding:30px;font-size:13px;width:600px;position:fixed;right:0;bottom:5px;z-index:9999999;display:visible;' align='center'>Denarius TX Notification<br/><a href='/transactions' style='color:#999;font-size:0.85rem;'>"+ data.notifydb.toString() +"</a><div id='buttonfloat' style='top:36px;position:absolute;right:15px;' onclick='closeNotify()'><button type='submit' style='background-color:transparent;color:#666;border:none;' onclick='closeNotify()'>X</button></div></div>");
+      }
+    });
+    socket.on('cpuspeed', function (data) {
+      // console.log(data);
+      $('#avg').html(data.avg);
+    });
+    socket.on('temp', function (data) {
+      // console.log(data);
+      $('#temp').html(data.temp);
+    });
+    socket.on('osinfo', function (data) {
+      // console.log(data);
+      $('#osname').html(data.osname);
+      $('#kernel').html(data.kernel);
+      $('#platform').html(data.platform);
+      $('#release').html(data.release);
+      $('#hostname').html(data.hostname);
+      $('#arch').html(data.arch);
+    });
+    socket.on('dchain', function (data) {
+      // console.log(data);
+      $('#blockheight').html(data.blockheight);
+      $('#balance').html(data.balance);
+      $('#unbalance').html(data.unbalance);
+      $('#instake').html(data.stakebal);
+      $('#peers').html(data.peers);
+      $('#datasent').html(data.datasent);
+      $('#datareceived').html(data.datareceived);
+      $('#diff').html(data.diff);
+      $('#stakediff').html(data.stakediff);
+      $('#nethash').html(data.nethash);
+      $('#netweight').html(data.netweight);
+      $('#yourweight').html(data.yourweight);
+    });
+    socket.on('usdinfo', function (data) {
+      // console.log(data);
+      $('#usdbalance').html(data.usdbalance.toFixed(2));
+      $('#currentprice').html(data.currentprice.toFixed(2));
+    });
+    socket.on('cpuload', function (data1) {
+      //console.log(data1.cpu);
+      //$('#cpu').html(data.cpu);
+      //$('#cpu').data('value',data1.cpu);
+      ldbar1 = new ldBar("#cpuy", {
+                    "stroke-width": 8,
+                    "preset": "circle",
+                    "pattern-size": "32",
+                    "stroke": "../img/maze.svg",
+                    "stroke-linecap": "round"
+                    });
+      ldbar1.set(data1.cpu.toFixed(2) * 100, true);
+      $('#avgload').html(data1.cpu.toFixed(2) * 100);
+
+    });
+    socket.on('memory', function (data2) {
+      //console.log(data2.mempp);
+      //$('.ldBar').attr('data-value', data2.mempp.toFixed(2) * 100);
+      ldbar = new ldBar("#rammy", {
+                    "stroke-width": 8,
+                    "preset": "circle",
+                    "pattern-size": "32",
+                    "stroke": "../img/maze.svg",
+                    "stroke-linecap": "round"
+                    });
+      ldbar.set(data2.mempp.toFixed(2) * 100, true);
+      $('#memu').html(data2.memu);
+      $('#memt').html(data2.memt);
+      $('#memf').html(data2.memf);
+      //$('#rammy').html("data-value=" + data2.mempp.toFixed(2) + "")
+    });
   script. 
     function confirmedu() {
       $('#sendunlock').submit();
@@ -33,13 +115,7 @@ block content
         x.style.display = "none";
       }
     }
-  if (notify != '')
-    #notificationtx.notifytx.animate__animated.animate__zoomInRight(style='background-color:#000000e8;border:3px solid #ffffff3d;border-radius:15px;padding:30px;font-size:13px;width:600px;position:fixed;right:0;bottom:5px;z-index:9999999;display:visible;', align='center')
-      | Denarius TX Notification
-      br
-      a(href='/transactions', style='color:#999;font-size:0.85rem;') #{notify.toString()}
-      #buttonfloat(style='top:36px;position:absolute;right:15px;', onclick='closeNotify()')
-        button(type='submit', style='background-color:transparent;color:#666;border:none;', onclick='closeNotify()') X
+  #notify
   .maincontent(style='border: none !important;')
     #DisplayModalUnlockStaking.modal(style='z-index:1100 !important;')
       .modal-dialog
@@ -161,27 +237,33 @@ block content
             {
             window.location=window.location;
             }
-            }, 30000); // 30 seconds for auto refresh enabled
+            }, 60000); // 60 seconds for auto refresh enabled
       .row(class='rowclass balancerow').animate__animated.animate__fadeIn
         .col-sm-6
           h3(style='font-size:48px;color: #393939;margin-top:0px;') 
             i.fas.fa-wallet 
             |  Balance
           p 
-          .bal(style='font-size:2.5em;') #{balance}
+          .bal(style='font-size:2.5em;') 
+            span#balance
             small(style='font-size:16px;')  D
           p
-          .bal(style='font-size:1.6em;color:#888;') $#{usdbalance}
-            small(style='font-size:16px;')  USD @ $#{currentprice} ea
+          .bal(style='font-size:1.6em;color:#888;') $
+            span#usdbalance
+            small(style='font-size:16px;')  USD @ $
+              span#currentprice
+              |  ea
         .col-sm-3
           h3(style='font-weight:light;font-size:28px;color: #393939;margin-top:15px;') Unconfirmed
           p 
-          .bal(style='font-size:1.7em;') #{unbalance}
+          .bal(style='font-size:1.7em;')
+            span#unbalance
             small(style='font-size:16px;')  D
         .col-sm-3
-          h3(style='font-weight:light;font-size:28px;color: #393939;margin-top:15px;') In Stake
+          h3(style='font-weight:light;font-size:28px;color: #393939;margin-top:5px;') In Stake
           p 
-          .bal(style='font-size:1.7em;') #{instake}
+          .bal(style='font-size:1.7em;') 
+            span#instake
             small(style='font-size:16px;')  D
       .row(class='rowclass').animate__animated.animate__fadeIn
         .col-md-6
@@ -215,12 +297,12 @@ block content
               i.fas.fa-hdd 
               |  Stats
             p Block Height: 
-              strong #{blockheight}
+              strong#blockheight
               p Denarius Version #{version}
               p Protocol v#{protocol}
               p Is Syncing: #{syncing}
               p Peer Connections: 
-                strong #{peers}
+                strong#peers
           .col-md-3
             p(style='margin-top:62px;') Node IP Address: #{ip}:33369
               p FortunaStakes Online: 
@@ -233,23 +315,25 @@ block content
           .col-md-6
             .row
               .col-sm-6(align='center')
-                #container(name='container') &nbsp;
-              .col-sm-6(align='center')
-                #container2(name='container2') &nbsp;
+                #rammy.label-center(style='width:250px;height:250px;')
+                span(style='color:#777;') RAM Usage
+              .col-sm-6(align='center')              
+                #cpuy.label-center(style='width:250px;height:250px;')
+                span(style='color:#777;') CPU Usage
       .row(class='rowclass').animate__animated.animate__fadeIn
         .col-sm-3
           p
             | PoW Mining Hashrate 
             br 
             h4 
-              strong #{nethash}
+              strong#nethash
               small  MH/sec
             br
             | Tribus PoW Difficulty 
-            strong #{diff}
+            strong#diff
             br
             | Staking PoS Difficulty 
-            strong #{stakediff}
+            strong#stakediff
         .col-sm-3
           p 
             | Staking is 
@@ -260,10 +344,10 @@ block content
               | #{staketoggle}
           p
             | Network Stake Weight 
-            strong #{netweight}
+            strong#netweight            
           p
             | Your Stake Weight 
-            strong #{yourweight}
+            strong#yourweight
           p
             | Network Stake Rate is 6% APR of D
         .col-sm-3
@@ -273,11 +357,11 @@ block content
           p
             i.fa.fa-arrow-up 
             |  Data Sent 
-            strong #{datasent}
+            strong#datasent
           p
             i.fa.fa-arrow-down 
             |  Data Received 
-            strong #{datareceived}
+            strong#datareceived
           p
             i.fas.fa-stopwatch 
             |  Target Timeframe 
@@ -291,16 +375,38 @@ block content
           i.fas.fa-microchip 
           |  System Info
         .col-sm-6
-          p Physical Cores #{cores} / #{threads} Threads
-          p Core Clock Speed: #{avg} GHz - Average CPU Load: #{avgload}
-          p CPU Tempature: #{temp} °C
-          p Memory Usage:  #{memu} GB Used / #{memf} GB Free / #{memt} GB Total
-          p Architecture: #{arch}
+          p Physical Cores 
+            span#cores
+            |  /  
+            span#threads 
+            |  Threads
+          p Core Clock Speed: 
+            span#avg
+            |  GHz - CPU Load: 
+            span#avgload 
+            | %
+          p CPU Tempature: 
+            span#temp 
+            |  °C
+          p Memory Usage:  
+            span#memu
+            |  GB Used / 
+            span#memf
+            |  GB Free / 
+            span#memt 
+            |  GB Total
+          p Architecture: 
+            span#arch
           #ram(data-value=mempp)
           #cpu(data-value=cpu)
         .col-sm-6
-          p OS Name: #{osname}
-          p Platform: #{platform}
-          p Release: #{release}
-          p Kernel: #{kernel}
-          p Hostname: #{hostname}
+          p OS Name: 
+            span#osname
+          p Platform: 
+            span#platform
+          p Release: 
+            span#release
+          p Kernel: 
+            span#kernel
+          p Hostname: 
+            span#hostname

@@ -263,6 +263,41 @@ exports.getDebugLog = (req, res) => {
 
 //Get information
 exports.index = (req, res) => {
+
+// WIP for getInfo Realtime Calls
+// var delay = 30000;
+// res.io.on('connection', function (socket) {
+// 				clearInterval(intervalset);
+// 				var intervalset = setInterval(() => {
+
+// 					client.getInfo(function (error, info, resHeaders) {
+// 						if (error) { 
+// 							console.log(error);
+// 						} else {
+// 								socket.emit("dchain", {
+// 									blockheight: info.blocks, 
+// 									balance: info.balance, 
+// 									diff: info.difficulty['proof-of-work'], 
+// 									stakediff: info.difficulty['proof-of-stake'], 
+// 									nethash: info.netmhashps.toFixed(2), 
+// 									unbalance: info.unconfirmed, 
+// 									stakebal: info.stake, 
+// 									peers: info.connections, 
+// 									datareceived: info.datareceived, 
+// 									datasent: info.datasent,
+// 									yourweight: info.weight,
+// 									netweight: info.netstakeweight
+// 								});
+// 						}
+// 					});
+
+// 				}, delay);
+
+// 				socket.on('disconnect', () => {
+// 					clearInterval(intervalset);
+// 				});
+// });	
+
 si.cpu(function (data) {	  
 
 	var brand1 = JSON.stringify(data.brand);
@@ -273,6 +308,13 @@ si.cpu(function (data) {
 	res.locals.cores = cores;
 	res.locals.threads = threads;
 	res.locals.brand = brand;
+	//Emit to our Socket.io Server
+	res.io.on('connection', function (socket) {
+		socket.emit("cpudata", {cores: cores, brand: brand, threads: threads});
+		setInterval(() => {
+			socket.emit("cpudata", {cores: cores, brand: brand, threads: threads});
+		}, 60000);		
+	});
 });
 
 si.cpuCurrentspeed(async function (data2) {
@@ -280,6 +322,15 @@ si.cpuCurrentspeed(async function (data2) {
 	var min = data2.min;
 	var avg = data2.avg;
 	var max = data2.max;
+
+	//Emit to our Socket.io Server
+	res.io.on('connection', function (socket) {
+		socket.emit("cpuspeed", {min: min, avg: avg, max: max});
+		setInterval(() => {
+			socket.emit("cpuspeed", {min: min, avg: avg, max: max});
+		}, 60000);
+	});
+});
 
 si.cpuTemperature(async function (data3) {
 	var tempp = data3.main;
@@ -290,6 +341,26 @@ si.cpuTemperature(async function (data3) {
 	} else {
 		var temp = temppp;
 	}
+
+	//Emit to our Socket.io Server
+	res.io.on('connection', function (socket) {
+		socket.emit("temp", {temp: temp, temppp: temppp});
+		setInterval(() => {
+			si.cpuTemperature(function (data3) {
+				var tempp = data3.main;
+				var temppp = tempp.toFixed(0);
+			
+				if (temppp == -1) {
+					var temp = 'N/A';
+				} else {
+					var temp = temppp;
+				}
+
+				socket.emit("temp", {temp: temp, temppp: temppp});
+			});
+		}, 60000);
+	});
+});
 
 si.mem(async function (data1) {
 
@@ -314,6 +385,38 @@ si.mem(async function (data1) {
 	var memppp = memp / 100;
 	var mempp = memppp;
 
+	//Emit to our Socket.io Server
+	res.io.on('connection', function (socket) {
+		socket.emit("memory", {mema: mema, memt: memt, memf: memf, memu: memu, memp: memp, mempp: mempp});
+		setInterval(() => {
+			si.mem(function (data1) {
+
+				var bytes = 1073741824;
+				var memtt = data1.total;
+				var memuu = data1.active;
+				var memff = data1.free;
+				var mema = data1.available;
+			
+				var memttt = memtt / bytes;
+				var memt = memttt.toFixed(2);
+			
+				var memffff = memtt - memuu;
+				var memfff = memffff / bytes;
+				var memf = memfff.toFixed(2);
+			
+				var memuuu = memuu / bytes;
+				var memu = memuuu.toFixed(2);			
+			
+				var memp = memu / memt * 100;
+				var memppp = memp / 100;
+				var mempp = memppp;
+
+				socket.emit("memory", {mema: mema, memt: memt, memf: memf, memu: memu, memp: memp, mempp: mempp});
+			});
+		}, 5000);
+	});
+});
+
 si.osInfo(async function (data4) {
 
 	var osname = data4.distro;
@@ -323,10 +426,30 @@ si.osInfo(async function (data4) {
 	var hostname = data4.hostname;
 	var arch = data4.arch;
 
+	//Emit to our Socket.io Server
+	res.io.on('connection', function (socket) {
+		socket.emit("osinfo", {osname: osname, kernel: kernel, platform: platform, release: release, hostname: hostname, arch: arch});
+		setInterval(() => {
+			socket.emit("osinfo", {osname: osname, kernel: kernel, platform: platform, release: release, hostname: hostname, arch: arch});
+		}, 60000);
+	});
+
+});
+
 si.system(async function (data9) {
 
 	var manu = data9.manufacturer;
 	var model = data9.model;
+
+	//Emit to our Socket.io Server
+	res.io.on('connection', function (socket) {
+		socket.emit("sysmodel", {manu: manu, model: model});
+		setInterval(() => {
+			socket.emit("sysmodel", {manu: manu, model: model});
+		}, 60000);
+	});
+
+});
 
 si.currentLoad().then(data6 => {
 
@@ -335,6 +458,24 @@ si.currentLoad().then(data6 => {
 
 	var cpu = currentload / 100;
 
+	//Emit to our Socket.io Server
+	res.io.on('connection', function (socket) {
+		socket.emit("cpuload", {avgload: avgload, cpu: cpu});
+		setInterval(() => {
+			si.currentLoad().then(data6 => {
+
+				var avgload = data6.avgload;
+				var currentload = data6.currentload;
+			
+				var cpu = currentload / 100;
+
+				socket.emit("cpuload", {avgload: avgload, cpu: cpu});
+
+			});
+		}, 5000);
+	});
+
+});
 
 	//Denarius Main Account to go off of
 	var account = '333D'; //Needs work
@@ -432,6 +573,11 @@ si.currentLoad().then(data6 => {
 
 			var offline = 'onlineoverlay';
 			var offlinebtn = 'onlinebutton';
+
+			//Emit to our Socket.io Server
+			res.io.on('connection', function (socket) {
+				socket.emit("mininginfo", {diff: diff, stakediff: stakediff, nethash: nethash});
+			});
 
 		}
 
@@ -541,6 +687,13 @@ si.currentLoad().then(data6 => {
 			var fslocked = info.fslock;
 			var testnet = info.testnet;
 			var walletstatuss = info.wallet_status;
+			var diff = info.difficulty['proof-of-work'];
+			var stakediff = info.difficulty['proof-of-stake'];
+			var netweight = info.netstakeweight;
+			var yourweight = info.weight;
+			var nethashh = info.netmhashps;
+
+			var nethash = nethashh.toFixed(2);
 
 			var offline = 'onlineoverlay';
 			var offlinebtn = 'onlinebutton';
@@ -550,6 +703,24 @@ si.currentLoad().then(data6 => {
 			var walletlink;
 			var sending;
 			var sendicon;
+
+			
+			//Emit to our Socket.io Server
+			res.io.on('connection', function (socket) {
+				socket.emit("dchain", {blockheight: blockheight, 
+					balance: balance, 
+					unbalance: unbalance, 
+					stakebal: stakebal, 
+					peers: peers, 
+					datareceived: datareceived, 
+					datasent: datasent,
+					diff: diff,
+					stakediff: stakediff,
+					netweight: netweight,
+					yourweight: yourweight,
+					nethash: nethash
+				});
+			});
 
 			if (syncing == true) {
 				var chaindl = 'syncingoverlay';
@@ -593,16 +764,16 @@ si.currentLoad().then(data6 => {
 			var cryptoidblocks = result.body;
 
 		//Get Current D/BTC and D/USD price from CoinGecko
-		unirest.get("https://api.coingecko.com/api/v3/coins/denarius?tickers=true&market_data=true&community_data=false&developer_data=true")
-			.headers({'Accept': 'application/json'})
-			.end(function (result) {
-				if (result.body['market_data']['current_price'] != undefined) {
-					var usdbalance = result.body['market_data']['current_price']['usd'] * balance;
-					var currentprice = result.body['market_data']['current_price']['usd'];
-				} else {
-					usdbalance = '~';
-					currentprice = '~';
-				}
+		// unirest.get("https://api.coingecko.com/api/v3/coins/denarius?tickers=true&market_data=true&community_data=false&developer_data=true")
+		// 	.headers({'Accept': 'application/json'})
+		// 	.end(function (result) {
+		// 		if (result.body['market_data']['current_price'] != undefined) {
+		// 			var usdbalance = result.body['market_data']['current_price']['usd'] * balance;
+		// 			var currentprice = result.body['market_data']['current_price']['usd'];
+		// 		} else {
+		// 			usdbalance = '~';
+		// 			currentprice = '~';
+		// 		}
 
 		if (blockheight >= 0 && cryptoidblocks >= 0) {
 			var blockpercent = blockheight / cryptoidblocks;
@@ -610,43 +781,49 @@ si.currentLoad().then(data6 => {
 			var blockperc = blockpercc.toFixed(2);
 		}
 
-		var thedir = appRoot + '/notifies.txt';
+		//Emit to our Socket.io Server for USD Balance Information
+		res.io.on('connection', function (socket) {
+			//Get Current D/BTC and D/USD price from CoinGecko
+			unirest.get("https://api.coingecko.com/api/v3/coins/denarius?tickers=true&market_data=true&community_data=false&developer_data=true")
+			.headers({'Accept': 'application/json'})
+			.end(function (result) {
+				if (result.body['market_data']['current_price'] != undefined) {
 
-		var thedb = files.readFileSync(thedir).toString();
+					var usdbalance = result.body['market_data']['current_price']['usd'] * balance;
+					var currentprice = result.body['market_data']['current_price']['usd'];
 
-		if (thedb == '') {
-			notifydb = '';
-		} else {
-			notifydb = thedb;
-			//req.toastr.success('Success!', 'TX RECEIVED', { positionClass: 'toast-bottom-right' });
-			files.writeFile('notifies.txt', '', function (err) {
-				if (err) throw err;
-				console.log('Notification Cleared!');
+					socket.emit("usdinfo", {usdbalance: result.body['market_data']['current_price']['usd'] * balance, currentprice: result.body['market_data']['current_price']['usd']});
+				} else { 
+					usdbalance = '~';
+					currentprice = '~';
+					socket.emit("usdinfo", {usdbalance: usdbalance, currentprice: currentprice});
+				}
 			});
-		}
+			setTimeout(() => {
+				setInterval(() => {
+						//Get Current D/BTC and D/USD price from CoinGecko
+						unirest.get("https://api.coingecko.com/api/v3/coins/denarius?tickers=true&market_data=true&community_data=false&developer_data=true")
+						.headers({'Accept': 'application/json'})
+						.end(function (result) {
+							if (result.body != undefined) {
 
-		console.log("NOTIFY UI", notifydb);
+								var usdbalance = result.body['market_data']['current_price']['usd'] * balance;
+								var currentprice = result.body['market_data']['current_price']['usd'];
+
+								socket.emit("usdinfo", {usdbalance: result.body['market_data']['current_price']['usd'] * balance, currentprice: result.body['market_data']['current_price']['usd']});
+							} else { 
+								usdbalance = '~';
+								currentprice = '~';
+								socket.emit("usdinfo", {usdbalance: usdbalance, currentprice: currentprice});
+							}
+						});
+				}, 20000);
+			}, 30000);
+		});
 		
 		//Render the page with the dynamic variables
         res.render('home', {
 			title: 'Home',
-			notify: notifydb,
-			min: min,
-			avg: avg,
-			max: max,
-			temp: temp,
-			memt: memt,
-			memu: memu,
-			memf: memf,
-			mema: mema,
-			osname: osname,
-			kernel: kernel,
-			platform: platform,
-			release: release,
-			arch: arch,
-			hostname: hostname,
-			manu: manu,
-			model: model,
 			blockheight: blockheight,
 			balance: balance,
 			unbalance: unbalance,
@@ -660,10 +837,6 @@ si.currentLoad().then(data6 => {
 			fs: fs,
 			tor: tor,
 			moneysupply: moneysupply,
-			memp: memp,
-			mempp: mempp,
-			cpu: cpu,
-			avgload: avgload,
 			nethash: nethash,
 			timeframe: timeframe,
 			target: target,
@@ -697,19 +870,10 @@ si.currentLoad().then(data6 => {
 			blockpercent: blockpercent,
 			blockperc: blockperc,
 			sendicon: sendicon,
-			fscount: fscount,
-			currentprice: currentprice.toFixed(2),
-			usdbalance: usdbalance.toFixed(2)
+			fscount: fscount
         	});
 		});
 	});
-});
-});
-});
-});
-});
-});
-});
 });
 });
 });

@@ -5,7 +5,7 @@
 
 @import "themes/sandstone/sandstone";
 
-@import url('https://fonts.googleapis.com/css?family=Lato:100,400|Quicksand:300|Roboto:100,300|Open Sans:100,300|Ubuntu:100,300|Muli:100,300');
+@import url('https://fonts.googleapis.com/css?family=Lato:100,200,400|Quicksand:300|Roboto:100,300|Open Sans:100,300|Poppins:100,200,400|Heebo:100,200,400|Ubuntu:100,300|Muli:100,300');
 
 // Scaffolding
 // -------------------------
@@ -199,6 +199,36 @@ footer {
 
 .systxt {
   font-size: 11px;
+}
+
+.ldBar path.baseline {
+  stroke-width: 2;
+  stroke: #333;
+  stroke-linecap: round;
+}
+
+.ldBar path.mainline {
+  stroke-linecap: round;
+}
+
+.ldBar-label {
+  font-size: 50px;
+  color: #eee;
+  font-family: 'Heebo', sans-serif;
+  font-weight: 100;
+  text-shadow: none !important;
+}
+
+.ldBar-label::after {
+  font-size: 30px;
+  color: #777;
+  font-family: 'Heebo', sans-serif;
+  font-weight: 100;
+}
+
+.ldBar.label-center > .ldBar-label {
+
+  text-shadow: 0 !important;
 }
 
 .Enabled {

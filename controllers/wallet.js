@@ -9,6 +9,8 @@ const ElectrumClient = require('electrum-cash').Client;
 const bs58 = require('bs58');
 const sha256 = require('sha256');
 const instantiateSecp256k1 = require('@bitauth/libauth');
+const appRoot = require('app-root-path');
+const files = require('fs');
 
 var sendJSONResponse = function (res, status, content) {
     res.status(status);
