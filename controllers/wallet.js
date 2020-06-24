@@ -8,7 +8,7 @@ const toastr = require('express-toastr');
 const ElectrumClient = require('electrum-cash').Client;
 const bs58 = require('bs58');
 const sha256 = require('sha256');
-const instantiateSecp256k1 = require('@bitauth/libauth');
+//const instantiateSecp256k1 = require('@bitauth/libauth'); Unused
 const appRoot = require('app-root-path');
 const files = require('fs');
 
