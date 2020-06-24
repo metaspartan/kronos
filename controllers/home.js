@@ -787,7 +787,7 @@ si.currentLoad().then(data6 => {
 			unirest.get("https://api.coingecko.com/api/v3/coins/denarius?tickers=true&market_data=true&community_data=false&developer_data=true")
 			.headers({'Accept': 'application/json'})
 			.end(function (result) {
-				if (result.body['market_data']['current_price'] != undefined) {
+				if (result.body != undefined) {
 
 					var usdbalance = result.body['market_data']['current_price']['usd'] * balance;
 					var currentprice = result.body['market_data']['current_price']['usd'];
