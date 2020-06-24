@@ -60,7 +60,7 @@ const app = express();
 
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
-io.setMaxListeners(333);
+io.setMaxListeners(33);
 
 /**
  * Express configuration.
@@ -90,7 +90,16 @@ app.use(lusca.xssProtection(true));
 app.use((req, res, next) => {
   res.io = io;
   //Emit to our Socket.io Server for Notifications
+  let socket_id10 = [];
   res.io.on('connection', function (socket) {
+    // console.log(socket.clients().length);
+    socket_id10.push(socket.id);
+    //console.log(socket.id);
+    if (socket_id10[0] === socket.id) {
+      // remove the connection listener for any subsequent 
+      // connections with the same ID
+      res.io.removeAllListeners('connection'); 
+    }
     setInterval(() => {
       var notifydb;
       var thedir = appRoot + '/notifies.txt';

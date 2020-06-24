@@ -78,7 +78,7 @@ db.get('seedphrase', function (err, value) {
 			//console.log('Inserted Encrypted Seed Phrase to DB');
 		});
 
-		return mnemonic;
+		//return mnemonic;
 
 	} else {
 
@@ -87,13 +87,10 @@ db.get('seedphrase', function (err, value) {
 
 		mnemonic = decryptedmnemonic;
 
-		return mnemonic;
+		//return mnemonic;
 
-	}	
-});
+	}
 
-//Wait under a half second to ensure the seedphrase to be grabbed from the LevelDB above
-setTimeout(function bip39seed() {
 
 	console.log("Stored Denarius Mnemonic: ", mnemonic);
 
@@ -129,15 +126,75 @@ setTimeout(function bip39seed() {
 
 		// Get the p2pkh base58 public address of the keypair
 		const p2pkhaddy = denarius.payments.p2pkh({ pubkey: addressKeypair.publicKey, network }).address;
+
+		const privatekey = addressKeypair.toWIF();
 	
 		//New Array called seedaddresses that is filled with address and path data currently, WIP and TODO
-		seedaddresses.push({ address: p2pkhaddy, path: addressPath });
+		seedaddresses.push({ address: p2pkhaddy, privkey: privatekey, path: addressPath });
 	}
 
 	// Console Log the full array - want to eventually push these into scripthash hashing and retrieve balances and then send from them
 	console.log("Seed Address Array", seedaddresses);
 
-}, 1000);
+	//Emit to our Socket.io Server
+	// io.on('connection', function (socket) {
+	// 	socket.emit("seed", {seedaddresses: seedaddresses});
+	// 	// setInterval(() => {
+	// 	// 	socket.emit("seed", {seedaddresses: seedaddresses});
+	// 	// }, 60000);		
+	// });
+
+});
+
+console.log("Seed Address Array 2", seedaddresses);
+// //Wait under a half second to ensure the seedphrase to be grabbed from the LevelDB above
+// setTimeout(function bip39seed() {
+
+// 	console.log("Stored Denarius Mnemonic: ", mnemonic);
+
+// 	//Convert our mnemonic seed phrase to BIP39 Seed Buffer 
+// 	const seed = bip39.mnemonicToSeedSync(mnemonic);
+// 	console.log("BIP39 Seed Phrase to Hex", seed.toString('hex'));
+	
+// 	// BIP32 From BIP39 Seed
+// 	const root = bip32.fromSeed(seed);
+
+// 	// Denarius Network Params Object
+// 	const network = {
+// 			messagePrefix: '\x19Denarius Signed Message:\n',
+// 			bech32: 'd',
+// 			bip32: {
+// 				public: 0x0488b21e,
+// 				private: 0x0488ade4
+// 			},
+// 			pubKeyHash: 0x1e,
+// 			scriptHash: 0x5a,
+// 			wif: 0x9e
+// 	};
+
+// 	// A for loop for how many addresses we want from the derivation path of the seed phrase
+// 	//
+// 	for (let i = 0; i < 10; i++) {
+
+// 		//Get 10 Addresses from the derived mnemonic
+// 		const addressPath = `m/44'/116'/0'/0/${i}`;
+
+// 		// Get the keypair from the address derivation path
+// 		const addressKeypair = root.derivePath(addressPath);
+
+// 		// Get the p2pkh base58 public address of the keypair
+// 		const p2pkhaddy = denarius.payments.p2pkh({ pubkey: addressKeypair.publicKey, network }).address;
+
+// 		const privatekey = addressKeypair.toWIF();
+	
+// 		//New Array called seedaddresses that is filled with address and path data currently, WIP and TODO
+// 		seedaddresses.push({ address: p2pkhaddy, privkey: privatekey, path: addressPath });
+// 	}
+
+// 	// Console Log the full array - want to eventually push these into scripthash hashing and retrieve balances and then send from them
+// 	console.log("Seed Address Array", seedaddresses);
+
+// }, 1000);
 
 // GET Denarius Debug Log File
 exports.getDebugLog = (req, res) => {
@@ -298,6 +355,14 @@ exports.index = (req, res) => {
 // 				});
 // });	
 
+let socket_id = [];
+let socket_id2 = [];
+let socket_id3 = [];
+let socket_id4 = [];
+let socket_id5 = [];
+let socket_id6 = [];
+let socket_id7 = [];
+
 si.cpu(function (data) {	  
 
 	var brand1 = JSON.stringify(data.brand);
@@ -310,6 +375,13 @@ si.cpu(function (data) {
 	res.locals.brand = brand;
 	//Emit to our Socket.io Server
 	res.io.on('connection', function (socket) {
+		socket_id.push(socket.id);
+		//console.log(socket.id);
+		if (socket_id[0] === socket.id) {
+		  // remove the connection listener for any subsequent 
+		  // connections with the same ID
+		  res.io.removeAllListeners('connection'); 
+		}
 		socket.emit("cpudata", {cores: cores, brand: brand, threads: threads});
 		setInterval(() => {
 			socket.emit("cpudata", {cores: cores, brand: brand, threads: threads});
@@ -325,6 +397,12 @@ si.cpuCurrentspeed(async function (data2) {
 
 	//Emit to our Socket.io Server
 	res.io.on('connection', function (socket) {
+		socket_id2.push(socket.id);
+		if (socket_id2[0] === socket.id) {
+		  // remove the connection listener for any subsequent 
+		  // connections with the same ID
+		  res.io.removeAllListeners('connection'); 
+		}
 		socket.emit("cpuspeed", {min: min, avg: avg, max: max});
 		setInterval(() => {
 			socket.emit("cpuspeed", {min: min, avg: avg, max: max});
@@ -344,6 +422,12 @@ si.cpuTemperature(async function (data3) {
 
 	//Emit to our Socket.io Server
 	res.io.on('connection', function (socket) {
+		socket_id3.push(socket.id);
+		if (socket_id3[0] === socket.id) {
+		  // remove the connection listener for any subsequent 
+		  // connections with the same ID
+		  res.io.removeAllListeners('connection'); 
+		}
 		socket.emit("temp", {temp: temp, temppp: temppp});
 		setInterval(() => {
 			si.cpuTemperature(function (data3) {
@@ -387,6 +471,12 @@ si.mem(async function (data1) {
 
 	//Emit to our Socket.io Server
 	res.io.on('connection', function (socket) {
+		socket_id4.push(socket.id);
+		if (socket_id4[0] === socket.id) {
+		  // remove the connection listener for any subsequent 
+		  // connections with the same ID
+		  res.io.removeAllListeners('connection'); 
+		}
 		socket.emit("memory", {mema: mema, memt: memt, memf: memf, memu: memu, memp: memp, mempp: mempp});
 		setInterval(() => {
 			si.mem(function (data1) {
@@ -428,6 +518,12 @@ si.osInfo(async function (data4) {
 
 	//Emit to our Socket.io Server
 	res.io.on('connection', function (socket) {
+		socket_id5.push(socket.id);
+		if (socket_id5[0] === socket.id) {
+		  // remove the connection listener for any subsequent 
+		  // connections with the same ID
+		  res.io.removeAllListeners('connection'); 
+		}
 		socket.emit("osinfo", {osname: osname, kernel: kernel, platform: platform, release: release, hostname: hostname, arch: arch});
 		setInterval(() => {
 			socket.emit("osinfo", {osname: osname, kernel: kernel, platform: platform, release: release, hostname: hostname, arch: arch});
@@ -443,6 +539,12 @@ si.system(async function (data9) {
 
 	//Emit to our Socket.io Server
 	res.io.on('connection', function (socket) {
+		socket_id6.push(socket.id);
+		if (socket_id6[0] === socket.id) {
+		  // remove the connection listener for any subsequent 
+		  // connections with the same ID
+		  res.io.removeAllListeners('connection'); 
+		}
 		socket.emit("sysmodel", {manu: manu, model: model});
 		setInterval(() => {
 			socket.emit("sysmodel", {manu: manu, model: model});
@@ -460,6 +562,12 @@ si.currentLoad().then(data6 => {
 
 	//Emit to our Socket.io Server
 	res.io.on('connection', function (socket) {
+		socket_id7.push(socket.id);
+		if (socket_id7[0] === socket.id) {
+		  // remove the connection listener for any subsequent 
+		  // connections with the same ID
+		  res.io.removeAllListeners('connection'); 
+		}
 		socket.emit("cpuload", {avgload: avgload, cpu: cpu});
 		setInterval(() => {
 			si.currentLoad().then(data6 => {
@@ -549,36 +657,6 @@ si.currentLoad().then(data6 => {
 			} else {
 				staketoggle = 'Not Yet Staking';
 			}
-		}
-
-	client.getMiningInfo(function (error, mineinfo, resHeaders) {
-
-		if (error) {
-			var diff = 'Node Offline';
-			var nethash = 'Node Offline';
-			var stakediff = 'Node Offline';
-
-			var offline = 'offlineoverlay';
-
-			var offlinebtn = 'offlinebutton';
-
-			console.log(error);
-
-		} else {
-			var diff = mineinfo.difficulty['proof-of-work'];
-			var stakediff = mineinfo.difficulty['proof-of-stake'];
-			var nethashh = mineinfo.netmhashps;
-
-			var nethash = nethashh.toFixed(2);
-
-			var offline = 'onlineoverlay';
-			var offlinebtn = 'onlinebutton';
-
-			//Emit to our Socket.io Server
-			res.io.on('connection', function (socket) {
-				socket.emit("mininginfo", {diff: diff, stakediff: stakediff, nethash: nethash});
-			});
-
 		}
 
 	client.getNetTotals(function (error, netinfo, resHeaders) {
@@ -704,24 +782,6 @@ si.currentLoad().then(data6 => {
 			var sending;
 			var sendicon;
 
-			
-			//Emit to our Socket.io Server
-			res.io.on('connection', function (socket) {
-				socket.emit("dchain", {blockheight: blockheight, 
-					balance: balance, 
-					unbalance: unbalance, 
-					stakebal: stakebal, 
-					peers: peers, 
-					datareceived: datareceived, 
-					datasent: datasent,
-					diff: diff,
-					stakediff: stakediff,
-					netweight: netweight,
-					yourweight: yourweight,
-					nethash: nethash
-				});
-			});
-
 			if (syncing == true) {
 				var chaindl = 'syncingoverlay';
 				var chaindlbtn = 'syncingbtn';
@@ -755,6 +815,33 @@ si.currentLoad().then(data6 => {
 				sendicon = 'display: none !important';
 				privatekey = 'Wallet Locked';
 			}
+
+			var socket_id8 = [];
+			//Emit to our Socket.io Server
+			res.io.on('connection', function (socket) {
+				socket_id8.push(socket.id);
+				//console.log(socket.id);
+				if (socket_id8[0] === socket.id) {
+				  // remove the connection listener for any subsequent 
+				  // connections with the same ID
+				  res.io.removeAllListeners('connection'); 
+				}
+				socket.emit("dchain", {blockheight: blockheight, 
+					balance: balance, 
+					unbalance: unbalance, 
+					instake: instake,
+					stakebal: stakebal, 
+					peers: peers, 
+					datareceived: datareceived, 
+					datasent: datasent,
+					diff: diff,
+					stakediff: stakediff,
+					netweight: netweight,
+					yourweight: yourweight,
+					nethash: nethash,
+
+				});
+			});
 		}
 
 		//Get Current Block Count from Chainz Explorer
@@ -781,8 +868,16 @@ si.currentLoad().then(data6 => {
 			var blockperc = blockpercc.toFixed(2);
 		}
 
+		let socket_id9 = [];
 		//Emit to our Socket.io Server for USD Balance Information
 		res.io.on('connection', function (socket) {
+			socket_id9.push(socket.id);
+			//console.log(socket.id);
+			if (socket_id9[0] === socket.id) {
+			  // remove the connection listener for any subsequent 
+			  // connections with the same ID
+			  res.io.removeAllListeners('connection'); 
+			}
 			//Get Current D/BTC and D/USD price from CoinGecko
 			unirest.get("https://api.coingecko.com/api/v3/coins/denarius?tickers=true&market_data=true&community_data=false&developer_data=true")
 			.headers({'Accept': 'application/json'})
@@ -824,35 +919,23 @@ si.currentLoad().then(data6 => {
 		//Render the page with the dynamic variables
         res.render('home', {
 			title: 'Home',
-			blockheight: blockheight,
 			balance: balance,
-			unbalance: unbalance,
-			instake: instake,
 			version: version,
 			protocol: protocol,
-			peers: peers,
 			ip: ip,
 			datadir: datadir,
 			syncing: syncing,
 			fs: fs,
 			tor: tor,
 			moneysupply: moneysupply,
-			nethash: nethash,
 			timeframe: timeframe,
 			target: target,
-			diff: diff,
-			stakediff: stakediff,
 			stakebal: stakebal,
 			enabled: enabled,
 			staking: staking,
-			yourweight: yourweight,
-			netweight: netweight,
 			expected: expected,
-			stakediff: stakediff,
 			staketoggle: staketoggle,
 			enabletoggle: enabletoggle,
-			datareceived: datareceived,
-			datasent: datasent,
 			nativetor: nativetor,
 			fslocked: fslocked,
 			testnet: testnet,
@@ -874,7 +957,6 @@ si.currentLoad().then(data6 => {
         	});
 		});
 	});
-});
 });
 });
 });

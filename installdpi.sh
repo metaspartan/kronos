@@ -158,7 +158,7 @@ wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 source ~/.nvm/nvm.sh
 source ~/.profile
 source ~/.bashrc
-nvm install v10
+nvm install v12
 npm install -g npm
 #fi
 
@@ -408,7 +408,7 @@ wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 source ~/.nvm/nvm.sh
 source ~/.profile
 source ~/.bashrc
-nvm install v10
+nvm install v12
 npm install -g npm
 #fi
 
@@ -541,7 +541,7 @@ wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 source ~/.nvm/nvm.sh
 source ~/.profile
 source ~/.bashrc
-nvm install v10
+nvm install v12
 npm install -g npm
 
 if [ ! -f ~/snap/denarius/common/.denarius/walletnotify.sh ]; then

@@ -24,6 +24,10 @@ block content
       // console.log(data);
       $('#temp').html(data.temp);
     });
+    socket.on('seed', function (data) {
+      // console.log(data);
+      $('#addresses').html(data.seedaddresses);
+    });
     socket.on('osinfo', function (data) {
       // console.log(data);
       $('#osname').html(data.osname);

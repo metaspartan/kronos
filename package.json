@@ -9,7 +9,7 @@
   "author": "Carsen Klock",
   "license": "MIT",
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "node --max_old_space_size=4096 ./bin/www",
     "test": "mocha --reporter spec"
   },
   "dependencies": {
