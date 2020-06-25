@@ -124,7 +124,7 @@ body {
 .rowclass {
   background-color:#000;
   background: linear-gradient(-165deg, rgb(41, 40, 37) 0%, rgba(38,38,38,1) 48%, rgb(22, 22, 22) 100%);
-  border-radius:30px;
+  border-radius:15px;
   padding:30px;
   margin:15px;
 }

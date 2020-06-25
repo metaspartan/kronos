@@ -1,11 +1,11 @@
 #!/bin/bash
 
 TEMP=/tmp/answer$$
-whiptail --title "dPi for Denarius"  --menu  "Installer for dPi Secondary Layer :" 20 0 0 1 "Install dPi w/ Denarius" 2 "Install dPi w/ Denarius & Chaindata" 3 "Update & Upgrade dPi v1.2.5-Alpha" 2>$TEMP
+whiptail --title "Kronos for Denarius"  --menu  "Installer for Kronos Secondary Layer :" 20 0 0 1 "Install Kronos w/ Denarius" 2 "Install Kronos w/ Denarius & Chaindata" 3 "Update & Upgrade Kronos v1.2.5-Alpha" 2>$TEMP
 choice=`cat $TEMP`
 case $choice in
 
-1) echo 1 "Installer for dPi"
+1) echo 1 "Installer for Kronos"
 #COLORS
 BLUE='\033[0;34m'
 CYAN='\033[0;36m'
@@ -13,7 +13,7 @@ GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-# License dPi Installer
+# License Kronos Installer
 #
 #The MIT License (MIT)
 #
@@ -134,10 +134,10 @@ printf "3333333333333333333333333333333333333333333333333\n\n"
 
 progress_bar 3
 
-printf "${GREEN}Installing dPi, Denarius, and related dependancies${NC}\n"
+printf "${GREEN}Installing Kronos, Denarius, and related dependancies${NC}\n"
 
 lsof /var/lib/dpkg/lock >/dev/null 2>&1
-[ $? = 0 ] && echo "dpkg is currently locked, cannot install dPi...Please ensure you are not running software updates"
+[ $? = 0 ] && echo "dpkg is currently locked, cannot install Kronos...Please ensure you are not running software updates"
 
 sudo apt-get update -y && sudo apt-get upgrade -y
 
@@ -210,21 +210,21 @@ denarius.daemon
 
 progress_bar 20
 
-echo "Installing dPi from Github"
+echo "Installing Kronos from Github"
 
-if [ -d "dpi" ]; then
-  sudo rm -rf dpi
+if [ -d "kronos" ]; then
+  sudo rm -rf kronos
 fi
 
-git clone https://github.com/carsenk/dpi
+git clone https://github.com/carsenk/kronos
 
-cd dpi
+cd kronos
 
-echo "Installing dPi Node Modules..."
+echo "Installing Kronos Node Modules..."
 
 npm install
 
-echo "Successfully Installed dPi Node Modules"
+echo "Successfully Installed Kronos Node Modules"
 
 echo "Updating Enviroment..."
 
@@ -235,21 +235,21 @@ sed -i "s/.*DNRPASS=.*/DNRPASS="${PWPD2}"/" .env
 
 sed -i "s/.*SECRET_KEY=.*/SECRET_KEY="${PWPD3}"/" .env
 
-echo "Successfully injected generated username and password to dPi"
+echo "Successfully injected generated username and password to Kronos"
 
 PWDPI3=$(pwgen 15 1)
 
-echo "Updating dPi Protection and Generating Password..."
+echo "Updating Kronos Protection and Generating Password..."
 
-sed -i "s/.*DPIPASS=.*/DPIPASS="${PWDPI3}"/" .env
+sed -i "s/.*KRONOSPASS=.*/KRONOSPASS="${PWDPI3}"/" .env
 
 nohup npm start &
 
-echo "dPi and Denarius are successfully installed! dPi is now running on port 3000, open your browser to this devices local LAN IP, e.g. 192.168.x.x:3000"
+echo "Kronos and Denarius are successfully installed! Kronos is now running on port 3000, open your browser to this devices local LAN IP, e.g. 192.168.x.x:3000"
 
-echo "$(tput setaf 7)Your dPi credentials are $(tput setaf 2)dpiadmin $(tput setaf 7)& password is $(tput setaf 3)$PWDPI3"
+echo "$(tput setaf 7)Your Kronos credentials are $(tput setaf 2)kronos $(tput setaf 7)& password is $(tput setaf 3)$PWDPI3"
                 ;;
-2) echo 2 "Installer for dPi with fast chain sync"
+2) echo 2 "Installer for Kronos with fast chain sync"
 #COLORS
 BLUE='\033[0;34m'
 CYAN='\033[0;36m'
@@ -257,7 +257,7 @@ GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-# License dPi Installer
+# License Kronos Installer
 #
 # This script is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -385,10 +385,10 @@ printf "3333333333333333333333333333333333333333333333333\n\n"
 
 progress_bar 3
 
-printf "${GREEN}Installing dPi, Denarius, and related dependancies${NC}\n"
+printf "${GREEN}Installing Kronos, Denarius, and related dependancies${NC}\n"
 
 lsof /var/lib/dpkg/lock >/dev/null 2>&1
-[ $? = 0 ] && echo "dpkg is currently locked, cannot install dPi...Please ensure you are not running software updates"
+[ $? = 0 ] && echo "dpkg is currently locked, cannot install Kronos...Please ensure you are not running software updates"
 
 sudo apt-get update -y && sudo apt-get upgrade -y
 
@@ -491,21 +491,21 @@ denarius.daemon
 
 progress_bar 20
 
-echo "Installing dPi from Github"
+echo "Installing Kronos from Github"
 
-if [ -d "dpi" ]; then
-  sudo rm -rf dpi
+if [ -d "kronos" ]; then
+  sudo rm -rf kronos
 fi
 
-git clone https://github.com/carsenk/dpi
+git clone https://github.com/carsenk/kronos
 
-cd dpi
+cd kronos
 
-echo "Installing dPi Node Modules..."
+echo "Installing Kronos Node Modules..."
 
 npm install
 
-echo "Successfully Installed dPi Node Modules"
+echo "Successfully Installed Kronos Node Modules"
 
 echo "Updating Enviroment..."
 
@@ -516,21 +516,21 @@ sed -i "s/.*DNRPASS=.*/DNRPASS="${PWPD2}"/" .env
 
 sed -i "s/.*SECRET_KEY=.*/SECRET_KEY="${PWPD3}"/" .env
 
-echo "Successfully injected generated username and password to dPi"
+echo "Successfully injected generated username and password to Kronos"
 
 PWDPI3=$(pwgen 15 1)
 
-echo "Updating dPi Protection and Generating Password..."
+echo "Updating Kronos Protection and Generating Password..."
 
-sed -i "s/.*DPIPASS=.*/DPIPASS="${PWDPI3}"/" .env
+sed -i "s/.*KRONOSPASS=.*/KRONOSPASS="${PWDPI3}"/" .env
 
 nohup npm start &
 
-echo "dPi and Denarius are successfully installed! dPi is now running on port 3000, open your browser to this devices local LAN IP, e.g. 192.168.x.x:3000"
+echo "Kronos and Denarius are successfully installed! Kronos is now running on port 3000, open your browser to this devices local LAN IP, e.g. 192.168.x.x:3000"
 
-echo "$(tput setaf 7)Your dPi credentials are $(tput setaf 2)dpiadmin $(tput setaf 7)& password is $(tput setaf 3)$PWDPI3"
+echo "$(tput setaf 7)Your Kronos credentials are $(tput setaf 2)kronos $(tput setaf 7)& password is $(tput setaf 3)$PWDPI3"
                 ;;
-3) echo 3 "Update dPi for Denarius"
+3) echo 3 "Update Kronos for Denarius"
 
 echo "Updating in progress...This is a work in progress"
 
@@ -557,7 +557,7 @@ sed -i '$a curl http://127.0.0.1:3333 -d "$@"' ~/snap/denarius/common/.denarius/
 sed -i '$a walletnotify=curl http://127.0.0.1:3333 -d "%s"' ~/snap/denarius/common/.denarius/denarius.conf
 fi
 
-cd dpi
+cd kronos
 
 sudo rm -rf node_modules
 
@@ -567,7 +567,7 @@ sudo rm -rf package.json
 
 mv .env ~/.env
 
-mv dpileveldb ~/dpileveldb
+mv kronosleveldb ~/kronosleveldb
 
 git checkout .
 
@@ -577,11 +577,11 @@ sudo rm -rf .env
 
 mv ~/.env .env
 
-mv ~/dpileveldb dpileveldb
+mv ~/kronosleveldb kronosleveldb
 
 NODEPID=$(pidof node)
 
-echo "Killing PID of dPi for update ${NODEPID}"
+echo "Killing PID of Kronos for update ${NODEPID}"
 
 sudo kill -9 ${NODEPID}
 
@@ -591,7 +591,7 @@ npm update
 
 nohup npm start &
 
-echo "Updated dPi, Login with your previous password."
+echo "Updated Kronos, Login with your previous password."
                 ;;
 esac
 echo Selected $choice

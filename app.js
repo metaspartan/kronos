@@ -1,5 +1,5 @@
 /**
- * dPi by Carsen Klock 2020, Main app.js
+ * Kronos by Carsen Klock 2020, Main app.js
  * Module dependencies.
  */
 const express = require('express');
@@ -113,6 +113,7 @@ app.use((req, res, next) => {
           if (err) throw err;
           console.log('Notification Cleared!');
         });
+        //socket.disconnect();
       }
       //socket.emit("notifications", {notifydb: notifydb});
     }, 300);
@@ -208,8 +209,8 @@ app.use(errorHandler());
 app.listen(3000, '0.0.0.0', () => {
   var tri = tribus.digest('Denarius');
   console.log('✓ Tribus Hash of "Denarius"', tri);
-  console.log('✓ dPi Interface is running at http://' + ip.address() + ':%d in %s mode', '3000', app.get('env'));
-  console.log('✓ Open the URL above in your web browser on your local network to use dPi!\n');
+  console.log('✓ Kronos Interface is running at http://' + ip.address() + ':%d in %s mode', '3000', app.get('env'));
+  console.log('✓ Open the URL above in your web browser on your local network to use Kronos!\n');
 });
 
 var http = require('http');
@@ -239,7 +240,7 @@ http.createServer(function (req, res) {
   res.end();
 
 }).listen(3333);
-console.log('✓ Started Wallet Notify Server on Port 3333');
+console.log('✓ Started Kronos Wallet Notify Server on Port 3333');
 
 module.exports = {app: app, server: server};
 

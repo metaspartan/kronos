@@ -822,7 +822,7 @@ exports.addresses = function (req, res) {
 
         const scripthasha = async () => {
           // Initialize an electrum client.
-          const electrum = new ElectrumClient('dPi ElectrumX', '1.4.1', delectrumxhost);
+          const electrum = new ElectrumClient('Kronos ElectrumX', '1.4.1', delectrumxhost);
   
           // Wait for the client to connect
           await electrum.connect();
@@ -846,7 +846,7 @@ exports.addresses = function (req, res) {
           const scripthashp2pk = changeEndianness(shaaddress1);
 
           // Initialize an Electrum cluster where 1 out of 4 needs to be consistent, polled randomly with fail-over.
-          // const electrum = new ElectrumCluster('dPi ElectrumX Cluster', '1.4.1', 1, 4, ElectrumCluster.ORDER.RANDOM);
+          // const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4.1', 1, 4, ElectrumCluster.ORDER.RANDOM);
           
           // Add some servers to the cluster.
           // electrum.addServer('electrumx1.denarius.pro');
@@ -964,7 +964,7 @@ exports.addresses = function (req, res) {
 
             const scripthashb = async () => {
               // Initialize an electrum client.
-              const electrum = new ElectrumClient('dPi ElectrumX', '1.4.1', delectrumxhost);
+              const electrum = new ElectrumClient('Kronos ElectrumX', '1.4.1', delectrumxhost);
       
               // Wait for the client to connect
               await electrum.connect();
@@ -1125,7 +1125,7 @@ exports.addresses = function (req, res) {
 
           const scripthashe = async () => {
             // Initialize an electrum client.
-            const electrum = new ElectrumClient('dPi ElectrumX', '1.4.1', delectrumxhost);
+            const electrum = new ElectrumClient('Kronos ElectrumX', '1.4.1', delectrumxhost);
     
             // Wait for the client to connect
             await electrum.connect();

@@ -1,18 +1,18 @@
-dPi - Denarius Node Dashboard and AIO Interface
+Kronos - Denarius Dashboard and AIO Interface
 =======================
 
-[![Build Status](https://travis-ci.org/carsenk/dpi.svg?branch=master)](https://travis-ci.org/carsenk/dpi) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/carsenk/dpi) [![Dependency Status](https://david-dm.org/carsenk/dpi/status.svg?style=flat)](https://david-dm.org/carsenk/dpi) [![devDependencies Status](https://david-dm.org/carsenk/dpi/dev-status.svg)](https://david-dm.org/carsenk/dpi?type=dev) [![Join the chat at https://discord.gg/UPpQy3n](https://img.shields.io/badge/Discord-Chat-blue.svg?logo=discord)](https://discord.gg/UPpQy3n)
+[![Build Status](https://travis-ci.org/carsenk/kronos.svg?branch=master)](https://travis-ci.org/carsenk/kronos) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/carsenk/kronos) [![Dependency Status](https://david-dm.org/carsenk/kronos/status.svg?style=flat)](https://david-dm.org/carsenk/kronos) [![devDependencies Status](https://david-dm.org/carsenk/kronos/dev-status.svg)](https://david-dm.org/carsenk/kronos?type=dev) [![Join the chat at https://discord.gg/UPpQy3n](https://img.shields.io/badge/Discord-Chat-blue.svg?logo=discord)](https://discord.gg/UPpQy3n)
 
-[![HitCount](http://hits.dwyl.io/carsenk/dpi.svg)](http://hits.dwyl.io/carsenk/dpi)
+[![HitCount](http://hits.dwyl.io/carsenk/kronos.svg)](http://hits.dwyl.io/carsenk/kronos)
 <a href="https://discord.gg/UPpQy3n"><img src="https://discordapp.com/api/guilds/334361453320732673/embed.png" alt="Discord server" /></a>
 
-dPi - A secondary layer NodeJS powered denariusd Web Wallet Dashboard with Statistics of your device. This is a major work in progress and this repo will be updated in time.
+Kronos - A secondary layer NodeJS/Socket.io/Express/Denarius powered Web Wallet Dashboard with Statistics of your device. This is a major work in progress and this repo will be updated in time.
 
 Send and Receive Funds, Create new addresses, View Transactions, Unlock/Lock Wallet, Stake D, Reboot your node, Import Private Keys, View Private Keys, Encrypt your wallet, Broadcast raw transactions, Sign and Verify Denarius messages, and much more!
 
-This was built for the Raspberry Pi in mind and one with at least 2GB of RAM, 4GB and 8GB models are recommended! dPi will run on any Linux distro.
+This was built for the Raspberry Pi in mind and one with at least 2GB of RAM, 4GB and 8GB models are recommended! Kronos will run on any Linux distro.
 
-Running the installer script below installs denarius via snap install and then modifies your .env in dPi and denarius.conf to a random rpcuser and rpcpass, dPi then generates you a password to login into dPi with, so be on the look out for that when the installer finishes. (Default Username is dpiadmin). dPi will then be running on your LAN (192.168.x.x:3000) on port 3000.
+Running the installer script below installs denarius via snap install and then modifies your .env in Kronos and denarius.conf to a random rpcuser and rpcpass, Kronos then generates you a password to login into Kronos with, so be on the look out for that when the installer finishes. (Default Username is kronos). Kronos will then be running on your LAN (192.168.x.x:3000) on port 3000.
 
 Recommended Devices and OS
 -----------------
@@ -37,18 +37,23 @@ CentOS
 openSUSE
 
 
-Install dPi with Denarius Now!
+Install Kronos with Denarius Now!
 -----------------
 
-Simply run this one command, then choose if you want to Install dPi with or without chaindata or if you want to just update!:
+Simply run the command below in your Terminal or via SSH, then choose one of the options if you want to Install Kronos with or without Denarius chaindata or if you want to just update!:
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/carsenk/dpi/master/installdpi.sh | bash
+wget -qO- https://raw.githubusercontent.com/carsenk/kronos/master/installkronos.sh | bash
+```
+or
+```bash
+curl -o- https://raw.githubusercontent.com/carsenk/kronos/master/installkronos.sh | bash
 ```
 
-![image](https://user-images.githubusercontent.com/10162347/84561876-38f54680-ad0d-11ea-9be8-554c148a86c2.png)
+![image](https://user-images.githubusercontent.com/10162347/85648890-fdd50a80-b65e-11ea-904c-8b202a9f5288.png)
 
-![image](https://user-images.githubusercontent.com/10162347/84561886-45799f00-ad0d-11ea-9f7f-0ed9c8b21375.png)
+![image](https://user-images.githubusercontent.com/10162347/85649248-e64a5180-b65f-11ea-9efc-91d2d03d6adc.png)
+
 
 Features
 --------
@@ -68,7 +73,7 @@ Features
 - Generate FS Key
 - Easy to install
 - Auto Updates for Denarius via Snap
-- Easy installer to install Denarius via Snap and dPi
+- Easy installer to install Kronos
 - Mobile Ready Responsive Design
 - Flash and Toastr notifications
 - MVC Project Structure
@@ -92,21 +97,25 @@ Getting Started
 The easiest way to get started is to run the following bash command:
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/carsenk/dpi/master/installdpi.sh | bash
+wget -qO- https://raw.githubusercontent.com/carsenk/kronos/master/installkronos.sh | bash
+```
+or
+```bash
+curl -o- https://raw.githubusercontent.com/carsenk/kronos/master/installkronos.sh | bash
 ```
 
 ```bash
 # Get the latest snapshot
-git clone --depth=1 https://github.com/carsenk/dpi.git dpi
+git clone --depth=1 https://github.com/carsenk/kronos.git kronos
 
 # Change directory
-cd dpi
+cd kronos
 
 # Install NPM dependencies
 npm install
 
-# Then simply start dPi
-node app.js
+# Then simply start Kronos
+node ./bin/www
 
 or
 

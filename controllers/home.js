@@ -59,9 +59,8 @@ function decrypt(data) {
 
 var mnemonic;
 let seedaddresses = [];
-// const db = level('dpileveldb'); // LevelDB dPi Init Directory
 
-// Fetch the dPi LevelDB
+// Fetch the Kronos LevelDB
 db.get('seedphrase', function (err, value) {
 	if (err) {
 		

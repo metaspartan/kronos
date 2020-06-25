@@ -1,10 +1,10 @@
 {
-  "name": "dPi",
-  "version": "1.2.5",
+  "name": "Kronos",
+  "version": "1.2.6",
   "description": "A Dashboard styled wallet for denariusd in NodeJS for Raspberry Pis & other Linux distros",
   "repository": {
     "type": "git",
-    "url": "https://github.com/carsenk/dpi.git"
+    "url": "https://github.com/carsenk/kronos.git"
   },
   "author": "Carsen Klock",
   "license": "MIT",

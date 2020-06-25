@@ -12,7 +12,7 @@ pids
 logs
 results
 tmp
-dpileveldb
+kronosleveldb
 
 # Dependency directory
 node_modules

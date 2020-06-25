@@ -8193,8 +8193,8 @@ body {
   font-size: 32px; }
 
 .rowclass {
-  background-color: #000;
-  background: linear-gradient(-165deg, #292825 0%, #262626 48%, #161616 100%);
+  /* background-color: #000;
+  background: linear-gradient(-165deg, #292825 0%, #262626 48%, #161616 100%); */
   border-radius: 30px;
   padding: 30px;
   margin: 15px; }
