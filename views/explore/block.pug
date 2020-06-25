@@ -1,0 +1,100 @@
+extends ../layout
+
+block content
+  script(src='//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js')
+  script.
+    function show() {
+      var x = document.getElementById('box');
+      if (x.style.display === 'none') {
+          x.style.display = 'block';
+      } else {
+          x.style.display = 'none';
+      }
+    }
+    function confirmedpk() {
+      $('#sendpriv').submit();
+    }
+    function getaddress() {
+      $('#sendaddy').submit();
+    }
+    function toggle() {
+      if ($('#toggle').is(":checked")) {
+        $("#menu1").show();
+        $("#menu2").hide();
+      } else {
+        $("#menu1").hide();
+        $("#menu2").show();
+      }
+    };
+  .mainDiv
+  .container
+    h1(align='center', style='font-size:73px;font-weight:100;margin-top:42px !important;')  Denarius Block
+    p(align='center') 
+      | Detailed information about a Denarius block.
+      br
+      .div(style='margin-top:25px;')
+        form.form-horizontal(action='/search', method='POST', id='explorer')
+          input(type='hidden', name='_csrf', value=_csrf)
+          input.form-control.blackinput4(type='text', align='center', name='explorersearch', id='explorersearch', placeholder='Search Kronos for Denarius Block # or Transaction Hash')
+  .row.rowclass.container(id="menu", style='margin: 0 auto; margin-top:15px;width:90%;')
+    if (blockinfo)
+      p(style='font-size:32px;margin-top:15px;', align='center')
+        i.fas.fa-cube
+        |  Block 
+        strong #{blockinfo.height}
+      .row(style='font-weight:400;font-size:14px;padding:30px;background-color:#222;margin:15px;border-radius:15px;', align='center')
+        .col-md-4(align='left')
+          a(href='/block/'+blockinfo.previousblockhash)
+            i.fas.fa-arrow-left.fa-3x
+        .col-md-4(align='center', style='margin-top:9px;')
+          span.hashm #{blockinfo.hash}
+        .col-md-4(align='right')
+          a(href='/block/'+blockinfo.nextblockhash)
+            i.fas.fa-arrow-right.fa-3x
+      .divider(style='background-color:#2b2b2b !important;height:2px;width:90%;margin:0 auto;', align='center')
+      .row(style='margin:15px;')
+        .col-md-6
+          p Time: 
+            span= new Date(blockinfo.time*1000).toUTCString()
+          p Block Hash: 
+            a.hashm(href='/block/'+blockinfo.hash) #{blockinfo.hash}
+          p Number of Transactions Included in Block: 
+            strong #{blockinfo.tx.length}
+          p Denarius Emissions: 
+            strong #{blockinfo.mint} D
+        .col-md-6(align='right')
+          p Block Size: #{(blockinfo.size / 1000).toFixed(2)} kB
+          p Block Diff: #{blockinfo.difficulty}
+          if (blockinfo.flags == 'proof-of-work')
+            p
+              .label.label-danger #{blockinfo.flags}
+          else
+            p
+              .label.label-info #{blockinfo.flags}
+          if (blockinfo.confirmations < 10)
+            .label.label-danger UNCONFIRMED
+            span(style='color:#777;')   (#{blockinfo.confirmations} Confirmations)
+          else
+            .label.label-success(style='background-color:#41B805;') CONFIRMED
+            span(style='color:#777;')   (#{blockinfo.confirmations} Confirmations)
+      .divider(style='background-color:#2b2b2b !important;height:2px;width:90%;margin:0 auto;', align='center')
+      .row(style='margin:15px;margin:0 auto;width:93%;')
+        .col-md-6
+          h2(style='font-weight:100;font-size:44px;') Transactions in Block
+          br
+          if (blockinfo.tx)
+            each tx in blockinfo.tx
+              p(style='color:#eee;margin:5px;padding:10px;background-color:#222;border-radius:5px;')
+                a.hashm(href='/tx/'+tx) #{tx}
+            br
+      .divider(style='background-color:#2b2b2b !important;height:2px;width:90%;margin:0 auto;', align='center')
+      .row(style='margin:0 auto;width:90%;')
+        h3 Raw Block Information
+        pre(style='width:100%;height:600px;background-color:#000;margin: 0 auto; padding:20px;border-color: #555;')= JSON.stringify(blockinfo, null, 2)
+    else
+      br
+      h3(align='center', style='color: #bbb;') Block Not Found
+      br
+  br
+  p(align='center')
+    a.btn.btn-default(href='/', role='button') Go back to the Dashboard     

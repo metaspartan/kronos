@@ -77,6 +77,10 @@ body {
     float: left;
   }
 
+  .hashm {
+    font-size: 11px !important;
+  }
+
   .valuetxt {
     color: #FFF;
     font-size:32px;
@@ -307,6 +311,11 @@ footer {
   opacity: 0.7;
 }
 
+.blackinput4::placeholder {
+  color: rgb(88, 88, 88);
+  opacity: 0.7;
+}
+
 .blackinput2 {
   background-color: #333 !important;
   border-color: #444 !important;
@@ -318,6 +327,14 @@ footer {
   background-color: #333 !important;
   border-color: #444 !important;
   color: #FFF !important;
+}
+
+.blackinput4 {
+  background-color: #111 !important;
+  border-color: #333 !important;
+  color: #FFF !important;
+  width: 98%;
+  margin: 0 auto;
 }
 
 .offlineoverlay {

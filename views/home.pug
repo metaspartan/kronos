@@ -271,6 +271,10 @@ block content
                   button.btn.btn-gold(type='submit', id='submit', onclick='confirmede()') Encrypt Wallet
                   button.btn.btn-default(type='button', data-dismiss='modal') Close
     .container(style='width:90%')
+      .div(style='margin-top:25px;')
+        form.form-horizontal(action='/search', method='POST', id='explorer')
+          input(type='hidden', name='_csrf', value=_csrf)
+          input.form-control.blackinput4(type='text', align='center', name='explorersearch', id='explorersearch', placeholder='Search Kronos for Denarius Block # or Transaction Hash')
       .row(style='margin-top:9px;')
         .col-md-4(align='left', style='margin-top:25px;')
           .row

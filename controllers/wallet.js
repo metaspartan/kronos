@@ -1876,6 +1876,366 @@ exports.fs = function (req, res) {
   });
 };
 
+//GET Get Transaction Information
+exports.gettx = function (req, res) {
+      var urltx = req.params.tx;
+      console.log('PASSED TXID: ', urltx);
+
+      client.getBalance(function (error, info, resHeaders) {
+        if (error) {
+          var offline = 'offlineoverlay';
+          var offlinebtn = 'offlinebutton';
+          var balance = '0';
+          console.log(error);
+        } else {
+          var offline = 'onlineoverlay';
+          var offlinebtn = 'onlinebutton';
+        }
+    
+        var chaindl = 'nooverlay';
+        var chaindlbtn = 'nobtn';
+    
+        var balance = info;
+    
+        if (balance <= 0) {
+          balance = 0;
+        }
+    
+      client.getTransaction(`${urltx}`, function (err, txinfo, resHeaders) {
+        if (err) {
+          console.log(err);
+          var offline = 'offlineoverlay';
+          var offlinebtn = 'offlinebutton';
+          var txinfo = '';
+          var blockhash = '';
+        } else {
+          var offline = 'onlineoverlay';
+          var offlinebtn = 'onlinebutton';
+          
+          blockhash = txinfo.blockhash;
+
+        }
+
+        //var blockhash = txinfo.blockhash;
+
+        client.getBlock(`${blockhash}`, function (err, blockinfo, resHeaders) {
+          if (err) {
+            console.log(err);
+            var offline = 'offlineoverlay';
+            var offlinebtn = 'offlinebutton';
+            var blockinfo = '';
+          } else {
+            var offline = 'onlineoverlay';
+            var offlinebtn = 'onlinebutton';        
+          }  
+
+    
+      client.walletStatus(function (err, ws, resHeaders) {
+        if (err) {
+          console.log(err);
+          var offline = 'offlineoverlay';
+          var offlinebtn = 'offlinebutton';
+          var ws = '';
+          var walletstatuss = 'locked';
+          var sendicon = 'display: none !important';
+        } else {
+          var offline = 'onlineoverlay';
+          var offlinebtn = 'onlinebutton';
+    
+          var walletstatuss = ws.wallet_status;
+          var sendicon;
+          
+          if (walletstatuss == 'stakingonly') {
+            sendicon = 'display: none !important';
+          } else if (walletstatuss == 'unlocked') {
+            sendicon = 'display: visible !important;';
+          } else if (walletstatuss == 'unencrypted') {
+            sendicon = 'display: visible !important';
+          } else if (walletstatuss == 'locked') {
+            sendicon = 'display: none !important';
+          }
+        }
+    
+      client.getStakingInfo(function (error, stakeinfo, resHeaders) {
+    
+            if (error) {
+              var enabled = 'Node Offline';
+              var staking = 'Node Offline';
+              var yourweight = 'Node Offline';
+              var netweight = 'Node Offline';
+              var expected = 'Node Offline';
+              var stakediff = 'Node Offline';
+        
+              var offline = 'offlineoverlay';
+        
+              var offlinebtn = 'offlinebutton';
+        
+              console.log(error);
+        
+            } else {
+              var enabled = stakeinfo.enabled;
+              var staking = stakeinfo.staking;
+              var yourweight = stakeinfo.weight;
+              var netweight = stakeinfo.netstakeweight;
+              var expected = stakeinfo.expectedtime;
+              var stakediff = stakeinfo.difficulty;
+        
+              var offline = 'onlineoverlay';
+              var offlinebtn = 'onlinebutton';
+        
+              var staketoggle;
+              var enabletoggle;
+        
+              if (enabled == true) {
+                enabletoggle = 'Configured';
+              } else {
+                enabletoggle = 'Disabled';
+              }
+        
+              if (staking == true) {
+                staketoggle = 'Staking';
+              } else {
+                staketoggle = 'Not Yet Staking';
+              }
+            }
+    
+        res.render('explore/gettx', { title: 'Transaction View', txinfo: txinfo, blockinfo: blockinfo, staketoggle: staketoggle, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
+        });
+    
+      });
+      });
+      }); 
+    });
+};
+
+//GET Get Block Information
+exports.getblock = function (req, res) {
+
+  if (isNaN(req.params.block) != true) {
+    var blocknumber = req.params.block;
+
+    console.log('GOT BLOCK #: ', blockhash);
+
+  client.getBalance(function (error, info, resHeaders) {
+    if (error) {
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var balance = '0';
+      console.log(error);
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+    }
+
+    var chaindl = 'nooverlay';
+    var chaindlbtn = 'nobtn';
+
+    var balance = info;
+
+    if (balance <= 0) {
+      balance = 0;
+    }
+
+    client.getBlockByNumber(parseInt(blocknumber), function (err, blockinfo, resHeaders) {
+      if (err) {
+        console.log(err);
+        var offline = 'offlineoverlay';
+        var offlinebtn = 'offlinebutton';
+        var blockinfo = '';
+      } else {
+        var offline = 'onlineoverlay';
+        var offlinebtn = 'onlinebutton';        
+      } 
+
+  client.walletStatus(function (err, ws, resHeaders) {
+    if (err) {
+      console.log(err);
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var ws = '';
+      var walletstatuss = 'locked';
+      var sendicon = 'display: none !important';
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+
+      var walletstatuss = ws.wallet_status;
+      var sendicon;
+      
+      if (walletstatuss == 'stakingonly') {
+        sendicon = 'display: none !important';
+      } else if (walletstatuss == 'unlocked') {
+        sendicon = 'display: visible !important;';
+      } else if (walletstatuss == 'unencrypted') {
+        sendicon = 'display: visible !important';
+      } else if (walletstatuss == 'locked') {
+        sendicon = 'display: none !important';
+      }
+    }
+
+  client.getStakingInfo(function (error, stakeinfo, resHeaders) {
+
+        if (error) {
+          var enabled = 'Node Offline';
+          var staking = 'Node Offline';
+          var yourweight = 'Node Offline';
+          var netweight = 'Node Offline';
+          var expected = 'Node Offline';
+          var stakediff = 'Node Offline';
+    
+          var offline = 'offlineoverlay';
+    
+          var offlinebtn = 'offlinebutton';
+    
+          console.log(error);
+    
+        } else {
+          var enabled = stakeinfo.enabled;
+          var staking = stakeinfo.staking;
+          var yourweight = stakeinfo.weight;
+          var netweight = stakeinfo.netstakeweight;
+          var expected = stakeinfo.expectedtime;
+          var stakediff = stakeinfo.difficulty;
+    
+          var offline = 'onlineoverlay';
+          var offlinebtn = 'onlinebutton';
+    
+          var staketoggle;
+          var enabletoggle;
+    
+          if (enabled == true) {
+            enabletoggle = 'Configured';
+          } else {
+            enabletoggle = 'Disabled';
+          }
+    
+          if (staking == true) {
+            staketoggle = 'Staking';
+          } else {
+            staketoggle = 'Not Yet Staking';
+          }
+        }
+
+    res.render('explore/block', { title: 'Block View', blockinfo: blockinfo, staketoggle: staketoggle, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
+    });
+
+  });
+  });
+  });
+    
+  } else {
+    var blockhash = req.params.block;
+    console.log('GOT BLOCK: ', blockhash);
+
+    client.getBalance(function (error, info, resHeaders) {
+      if (error) {
+        var offline = 'offlineoverlay';
+        var offlinebtn = 'offlinebutton';
+        var balance = '0';
+        console.log(error);
+      } else {
+        var offline = 'onlineoverlay';
+        var offlinebtn = 'onlinebutton';
+      }
+  
+      var chaindl = 'nooverlay';
+      var chaindlbtn = 'nobtn';
+  
+      var balance = info;
+  
+      if (balance <= 0) {
+        balance = 0;
+      }
+  
+      client.getBlock(`${blockhash}`, function (err, blockinfo, resHeaders) {
+        if (err) {
+          console.log(err);
+          var offline = 'offlineoverlay';
+          var offlinebtn = 'offlinebutton';
+          var blockinfo = '';
+        } else {
+          var offline = 'onlineoverlay';
+          var offlinebtn = 'onlinebutton';        
+        }  
+  
+  
+    client.walletStatus(function (err, ws, resHeaders) {
+      if (err) {
+        console.log(err);
+        var offline = 'offlineoverlay';
+        var offlinebtn = 'offlinebutton';
+        var ws = '';
+        var walletstatuss = 'locked';
+        var sendicon = 'display: none !important';
+      } else {
+        var offline = 'onlineoverlay';
+        var offlinebtn = 'onlinebutton';
+  
+        var walletstatuss = ws.wallet_status;
+        var sendicon;
+        
+        if (walletstatuss == 'stakingonly') {
+          sendicon = 'display: none !important';
+        } else if (walletstatuss == 'unlocked') {
+          sendicon = 'display: visible !important;';
+        } else if (walletstatuss == 'unencrypted') {
+          sendicon = 'display: visible !important';
+        } else if (walletstatuss == 'locked') {
+          sendicon = 'display: none !important';
+        }
+      }
+  
+    client.getStakingInfo(function (error, stakeinfo, resHeaders) {
+  
+          if (error) {
+            var enabled = 'Node Offline';
+            var staking = 'Node Offline';
+            var yourweight = 'Node Offline';
+            var netweight = 'Node Offline';
+            var expected = 'Node Offline';
+            var stakediff = 'Node Offline';
+      
+            var offline = 'offlineoverlay';
+      
+            var offlinebtn = 'offlinebutton';
+      
+            console.log(error);
+      
+          } else {
+            var enabled = stakeinfo.enabled;
+            var staking = stakeinfo.staking;
+            var yourweight = stakeinfo.weight;
+            var netweight = stakeinfo.netstakeweight;
+            var expected = stakeinfo.expectedtime;
+            var stakediff = stakeinfo.difficulty;
+      
+            var offline = 'onlineoverlay';
+            var offlinebtn = 'onlinebutton';
+      
+            var staketoggle;
+            var enabletoggle;
+      
+            if (enabled == true) {
+              enabletoggle = 'Configured';
+            } else {
+              enabletoggle = 'Disabled';
+            }
+      
+            if (staking == true) {
+              staketoggle = 'Staking';
+            } else {
+              staketoggle = 'Not Yet Staking';
+            }
+          }
+  
+      res.render('explore/block', { title: 'Block View', blockinfo: blockinfo, staketoggle: staketoggle, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
+      });
+  
+    });
+    });
+    });
+  }
+};
 
 //GET for Peers Page
 exports.peers = function (req, res) {
@@ -2162,6 +2522,31 @@ exports.verifyMsg = (req, res, next) => {
   }
 
 });
+};
+
+/**
+ * POST /search
+ * Search Denarius Blockchain
+ */
+exports.search = (req, res, next) => {
+  var searchreq = req.body.explorersearch;
+
+  var regexpTx = new RegExp('[0-9a-zA-Z]{64}?');
+  var regexpAddr = new RegExp('^(D)?[0-9a-f]{34}$'); //D Regular Expression for Addresses
+  var regexpBlockNum = new RegExp('[0-9]{1,7}?'); // Blocks have same hash regex as TX...hmmm
+  var regexpBlock = new RegExp('^[0][0-9a-zA-Z]{64}?'); // Blocks have same hash regex as TX...hmmm
+
+  if (regexpAddr.test(searchreq) == true) {
+    return res.redirect('/addr/'+searchreq);
+  } else if (regexpTx.test(searchreq) == true) {
+    return res.redirect('/tx/'+searchreq);
+  } else if (regexpBlockNum.test(searchreq) == true) {
+    return res.redirect('/block/'+searchreq);
+  } else {
+    req.toastr.error('Invalid Block #, Address, or Transaction Hash', 'Error!', { positionClass: 'toast-bottom-right' });
+    return res.redirect('/')
+  }
+
 };
 
 /**

@@ -158,7 +158,13 @@ app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }))
 app.get('/', homeController.index);
 app.post('/', homeController.index);
 
-//POST Routes
+app.get('/ddebug', homeController.getDebugLog);
+
+// D Explorer Routes
+app.get('/tx/:tx', walletController.gettx);
+app.get('/block/:block', walletController.getblock);
+
+//POST Routes for HomeController
 app.post('/unlock', homeController.unlock);
 app.post('/unlockstaking', homeController.unlockstaking);
 app.post('/lock', homeController.lock);
@@ -166,24 +172,24 @@ app.post('/encrypt', homeController.encrypt);
 app.post('/reboot', homeController.reboot);
 app.post('/privkey', homeController.privkey);
 
+//POST Routes for WalletController
 app.post('/newaddress', walletController.address);
+app.post('/startfs', walletController.startfs);
+app.post('/getnewaddress', walletController.address);
+app.post('/getgenkey', walletController.genkey);
+app.post('/withdraw/send', walletController.withdraw);
+app.post('/sendrawtx', walletController.sendRaw);
+app.post('/search', walletController.search);
+
+//GET Routes for WalletController
 app.get('/addresses', walletController.addresses);
 app.get('/transactions', walletController.transactions);
-
 app.get('/peers', walletController.peers);
-
 app.get('/fs', walletController.fs);
-app.post('/startfs', walletController.startfs);
-
-app.post('/getnewaddress', walletController.address);
-
-app.post('/getgenkey', walletController.genkey);
-
-app.post('/withdraw/send', walletController.withdraw);
 app.get('/withdraw', walletController.getWithdraw);
 app.get('/rawtx', walletController.getRaw);
-app.post('/sendrawtx', walletController.sendRaw);
 
+//Other POST and GET Routes for WalletController
 app.get('/import', walletController.getPriv);
 app.post('/importpriv', walletController.importPriv);
 
@@ -195,8 +201,6 @@ app.post('/verifymsg', walletController.verifyMsg);
 
 app.get('/backup', walletController.getBackup);
 app.post('/backupwallet', walletController.backupWallet);
-
-app.get('/ddebug', homeController.getDebugLog);
 
 /**
  * Error Handler.

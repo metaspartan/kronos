@@ -1,0 +1,110 @@
+extends ../layout
+
+block content
+  script(src='//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js')
+  script.
+    function show() {
+      var x = document.getElementById('box');
+      if (x.style.display === 'none') {
+          x.style.display = 'block';
+      } else {
+          x.style.display = 'none';
+      }
+    }
+    function confirmedpk() {
+      $('#sendpriv').submit();
+    }
+    function getaddress() {
+      $('#sendaddy').submit();
+    }
+    function toggle() {
+      if ($('#toggle').is(":checked")) {
+        $("#menu1").show();
+        $("#menu2").hide();
+      } else {
+        $("#menu1").hide();
+        $("#menu2").show();
+      }
+    };
+  .mainDiv
+  .container
+    h1(align='center', style='font-size:73px;font-weight:100;margin-top:42px !important;')  Denarius Transaction
+    p(align='center') 
+      | Detailed information about a Denarius transaction.
+      br
+      .div(style='margin-top:25px;')
+        form.form-horizontal(action='/search', method='POST', id='explorer')
+          input(type='hidden', name='_csrf', value=_csrf)
+          input.form-control.blackinput4(type='text', align='center', name='explorersearch', id='explorersearch', placeholder='Search Kronos for Denarius Block # or Transaction Hash')
+  .row.rowclass.container(id="menu", style='margin: 0 auto; margin-top:15px;width:90%;')
+    if (txinfo)
+      h3(align='center') Details on Transaction ID
+      .div(style='font-weight:400;font-size:14px;padding:30px;background-color:#222;margin:15px;border-radius:15px;', align='center') 
+        span.hashm #{txinfo.txid}
+      .divider(style='background-color:#2b2b2b !important;height:2px;width:90%;margin:0 auto;', align='center')
+      .row(style='margin:15px;')
+        .col-md-6
+          p(style='font-size:21px;') Block Height: 
+            strong #{blockinfo.height}
+          p Received Time: 
+            span= new Date(txinfo.time*1000).toUTCString()
+          p Block Hash: 
+            a.hashm(href='/block/'+blockinfo.hash) #{blockinfo.hash}
+          p Number of Transactions Included in Block: 
+            strong #{blockinfo.tx.length}
+        .col-md-6(align='right')
+          p Block Size: #{blockinfo.size} bytes
+          p Block Diff: #{blockinfo.difficulty}
+          if (blockinfo.flags == 'proof-of-work')
+            p
+              .label.label-danger #{blockinfo.flags}
+          else
+            p
+              .label.label-info #{blockinfo.flags}
+          if (txinfo.confirmations < 10)
+            .label.label-danger UNCONFIRMED
+            span(style='color:#777;')   (#{txinfo.confirmations} Confirmations)
+          else
+            .label.label-success(style='background-color:#41B805;') CONFIRMED
+            span(style='color:#777;')   (#{txinfo.confirmations} Confirmations)
+      .divider(style='background-color:#2b2b2b !important;height:2px;width:90%;margin:0 auto;', align='center')
+      .row(style='margin:15px;')
+        .col-md-6
+          h2(style='font-weight:100;font-size:64px;') Inputs 
+            i.fas.fa-arrow-down
+          br
+          if (txinfo.vin)
+            each vin in txinfo.vin
+              p(style='color:#eee;margin:5px;padding:10px;background-color:#222;border-radius:5px;')
+                a.hashm(href='/tx/'+vin.txid) #{vin.txid}
+                |  : #{vin.vout}
+        .col-md-2(align='center', style='margin-top:30px;')
+          i.fas.fa-long-arrow-alt-right.fa-4x
+          br
+          i.fas.fa-long-arrow-alt-right.fa-4x
+          br
+          i.fas.fa-long-arrow-alt-right.fa-4x
+        .col-md-4
+          h2(style='font-weight:100;font-size:64px;') Outputs 
+            i.fas.fa-arrow-up
+          br
+          if (txinfo.vout)
+            each vout in txinfo.vout
+              .outs(style='color:#eee;margin:5px;padding:20px;padding-top:25px;background-color:#222;border-radius:5px;') 
+                p #{vout.n} - #{vout.scriptPubKey.addresses}                
+                p #{vout.scriptPubKey.type} - 
+                  if (txinfo.confirmations < 10)
+                    span.label.label-danger Amount: #{vout.value} D
+                  else
+                    span.label.label-success(style='background-color:#41B805;') Amount: #{vout.value} D
+      .divider(style='background-color:#2b2b2b !important;height:2px;width:90%;margin:0 auto;', align='center')
+      .row(style='margin:0 auto;width:90%;')
+        h3 Raw Transaction Information
+        pre(style='width:100%;height:600px;background-color:#000;margin: 0 auto; padding:20px;border-color: #555;')= JSON.stringify(txinfo, null, 2)
+    else
+      br
+      h3(align='center', style='color: #bbb;') TX Not Found
+      br
+  br
+  p(align='center')
+    a.btn.btn-default(href='/', role='button') Go back to the Dashboard     
