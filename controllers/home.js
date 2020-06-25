@@ -20,6 +20,7 @@ const appRoot = require('app-root-path');
 const split = require('split');
 const os = require('os');
 const dbr = require('../db.js');
+const { isNullOrUndefined } = require('util');
 const db = dbr.db;
 
 const SECRET_KEY = process.env.SECRET_KEY;
@@ -887,7 +888,7 @@ si.currentLoad().then(data6 => {
 			unirest.get("https://api.coingecko.com/api/v3/coins/denarius?tickers=true&market_data=true&community_data=false&developer_data=true")
 			.headers({'Accept': 'application/json'})
 			.end(function (result) {
-				if (result.body != undefined) {
+				if (!isNullOrUndefined(result.body['market_data']['current_price']['usd'])) {
 
 					var usdbalance = result.body['market_data']['current_price']['usd'] * balance;
 					var currentprice = result.body['market_data']['current_price']['usd'];
@@ -905,7 +906,7 @@ si.currentLoad().then(data6 => {
 						unirest.get("https://api.coingecko.com/api/v3/coins/denarius?tickers=true&market_data=true&community_data=false&developer_data=true")
 						.headers({'Accept': 'application/json'})
 						.end(function (result) {
-							if (result.body != undefined) {
+							if (!isNullOrUndefined(result.body['market_data']['current_price']['usd'])) {
 
 								var usdbalance = result.body['market_data']['current_price']['usd'] * balance;
 								var currentprice = result.body['market_data']['current_price']['usd'];
@@ -917,8 +918,8 @@ si.currentLoad().then(data6 => {
 								socket.emit("usdinfo", {usdbalance: usdbalance, currentprice: currentprice});
 							}
 						});
-				}, 20000);
-			}, 30000);
+				}, 60000);
+			}, 80000);
 		});
 		
 		//Render the page with the dynamic variables
