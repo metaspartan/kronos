@@ -337,6 +337,24 @@ footer {
   margin: 0 auto;
 }
 
+.blockcount a {
+  color:#666;
+  font-size:72px;
+  font-weight:100;
+  font-family:"Heebo",sans-serif;
+  text-decoration: none;
+  margin-bottom: 0;
+}
+
+.blockcount a:hover {
+  color:#666;
+  font-size:72px;
+  font-weight:100;
+  font-family:"Heebo",sans-serif;
+  text-decoration: none;
+  margin-bottom: 0;
+}
+
 .offlineoverlay {
   /* Height & width depends on how you want to reveal the overlay (see JS below) */   
   height: 100%;

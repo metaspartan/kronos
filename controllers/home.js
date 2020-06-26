@@ -21,6 +21,8 @@ const split = require('split');
 const os = require('os');
 const dbr = require('../db.js');
 const { isNullOrUndefined } = require('util');
+const ElectrumClient = require('electrum-cash').Client;
+const bs58 = require('bs58');
 const db = dbr.db;
 
 const SECRET_KEY = process.env.SECRET_KEY;
@@ -327,6 +329,8 @@ exports.index = (req, res) => {
 
 	res.locals.lanip = ipaddy;
 
+	const delectrumxhost = 'electrumx1.denarius.pro';
+
 // WIP for getInfo Realtime Calls
 // var delay = 30000;
 // res.io.on('connection', function (socket) {
@@ -369,18 +373,12 @@ let socket_id5 = [];
 let socket_id6 = [];
 let socket_id7 = [];
 
-si.cpu(function (data) {	  
-
-	var brand1 = JSON.stringify(data.brand);
-	var brand = brand1;
-
-	var cores = data.physicalCores;
-	var threads = data.cores;
-	// res.locals.cores = cores;
-	// res.locals.threads = threads;
-	// res.locals.brand = brand;
+si.cpu(async function (data) {
 	//Emit to our Socket.io Server
-	res.io.on('connection', function (socket) {
+	res.io.on('connection', async function (socket) {
+		var cores = data.physicalCores;
+		var threads = data.cores;
+		//console.log(data)
 		socket_id.push(socket.id);
 		//console.log(socket.id);
 		if (socket_id[0] === socket.id) {
@@ -388,10 +386,10 @@ si.cpu(function (data) {
 		  // connections with the same ID
 		  res.io.removeAllListeners('connection'); 
 		}
-		socket.emit("cpudata", {cores: cores, threads: threads});
-		setInterval(() => {
-			socket.emit("cpudata", {cores: cores, threads: threads});
-		}, 120000);		
+		// res.locals.cores1 = cores;
+		// res.locals.threads1 = threads;
+		//console.log(cores+ "/" +threads)
+		socket.emit("cpudata", {cores: cores, threads: threads});	
 	});
 });
 
@@ -513,7 +511,8 @@ si.mem(function (data1) {
 	});
 });
 
-si.osInfo(function (data4) {
+
+si.osInfo().then(data4 => {
 
 	var osname = data4.distro;
 	var kernel = data4.kernel;
@@ -537,18 +536,15 @@ si.osInfo(function (data4) {
 		  // connections with the same ID
 		  res.io.removeAllListeners('connection'); 
 		}
-		// res.locals.osname = osname;
-		// res.locals.kernel = kernel;
-		// res.locals.platform = platform;
-		// res.locals.release = release;
-		// res.locals.hostname = hostname;
-		// res.locals.arch = arch;
+		res.locals.osname = osname;
+		res.locals.kernel = kernel;
+		res.locals.platform = platform;
+		res.locals.release = release;
+		res.locals.hostname = hostname;
+		res.locals.arch = arch;
 		socket.emit("osinfo", {osname: osname, kernel: kernel, platform: platform, release: release, hostname: hostname, arch: arch});
-		setInterval(() => {
-			socket.emit("osinfo", {osname: osname, kernel: kernel, platform: platform, release: release, hostname: hostname, arch: arch});
-		}, 60000);
-	});
 
+});
 });
 
 si.system(function (data9) {
@@ -565,9 +561,6 @@ si.system(function (data9) {
 		  res.io.removeAllListeners('connection'); 
 		}
 		socket.emit("sysmodel", {manu: manu, model: model});
-		setInterval(() => {
-			socket.emit("sysmodel", {manu: manu, model: model});
-		}, 60000);
 	});
 
 });
@@ -602,6 +595,40 @@ si.currentLoad().then(data6 => {
 		}, 5000);
 	});
 
+});
+
+//Testing out realtime Electrumx Block Header Subscribe
+let socket_id10 = [];
+//Emit to our Socket.io Server
+res.io.on('connection', function (socket) {
+	socket_id10.push(socket.id);
+	if (socket_id10[0] === socket.id) {
+	// remove the connection listener for any subsequent 
+	// connections with the same ID
+	res.io.removeAllListeners('connection'); 
+	}
+	const latestblocks = async () => {
+		// Initialize an electrum client.
+		const electrum = new ElectrumClient('Kronos ElectrumX', '1.4.1', delectrumxhost);
+
+		// Wait for the client to connect
+		await electrum.connect();
+
+		// Set up a callback function to handle new blocks.
+		const handleNewBlocks = function(data)
+		{
+			socket.emit("newblock", {block: data});
+			//console.log("Got New Denarius Block Height");
+		}
+		//TODO: NEED TO SETUP CLUSTERING AND ALSO ERROR SANITY CHECKING IF SERVER(S) OFFLINE
+		// Set up a subscription for new block headers and handle events with our callback function.
+		await electrum.subscribe(handleNewBlocks, 'blockchain.headers.subscribe');
+
+		//await electrum.disconnect();
+
+		//return handleNewBlocks();
+	}
+	latestblocks();
 });
 
 	//Denarius Main Account to go off of
@@ -730,6 +757,7 @@ si.currentLoad().then(data6 => {
 			var version = 'Node Offline';
 			var protocol = 'Node Offline';
 			var blockheight = '0';
+			res.locals.blockheight = '0';
 			var moneysupply = 'Node Offline';
 			var peers = 'Node Offline';
 			var ip = 'Node Offline';
@@ -771,6 +799,7 @@ si.currentLoad().then(data6 => {
 			var version = info.version;
 			var protocol = info.protocolversion;
 			var blockheight = info.blocks;
+			res.locals.blockheight = info.blocks;
 			var moneysupply = info.moneysupply;
 			var peers = info.connections;
 			var ip = info.ip;

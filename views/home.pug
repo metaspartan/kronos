@@ -8,6 +8,9 @@ block content
   script.
     var lanip = document.getElementById("lanip").getAttribute("data-value");
     var socket = io('//'+ lanip +':3300');
+    socket.on('disconnect', () => {
+      socket.open();
+    });
     socket.on('cpudata', function (data) {
       // console.log(data);
       $('#cores').html(data.cores);
@@ -22,6 +25,24 @@ block content
     socket.on('cpuspeed', function (data) {
       // console.log(data);
       $('#avg').html(data.avg);
+    });
+    socket.on('newblock', function (data) {
+      //console.log('SOCKET GOT NEW BLOCK', data);
+      if (!data.block[0] && !data.error) {
+        var height = data.block.height;
+        var hexhash = data.block.hex.toString();
+        //$('#blockheight').html(height);
+        $('#blockhash').html('<a href="/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;">BLOCK HEX: '+hexhash.substring(0,30)+'...</a>'); 
+        $('#link').html('<span class="blockcount"><a href="/block/'+height+'">'+height+'</a></span>'); 
+
+      } else {
+        var height = data.block[0].height;
+        var hexhash = data.block[0].hex.toString();
+        //$('#blockheight').html(height);
+        $('#blockhash').html('<a href="/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;">BLOCK HEX: '+hexhash.substring(0,30)+'...</a>'); 
+        $('#link').html('<span class="blockcount"><a href="/block/'+height+'">'+height+'</a>'); 
+
+      }
     });
     socket.on('temp', function (data) {
       // console.log(data);
@@ -134,9 +155,6 @@ block content
       //$('#rammy').html("data-value=" + data2.mempp.toFixed(2) + "")
     });
     //console.log(progarray);
-    socket.on('disconnect', () => {
-      socket.open();
-    });
   script. 
     function confirmedu() {
       $('#sendunlock').submit();
@@ -278,7 +296,7 @@ block content
           input(type='hidden', name='_csrf', value=_csrf)
           input.form-control.blackinput4(type='text', align='center', name='explorersearch', id='explorersearch', placeholder='Search Kronos for Denarius Block # or Transaction Hash or D Address')
       .row(style='margin-top:9px;')
-        .col-md-4(align='left', style='margin-top:25px;')
+        .col-md-4(align='left', style='margin-top:50px;')
           .row
             .col-xs-3(align='right')
               span(style='color:#444;') RAM
@@ -290,23 +308,28 @@ block content
             .col-xs-9(align='left')
               .cpumini
         .col-md-4(align='center')
-          h3(align='center', style='margin:30px;').animate__animated.animate__bounce
+          h3(align='center', style='margin:55px;').animate__animated.animate__bounce
             | Everything is 
             span(style='color: #42B905;') Great!
         .col-md-4
-      div(align='center', style='top: -62px;position:relative;padding-right:15px;float:right;')
-        span(class='autorefresh') Auto Refresh
-        label.switch2(align='center')
-          input#autoRefreshCheckbox(type='checkbox', value='true', checked='checked')
-          span.slider2.round(align='center')
-          script(type='text/javascript').
-            setInterval(function ()
-            {
-            if (document.getElementById('autoRefreshCheckbox').checked)
-            {
-            window.location=window.location;
-            }
-            }, 60000); // 60 seconds for auto refresh enabled
+          p(align='center')
+            span.animate__animated.animate__fadeIn#link
+            br
+            span.animate__animated.animate__fadeIn#blockhash(style='margin-bottom:10px;')
+            br
+      //- div(align='center', style='top: -62px;position:relative;padding-right:15px;float:right;')
+      //-   span(class='autorefresh') Auto Refresh
+      //-   label.switch2(align='center')
+      //-     input#autoRefreshCheckbox(type='checkbox', value='true', checked='checked')
+      //-     span.slider2.round(align='center')
+      //-     script(type='text/javascript').
+      //-       setInterval(function ()
+      //-       {
+      //-       if (document.getElementById('autoRefreshCheckbox').checked)
+      //-       {
+      //-       window.location=window.location;
+      //-       }
+      //-       }, 60000); // 60 seconds for auto refresh enabled
       .row(class='rowclass balancerow').animate__animated.animate__fadeIn
         .col-sm-6
           h3(style='font-size:48px;color: #393939;margin-top:0px;') 
@@ -329,7 +352,7 @@ block content
             span#unbalance
             small(style='font-size:16px;')  D
         .col-sm-3
-          h3(style='font-weight:light;font-size:28px;color: #393939;margin-top:5px;') In Stake
+          h3(style='font-weight:light;font-size:28px;color: #393939;margin-top:15px;') In Stake
           p 
           .bal(style='font-size:1.7em;') 
             span#instake
@@ -375,7 +398,7 @@ block content
               i.fas.fa-hdd 
               |  Stats
             p Block Height: 
-              strong#blockheight
+              strong #{blockheight}
               p Denarius Version #{version}
               p Protocol v#{protocol}
               p Is Syncing: #{syncing}
@@ -460,7 +483,7 @@ block content
           p Physical Cores 
             span#cores
             |  /  
-            span#threads 
+            span#threads
             |  Threads
           p Core Clock Speed: 
             span#avg
