@@ -35,7 +35,7 @@ block content
       .div(style='margin-top:25px;')
         form.form-horizontal(action='/search', method='POST', id='explorer')
           input(type='hidden', name='_csrf', value=_csrf)
-          input.form-control.blackinput4(type='text', align='center', name='explorersearch', id='explorersearch', placeholder='Search Kronos for Denarius Block # or Transaction Hash')
+          input.form-control.blackinput4(type='text', align='center', name='explorersearch', id='explorersearch', placeholder='Search Kronos for Denarius Block # or Transaction Hash or D Address')
   .row.rowclass.container(id="menu", style='margin: 0 auto; margin-top:15px;width:90%;')
     if (blockinfo)
       p(style='font-size:32px;margin-top:15px;', align='center')
@@ -43,16 +43,16 @@ block content
         |  Block 
         strong #{blockinfo.height}
       .row(style='font-weight:400;font-size:14px;padding:30px;background-color:#222;margin:15px;border-radius:15px;', align='center')
-        .col-md-4(align='left')
+        .col-md-2(align='left')
           a(href='/block/'+blockinfo.previousblockhash)
             i.fas.fa-arrow-left.fa-3x
-        .col-md-4(align='center', style='margin-top:9px;')
-          span.hashm #{blockinfo.hash}
-        .col-md-4(align='right')
+        .col-md-8(align='center', style='margin-top:9px;')
+          span.hashm(style='font-size:19px;') #{blockinfo.hash}
+        .col-md-2(align='right')
           a(href='/block/'+blockinfo.nextblockhash)
             i.fas.fa-arrow-right.fa-3x
       .divider(style='background-color:#2b2b2b !important;height:2px;width:90%;margin:0 auto;', align='center')
-      .row(style='margin:15px;')
+      .row(style='font-weight:400;font-size:14px;padding:30px;background-color:#222;margin:15px;border-radius:15px;')
         .col-md-6
           p Time: 
             span= new Date(blockinfo.time*1000).toUTCString()
@@ -79,7 +79,7 @@ block content
             span(style='color:#777;')   (#{blockinfo.confirmations} Confirmations)
       .divider(style='background-color:#2b2b2b !important;height:2px;width:90%;margin:0 auto;', align='center')
       .row(style='margin:15px;margin:0 auto;width:93%;')
-        .col-md-6
+        .col-md-12
           h2(style='font-weight:100;font-size:44px;') Transactions in Block
           br
           if (blockinfo.tx)

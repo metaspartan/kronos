@@ -35,17 +35,18 @@ block content
       .div(style='margin-top:25px;')
         form.form-horizontal(action='/search', method='POST', id='explorer')
           input(type='hidden', name='_csrf', value=_csrf)
-          input.form-control.blackinput4(type='text', align='center', name='explorersearch', id='explorersearch', placeholder='Search Kronos for Denarius Block # or Transaction Hash')
+          input.form-control.blackinput4(type='text', align='center', name='explorersearch', id='explorersearch', placeholder='Search Kronos for Denarius Block # or Transaction Hash or D Address')
   .row.rowclass.container(id="menu", style='margin: 0 auto; margin-top:15px;width:90%;')
     if (txinfo)
       h3(align='center') Details on Transaction ID
       .div(style='font-weight:400;font-size:14px;padding:30px;background-color:#222;margin:15px;border-radius:15px;', align='center') 
-        span.hashm #{txinfo.txid}
+        span.hashm(style='font-size:22px;') #{txinfo.txid}
       .divider(style='background-color:#2b2b2b !important;height:2px;width:90%;margin:0 auto;', align='center')
-      .row(style='margin:15px;')
+      .row(style='font-weight:400;font-size:14px;padding:30px;background-color:#222;margin:15px;border-radius:15px;')
         .col-md-6
           p(style='font-size:21px;') Block Height: 
-            strong #{blockinfo.height}
+            strong 
+              a(href='/block/'+blockinfo.height) #{blockinfo.height}
           p Received Time: 
             span= new Date(txinfo.time*1000).toUTCString()
           p Block Hash: 
@@ -91,7 +92,8 @@ block content
           if (txinfo.vout)
             each vout in txinfo.vout
               .outs(style='color:#eee;margin:5px;padding:20px;padding-top:25px;background-color:#222;border-radius:5px;') 
-                p #{vout.n} - #{vout.scriptPubKey.addresses}                
+                p #{vout.n} - 
+                  a.hashm(href='/address/'+vout.scriptPubKey.addresses) #{vout.scriptPubKey.addresses}                
                 p #{vout.scriptPubKey.type} - 
                   if (txinfo.confirmations < 10)
                     span.label.label-danger Amount: #{vout.value} D

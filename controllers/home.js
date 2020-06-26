@@ -147,7 +147,7 @@ db.get('seedphrase', function (err, value) {
 
 });
 
-console.log("Seed Address Array 2", seedaddresses);
+//console.log("Seed Address Array 2", seedaddresses);
 // //Wait under a half second to ensure the seedphrase to be grabbed from the LevelDB above
 // setTimeout(function bip39seed() {
 
@@ -376,9 +376,9 @@ si.cpu(function (data) {
 
 	var cores = data.physicalCores;
 	var threads = data.cores;
-	res.locals.cores = cores;
-	res.locals.threads = threads;
-	res.locals.brand = brand;
+	// res.locals.cores = cores;
+	// res.locals.threads = threads;
+	// res.locals.brand = brand;
 	//Emit to our Socket.io Server
 	res.io.on('connection', function (socket) {
 		socket_id.push(socket.id);
@@ -388,14 +388,14 @@ si.cpu(function (data) {
 		  // connections with the same ID
 		  res.io.removeAllListeners('connection'); 
 		}
-		socket.emit("cpudata", {cores: cores, brand: brand, threads: threads});
+		socket.emit("cpudata", {cores: cores, threads: threads});
 		setInterval(() => {
-			socket.emit("cpudata", {cores: cores, brand: brand, threads: threads});
-		}, 60000);		
+			socket.emit("cpudata", {cores: cores, threads: threads});
+		}, 120000);		
 	});
 });
 
-si.cpuCurrentspeed(async function (data2) {
+si.cpuCurrentspeed(function (data2) {
 
 	var min = data2.min;
 	var avg = data2.avg;
@@ -412,11 +412,11 @@ si.cpuCurrentspeed(async function (data2) {
 		socket.emit("cpuspeed", {min: min, avg: avg, max: max});
 		setInterval(() => {
 			socket.emit("cpuspeed", {min: min, avg: avg, max: max});
-		}, 60000);
+		}, 90000);
 	});
 });
 
-si.cpuTemperature(async function (data3) {
+si.cpuTemperature(function (data3) {
 	var tempp = data3.main;
 	var temppp = tempp.toFixed(0);
 
@@ -452,7 +452,7 @@ si.cpuTemperature(async function (data3) {
 	});
 });
 
-si.mem(async function (data1) {
+si.mem(function (data1) {
 
 	var bytes = 1073741824;
 	var memtt = data1.total;
@@ -513,7 +513,7 @@ si.mem(async function (data1) {
 	});
 });
 
-si.osInfo(async function (data4) {
+si.osInfo(function (data4) {
 
 	var osname = data4.distro;
 	var kernel = data4.kernel;
@@ -521,6 +521,13 @@ si.osInfo(async function (data4) {
 	var release = data4.release;
 	var hostname = data4.hostname;
 	var arch = data4.arch;
+
+	// res.locals.osname = osname;
+	// res.locals.kernel = kernel;
+	// res.locals.platform = platform;
+	// res.locals.release = release;
+	// res.locals.hostname = hostname;
+	// res.locals.arch = arch;
 
 	//Emit to our Socket.io Server
 	res.io.on('connection', function (socket) {
@@ -530,6 +537,12 @@ si.osInfo(async function (data4) {
 		  // connections with the same ID
 		  res.io.removeAllListeners('connection'); 
 		}
+		// res.locals.osname = osname;
+		// res.locals.kernel = kernel;
+		// res.locals.platform = platform;
+		// res.locals.release = release;
+		// res.locals.hostname = hostname;
+		// res.locals.arch = arch;
 		socket.emit("osinfo", {osname: osname, kernel: kernel, platform: platform, release: release, hostname: hostname, arch: arch});
 		setInterval(() => {
 			socket.emit("osinfo", {osname: osname, kernel: kernel, platform: platform, release: release, hostname: hostname, arch: arch});
@@ -538,7 +551,7 @@ si.osInfo(async function (data4) {
 
 });
 
-si.system(async function (data9) {
+si.system(function (data9) {
 
 	var manu = data9.manufacturer;
 	var model = data9.model;
@@ -888,38 +901,50 @@ si.currentLoad().then(data6 => {
 			unirest.get("https://api.coingecko.com/api/v3/coins/denarius?tickers=true&market_data=true&community_data=false&developer_data=true")
 			.headers({'Accept': 'application/json'})
 			.end(function (result) {
-				if (!isNullOrUndefined(result.body['market_data']['current_price']['usd'])) {
+				if (!result.error) {
 
 					var usdbalance = result.body['market_data']['current_price']['usd'] * balance;
 					var currentprice = result.body['market_data']['current_price']['usd'];
+					
+					res.locals.usdbalance = usdbalance;
+					res.locals.currentprice = currentprice;
 
-					socket.emit("usdinfo", {usdbalance: result.body['market_data']['current_price']['usd'] * balance, currentprice: result.body['market_data']['current_price']['usd']});
+					socket.emit("usdinfo", {usdbalance: usdbalance, currentprice: currentprice});
 				} else { 
-					usdbalance = '~';
-					currentprice = '~';
+					console.log("Error occured on price refresh before interval", result.error);
+					var usdbalance = '~';
+					var currentprice = '~';
+					res.locals.usdbalance = usdbalance;
+					res.locals.currentprice = currentprice;
 					socket.emit("usdinfo", {usdbalance: usdbalance, currentprice: currentprice});
 				}
 			});
-			setTimeout(() => {
-				setInterval(() => {
-						//Get Current D/BTC and D/USD price from CoinGecko
-						unirest.get("https://api.coingecko.com/api/v3/coins/denarius?tickers=true&market_data=true&community_data=false&developer_data=true")
-						.headers({'Accept': 'application/json'})
-						.end(function (result) {
-							if (!isNullOrUndefined(result.body['market_data']['current_price']['usd'])) {
+			// setTimeout(() => {
+			// 	setInterval(() => {
+			// 			//Get Current D/BTC and D/USD price from CoinGecko
+			// 			unirest.get("https://api.coingecko.com/api/v3/coins/denarius?tickers=true&market_data=true&community_data=false&developer_data=true")
+			// 			.headers({'Accept': 'application/json'})
+			// 			.end(function (result) {
+			// 				if (!result.error) {
 
-								var usdbalance = result.body['market_data']['current_price']['usd'] * balance;
-								var currentprice = result.body['market_data']['current_price']['usd'];
+			// 					var usdbalance = result.body['market_data']['current_price']['usd'] * balance;
+			// 					var currentprice = result.body['market_data']['current_price']['usd'];
 
-								socket.emit("usdinfo", {usdbalance: result.body['market_data']['current_price']['usd'] * balance, currentprice: result.body['market_data']['current_price']['usd']});
-							} else { 
-								usdbalance = '~';
-								currentprice = '~';
-								socket.emit("usdinfo", {usdbalance: usdbalance, currentprice: currentprice});
-							}
-						});
-				}, 60000);
-			}, 80000);
+			// 					res.locals.usdbalance = usdbalance;
+			// 					res.locals.currentprice = currentprice;
+
+			// 					socket.emit("usdinfo", {usdbalance: usdbalance, currentprice: currentprice});
+			// 				} else { 
+			// 					console.log("Error occured on price refresh", result.error);
+			// 					var usdbalance = '~';
+			// 					var currentprice = '~';
+			// 					res.locals.usdbalance = usdbalance;
+			// 					res.locals.currentprice = currentprice;
+			// 					socket.emit("usdinfo", {usdbalance: usdbalance, currentprice: currentprice});
+			// 				}
+			// 			});
+			// 	}, 60000);
+			// }, 80000);
 		});
 		
 		//Render the page with the dynamic variables

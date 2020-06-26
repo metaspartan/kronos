@@ -1,0 +1,110 @@
+extends ../layout
+
+block content
+  script(src='//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js')
+  script.
+    function show() {
+      var x = document.getElementById('box');
+      if (x.style.display === 'none') {
+          x.style.display = 'block';
+      } else {
+          x.style.display = 'none';
+      }
+    }
+    function confirmedpk() {
+      $('#sendpriv').submit();
+    }
+    function getaddress() {
+      $('#sendaddy').submit();
+    }
+    function toggle() {
+      if ($('#toggle').is(":checked")) {
+        $("#menu1").show();
+        $("#menu2").hide();
+      } else {
+        $("#menu1").hide();
+        $("#menu2").show();
+      }
+    };
+  .mainDiv
+  .container
+    h1(align='center', style='font-size:73px;font-weight:100;margin-top:42px !important;')  Denarius Address
+    p(align='center') 
+      | Detailed information about a Denarius address.
+      br
+      .div(style='margin-top:25px;')
+        form.form-horizontal(action='/search', method='POST', id='explorer')
+          input(type='hidden', name='_csrf', value=_csrf)
+          input.form-control.blackinput4(type='text', align='center', name='explorersearch', id='explorersearch', placeholder='Search Kronos for Denarius Block # or Transaction Hash or D Address')
+  .row.rowclass.container(id="menu", style='margin: 0 auto; margin-top:15px;width:90%;')
+    if (scripthasharray)
+      h3(align='center') Details on Address
+      .div(style='font-weight:400;font-size:14px;padding:30px;background-color:#222;margin:15px;border-radius:15px;', align='center') 
+        span.hashm(style='font-size:22px;') #{scripthasharray[0].address}
+      .divider(style='background-color:#2b2b2b !important;height:2px;width:90%;margin:0 auto;', align='center')
+      .row(style='font-weight:400;font-size:14px;padding:30px;background-color:#222;margin:15px;border-radius:15px;')
+        .col-md-6
+          p(style='font-size:21px;') Balance: 
+            if (scripthasharray[0].ismine == true)
+              strong #{scripthasharray[0].balance} D
+            else
+              strong #{explorerbalance} D
+          if (scripthasharray[0].ismine == true)
+            p
+              span.label.label-success(style='background-color:#41B805;') OWNED ADDRESS
+          else
+            p
+              span.label.label-danger NOT AN OWNED ADDRESS
+          if (scripthasharray[0].ismine == true)
+            p.hashm Total Transactions with Address: 
+              strong #{numTx}
+          p.hashm P2PKH ScriptHash: #{scripthasharray[0].p2pkhscripthash}
+          if (scripthasharray[0].ismine == false)
+            a.btn.btn-sm.btn-default(href='https://chainz.cryptoid.info/d/address.dws?'+scripthasharray[0].address, target='_blank') View on Chainz Explorer  
+              i.fas.fa-arrow-right(style='margin-left:10px;')
+          if (scripthasharray[0].ismine == true)
+            p.hashm P2PK ScriptHash: #{scripthasharray[0].p2pkscripthash}
+            a.btn.btn-sm.btn-default(href='https://chainz.cryptoid.info/d/address.dws?'+scripthasharray[0].address, target='_blank') View on Chainz Explorer  
+              i.fas.fa-arrow-right(style='margin-left:10px;')
+        .col-md-6(style='margin-top:10px;')
+          p.qrcode(align='right')
+            a(href='denarius:' + scripthasharray[0].address)
+              img(src='' + scripthasharray[0].qr, style='border-radius:10px;width:175px;')
+      .divider(style='background-color:#2b2b2b !important;height:2px;width:90%;margin:0 auto;', align='center')
+      .row(style='margin:15px;')
+        .col-md-12
+          h2(style='font-weight:100;font-size:64px;') Address Transactions
+          br
+          if (scripthasharray[0].txs)
+            each tx in scripthasharray[0].txs            
+              if (tx.scripthashtxhistory != null)
+                h4 P2PKH Denarius Transactions
+                each script in tx.scripthashtxhistory
+                  .row(style='color:#eee;margin:5px;padding:10px;background-color:#222;border-radius:5px;')
+                    .col-md-6
+                      a.hashm(href='/tx/'+script.tx_hash) #{script.tx_hash}
+                    .col-md-6(align='right')
+                      | On Block 
+                      a(href='/block/'+script.height) #{script.height}
+              if (tx.p2pktxhistory != '')
+                h4 P2PK Denarius Transactions
+                each script in tx.p2pktxhistory
+                  .row(style='color:#eee;margin:5px;padding:10px;background-color:#222;border-radius:5px;')
+                    .col-md-6
+                      a.hashm(href='/tx/'+script.tx_hash) #{script.tx_hash}
+                    .col-md-6(align='right')
+                      | On Block 
+                      a(href='/block/'+script.height) #{script.height}
+              else
+                h3(align='center', style='color:#333;') P2PK Transactions (Typically PoS TX) are not availble for addresses that Kronos does not own
+      .divider(style='background-color:#2b2b2b !important;height:2px;width:90%;margin:0 auto;', align='center')
+      .row(style='margin:0 auto;width:90%;')
+        h3 Raw Address Information
+        pre(style='width:100%;height:600px;background-color:#000;margin: 0 auto; padding:20px;border-color: #555;')= JSON.stringify(scripthasharray, null, 2)
+    else
+      br
+      h3(align='center', style='color: #bbb;') Address Not Found
+      br
+  br
+  p(align='center')
+    a.btn.btn-default(href='/', role='button') Go back to the Dashboard     

@@ -94,7 +94,8 @@ block content
         .col-lg-3
           .addi(style='background-color: #151515;border-color: #444; padding:30px; margin: 10px; border-radius:15px;')
             p(align='center')
-              .span(style='font-size:13px;text-align:center;color:#eee;') #{address.address}
+              .span(style='font-size:13px;text-align:center;color:#eee;') 
+                a(href='/address/'+address.address) #{address.address}
             p(align='center')
               .qrcode(align='center')
                 a(href='denarius:' + address.address)
@@ -119,7 +120,8 @@ block content
               td(align='center')
                 a(href='denarius:' + address.address)
                   img(src='' + address.qr, align='center', style='width:75px;border-radius:10px;')
-              td(align='center') #{address.address}
+              td(align='center') 
+                a(href='/address/'+address.address) #{address.address}
               td(align='center') #{address.balance} D
     else
       br

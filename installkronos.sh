@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TEMP=/tmp/answer$$
-whiptail --title "Kronos for Denarius"  --menu  "Installer for Kronos Secondary Layer :" 20 0 0 1 "Install Kronos w/ Denarius" 2 "Install Kronos w/ Denarius & Chaindata" 3 "Update & Upgrade Kronos v1.2.6-Alpha" 2>$TEMP
+whiptail --title "Kronos for Denarius"  --menu  "Installer for Kronos Secondary Layer :" 20 0 0 1 "Install Kronos w/ Denarius" 2 "Install Kronos w/ Denarius & Chaindata" 3 "Update & Upgrade Kronos v1.2.7-Alpha" 2>$TEMP
 choice=`cat $TEMP`
 case $choice in
 

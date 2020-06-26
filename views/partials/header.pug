@@ -30,6 +30,15 @@ div(class=chaindl)
     p
       img(src='../img/syncing.svg', alt='Syncing Blocks...', border='0')
       #blockcount(data-value=blockpercent)
+script. 
+  function togglesearch() {
+      var x = document.getElementById("searchinput");
+      if (x.style.display === "none") {
+        x.style.display = "block";
+      } else {
+        x.style.display = "none";
+      }
+    }
 .navbar.navbar-default.navbar-fixed-top(style='background-image: url("../img/mazeheader.svg") !important;')
   .hcontainer
     .navbar-header
@@ -121,21 +130,29 @@ div(class=chaindl)
             a(href='/withdraw')
               i.fa.fa-paper-plane 
               |   SEND
+          li
+            #searchinput.animate__animated.animate__fadeInRight(style='margin-top:8px;display:none;')
+              form.form-horizontal(action='/search', method='POST', id='explorer')
+                input(type='hidden', name='_csrf', value=_csrf)
+                input.form-control.blackinput4(style='min-width:350px;', type='text', align='center', name='explorersearch', id='explorersearch', placeholder='Search the chain for TX Hashes, Block #, or Address')
+          li
+            a(href='#', onclick='togglesearch()')
+              i.fas.fa-search
           li.dropdown(class=(title == 'Community') ? 'active' : undefined)
             a.dropdown-toggle(href='#', data-toggle='dropdown')
               span 
-                i.fas.fa-users 
-                |   Community
+                i.fas.fa-cog
+                |   About
               i.caret
             ul.dropdown-menu
+              li(class=(title == 'Version') ? 'active' : undefined)
+                a(href='https://github.com/carsenk/kronos') Kronos v1.2.7-Alpha
               li
                 a(href='https://blockforums.org', target='_blank') 
                   i.fas.fa-bold 
-                  |   Forums
+                  |   BlockForums
               li.divider
               li
                 a(href='https://discord.gg/UPpQy3n', target='_blank')
                   i.fab.fa-discord 
-                  |   Discord
-          li(class=(title == 'Version') ? 'active' : undefined)
-            a(href='https://github.com/carsenk/kronos') v1.2.6-Alpha
+                  |   Denarius Discord

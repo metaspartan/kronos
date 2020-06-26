@@ -1876,10 +1876,307 @@ exports.fs = function (req, res) {
   });
 };
 
+//GET Get Address Information
+exports.getaddress = function (req, res) {
+  var urladdy = req.params.addr;
+  //console.log('PASSED ADDRESS: ', urladdy);
+
+  //The used Electrumx Host, may swap to Clusters to run all x1-x4 nodes
+  // May move electrumx connections globally todo
+  //
+  const delectrumxhost = 'electrumx1.denarius.pro';
+  //
+  //
+
+  //Global Vars
+  var scripthasharray = [];
+  var txhistoryarray = [];
+  var promises = [];
+
+  client.getBalance(function (error, info, resHeaders) {
+    if (error) {
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var balance = '0';
+      console.log(error);
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+    }
+
+    var chaindl = 'nooverlay';
+    var chaindlbtn = 'nobtn';
+
+    var balance = info;
+
+    if (balance <= 0) {
+      balance = 0;
+    }
+
+
+
+  client.walletStatus(function (err, ws, resHeaders) {
+    if (err) {
+      console.log(err);
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var ws = '';
+      var walletstatuss = 'locked';
+      var sendicon = 'display: none !important';
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+
+      var walletstatuss = ws.wallet_status;
+      var sendicon;
+      
+      if (walletstatuss == 'stakingonly') {
+        sendicon = 'display: none !important';
+      } else if (walletstatuss == 'unlocked') {
+        sendicon = 'display: visible !important;';
+      } else if (walletstatuss == 'unencrypted') {
+        sendicon = 'display: visible !important';
+      } else if (walletstatuss == 'locked') {
+        sendicon = 'display: none !important';
+      }
+    }
+
+  client.getStakingInfo(function (error, stakeinfo, resHeaders) {
+
+        if (error) {
+          var enabled = 'Node Offline';
+          var staking = 'Node Offline';
+          var yourweight = 'Node Offline';
+          var netweight = 'Node Offline';
+          var expected = 'Node Offline';
+          var stakediff = 'Node Offline';
+    
+          var offline = 'offlineoverlay';
+    
+          var offlinebtn = 'offlinebutton';
+    
+          console.log(error);
+    
+        } else {
+          var enabled = stakeinfo.enabled;
+          var staking = stakeinfo.staking;
+          var yourweight = stakeinfo.weight;
+          var netweight = stakeinfo.netstakeweight;
+          var expected = stakeinfo.expectedtime;
+          var stakediff = stakeinfo.difficulty;
+    
+          var offline = 'onlineoverlay';
+          var offlinebtn = 'onlinebutton';
+    
+          var staketoggle;
+          var enabletoggle;
+    
+          if (enabled == true) {
+            enabletoggle = 'Configured';
+          } else {
+            enabletoggle = 'Disabled';
+          }
+    
+          if (staking == true) {
+            staketoggle = 'Staking';
+          } else {
+            staketoggle = 'Not Yet Staking';
+          }
+        }
+
+        client.validateAddress(urladdy, function (error, returnedaddi, resHeaders) {
+          if (error) {
+            var offline = 'offlineoverlay';
+            var offlinebtn = 'offlinebutton';
+            var returnedaddi = 'Offline';
+            console.log(error);
+          } else {
+            var offline = 'onlineoverlay';
+            var offlinebtn = 'onlinebutton';
+          }
+      
+          var chaindl = 'nooverlay';
+          var chaindlbtn = 'nobtn';
+      
+          var validationdata = returnedaddi.ismine;
+
+          if (validationdata == true) {
+            urladdy = returnedaddi.address;              
+            var compressedpubkey = returnedaddi.pubkey;
+          } else {
+            //urladdy = '';
+            var compressedpubkey = 'NOT AVAILABLE';
+          }
+
+
+          //Convert P2PKH Address to Scripthash for ElectrumX Balance Fetching
+          const bytes = bs58.decode(urladdy);
+          const byteshex = bytes.toString('hex');
+          const remove00 = byteshex.substring(2);
+          const removechecksum = remove00.substring(0, remove00.length-8);
+          const HASH160 = "76A914" + removechecksum.toUpperCase() + "88AC";
+          const BUFFHASH160 = Buffer.from(HASH160, "hex");
+          const shaaddress = sha256(BUFFHASH160);
+
+          //Convert P2PK Address to Scripthash for ElectrumX Balance Fetching
+          //Convert Compressed Pub Key
+          const HASH1601p = "21" + compressedpubkey.toUpperCase() + "AC"; // 21 + COMPRESSED PUBKEY + OP_CHECKSIG = P2PK
+          const BUFFHASH1601p = Buffer.from(HASH1601p, "hex");
+          const shaaddress1p = sha256(BUFFHASH1601p);
+
+          const changeEndianness = (string) => {
+                  const result = [];
+                  let len = string.length - 2;
+                  while (len >= 0) {
+                    result.push(string.substr(len, 2));
+                    len -= 2;
+                  }
+                  return result.join('');
+          }
+
+          if (validationdata == true) {
+            var p2pkraw = "21  "+compressedpubkey.toUpperCase()+"  OP_CHECKSIG";
+            var p2pkhraw = "OP_DUP OP_HASH160  "+removechecksum.toUpperCase()+"  OP_EQUALVERIFY OP_CHECKSIG";
+          } else {
+            var p2pkraw = "";       
+            var p2pkhraw = "OP_DUP OP_HASH160  "+removechecksum.toUpperCase()+"  OP_EQUALVERIFY OP_CHECKSIG";
+          }
+
+          const scripthash = changeEndianness(shaaddress);
+
+          var p2pkscripthash = changeEndianness(shaaddress1p);
+
+          const scripthashf = async () => {
+            // Initialize an electrum client.
+            const electrum = new ElectrumClient('Kronos ElectrumX', '1.4.1', delectrumxhost);
+    
+            // Wait for the client to connect
+            await electrum.connect();
+
+            // Request the balance of the requested Scripthash D address
+            const balancescripthash1 = await electrum.request('blockchain.scripthash.get_balance', scripthash);
+
+            const p2pkbalancescripthash1 = await electrum.request('blockchain.scripthash.get_balance', p2pkscripthash);
+
+            // const scripthashhistory = await electrum.request('blockchain.scripthash.get_history', scripthash);
+
+            // const p2pkhistory = await electrum.request('blockchain.scripthash.get_history', p2pkscripthash);
+
+            const balanceformatted1 = balancescripthash1.confirmed;
+
+            const p2pkbalanceformatted1 = p2pkbalancescripthash1.confirmed;
+
+            const balancefinal1 = balanceformatted1 / 100000000;
+
+            const p2pkbalancefinal1 = p2pkbalanceformatted1 / 100000000;
+
+            const addedbalance1 = balancefinal1 + p2pkbalancefinal1;
+
+            await electrum.disconnect();
+    
+            return addedbalance1;
+          }
+
+          unirest.get("https://chainz.cryptoid.info/d/api.dws?q=getbalance&a="+urladdy)
+            .headers({'Accept': 'application/json'})
+            .end(function (result) {
+              if (!result.error) {
+
+                res.locals.explorerbalance = result.body;
+                var eebalance = result.body;
+
+              } else { 
+
+                res.locals.explorerbalance = '~';
+                var eebalance = '~';
+
+              }      
+
+          const scripthashtx = async () => {
+            // Initialize an electrum client.
+            const electrum = new ElectrumClient('Kronos ElectrumX', '1.4.1', delectrumxhost);
+    
+            // Wait for the client to connect
+            await electrum.connect();
+
+            const scripthashhistory = await electrum.request('blockchain.scripthash.get_history', scripthash);
+
+            const p2pkhistory = await electrum.request('blockchain.scripthash.get_history', p2pkscripthash);
+
+            const txs = scripthashhistory + p2pkhistory;
+
+            const numTx = scripthashhistory.length + p2pkhistory.length;
+
+            //console.log(numTx);
+
+            res.locals.numTx = numTx;
+
+            txhistoryarray.push({scripthashtxhistory: scripthashhistory, p2pktxhistory: p2pkhistory});
+
+            //console.log(txhistoryarray)            
+
+            await electrum.disconnect();
+    
+            return txhistoryarray;
+          }
+
+          const qrcodeasync = async () => {
+            if (urladdy != '') {
+              const qrcoded1 = await QRCode.toDataURL(urladdy, { color: { dark: '#000000FF', light:"#333333FF" } });
+
+              return qrcoded1;
+            } else {
+              const qrcoded1 = '';
+
+              return qrcoded1;
+            }
+          }
+
+          var ebalance = eebalance;
+
+          promises.push(new Promise((res, rej) => {
+            qrcodeasync().then(qrcodedata1 => {
+              scripthashf().then(globalData1 => {
+                scripthashtx().then(txData => {
+
+                  if (validationdata == true) {
+                    globalData1 = globalData1;
+                  } else {
+                    p2pkscripthash = "";
+                    globalData1 = ebalance;
+                  }
+              
+              scripthasharray.push({address: urladdy, qr: qrcodedata1, ismine: validationdata, p2pkhscripthash: scripthash, p2pkhraw: p2pkhraw, p2pkscripthash: p2pkscripthash, p2pkraw: p2pkraw, balance: globalData1, txs: txData});
+              
+              res({urladdy, qrcodedata1, scripthash, globalData1, txData});
+
+            }).catch(function(err) {
+              console.log("Error", err);
+          });
+            });  
+          });
+          }) );
+
+          Promise.all(promises).then((values) => {
+
+          //console.log(scripthasharray);
+        
+
+    res.render('explore/getaddress', { title: 'Address View', scripthasharray: scripthasharray, staketoggle: staketoggle, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
+    });
+
+  });
+  });
+  });      
+  });
+});    
+  //}); 
+};
+
 //GET Get Transaction Information
 exports.gettx = function (req, res) {
       var urltx = req.params.tx;
-      console.log('PASSED TXID: ', urltx);
+      //console.log('PASSED TXID: ', urltx);
 
       client.getBalance(function (error, info, resHeaders) {
         if (error) {
@@ -2014,7 +2311,7 @@ exports.getblock = function (req, res) {
   if (isNaN(req.params.block) != true) {
     var blocknumber = req.params.block;
 
-    console.log('GOT BLOCK #: ', blockhash);
+    //console.log('GOT BLOCK #: ', blocknumber);
 
   client.getBalance(function (error, info, resHeaders) {
     if (error) {
@@ -2125,7 +2422,7 @@ exports.getblock = function (req, res) {
     
   } else {
     var blockhash = req.params.block;
-    console.log('GOT BLOCK: ', blockhash);
+    //console.log('GOT BLOCK: ', blockhash);
 
     client.getBalance(function (error, info, resHeaders) {
       if (error) {
@@ -2531,16 +2828,22 @@ exports.verifyMsg = (req, res, next) => {
 exports.search = (req, res, next) => {
   var searchreq = req.body.explorersearch;
 
+  console.log('Search Request', searchreq)
+
   var regexpTx = new RegExp('[0-9a-zA-Z]{64}?');
-  var regexpAddr = new RegExp('^(D)?[0-9a-f]{34}$'); //D Regular Expression for Addresses
+  var regexpAddr = new RegExp('^(D)?[0-9a-zA-Z]{34}$'); //D Regular Expression for Addresses
+  var scripthashregex = new RegExp('^(d)?[0-9a-zA-Z]{34}$'); // d Scripthash Addresses
   var regexpBlockNum = new RegExp('[0-9]{1,7}?'); // Blocks have same hash regex as TX...hmmm
   var regexpBlock = new RegExp('^[0][0-9a-zA-Z]{64}?'); // Blocks have same hash regex as TX...hmmm
 
-  if (regexpAddr.test(searchreq) == true) {
-    return res.redirect('/addr/'+searchreq);
-  } else if (regexpTx.test(searchreq) == true) {
+  if (regexpAddr.test(searchreq) || scripthashregex.test(searchreq)) {
+    //console.log("State of Address Test ", regexpAddr.test(searchreq))
+    return res.redirect('/address/'+searchreq);
+  } else if (regexpTx.test(searchreq)) {
+    //console.log("State of TX Test ", regexpTx.test(searchreq))
     return res.redirect('/tx/'+searchreq);
-  } else if (regexpBlockNum.test(searchreq) == true) {
+  } else if (regexpBlockNum.test(searchreq)) {
+    //console.log("State of Block Test ", regexpBlockNum.test(searchreq))
     return res.redirect('/block/'+searchreq);
   } else {
     req.toastr.error('Invalid Block #, Address, or Transaction Hash', 'Error!', { positionClass: 'toast-bottom-right' });

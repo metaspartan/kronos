@@ -163,6 +163,7 @@ app.get('/ddebug', homeController.getDebugLog);
 // D Explorer Routes
 app.get('/tx/:tx', walletController.gettx);
 app.get('/block/:block', walletController.getblock);
+app.get('/address/:addr', walletController.getaddress);
 
 //POST Routes for HomeController
 app.post('/unlock', homeController.unlock);

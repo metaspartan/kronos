@@ -102,10 +102,7 @@ block content
     socket.on('memory', function (data2) {
       //console.log(data2.mempp);
       //$('.ldBar').attr('data-value', data2.mempp.toFixed(2) * 100);
-      
-      var progressmem2 = data2.mempp.toFixed(2) * 100;
-      var progressmem = progressmem2.toFixed(2);
-
+    
       ldbar = new ldBar("#rammy", {
                     "stroke-width": 8,
                     "preset": "circle",
@@ -113,7 +110,10 @@ block content
                     "stroke": "../img/maze.svg",
                     "stroke-linecap": "round"
                     });
-      ldbar.set(progressmem);
+      ldbar.set(data2.mempp.toFixed(2) * 100, true);
+
+      var progressmem2 = data2.mempp.toFixed(2) * 100;
+      var progressmem = progressmem2.toFixed(2);
 
       progarray.push(progressmem);
 
@@ -133,7 +133,10 @@ block content
       $('#memf').html(data2.memf);
       //$('#rammy').html("data-value=" + data2.mempp.toFixed(2) + "")
     });
-    console.log(progarray);
+    //console.log(progarray);
+    socket.on('disconnect', () => {
+      socket.open();
+    });
   script. 
     function confirmedu() {
       $('#sendunlock').submit();
@@ -172,7 +175,7 @@ block content
           .modal-content(style='color:#FFF !important;background-color:#111 !important; border-color: #444 !important;')
               .modal-header(style='border-bottom: none !important;')
                   button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
-                  h4.modal-title Unlock Denarius Wallet
+                  h4.modal-title Unlock Denarius Wallet For Staking Only
               .modal-body
                 .form-horizontal
                   .row
@@ -217,7 +220,6 @@ block content
                       .col-sm-7
                         input.form-control.blackinput(type='password', name='password', id='password', placeholder='************')
               .modal-footer(style='border-top: none !important;')
-                  button.btn.btn-warning(type='button', id='sendunlocks', onclick='displayus()', data-toggle='modal', data-target='#DisplayModalUnlockStaking') Unlock for Staking Only
                   button.btn.btn-success(type='submit', id='submit', onclick='confirmedu()') Unlock Wallet
                   button.btn.btn-default(type='button', data-dismiss='modal') Close
     #DisplayModalLock.modal
@@ -274,7 +276,7 @@ block content
       .div(style='margin-top:25px;')
         form.form-horizontal(action='/search', method='POST', id='explorer')
           input(type='hidden', name='_csrf', value=_csrf)
-          input.form-control.blackinput4(type='text', align='center', name='explorersearch', id='explorersearch', placeholder='Search Kronos for Denarius Block # or Transaction Hash')
+          input.form-control.blackinput4(type='text', align='center', name='explorersearch', id='explorersearch', placeholder='Search Kronos for Denarius Block # or Transaction Hash or D Address')
       .row(style='margin-top:9px;')
         .col-md-4(align='left', style='margin-top:25px;')
           .row
@@ -338,7 +340,7 @@ block content
           .bal(style='font-size:1.9vw;font-weight:100;text-align:center;', align='center') #{address}
           br
           .qrcode(align='center')
-            a(href='denarius:' + address)
+            a(href='/address/' + address)
               img(src='' + qrcode, style='border-radius:10px;')
           br
         .col-md-2
@@ -357,6 +359,13 @@ block content
             br
             | Wallet is #{walletstatus}
         .col-md-2
+          if (walletstatus == 'Locked')
+            p(align='center', style='margin-top:55px;')
+              button.btn.btn-default(type='button', id='sendu', data-toggle='modal', data-target='#DisplayModalUnlockStaking')
+                i(class='fas fa-coins fa-5x', align='center')
+              br
+              br
+              | Unlock for Staking Only
           p(align='center')
             !=sending
       .divider(style='background-color:#2b2b2b !important;height:2px;width:60%;margin:0 auto;', align='center')
@@ -443,7 +452,7 @@ block content
             |  Upload Target Limit 
             strong #{target} 
       .divider(style='background-color:#2b2b2b !important;height:2px;width:60%;margin:0 auto;', align='center')
-      .row(class='rowclass', style='margin-bottom:150px;').animate__animated.animate__fadeIn
+      .row(class='rowclass', style='margin-bottom:50px;').animate__animated.animate__fadeIn
         h3(style='font-weight:light;font-size:48px;color: #393939;margin-top:0px;margin-bottom:30px;') 
           i.fas.fa-microchip 
           |  System Info
