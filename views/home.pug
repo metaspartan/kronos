@@ -1,26 +1,13 @@
 extends layout
 
 block content
-  span#lanip(data-value=lanip)
   script(src='../js/lib/jquery-3.1.1.min.js') 
   script(src='../js/jquery.sparkline.min.js')
-  script(src="/socket.io/socket.io.js")
   script.
-    var lanip = document.getElementById("lanip").getAttribute("data-value");
-    var socket = io('//'+ lanip +':3300');
-    socket.on('disconnect', () => {
-      socket.open();
-    });
     socket.on('cpudata', function (data) {
       // console.log(data);
       $('#cores').html(data.cores);
       $('#threads').html(data.threads);
-    });
-    socket.on('notifications', function (data) {
-      // console.log(data);
-      if (data.notifydb != '') {
-        $('#notify').html("<div class='notifytx animate__animated animate__zoomInRight' id='notificationtx' style='background-color:#000000e8;border:3px solid #ffffff3d;border-radius:15px;padding:30px;font-size:13px;width:600px;position:fixed;right:0;bottom:5px;z-index:9999999;display:visible;' align='center'>Denarius TX Notification<br/><a href='/transactions' style='color:#999;font-size:0.85rem;'>"+ data.notifydb.toString() +"</a><div id='buttonfloat' style='top:36px;position:absolute;right:15px;' onclick='closeNotify()'><button type='submit' style='background-color:transparent;color:#666;border:none;' onclick='closeNotify()'>X</button></div></div>");
-      }
     });
     socket.on('cpuspeed', function (data) {
       // console.log(data);
@@ -32,14 +19,14 @@ block content
         var height = data.block.height;
         var hexhash = data.block.hex.toString();
         //$('#blockheight').html(height);
-        $('#blockhash').html('<a href="/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;">BLOCK HEX: '+hexhash.substring(0,30)+'...</a>'); 
+        $('#blockhash').html('<a href="/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;">BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
         $('#link').html('<span class="blockcount"><a href="/block/'+height+'">'+height+'</a></span>'); 
 
       } else {
         var height = data.block[0].height;
         var hexhash = data.block[0].hex.toString();
         //$('#blockheight').html(height);
-        $('#blockhash').html('<a href="/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;">BLOCK HEX: '+hexhash.substring(0,30)+'...</a>'); 
+        $('#blockhash').html('<a href="/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;">BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
         $('#link').html('<span class="blockcount"><a href="/block/'+height+'">'+height+'</a>'); 
 
       }
@@ -167,10 +154,6 @@ block content
     }
     function confirmede() {
       $('#sendencrypt').submit();
-    }
-    function closeNotify() {
-      var c = document.getElementById("notificationtx")
-      c.style.display = "none";
     }
     function displayus() {
       var y = document.getElementById("DisplayModalUnlock");

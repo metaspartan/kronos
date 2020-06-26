@@ -1,7 +1,9 @@
 #!/bin/bash
 
+VERSION='v1.2.8-alpha'
+
 TEMP=/tmp/answer$$
-whiptail --title "Kronos for Denarius"  --menu  "Installer for Kronos Secondary Layer :" 20 0 0 1 "Install Kronos w/ Denarius" 2 "Install Kronos w/ Denarius & Chaindata" 3 "Update & Upgrade Kronos v1.2.7-Alpha" 2>$TEMP
+whiptail --title "Kronos ${VERSION} for Denarius"  --menu  "Installer for Kronos Secondary Layer :" 20 0 0 1 "Install Kronos w/ Denarius Config" 2 "Install Kronos w/ Denarius Config & Chaindata" 3 "Update & Upgrade Kronos ${VERSION}" 2>$TEMP
 choice=`cat $TEMP`
 case $choice in
 
@@ -17,7 +19,7 @@ NC='\033[0m' # No Color
 #
 #The MIT License (MIT)
 #
-#Copyright (c) 2017-2020 Carsen Klock
+#Copyright (c) 2020 Carsen Klock
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 #The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
@@ -139,7 +141,8 @@ printf "|  (_/ / | (____)|| |   | ||   \ | || |   | || (_____ \n"
 printf "|   _ (  |     __)| |   | || (\ \) || |   | |(_____  )\n"
 printf "|  ( \ \ | (\ (   | |   | || | \   || |   | |      ) |\n"
 printf "|  /  \ \| ) \ \__| (___) || )  \  || (___) |/\____) |\n"
-printf "|_/    \/|/   \__/(_______)|/    )_)(_______)\_______)\n\n"
+printf "|_/    \/|/   \__/(_______)|/    )_)(_______)\_______)\n"
+printf "Version ${VERSION}\n\n"
 
 progress_bar 3
 
@@ -206,9 +209,9 @@ touch ~/snap/denarius/common/.denarius/walletnotify.sh
 
 sed -i '$a #!/bin/sh' ~/snap/denarius/common/.denarius/walletnotify.sh
 
-sed -i '$a curl "http://127.0.0.1:3333" -d "$@"' ~/snap/denarius/common/.denarius/walletnotify.sh
+sed -i '$a curl http://127.0.0.1:3000/walletnotify -d "txid=$@"' ~/snap/denarius/common/.denarius/walletnotify.sh
 
-sed -i '$a walletnotify=curl http://127.0.0.1:3333 -d "%s"' ~/snap/denarius/common/.denarius/denarius.conf
+sed -i '$a walletnotify=curl http://127.0.0.1:3000/walletnotify -d "txid=%s"' ~/snap/denarius/common/.denarius/denarius.conf
 fi
 
 echo "Injected newly generated username and password..."
@@ -365,8 +368,8 @@ printf "|  (_/ / | (____)|| |   | ||   \ | || |   | || (_____ \n"
 printf "|   _ (  |     __)| |   | || (\ \) || |   | |(_____  )\n"
 printf "|  ( \ \ | (\ (   | |   | || | \   || |   | |      ) |\n"
 printf "|  /  \ \| ) \ \__| (___) || )  \  || (___) |/\____) |\n"
-printf "|_/    \/|/   \__/(_______)|/    )_)(_______)\_______)\n\n"
-                                                      
+printf "|_/    \/|/   \__/(_______)|/    )_)(_______)\_______)\n"
+printf "Version ${VERSION}\n\n"                                            
 
 progress_bar 3
 
@@ -463,9 +466,9 @@ touch ~/snap/denarius/common/.denarius/walletnotify.sh
 
 sed -i '$a #!/bin/sh' ~/snap/denarius/common/.denarius/walletnotify.sh
 
-sed -i '$a curl "http://127.0.0.1:3333" -d "$@"' ~/snap/denarius/common/.denarius/walletnotify.sh
+sed -i '$a curl http://127.0.0.1:3000/walletnotify -d "txid=$@"' ~/snap/denarius/common/.denarius/walletnotify.sh
 
-sed -i '$a walletnotify=curl http://127.0.0.1:3333 -d "%s"' ~/snap/denarius/common/.denarius/denarius.conf
+sed -i '$a walletnotify=curl http://127.0.0.1:3000/walletnotify -d "txid=%s"' ~/snap/denarius/common/.denarius/denarius.conf
 fi
 
 echo "Injected newly generated username and password..."
@@ -513,13 +516,13 @@ nohup npm start &
 
 echo "Kronos and Denarius are successfully installed! Kronos is now running on port 3000, open your browser to this devices local LAN IP, e.g. 192.168.x.x:3000"
 
-echo "$(tput setaf 7)Your Kronos credentials are $(tput setaf 2)kronos $(tput setaf 7)& password is $(tput setaf 3)$PWDPI3"
+echo "$(tput setaf 7)Your Kronos credentials are username: $(tput setaf 2)kronos $(tput setaf 7)& password is $(tput setaf 3)$PWDPI3"
                 ;;
-3) echo 3 "Update Kronos for Denarius"
+3) echo 3 "Update Kronos ${VERSION} for Denarius"
 
 echo "Updating in progress...This is a work in progress"
 
-echo "Ensuring you have NVM and NodeJS/NPM"
+echo "Ensuring you have NVM and v12 NodeJS/NPM"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
@@ -537,9 +540,9 @@ touch ~/snap/denarius/common/.denarius/walletnotify.sh
 
 sed -i '$a #!/bin/sh' ~/snap/denarius/common/.denarius/walletnotify.sh
 
-sed -i '$a curl http://127.0.0.1:3333 -d "$@"' ~/snap/denarius/common/.denarius/walletnotify.sh
+sed -i '$a curl http://127.0.0.1:3000/walletnotify -d "txid=$@"' ~/snap/denarius/common/.denarius/walletnotify.sh
 
-sed -i '$a walletnotify=curl http://127.0.0.1:3333 -d "%s"' ~/snap/denarius/common/.denarius/denarius.conf
+sed -i '$a walletnotify=curl http://127.0.0.1:3000/walletnotify -d "txid=%s"' ~/snap/denarius/common/.denarius/denarius.conf
 fi
 
 cd kronos
@@ -576,7 +579,7 @@ npm update
 
 nohup npm start &
 
-echo "Updated Kronos, Login with your previous password."
+echo "Updated Kronos to ${VERSION}, Login with your previous password. Default Username: kronos"
                 ;;
 esac
 echo Selected $choice

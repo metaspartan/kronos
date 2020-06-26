@@ -30,7 +30,14 @@ div(class=chaindl)
     p
       img(src='../img/syncing.svg', alt='Syncing Blocks...', border='0')
       #blockcount(data-value=blockpercent)
-script. 
+span#lanip(data-value=lanip)
+script(src="/socket.io/socket.io.js")
+script.
+  var lanip = document.getElementById("lanip").getAttribute("data-value");
+  var socket = io('//'+ lanip +':3300');
+  socket.on('disconnect', () => {
+      socket.open();
+  });
   function togglesearch() {
       var x = document.getElementById("searchinput");
       if (x.style.display === "none") {
@@ -39,6 +46,16 @@ script.
         x.style.display = "none";
       }
     }
+  socket.on('notifications', function (data) {
+      console.log('GOT NOTIFY', data);
+      if (data.notifydb != '') {
+        $('#notify').html("<div class='notifytx animate__animated animate__zoomInRight' id='notificationtx' style='background-color:#000000e8;border:3px solid #ffffff3d;border-radius:15px;padding:30px;font-size:13px;width:600px;position:fixed;right:0;bottom:5px;z-index:9999999;display:visible;' align='center'>Denarius TX Notification<br/><a href='/transactions' style='color:#999;font-size:0.85rem;'>"+ data.notifydb.toString() +"</a><div id='buttonfloat' style='top:36px;position:absolute;right:15px;' onclick='closeNotify()'><button type='submit' style='background-color:transparent;color:#666;border:none;' onclick='closeNotify()'>X</button></div></div>");
+      }
+  });
+  function closeNotify() {
+    var c = document.getElementById("notificationtx")
+    c.style.display = "none";
+  }
 .navbar.navbar-default.navbar-fixed-top(style='background-image: url("../img/mazeheader.svg") !important;')
   .hcontainer
     .navbar-header
@@ -146,7 +163,7 @@ script.
               i.caret
             ul.dropdown-menu
               li(class=(title == 'Version') ? 'active' : undefined)
-                a(href='https://github.com/carsenk/kronos') Kronos v1.2.7-Alpha
+                a(href='https://github.com/carsenk/kronos') Kronos v1.2.8-Alpha
               li.divider
               li
                 a(href='https://blockforums.org', target='_blank') 
@@ -157,3 +174,8 @@ script.
                 a(href='https://discord.gg/UPpQy3n', target='_blank')
                   i.fab.fa-discord 
                   |   Denarius Discord
+              li.divider
+              li
+                a(href='/logout')
+                  i.fas.fa-sign-out-alt  
+                  |   Logout

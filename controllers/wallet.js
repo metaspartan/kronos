@@ -32,6 +32,11 @@ var client = new bitcoin.Client({
  */
 exports.getWithdraw = (req, res) => {
   //var username = req.user.email;
+  const ip = require('ip');
+  const ipaddy = ip.address();
+
+  res.locals.lanip = ipaddy;
+
   client.walletStatus(function (err, ws, resHeaders) {
     if (err) {
       console.log(err);
@@ -134,6 +139,11 @@ exports.getWithdraw = (req, res) => {
 
 exports.getRaw = (req, res) => {
   //var username = req.user.email;
+  const ip = require('ip');
+  const ipaddy = ip.address();
+
+  res.locals.lanip = ipaddy;
+
   client.walletStatus(function (err, ws, resHeaders) {
     if (err) {
       console.log(err);
@@ -237,6 +247,11 @@ exports.getRaw = (req, res) => {
 
 exports.getPriv = (req, res) => {
   //var username = req.user.email;
+
+  const ip = require('ip');
+  const ipaddy = ip.address();
+
+  res.locals.lanip = ipaddy;
   client.walletStatus(function (err, ws, resHeaders) {
     if (err) {
       console.log(err);
@@ -344,6 +359,10 @@ exports.getPriv = (req, res) => {
 
 exports.getSign = (req, res) => {
   //var username = req.user.email;
+  const ip = require('ip');
+  const ipaddy = ip.address();
+
+  res.locals.lanip = ipaddy;
   client.walletStatus(function (err, ws, resHeaders) {
     if (err) {
       console.log(err);
@@ -447,6 +466,10 @@ exports.getSign = (req, res) => {
 
 exports.getVerify = (req, res) => {
   //var username = req.user.email;
+  const ip = require('ip');
+  const ipaddy = ip.address();
+
+  res.locals.lanip = ipaddy;
   client.walletStatus(function (err, ws, resHeaders) {
     if (err) {
       console.log(err);
@@ -550,6 +573,10 @@ exports.getVerify = (req, res) => {
 
 exports.getBackup = (req, res) => {
   //var username = req.user.email;
+  const ip = require('ip');
+  const ipaddy = ip.address();
+
+  res.locals.lanip = ipaddy;
   client.walletStatus(function (err, ws, resHeaders) {
     if (err) {
       console.log(err);
@@ -658,6 +685,11 @@ exports.getBackup = (req, res) => {
 // By Carsen Klock
 exports.addresses = function (req, res) {
   //var username = req.user.email;
+
+  const ip = require('ip');
+  const ipaddy = ip.address();
+
+  res.locals.lanip = ipaddy;
 
   //The used Electrumx Host, may swap to Clusters to run all x1-x4 nodes
   // May move electrumx connections globally todo
@@ -1292,6 +1324,10 @@ exports.wallet = function (req, res) {
 
 exports.address = function (req, res) {
     //var username = req.user.email;
+    const ip = require('ip');
+    const ipaddy = ip.address();
+
+    res.locals.lanip = ipaddy;
 
     client.walletStatus(function (err, ws, resHeaders) {
       if (err) {
@@ -1413,6 +1449,11 @@ exports.address = function (req, res) {
 
 exports.genkey = function (req, res) {
   //var username = req.user.email;
+
+  const ip = require('ip');
+  const ipaddy = ip.address();
+
+  res.locals.lanip = ipaddy;
 
   client.walletStatus(function (err, ws, resHeaders) {
     if (err) {
@@ -1587,9 +1628,9 @@ exports.transactions = function (req, res) {
   //var username = req.user.email;
 
   const ip = require('ip');
-	const ipaddy = ip.address();
+  const ipaddy = ip.address();
 
-	res.locals.lanip = ipaddy;
+  res.locals.lanip = ipaddy;
 
   client.walletStatus(function (err, ws, resHeaders) {
     if (err) {
@@ -1738,6 +1779,11 @@ exports.startfs = (req, res, next) => {
 exports.fs = function (req, res) {
   //var username = req.user.email;
 
+  const ip = require('ip');
+  const ipaddy = ip.address();
+
+  res.locals.lanip = ipaddy;
+
   client.getBalance(function (error, info, resHeaders) {
     if (error) {
       var offline = 'offlineoverlay';
@@ -1880,6 +1926,11 @@ exports.fs = function (req, res) {
 exports.getaddress = function (req, res) {
   var urladdy = req.params.addr;
   //console.log('PASSED ADDRESS: ', urladdy);
+
+  const ip = require('ip');
+  const ipaddy = ip.address();
+
+  res.locals.lanip = ipaddy;
 
   //The used Electrumx Host, may swap to Clusters to run all x1-x4 nodes
   // May move electrumx connections globally todo
@@ -2178,6 +2229,11 @@ exports.gettx = function (req, res) {
       var urltx = req.params.tx;
       //console.log('PASSED TXID: ', urltx);
 
+      const ip = require('ip');
+      const ipaddy = ip.address();
+
+      res.locals.lanip = ipaddy;
+
       client.getBalance(function (error, info, resHeaders) {
         if (error) {
           var offline = 'offlineoverlay';
@@ -2307,6 +2363,11 @@ exports.gettx = function (req, res) {
 
 //GET Get Block Information
 exports.getblock = function (req, res) {
+
+  const ip = require('ip');
+  const ipaddy = ip.address();
+
+  res.locals.lanip = ipaddy;
 
   if (isNaN(req.params.block) != true) {
     var blocknumber = req.params.block;
@@ -2537,6 +2598,11 @@ exports.getblock = function (req, res) {
 //GET for Peers Page
 exports.peers = function (req, res) {
   //var username = req.user.email;
+
+  const ip = require('ip');
+  const ipaddy = ip.address();
+
+  res.locals.lanip = ipaddy;
 
   client.getBalance(function (error, info, resHeaders) {
     if (error) {

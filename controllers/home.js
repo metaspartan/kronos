@@ -201,6 +201,10 @@ db.get('seedphrase', function (err, value) {
 
 // GET Denarius Debug Log File
 exports.getDebugLog = (req, res) => {
+	const ip = require('ip');
+	const ipaddy = ip.address();
+
+	res.locals.lanip = ipaddy;
 
 	console.log("HOME DIRECTORY:", os.homedir());
 
@@ -324,23 +328,41 @@ exports.getDebugLog = (req, res) => {
 //Get information
 exports.index = (req, res) => {
 
-	const ip = require('ip');
-	const ipaddy = ip.address();
+const ip = require('ip');
+const ipaddy = ip.address();
 
-	res.locals.lanip = ipaddy;
+res.locals.lanip = ipaddy;
 
-	const delectrumxhost = 'electrumx1.denarius.pro';
+const delectrumxhost = 'electrumx1.denarius.pro';
+
+let socket_id = [];
+let socket_id2 = [];
+let socket_id3 = [];
+let socket_id4 = [];
+let socket_id5 = [];
+let socket_id6 = [];
+let socket_id7 = [];
+let socket_idg = [];
 
 // WIP for getInfo Realtime Calls
-// var delay = 30000;
+// var delay = 60000;
+// var delay2 = 60000;
 // res.io.on('connection', function (socket) {
-// 				clearInterval(intervalset);
-// 				var intervalset = setInterval(() => {
-
+// 					socket_idg.push(socket.id);
+// 					if (socket_idg[0] === socket.id) {
+// 						// remove the connection listener for any subsequent 
+// 						// connections with the same ID
+// 						res.io.removeAllListeners('connection'); 
+// 					}
+// 					console.log("IM HERE CONNECTION!");
+// 					setInterval(() => {
+// 					setTimeout(() => {
 // 					client.getInfo(function (error, info, resHeaders) {
 // 						if (error) { 
 // 							console.log(error);
+// 							console.log("ERROR IM HERE!");
 // 						} else {
+// 								console.log("IM HERE!");
 // 								socket.emit("dchain", {
 // 									blockheight: info.blocks, 
 // 									balance: info.balance, 
@@ -355,23 +377,14 @@ exports.index = (req, res) => {
 // 									yourweight: info.weight,
 // 									netweight: info.netstakeweight
 // 								});
+// 								console.log("IM HERE FINALLY!");
 // 						}
 // 					});
-
+					
 // 				}, delay);
+// 			}, delay2);
 
-// 				socket.on('disconnect', () => {
-// 					clearInterval(intervalset);
-// 				});
 // });	
-
-let socket_id = [];
-let socket_id2 = [];
-let socket_id3 = [];
-let socket_id4 = [];
-let socket_id5 = [];
-let socket_id6 = [];
-let socket_id7 = [];
 
 si.cpu(async function (data) {
 	//Emit to our Socket.io Server
@@ -1182,5 +1195,75 @@ exports.lock = (req, res, next) => {
 		return res.redirect('/addresses');
 		
     }
+  
+  };
+
+
+
+/**
+ * GET /login
+ * Kronos Auth Login
+ */
+exports.login = (req, res) => {
+	res.render('login', {title: 'Kronos Login'});
+};
+
+/**
+ * GET /logout
+ * Kronos Auth Logout
+ */
+exports.logout = (req, res) => {
+	req.session.loggedin = false;
+	req.session.username = '';
+	res.render('login', {title: 'Kronos Login'});
+};
+
+/**
+ * POST /login
+ * Kronos Auth Login
+ */
+exports.postlogin = (request, response) => {
+	var username = request.body.PPU1;
+	var password = request.body.PPP1;
+	
+	var saveduser = process.env.KRONOSUSER;
+	var savedpass =  process.env.KRONOSPASS;
+	
+	if (username && password) {
+
+		if (request.body && (username == saveduser) && (password == savedpass)) {
+			request.session.loggedin = true;
+			request.session.username = username;
+			response.redirect('/');
+		} else {
+			//response.send('Incorrect Username and/or Password!');
+			//request.flash('success', { msg: 'TEST' });
+			//request.toastr.error('Incorrect Username and/or Password!', 'Invalid!', { positionClass: 'toast-bottom-right' });
+			response.redirect('/login');
+		}
+		
+		response.end();
+	
+	} else {
+		//response.send('Please enter Username and Password!');
+		//request.toastr.error('Please enter Username and Password!', 'Invalid!', { positionClass: 'toast-bottom-right' });
+		response.redirect('/login');
+		response.end();
+	}
+};
+
+  //POST Wallet Notify
+  exports.notification = (req, res, next) => {
+	var notifydata = req.body.txid;
+
+	console.log("Transaction Notify Received: ", notifydata);
+
+	files.writeFile('notifies.txt', notifydata, function (err) {
+		if (err) throw err;
+		console.log('TXID Written to File');
+	});
+
+	res.send('Got your notify!');
+	next();
   
   };

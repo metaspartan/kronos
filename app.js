@@ -26,7 +26,6 @@ const si = require('systeminformation');
 const ProgressBar = require('progressbar.js');
 const cookieParser = require('cookie-parser');
 const toastr = require('express-toastr');
-const passwordProtected = require('express-password-protect');
 const upload = multer({ dest: path.join(__dirname, 'uploads') });
 const ip = require('ip');
 const shell = require('shelljs');
@@ -60,6 +59,7 @@ const app = express();
 
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
+const sharedsession = require("express-socket.io-session");
 io.setMaxListeners(33);
 
 /**
@@ -90,39 +90,64 @@ app.use(lusca.xssProtection(true));
 app.use((req, res, next) => {
   res.io = io;
   //Emit to our Socket.io Server for Notifications
-  let socket_id10 = [];
+  let socket_idx = [];
   res.io.on('connection', function (socket) {
-    // console.log(socket.clients().length);
-    socket_id10.push(socket.id);
-    //console.log(socket.id);
-    if (socket_id10[0] === socket.id) {
+
+    socket_idx.push(socket.id);
+
+    if (socket_idx[0] === socket.id) {
       // remove the connection listener for any subsequent 
       // connections with the same ID
-      res.io.removeAllListeners('connection'); 
+      res.io.removeAllListeners('connection');
     }
-    setInterval(() => {
+
+    //socket.emit("notifications", {notifydb: notifydata});
+
+    var notifydb;
+    var thedir = appRoot + '/notifies.txt';
+    var thedb = files.readFileSync(thedir).toString();
+    
+    if (thedb == '') {
+      notifydb = '';
+    } else {
+      notifydb = thedb;      
+
+      console.log("IM EMITTING WEEFEEEE");
+
+      socket.emit("notifications", {notifydb: notifydb});
+
+      files.writeFile('notifies.txt', '', function (err) {
+        if (err) throw err;
+        console.log('Notification Cleared!');
+      });
+
+    }
+
+    const asyncFun = async() => {
       var notifydb;
       var thedir = appRoot + '/notifies.txt';
-      var thedb = files.readFileSync(thedir).toString();
+      var thedb = await files.readFileSync(thedir).toString();
+      
       if (thedb == '') {
         notifydb = '';
       } else {
-        notifydb = thedb;        
+        notifydb = thedb;   
+    
+        console.log("INTERVAL RUNNING ON SOCKET EMIT");
+      
         socket.emit("notifications", {notifydb: notifydb});
+      
         files.writeFile('notifies.txt', '', function (err) {
           if (err) throw err;
           console.log('Notification Cleared!');
         });
-        //socket.disconnect();
-      }
-      //socket.emit("notifications", {notifydb: notifydb});
-    }, 300);
-  });
-  next();
-});
 
-app.use((req, res, next) => {
-  res.locals.user = req.user;
+      }   
+
+    }
+
+    setInterval(() => {asyncFun();}, 3000);
+  });
   next();
 });
 
@@ -130,13 +155,21 @@ app.use(cookieParser('secret'));
 
 app.use(flashc());
 
-const config = {
-username: process.env.DPIUSER,
-password: process.env.DPIPASS,
-maxAge: 10800000 // 3 hours
-}
+const sess = session({
+  secret: process.env.SESSION_SECRET,
+  resave: true,
+  saveUninitialized: true,
+  unset: 'destroy',
+  name: 'KronosAuth',
+  cookie: {
+      maxAge: (1000 * 60 * 60 * 24) // default is 1 day
+  }
+});
 
-app.use(passwordProtected(config));
+//New Auth Sharing Session with Sockets.io
+app.use(sess);
+
+io.use(sharedsession(sess)); 
 
 app.set('trust proxy',1);
  
@@ -152,56 +185,77 @@ app.use(function (req, res, next)
 
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
 
+var auth = function(req,res,next){
+  if (!req.session.loggedin){
+      //console.log('You are NOT AUTHED');
+      return res.redirect("/login");
+      //return res.render('login', { title: 'Kronos Login'});
+  } else {
+      //console.log('You are AUTHED');
+      return next();
+  }
+};
+
+/**
+ * Kronos Auth Login
+ */
+app.get('/login', homeController.login);
+app.post('/login', homeController.postlogin);
+
+app.get('/logout', homeController.logout);
+
 /**
  * Primary app routes.
  */
-app.get('/', homeController.index);
-app.post('/', homeController.index);
+app.get('/', auth, homeController.index);
+app.post('/', auth, homeController.index);
 
-app.get('/ddebug', homeController.getDebugLog);
+app.get('/ddebug', auth, homeController.getDebugLog);
+
+app.post('/walletnotify', homeController.notification);
 
 // D Explorer Routes
-app.get('/tx/:tx', walletController.gettx);
-app.get('/block/:block', walletController.getblock);
-app.get('/address/:addr', walletController.getaddress);
+app.get('/tx/:tx', auth, walletController.gettx);
+app.get('/block/:block', auth, walletController.getblock);
+app.get('/address/:addr', auth, walletController.getaddress);
 
 //POST Routes for HomeController
-app.post('/unlock', homeController.unlock);
-app.post('/unlockstaking', homeController.unlockstaking);
-app.post('/lock', homeController.lock);
-app.post('/encrypt', homeController.encrypt);
-app.post('/reboot', homeController.reboot);
-app.post('/privkey', homeController.privkey);
+app.post('/unlock', auth, homeController.unlock);
+app.post('/unlockstaking', auth, homeController.unlockstaking);
+app.post('/lock', auth, homeController.lock);
+app.post('/encrypt', auth, homeController.encrypt);
+app.post('/reboot', auth, homeController.reboot);
+app.post('/privkey', auth, homeController.privkey);
 
 //POST Routes for WalletController
-app.post('/newaddress', walletController.address);
-app.post('/startfs', walletController.startfs);
-app.post('/getnewaddress', walletController.address);
-app.post('/getgenkey', walletController.genkey);
-app.post('/withdraw/send', walletController.withdraw);
-app.post('/sendrawtx', walletController.sendRaw);
-app.post('/search', walletController.search);
+app.post('/newaddress', auth, walletController.address);
+app.post('/startfs', auth, walletController.startfs);
+app.post('/getnewaddress', auth, walletController.address);
+app.post('/getgenkey', auth, walletController.genkey);
+app.post('/withdraw/send', auth, walletController.withdraw);
+app.post('/sendrawtx', auth, walletController.sendRaw);
+app.post('/search', auth, walletController.search);
 
 //GET Routes for WalletController
-app.get('/addresses', walletController.addresses);
-app.get('/transactions', walletController.transactions);
-app.get('/peers', walletController.peers);
-app.get('/fs', walletController.fs);
-app.get('/withdraw', walletController.getWithdraw);
-app.get('/rawtx', walletController.getRaw);
+app.get('/addresses', auth, walletController.addresses);
+app.get('/transactions', auth, walletController.transactions);
+app.get('/peers', auth, walletController.peers);
+app.get('/fs', auth, walletController.fs);
+app.get('/withdraw', auth, walletController.getWithdraw);
+app.get('/rawtx', auth, walletController.getRaw);
 
 //Other POST and GET Routes for WalletController
-app.get('/import', walletController.getPriv);
-app.post('/importpriv', walletController.importPriv);
+app.get('/import', auth, walletController.getPriv);
+app.post('/importpriv', auth, walletController.importPriv);
 
-app.get('/sign', walletController.getSign);
-app.post('/signmsg', walletController.signMsg);
+app.get('/sign', auth, walletController.getSign);
+app.post('/signmsg', auth, walletController.signMsg);
 
-app.get('/verify', walletController.getVerify);
-app.post('/verifymsg', walletController.verifyMsg);
+app.get('/verify', auth, walletController.getVerify);
+app.post('/verifymsg', auth, walletController.verifyMsg);
 
-app.get('/backup', walletController.getBackup);
-app.post('/backupwallet', walletController.backupWallet);
+app.get('/backup', auth, walletController.getBackup);
+app.post('/backupwallet', auth, walletController.backupWallet);
 
 /**
  * Error Handler.
@@ -220,27 +274,27 @@ app.listen(3000, '0.0.0.0', () => {
 
 var http = require('http');
 http.createServer(function (req, res) {
-  var data = '';
+  // var data = '';
   res.writeHead(200, {'Content-Type': 'text/plain'});
   res.write('Got your notify!');
 
   req.on('data', chunk => {
 
-    data += chunk;
+    // data += chunk;
     console.log('Transaction Notify Received:', chunk.toString());
 
     db.put('txid', chunk.toString(), function (err) {
 			if (err) return console.log('Ooops!', err) // some kind of I/O error if so
     });
     
-    fs.writeFile('notifies.txt', chunk.toString(), function (err) {
-      if (err) throw err;
-      //console.log('Loaded, Written to File');
-    });
+    // fs.writeFile('notifies.txt', chunk.toString(), function (err) {
+    //   if (err) throw err;
+    //   //console.log('Loaded, Written to File');
+    // });
 
   });
 
-  console.log(data.toString());
+  // console.log(data.toString());
 
   res.end();
 

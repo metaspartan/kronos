@@ -1,7 +1,6 @@
 extends ../layout
 
 block content
-  script(src='//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js')
   script.
     function show() {
       var x = document.getElementById('box');
@@ -26,6 +25,7 @@ block content
         $("#menu2").show();
       }
     };
+  #notify
   .mainDiv
     #DisplayModalPrivKey.modal
       .modal-dialog
