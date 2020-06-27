@@ -522,6 +522,16 @@ echo "$(tput setaf 7)Your Kronos credentials are username: $(tput setaf 2)kronos
 
 echo "Updating in progress...This is a work in progress"
 
+printf " _        _______  _______  _        _______  _______ \n"
+printf "| \    /\(  ____ )(  ___  )( (    /|(  ___  )(  ____ \\n"
+printf "|  \  / /| (    )|| (   ) ||  \  ( || (   ) || (    \/\n"
+printf "|  (_/ / | (____)|| |   | ||   \ | || |   | || (_____ \n"
+printf "|   _ (  |     __)| |   | || (\ \) || |   | |(_____  )\n"
+printf "|  ( \ \ | (\ (   | |   | || | \   || |   | |      ) |\n"
+printf "|  /  \ \| ) \ \__| (___) || )  \  || (___) |/\____) |\n"
+printf "|_/    \/|/   \__/(_______)|/    )_)(_______)\_______)\n"
+printf "Updating to Kronos Version ${VERSION}\n\n"
+
 echo "Ensuring you have NVM and v12 NodeJS/NPM"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
