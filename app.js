@@ -272,34 +272,34 @@ app.listen(3000, '0.0.0.0', () => {
   console.log('✓ Open the URL above in your web browser on your local network to use Kronos!\n');
 });
 
-var http = require('http');
-http.createServer(function (req, res) {
-  // var data = '';
-  res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.write('Got your notify!');
+// var http = require('http');
+// http.createServer(function (req, res) {
+//   // var data = '';
+//   res.writeHead(200, {'Content-Type': 'text/plain'});
+//   res.write('Got your notify!');
 
-  req.on('data', chunk => {
+//   req.on('data', chunk => {
 
-    // data += chunk;
-    console.log('Transaction Notify Received:', chunk.toString());
+//     // data += chunk;
+//     console.log('Transaction Notify Received:', chunk.toString());
 
-    db.put('txid', chunk.toString(), function (err) {
-			if (err) return console.log('Ooops!', err) // some kind of I/O error if so
-    });
+//     db.put('txid', chunk.toString(), function (err) {
+// 			if (err) return console.log('Ooops!', err) // some kind of I/O error if so
+//     });
     
-    // fs.writeFile('notifies.txt', chunk.toString(), function (err) {
-    //   if (err) throw err;
-    //   //console.log('Loaded, Written to File');
-    // });
+//     // fs.writeFile('notifies.txt', chunk.toString(), function (err) {
+//     //   if (err) throw err;
+//     //   //console.log('Loaded, Written to File');
+//     // });
 
-  });
+//   });
 
-  // console.log(data.toString());
+//   // console.log(data.toString());
 
-  res.end();
+//   res.end();
 
-}).listen(3333);
-console.log('✓ Started Kronos Wallet Notify Server on Port 3333');
+// }).listen(3333);
+// console.log('✓ Started Kronos Wallet Notify Server on Port 3333');
 
 module.exports = {app: app, server: server};
 

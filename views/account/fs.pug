@@ -117,8 +117,10 @@ block content
                   td(align='center')
                     if (status.txid == 'Wallet is Locked')
                       a(href='/', style='color: red;') !{status.txid}
-                    else
+                    else if (status.txid)
                       a(href='https://www.coinexplorer.net/D/transaction/' + status.txid, target='_blank', style='color: #777;font-size:11px;') !{status.txid.substring(0,30)}...
+                    else if (!status.txid)
+                      | No TXID Available
                   td(align='center')
                     | !{status.lastpaidblock}
                   td(align='center')
