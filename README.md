@@ -27,6 +27,7 @@ wget -qO- https://raw.githubusercontent.com/carsenk/kronos/master/installkronos.
 or
 ```bash
 curl -o- https://raw.githubusercontent.com/carsenk/kronos/master/installkronos.sh | bash
+```
 
 You can choose an option 1-3 from the installer script above to either install Kronos, install Kronos with Denarius chaindata, or Update Kronos!
 
@@ -51,7 +52,6 @@ Recommended Devices and OS
 * elementaryOS
 * CentOS
 * openSUSE
-```
 
 ![ss](https://user-images.githubusercontent.com/10162347/85916042-00c02e80-b80a-11ea-859f-7f82d17353c9.png)
 
