@@ -8,13 +8,27 @@
 [![HitCount](http://hits.dwyl.io/carsenk/kronos.svg)](http://hits.dwyl.io/carsenk/kronos)
 <a href="https://discord.gg/UPpQy3n"><img src="https://discordapp.com/api/guilds/334361453320732673/embed.png" alt="Discord server" /></a>
 
-Kronos - A secondary layer NodeJS/Socket.io/Express/Denarius powered Web Wallet Dashboard with Statistics of your device. This is a major work in progress and this repo will be updated in time.
+Kronos - A secondary layer NodeJS/Socket.io/Express/Denarius powered Web Wallet Dashboard with Statistics of your device typically on your LAN by default, though can be setup to be accessed remotely. This is a major project with active development in progress and this repo will be updated in time, be warned, things can break and always always backup backup backup!
 
 Send and Receive Funds, Create new addresses, View Transactions, Unlock/Lock Wallet, Stake D, Reboot your node, Import Private Keys, View Private Keys, Encrypt your wallet, Broadcast raw transactions, Sign and Verify Denarius messages, and much more!
 
 This was built for the Raspberry Pi in mind and one with at least 2GB of RAM, 4GB and 8GB models are recommended! Kronos will run on any Linux distro.
 
 Running the installer script below installs denarius via snap install and then modifies your .env in Kronos and denarius.conf to a random rpcuser and rpcpass, Kronos then generates you a password to login into Kronos with, so be on the look out for that when the installer finishes. (Default Username is kronos). Kronos will then be running on your LAN (192.168.x.x:3000) on port 3000.
+
+Install Kronos with Denarius Now!
+-----------------
+
+Simply run the single command below in your Terminal or via SSH, then choose one of the options if you want to Install Kronos with or without Denarius chaindata or if you want to just update!:
+
+```bash
+wget -qO- https://raw.githubusercontent.com/carsenk/kronos/master/installkronos.sh | bash
+```
+or
+```bash
+curl -o- https://raw.githubusercontent.com/carsenk/kronos/master/installkronos.sh | bash
+
+You can choose an option 1-3 from the installer script above to either install Kronos, install Kronos with Denarius chaindata, or Update Kronos!
 
 Recommended Devices and OS
 -----------------
@@ -37,22 +51,9 @@ Recommended Devices and OS
 * elementaryOS
 * CentOS
 * openSUSE
-
-
-Install Kronos with Denarius Now!
------------------
-
-Simply run the single command below in your Terminal or via SSH, then choose one of the options if you want to Install Kronos with or without Denarius chaindata or if you want to just update!:
-
-```bash
-wget -qO- https://raw.githubusercontent.com/carsenk/kronos/master/installkronos.sh | bash
-```
-or
-```bash
-curl -o- https://raw.githubusercontent.com/carsenk/kronos/master/installkronos.sh | bash
 ```
 
-![ss](https://user-images.githubusercontent.com/10162347/85648890-fdd50a80-b65e-11ea-904c-8b202a9f5288.png)
+![ss](https://user-images.githubusercontent.com/10162347/85916042-00c02e80-b80a-11ea-859f-7f82d17353c9.png)
 
 ![ss2](https://user-images.githubusercontent.com/10162347/85649248-e64a5180-b65f-11ea-9efc-91d2d03d6adc.png)
 
