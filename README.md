@@ -1,5 +1,7 @@
-Kronos - Denarius Dashboard and AIO Interface
+# Kronos
+#### Denarius Dashboard and AIO Interface
 =======================
+![Kronos Logo](https://user-images.githubusercontent.com/10162347/85915874-88a53900-b808-11ea-9a0f-1b68b7a2e61e.png)
 
 [![Build Status](https://travis-ci.org/carsenk/kronos.svg?branch=master)](https://travis-ci.org/carsenk/kronos) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/carsenk/kronos) [![Dependency Status](https://david-dm.org/carsenk/kronos/status.svg?style=flat)](https://david-dm.org/carsenk/kronos) [![devDependencies Status](https://david-dm.org/carsenk/kronos/dev-status.svg)](https://david-dm.org/carsenk/kronos?type=dev) [![Join the chat at https://discord.gg/UPpQy3n](https://img.shields.io/badge/Discord-Chat-blue.svg?logo=discord)](https://discord.gg/UPpQy3n)
 
@@ -16,31 +18,31 @@ Running the installer script below installs denarius via snap install and then m
 
 Recommended Devices and OS
 -----------------
-Raspberry Pi 4 4GB - Ubuntu 20.04 Server Image
-Raspberry Pi 4 8GB - Ubuntu 20.04 Server Image
-Ubuntu 20.04
-Ubuntu 19.10
-Ubuntu 19.04
-Ubuntu 18.04
-Ubuntu 16.04
-Raspberry Pi OS
+* Raspberry Pi 4 4GB - Ubuntu 20.04 Server Image
+* Raspberry Pi 4 8GB - Ubuntu 20.04 Server Image
+* Ubuntu 20.04
+* Ubuntu 19.10
+* Ubuntu 19.04
+* Ubuntu 18.04
+* Ubuntu 16.04
+* Raspberry Pi OS
 
-Linux Mint
-Debian
-Arch Linux
-Fedora
-Red Hat
-Manjaro
-ZorinOS
-elementaryOS
-CentOS
-openSUSE
+* Linux Mint
+* Debian
+* Arch Linux
+* Fedora
+* Red Hat
+* Manjaro
+* ZorinOS
+* elementaryOS
+* CentOS
+* openSUSE
 
 
 Install Kronos with Denarius Now!
 -----------------
 
-Simply run the command below in your Terminal or via SSH, then choose one of the options if you want to Install Kronos with or without Denarius chaindata or if you want to just update!:
+Simply run the single command below in your Terminal or via SSH, then choose one of the options if you want to Install Kronos with or without Denarius chaindata or if you want to just update!:
 
 ```bash
 wget -qO- https://raw.githubusercontent.com/carsenk/kronos/master/installkronos.sh | bash
@@ -50,9 +52,9 @@ or
 curl -o- https://raw.githubusercontent.com/carsenk/kronos/master/installkronos.sh | bash
 ```
 
-![image](https://user-images.githubusercontent.com/10162347/85648890-fdd50a80-b65e-11ea-904c-8b202a9f5288.png)
+![ss](https://user-images.githubusercontent.com/10162347/85648890-fdd50a80-b65e-11ea-904c-8b202a9f5288.png)
 
-![image](https://user-images.githubusercontent.com/10162347/85649248-e64a5180-b65f-11ea-9efc-91d2d03d6adc.png)
+![ss2](https://user-images.githubusercontent.com/10162347/85649248-e64a5180-b65f-11ea-9efc-91d2d03d6adc.png)
 
 
 Features
@@ -63,6 +65,9 @@ Features
 - Address Balances Powered by Scripthash and ElectrumX (denarius.pro)
 - View all transactions
 - Stake your Denarius
+- Block Explorer for Addresses, Blocks, and Transactions
+- Realtime Denarius Block Height on Dashboard
+- Realtime CPU and Memory Usage Gauges
 - Unlock/Lock/Encrypt your wallet
 - Backup Wallet
 - Sign/Verify Denarius Messages
@@ -133,7 +138,7 @@ License
 
 The MIT License (MIT)
 
-Copyright (c) 2017-2020 Carsen Klock
+Copyright (c) 2020 Carsen Klock
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
