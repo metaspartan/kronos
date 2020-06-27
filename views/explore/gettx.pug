@@ -76,9 +76,13 @@ block content
           br
           if (txinfo.vin)
             each vin in txinfo.vin
-              p(style='color:#eee;margin:5px;padding:10px;background-color:#222;border-radius:5px;')
-                a.hashm(href='/tx/'+vin.txid) #{vin.txid}
-                |  : #{vin.vout}
+              if (!vin.coinbase)
+                p(style='color:#eee;margin:5px;padding:10px;background-color:#222;border-radius:5px;')
+                  a.hashm(href='/tx/'+vin.txid) #{vin.txid}
+                  |  : #{vin.vout}
+              else
+                .label.label-info 
+                  | COINBASE INPUT
         .col-md-2(align='center', style='margin-top:30px;')
           i.fas.fa-long-arrow-alt-right.fa-4x
           br
