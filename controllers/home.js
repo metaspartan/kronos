@@ -287,6 +287,113 @@ exports.terminal = (req, res) => {
 });
 };
 
+// GET Terminal
+exports.termPop = (req, res) => {
+	const ip = require('ip');
+	const ipaddy = ip.address();
+
+	res.locals.lanip = ipaddy;
+
+	req.session.loggedin4 = false;
+
+		client.walletStatus(function (err, ws, resHeaders) {
+			if (err) {
+			  console.log(err);
+			  var offline = 'onlineoverlay';
+			  var offlinebtn = 'onlinebutton';
+			  var ws = '';
+			  var walletstatuss = 'locked';
+			  var sendicon = 'display: none !important';
+			} else {
+			  var offline = 'onlineoverlay';
+			  var offlinebtn = 'onlinebutton';
+		
+			  var walletstatuss = ws.wallet_status;
+			  var sendicon;
+			  
+			  if (walletstatuss == 'stakingonly') {
+						sendicon = 'display: none !important';
+					} else if (walletstatuss == 'unlocked') {
+						sendicon = 'display: visible !important;';
+					} else if (walletstatuss == 'unencrypted') {
+						sendicon = 'display: visible !important';
+					} else if (walletstatuss == 'locked') {
+						sendicon = 'display: none !important';
+					}
+			}
+		  client.getBalance(function (error, info, resHeaders) {
+			  if (error) {
+				var offline = 'onlineoverlay';
+				var offlinebtn = 'onlinebutton';
+				var balance = '~';
+				console.log(error);
+			  } else {
+				var offline = 'onlineoverlay';
+						var offlinebtn = 'onlinebutton';
+			  }
+		
+			  var chaindl = 'nooverlay';
+			  var chaindlbtn = 'nobtn';
+		
+			  var balance = info;
+		
+			  if (balance && balance <= 0) {
+				balance = 0;
+			  }
+
+			  client.getStakingInfo(function (error, stakeinfo, resHeaders) {
+
+				if (error) {
+					var enabled = 'Node Offline';
+					var staking = 'Node Offline';
+					var yourweight = 'Node Offline';
+					var netweight = 'Node Offline';
+					var expected = 'Node Offline';
+					var stakediff = 'Node Offline';
+		
+					var offline = 'onlineoverlay';
+		
+					var offlinebtn = 'onlineoverlay';
+		
+					console.log(error);
+		
+				} else {
+					var enabled = stakeinfo.enabled;
+					var staking = stakeinfo.staking;
+					var yourweight = stakeinfo.weight;
+					var netweight = stakeinfo.netstakeweight;
+					var expected = stakeinfo.expectedtime;
+					var stakediff = stakeinfo.difficulty;
+		
+					var offline = 'onlineoverlay';
+					var offlinebtn = 'onlinebutton';
+		
+					var staketoggle;
+					var enabletoggle;
+		
+					if (enabled && enabled == true) {
+						enabletoggle = 'Configured';
+					} else {
+						enabletoggle = 'Disabled';
+					}
+		
+					if (staking && staking == true) {
+						staketoggle = 'Staking';
+					} else {
+						staketoggle = 'Not Yet Staking';
+					}
+				}
+				var os = require('os');
+
+				// Initialize node-pty with an appropriate shell
+				var shell = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
+		
+		res.render('account/termpop', {title: 'Kronos Terminal', staketoggle: staketoggle, balance: balance, chaindl: chaindl, chaindlbtn: chaindlbtn, offline: offline, offlinebtn: offlinebtn, sendicon: sendicon});
+	});
+});
+});
+};
+
 //Get information
 exports.index = (req, res) => {
 
@@ -1220,6 +1327,25 @@ exports.autht = (req, res) => {
 };
 
 /**
+ * GET /authk
+ * Kronos Terminal Pop Auth Login
+ */
+exports.authk = (req, res) => {
+	db.get('username', function (err, value) {
+        if (err) {
+          
+          // If username does not exist in levelDB then go to page to create one
+          res.render('create', {title: 'Create Kronos Login'});
+
+        } else {
+		  
+		  res.render('authk', {title: 'Kronos Authorization'});
+
+		}
+	});
+};
+
+/**
  * POST /create
  * Kronos Auth Creation
  */
@@ -1497,6 +1623,70 @@ exports.postAutht = (request, response) => {
 		//response.send('Please enter Username and Password!');
 		request.toastr.error('Please enter a Username and Password!', 'Error!', { positionClass: 'toast-bottom-right' });
 		response.redirect('http://'+ip.address()+':3000/autht');
+		response.end();
+	}
+};
+
+/**
+ * POST /authk
+ * Kronos Terminal Popout Auth Login
+ */
+exports.postAuthk = (request, response) => {
+	var username = request.body.PPU1;
+	var password = request.body.PPP1;
+
+	const ip = require('ip');
+	const ipaddy = ip.address();
+  
+	response.locals.lanip = ipaddy;
+	
+	if (username && password) {
+
+		db.get('username', function (err, value) {
+			if (err) {
+			  // If username does not exist in levelDB then go to page to create one
+			  //response.render('create', {title: 'Create Kronos Login'});
+			  //request.toastr.error('Username does not exist!', 'Error!', { positionClass: 'toast-bottom-right' });
+			} else {
+				//If it does exist
+				var decrypteduser = decrypt(value);
+
+				db.get('password', function (err, value) {
+					if (err) {
+						// If password does not exist in levelDB then go to page to create one
+						//request.toastr.error('Password does not exist!', 'Error!', { positionClass: 'toast-bottom-right' });
+					  } else {
+
+						//If it does exist
+						var decryptedpass = decrypt(value);
+
+						if (request.body && (username == decrypteduser) && (password == decryptedpass)) {
+							request.session.loggedin = true;
+							request.session.loggedin4 = true;
+							request.session.username = username;
+							request.toastr.success('Authed Kronos', 'Success!', { positionClass: 'toast-bottom-right' });
+							response.redirect('http://'+ip.address()+':3300/termpop');
+							response.end();
+						} else {
+							//response.send('Incorrect Username and/or Password!');
+							//request.flash('success', { msg: 'TEST' });
+							request.toastr.error('Incorrect Username and/or Password!', 'Error!', { positionClass: 'toast-bottom-right' });
+							response.redirect('http://'+ip.address()+':3000/authk');
+							response.end();
+						}
+					}
+
+				});
+	
+			}
+		});
+		
+		//response.end();
+	
+	} else {
+		//response.send('Please enter Username and Password!');
+		request.toastr.error('Please enter a Username and Password!', 'Error!', { positionClass: 'toast-bottom-right' });
+		response.redirect('http://'+ip.address()+':3000/authk');
 		response.end();
 	}
 };

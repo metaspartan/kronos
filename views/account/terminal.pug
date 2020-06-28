@@ -17,9 +17,29 @@ block content
     h1(align='center', style='font-size:73px;font-weight:100;margin-top:22px !important;') Kronos Terminal 
     p
       .titlesmall(align='center') Run any command below directly on your Kronos host. Do not attempt to upgrade Kronos or reboot Kronos while on this page.
-        p(style='background-color:#111;border-radius:5px;padding:10px;width:250px;margin:10px;')
+        p(style='background-color:#111;border-radius:5px;padding:10px;width:250px;margin:10px;margin-bottom:25px;')
           | SUPER ALPHA VERSION
-    br
+          script.
+            function popup(url) 
+            {
+              params  = 'width=900px';
+              params += ', height=600px';
+              params += ', top=0, left=0';
+              params += ', fullscreen=no';
+              params += ', location=0';
+              params += ', menubar=no';
+              params += ', resizable=no';
+              params += ', toolbar=no';
+              params += ', directories=no';
+              params += ', scrollbars=no';
+
+              newwin=window.open(url,'Kronos Terminal', params);
+              if (window.focus) {newwin.focus()}
+              return false;
+            }
+          a(href="javascript:popup('http://"+lanip+":3300/termpop');", style='float:right;')
+            | Popout   
+            i.fas.fa-external-link-alt
     div.rowclass(style='font-weight:400;font-size:14px;padding:20px;background-color:#222;margin:15px;border-radius:15px;', align='center')
       .gritty(style='height:auto;')
       //- #terminal

@@ -225,6 +225,17 @@ var authterm = function(req,res,next){
   }
 };
 
+var authtermpop = function(req,res,next){
+  if (!req.session.loggedin4){
+      //console.log('You are NOT AUTHED');
+      return res.redirect("http://" + ip.address() + ":3000/authk");
+      //return res.render('login', { title: 'Kronos Login'});
+  } else {
+      //console.log('You are AUTHED');
+      return next();
+  }
+};
+
 //Damn Terminal Sockets running on port 3300
 gritty.listen(io, {
   prefix: '/gritty',
@@ -254,7 +265,11 @@ app.post('/auth', auth, Limiter, homeController.postAuth);
 app.get('/autht', auth, Limiter, homeController.autht);
 app.post('/autht', auth, Limiter, homeController.postAutht);
 
+app.get('/authk', auth, Limiter, homeController.authk);
+app.post('/authk', auth, Limiter, homeController.postAuthk);
+
 app.get('/terminal', auth, authterm, Limiter, homeController.terminal);
+app.get('/termpop', auth, authtermpop, Limiter, homeController.termPop);
 
 app.get('/logout', homeController.logout);
 

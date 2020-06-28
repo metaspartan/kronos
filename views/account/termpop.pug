@@ -1,0 +1,61 @@
+span#lanip(data-value=lanip)
+script.
+  var lanip = document.getElementById("lanip").getAttribute("data-value");
+  var socket = io('//'+ lanip +':3300');
+script(src="/gritty/gritty.js")
+style.
+  body {
+    background-color:#000;
+  }
+  ::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+  }
+  ::-webkit-scrollbar-button {
+    width: 9px;
+    height: 9px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #4a4a4a;
+    border: 0px none #ffffff;
+    border-radius: 50px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #8a8a8a;
+  }
+  ::-webkit-scrollbar-thumb:active {
+    background: #666666;
+  }
+  ::-webkit-scrollbar-track {
+    background: #000000;
+    border: 0px none #ffffff;
+    border-radius: 50px;
+  }
+  ::-webkit-scrollbar-track:hover {
+    background: #303030;
+  }
+  ::-webkit-scrollbar-track:active {
+    background: #000000;
+  }
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  .terminal {
+    font-family: monospace;
+    color: white;
+    background: black;
+  }
+.gritty(style='height:auto;')
+//- #terminal
+script.
+  const options = {
+      prefix: '/gritty',
+      autoRestart: true, // optional
+      env: {
+          TERMINAL: 'gritty',
+      }
+  };
+  
+  gritty('.gritty', options);
+            
+        
