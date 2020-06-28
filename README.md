@@ -55,7 +55,9 @@ Recommended Devices and OS
 
 ![ss](https://user-images.githubusercontent.com/10162347/85916042-00c02e80-b80a-11ea-859f-7f82d17353c9.png)
 
-![ss2](https://user-images.githubusercontent.com/10162347/85649248-e64a5180-b65f-11ea-9efc-91d2d03d6adc.png)
+![ss2](https://user-images.githubusercontent.com/10162347/85956259-09b41b80-b942-11ea-8b74-2ab4a7540872.gif)
+
+![ss3](https://user-images.githubusercontent.com/10162347/85649248-e64a5180-b65f-11ea-9efc-91d2d03d6adc.png)
 
 
 Features
@@ -78,14 +80,12 @@ Features
 - View FortunaStake Nodes
 - Generate FS Key
 - Easy to install
+- Full Terminal inside of Kronos for managing your device
 - Auto Updates for Denarius via Snap
 - Easy installer to install Kronos
 - Mobile Ready Responsive Design
 - Flash and Toastr notifications
 - MVC Project Structure
-- Node.js clusters support
-- Sass stylesheets (auto-compiled via middleware)
-- Bootstrap 3 + Theme
 - CSRF protection
 - XSS protection
 
