@@ -121,7 +121,7 @@ cd kronos
 npm install
 
 # Then simply start Kronos
-node ./bin/www
+node ./bin/kronos
 
 or
 

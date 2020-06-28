@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 var app = require('../app').app;
-var debug = require('debug')('www:server');
+var debug = require('debug')('kronos:server');
 var http = require('http');
 var ip = require('ip');
 

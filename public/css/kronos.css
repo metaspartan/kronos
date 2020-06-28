@@ -46,6 +46,13 @@ body {
   background-color: #222;
   color: #FFF;
   font-family: 'Lato', sans-serif;
+  overflow-x: hidden;
+}
+
+.row {
+  padding-right: 0px !important;
+  margin-right: 0px !important;
+  margin: 0 auto !important;
 }
 
 #myVideo {
@@ -67,7 +74,13 @@ body {
   .rowclass {
     margin: 0px !important;
     border-radius: 0px !important;
-  }  
+  } 
+  .mobilerow {
+    margin-bottom: 25px !important;
+  }
+  .mobilerow2 {
+    margin-bottom: 55px !important;
+  }
   #container {
     margin: 0px !important;
     margin-bottom: 50px !important;
@@ -344,6 +357,7 @@ footer {
   font-family:"Heebo",sans-serif;
   text-decoration: none;
   margin-bottom: 0;
+  line-height: 0.5;
 }
 
 .blockcount a:hover {
@@ -481,7 +495,7 @@ textarea {
 }
 
 .navbar-default{
-  background-image: url("../img/bg.png") !important;
+  background-image: url("../img/mazeheader.svg") !important;
   background-repeat: repeat-x;
   background-color: #191919 !important;
 }
@@ -695,6 +709,11 @@ a.send {
     margin-top: 60px;
 }
 
+.divider {
+  margin-top: 10px !important;
+  margin-bottom: 10px !important;
+}
+
 @media (max-width: 800px) {
   .mainaddy {
     margin: 0;
@@ -705,6 +724,14 @@ a.send {
      left: 50%;
      position: absolute;
      transform: translateX(-50%);
+  }
+  .navbar-default{
+    background-image:  none !important;
+    background-repeat: repeat-x;
+    background-color: #191919 !important;
+  }
+  .navbar-fixed-top, .navbar-collapse {
+    max-height: 435px !important;
   }
 }
 

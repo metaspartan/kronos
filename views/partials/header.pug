@@ -56,10 +56,10 @@ script.
     var c = document.getElementById("notificationtx")
     c.style.display = "none";
   }
-.navbar.navbar-default.navbar-fixed-top(style='background-image: url("../img/mazeheader.svg") !important;')
+.navbar.navbar-default.navbar-fixed-top
   .hcontainer
     .navbar-header
-      button.navbar-toggle.pull-left.ml(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+      button.navbar-toggle.pull-right.ml(type='button', data-toggle='collapse', data-target='.navbar-collapse')
         span.sr-only Toggle navigation
         span.icon-bar
         span.icon-bar
@@ -158,7 +158,7 @@ script.
               i.caret
             ul.dropdown-menu
               li(class=(title == 'Version') ? 'active' : undefined)
-                a(href='https://github.com/carsenk/kronos') Kronos v1.2.9-Alpha
+                a(href='https://github.com/carsenk/kronos') Kronos v1.3.0-Alpha
               li.divider
               li
                 a(href='http://'+lanip+':3300/terminal', onclick="javascript:event.target.port=3300")

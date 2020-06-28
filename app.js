@@ -197,7 +197,7 @@ app.use(function (req, res, next)
     next()
 });
 
-//app.use(gritty());
+app.use(gritty()); //Gritty...
 
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
 

@@ -278,25 +278,25 @@ block content
         form.form-horizontal(action='/search', method='POST', id='explorer')
           input(type='hidden', name='_csrf', value=_csrf)
           input.form-control.blackinput4(type='text', align='center', name='explorersearch', id='explorersearch', placeholder='Search Kronos for Denarius Block # or Transaction Hash or D Address')
-      .row(style='margin-top:9px;')
-        .col-md-4(align='left', style='margin-top:50px;')
+      .row.mobilerow(style='margin-top:9px;')
+        .col-md-4(align='left', style='margin-top:40px;')
           .row
-            .col-xs-3(align='right')
+            .col-xs-1(align='right')
               span(style='color:#444;') RAM
-            .col-xs-9(align='left')
+            .col-xs-11(align='left')
               .memini
           .row
-            .col-xs-3(align='right')
+            .col-xs-1(align='right')
               span(style='color:#444;') CPU
-            .col-xs-9(align='left')
+            .col-xs-11(align='left')
               .cpumini
-        .col-md-4(align='center')
+        .col-md-4.mobilerow2(align='center')
           h3(align='center', style='margin:35px;').animate__animated.animate__bounce
             | Everything is 
             span(style='color: #42B905;') Great!
             br
-            span(style='font-size:12px;color:#999;') DENARIUS IS SYNCED
-        .col-md-4
+            span.mobilerow2(style='font-size:12px;color:#999;') DENARIUS IS SYNCED
+        .col-md-4(style='margin-top:35px;')
           p(align='center')
             span.animate__animated.animate__fadeIn#link
             br
