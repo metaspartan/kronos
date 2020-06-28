@@ -39,6 +39,7 @@
     "express-status-monitor": "git://github.com/carsenk/express-status-monitor.git",
     "express-toastr": "^2.0.2",
     "fs": "0.0.1-security",
+    "gritty": "^4.8.13",
     "ip": "^1.1.5",
     "level": "^6.0.1",
     "lob": "^6.1.0",

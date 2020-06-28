@@ -34,6 +34,7 @@ const dbr = require('./db.js');
 const appRoot = require('app-root-path');
 const files = require('fs');
 const db = dbr.db;
+const gritty = require('gritty');
 
 
 //Print in console your LAN IP
@@ -60,12 +61,23 @@ const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const sharedsession = require("express-socket.io-session");
+//io.setMaxListeners(33);
+
+//const socket = io.listen(server);
 io.setMaxListeners(33);
+
+// const iot = require('socket.io');
+// const servert = require('http').createServer(app);
+// const sockett = iot.listen(servert);
+ 
+const port = 3000;
+// const portt = 3337;
+// const ipt = '0.0.0.0';
 
 /**
  * Express configuration.
  */
-app.set('port', process.env.PORT || 3000);
+//app.set('port', port);
 
 app.set('views', path.join(__dirname, 'views'));
 
@@ -82,6 +94,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(flash());
+
+app.use(gritty());
 
 app.use(lusca.xframe('SAMEORIGIN'));
 
@@ -183,6 +197,8 @@ app.use(function (req, res, next)
     next()
 });
 
+//app.use(gritty());
+
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
 
 var auth = function(req,res,next){
@@ -196,12 +212,34 @@ var auth = function(req,res,next){
   }
 };
 
+var authseed = function(req,res,next){
+  if (!req.session.loggedin2){
+      //console.log('You are NOT AUTHED');
+      return res.redirect("/auth");
+      //return res.render('login', { title: 'Kronos Login'});
+  } else {
+      //console.log('You are AUTHED');
+      return next();
+  }
+};
+
+//Damn Terminal Sockets running on port 3300
+gritty.listen(io, {
+  prefix: '/gritty',
+});
+
+//server.listen(portt, ipt);
+
 /**
  * Kronos Auth Login
  */
 app.get('/login', homeController.login);
 app.post('/login', homeController.postlogin);
 app.post('/create', homeController.create);
+app.get('/auth', auth, homeController.auth);
+app.post('/auth', auth, homeController.postAuth);
+
+app.get('/terminal', auth, homeController.terminal);
 
 app.get('/logout', homeController.logout);
 
@@ -244,7 +282,7 @@ app.get('/peers', auth, walletController.peers);
 app.get('/fs', auth, walletController.fs);
 app.get('/withdraw', auth, walletController.getWithdraw);
 app.get('/rawtx', auth, walletController.getRaw);
-app.get('/seed', auth, walletController.getSeed);
+app.get('/seed', auth, authseed, walletController.getSeed);
 
 //Other POST and GET Routes for WalletController
 app.get('/import', auth, walletController.getPriv);
@@ -267,12 +305,14 @@ app.use(errorHandler());
 /**
  * Start Express server.
  */
-app.listen(3000, '0.0.0.0', () => {
+app.listen(port, '0.0.0.0', () => {
   var tri = tribus.digest('Denarius');
   console.log('✓ Tribus Hash of "Denarius"', tri);
   console.log('✓ Kronos Interface is running at http://' + ip.address() + ':%d', '3000', app.get('env'));
   console.log('✓ Open the URL above in your web browser on your local network to start using Kronos!\n');
 });
+
+//server.listen(port, ip.address());
 
 // var http = require('http');
 // http.createServer(function (req, res) {

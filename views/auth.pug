@@ -117,15 +117,15 @@ html(dir="ltr", lang="en-US")
 		.container(style='margin-top:100px !important;margin:0;padding:0;', align='center')
 			img(src="https://user-images.githubusercontent.com/10162347/85637883-9fe5fa00-b641-11ea-9f4b-22901d7911c4.png", height="240px", width="261px", align="center")
 		.container(style='margin-top:20px !important;margin:0;padding:0;', align='center')
-			form(action="/login" method="post")
+			form(action="/auth" method="post")
 				.form-content
 					input(type="text" id="PPU1" name="PPU1" placeholder="username")
 					input(type="password" id="PPP1" name="PPP1" placeholder="password")
 					br
-					input.button(style='background-color: #444;', type="submit" value="Login") 
+					input.button(style='background-color: #444;', type="submit" value="Verify") 
 				br
 				span(style='color:#777;')
-					| Version: v1.2.9-Alpha
+					| Enter in username and password again
 		script(src='/js/lib/jquery-3.1.1.min.js')
 		script(src='//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/js/toastr.min.js')
 		script(src='//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/js/all.min.js')

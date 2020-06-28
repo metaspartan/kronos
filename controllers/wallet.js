@@ -2973,7 +2973,7 @@ exports.backupWallet = (req, res, next) => {
 };
 
 exports.getseed = (req, res, next) => {
-  var mnemonic;
+var mnemonic;
 let seedaddresses = [];
 
 // Fetch the Kronos LevelDB
@@ -3069,6 +3069,8 @@ exports.getSeed = (req, res) => {
 
   res.locals.lanip = ipaddy;
 
+  req.session.loggedin2 = false;
+
   client.walletStatus(function (err, ws, resHeaders) {
     if (err) {
       console.log(err);
@@ -3157,89 +3159,67 @@ exports.getSeed = (req, res) => {
       }
 
       var mnemonic;
+      var ps;
       let seedaddresses = [];
       let store = [];
 
-      // Fetch the Kronos LevelDB
-      db.get('seedphrase', function (err, value) {
+      db.get('password', function(err, value) {
         if (err) {
-          
-          // // If seedphrase does not exist in levelDB then generate one
-          // mnemonic = bip39.generateMnemonic(256);
-          // console.log("~Generated Denarius Mnemonic~ ", mnemonic);
-
-          // // Encrypt the seedphrase for storing in the DB
-          // var encryptedmnemonic = encrypt(mnemonic);
-          // console.log("Encrypted Mnemonic", encryptedmnemonic);
-
-          // // Put the encrypted seedphrase in the DB
-          // db.put('seedphrase', encryptedmnemonic, function (err) {
-          //   if (err) return console.log('Ooops!', err) // some kind of I/O error if so
-          //   //console.log('Inserted Encrypted Seed Phrase to DB');
-          // });
-
-          //return mnemonic;
 
         } else {
-
-          var decryptedmnemonic = decrypt(value);
-          //console.log("Decrypted Mnemonic", decryptedmnemonic);
-
-          mnemonic = decryptedmnemonic;
-
-          //return mnemonic;
-
+          var decryptedpass = decrypt(value);
+          ps = decryptedpass;
         }
 
-        //console.log("Stored Denarius Mnemonic: ", mnemonic);
+        // Fetch the Kronos LevelDB
+        db.get('seedphrase', function (err, value) {
+          if (err) {
 
-        //Convert our mnemonic seed phrase to BIP39 Seed Buffer 
-        const seed = bip39.mnemonicToSeedSync(mnemonic);
-        //console.log("BIP39 Seed Phrase to Hex", seed.toString('hex'));
-        
-        // BIP32 From BIP39 Seed
-        const root = bip32.fromSeed(seed);
+          } else {
+            var decryptedmnemonic = decrypt(value);
+            mnemonic = decryptedmnemonic;
+          }
 
-        // Denarius Network Params Object
-        const network = {
-            messagePrefix: '\x19Denarius Signed Message:\n',
-            bech32: 'd',
-            bip32: {
-              public: 0x0488b21e,
-              private: 0x0488ade4
-            },
-            pubKeyHash: 0x1e,
-            scriptHash: 0x5a,
-            wif: 0x9e
-        };
+          //Convert our mnemonic seed phrase to BIP39 Seed Buffer 
+          const seed = bip39.mnemonicToSeedSync(mnemonic, ps);
+          
+          // BIP32 From BIP39 Seed
+          const root = bip32.fromSeed(seed);
 
-        // A for loop for how many addresses we want from the derivation path of the seed phrase
-        //
-        for (let i = 0; i < 21; i++) { //20
+          // Denarius Network Params Object
+          const network = {
+              messagePrefix: '\x19Denarius Signed Message:\n',
+              bech32: 'd',
+              bip32: {
+                public: 0x0488b21e,
+                private: 0x0488ade4
+              },
+              pubKeyHash: 0x1e,
+              scriptHash: 0x5a,
+              wif: 0x9e
+          };
 
-          //Get 10 Addresses from the derived mnemonic
-          const addressPath = `m/44'/116'/0'/0/${i}`;
+          // A for loop for how many addresses we want from the derivation path of the seed phrase
+          for (let i = 0; i < 21; i++) { //20
 
-          // Get the keypair from the address derivation path
-          const addressKeypair = root.derivePath(addressPath);
+            //Get 10 Addresses from the derived mnemonic
+            const addressPath = `m/44'/116'/0'/0/${i}`;
 
-          // Get the p2pkh base58 public address of the keypair
-          const p2pkhaddy = denarius.payments.p2pkh({ pubkey: addressKeypair.publicKey, network }).address;
+            // Get the keypair from the address derivation path
+            const addressKeypair = root.derivePath(addressPath);
 
-          const privatekey = addressKeypair.toWIF();
-        
-          //New Array called seedaddresses that is filled with address and path data currently, WIP and TODO
-          seedaddresses.push({ address: p2pkhaddy, privkey: privatekey, path: addressPath });
-        }
-        
-        // Console Log the full array - want to eventually push these into scripthash hashing and retrieve balances and then send from them
-        //console.log("Seed Address Array", seedaddresses);
+            // Get the p2pkh base58 public address of the keypair
+            const p2pkhaddy = denarius.payments.p2pkh({ pubkey: addressKeypair.publicKey, network }).address;
 
-        store.push({mnemonic: mnemonic, seedaddresses: seedaddresses});
+            const privatekey = addressKeypair.toWIF();
+          
+            //New Array called seedaddresses that is filled with address and path data currently, WIP and TODO
+            seedaddresses.push({ address: p2pkhaddy, privkey: privatekey, path: addressPath });
+          }
 
-        //console.log(store);
+          store.push({mnemonic: mnemonic, seedaddresses: seedaddresses});
 
-        res.locals.seedphrase = store;
+          res.locals.seedphrase = store;
   
     res.render('account/getseed', {
         title: 'Denarius Seed Phrase',
@@ -3253,6 +3233,7 @@ exports.getSeed = (req, res) => {
         chaindlbtn: chaindlbtn
     });
   });
+});
 });
 });
 });

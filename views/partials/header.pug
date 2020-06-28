@@ -66,22 +66,18 @@ script.
         span.icon-bar
       .navbar-brand
         img.res(src='../img/kronos.svg', alt='Denarius', border='0')
-      if user
-        .navbar-send.hidden-sm.hidden-md.hidden-lg.hidden-xl
-          a.send(href='/withdraw')
-            i.fa.fa-paper-plane
     .collapse.navbar-collapse
       ul.nav.navbar-nav
           li(class=(title == 'Home') ? 'active' : undefined)
-            a(href='/') 
+            a(href='http://'+lanip+':3000/', onclick="javascript:event.target.port=3000") 
               i.fas.fa-tachometer-alt  
               |   Dashboard
           li(class=(title == 'FortunaStakes') ? 'active' : undefined)
-            a(href='/fs') 
+            a(href='http://'+lanip+':3000/fs', onclick="javascript:event.target.port=3000") 
               i.fas.fa-th   
               |   FS
           li(class=(title == 'Peers') ? 'active' : undefined)
-            a(href='/peers') 
+            a(href='http://'+lanip+':3000/peers', onclick="javascript:event.target.port=3000") 
               i.fas.fa-network-wired    
               |   Peers
           li.dropdown(class=(title == 'Wallet') ? 'active' : undefined)
@@ -92,12 +88,12 @@ script.
               i.caret
             ul.dropdown-menu
               li
-                a(href='/transactions') 
+                a(href='http://'+lanip+':3000/transactions', onclick="javascript:event.target.port=3000") 
                   i.fas.fa-exchange-alt  
                   |   Transactions
               li.divider
               li
-                a(href='/addresses') 
+                a(href='http://'+lanip+':3000/addresses', onclick="javascript:event.target.port=3000") 
                   i.fas.fa-at  
                   |   Addresses
           li.dropdown(class=(title == 'Tools') ? 'active' : undefined)
@@ -108,30 +104,30 @@ script.
               i.caret
             ul.dropdown-menu
               li
-                a(href='/backup') 
+                a(href='http://'+lanip+':3000/backup', onclick="javascript:event.target.port=3000") 
                   i.fas.fa-server  
                   |   Backup Wallet
               li
-                a(href='/ddebug') 
+                a(href='http://'+lanip+':3000/ddebug', onclick="javascript:event.target.port=3000") 
                   i.fas.fa-bug  
                   |   Denarius Debug Log
               li.divider
               li
-                a(href='/sign') 
+                a(href='http://'+lanip+':3000/sign', onclick="javascript:event.target.port=3000") 
                   i.fas.fa-signature  
                   |   Sign a message
               li
-                a(href='/verify') 
+                a(href='http://'+lanip+':3000/verify', onclick="javascript:event.target.port=3000") 
                   i.fas.fa-certificate  
                   |   Verify a message
               li.divider(style=sendicon)
               li(style=sendicon)
-                a(href='/rawtx') 
+                a(href='http://'+lanip+':3000/rawtx', onclick="javascript:event.target.port=3000") 
                   i.far.fa-paper-plane  
                   |   Send Raw Transaction
               li.divider(style=sendicon)
               li(style=sendicon)
-                a(href='/import') 
+                a(href='http://'+lanip+':3000/import', onclick="javascript:event.target.port=3000") 
                   i.fas.fa-key   
                   |   Import a private key
           li
@@ -144,12 +140,12 @@ script.
                   |  #{staketoggle}
       ul.nav.navbar-nav.navbar-right
           li(style=sendicon,class=(title == 'Send D') ? 'active' : undefined)
-            a(href='/withdraw')
+            a(href='http://'+lanip+':3000/withdraw')
               i.fa.fa-paper-plane 
               |   SEND
           li
             #searchinput.animate__animated.animate__fadeInRight(style='margin-top:8px;display:none;')
-              form.form-horizontal(action='/search', method='POST', id='explorer')
+              form.form-horizontal(action='http://'+lanip+':3000/search', method='POST', id='explorer')
                 input(type='hidden', name='_csrf', value=_csrf)
                 input.form-control.blackinput4(style='min-width:350px;', type='text', align='center', name='explorersearch', id='explorersearch', placeholder='Search the chain for TX Hashes, Block #, or Address')
           li
@@ -165,6 +161,15 @@ script.
                 a(href='https://github.com/carsenk/kronos') Kronos v1.2.9-Alpha
               li.divider
               li
+                a(href='http://'+lanip+':3300/terminal', onclick="javascript:event.target.port=3300")
+                  i.fas.fa-terminal  
+                  |   Terminal (Super Alpha)
+              li
+                a(href='http://'+lanip+':3000/seed', onclick="javascript:event.target.port=3000")
+                  i.fas.fa-mask     
+                  |   View Seed
+              li.divider
+              li
                 a(href='https://blockforums.org', target='_blank') 
                   i.fas.fa-bold 
                   |   BlockForums
@@ -174,6 +179,6 @@ script.
                   |   Denarius Discord
               li.divider
               li
-                a(href='/logout')
+                a(href='http://'+lanip+':3000/logout', onclick="javascript:event.target.port=3000")
                   i.fas.fa-sign-out-alt  
                   |   Logout

@@ -5,14 +5,21 @@ var debug = require('debug')('www:server');
 var http = require('http');
 var ip = require('ip');
 
+// var iot = require('socket.io');
+// var gritty = require('gritty');
+
 
 var lan = '0.0.0.0';
 var port = normalizePort('3300'); //Port 3300 for Socket.io Server
 app.set('port', port);
 var ipaddy = ip.address();
 
-
 var server = require('../app').server;
+//var sockett = iot.listen(server);
+
+// gritty.listen(iot.listen(server), {
+//   prefix: '/gritty'
+// });
 
 server.listen(port, ipaddy);
 server.on('error', onError);

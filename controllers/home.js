@@ -54,151 +54,6 @@ function decrypt(data) {
 	return data;
 }
 
-// Testing Denarius (D) Mnemonic Seed Phrases - Major WIP
-//
-//
-//
-//
-
-var mnemonic;
-let seedaddresses = [];
-
-// Fetch the Kronos LevelDB
-db.get('seedphrase', function (err, value) {
-	if (err) {
-		
-		// If seedphrase does not exist in levelDB then generate one
-		mnemonic = bip39.generateMnemonic(256);
-		//console.log("~Generated Denarius Mnemonic~ ", mnemonic);
-
-		// Encrypt the seedphrase for storing in the DB
-		var encryptedmnemonic = encrypt(mnemonic);
-		//console.log("Encrypted Mnemonic", encryptedmnemonic);
-
-		// Put the encrypted seedphrase in the DB
-		db.put('seedphrase', encryptedmnemonic, function (err) {
-			if (err) return console.log('Ooops!', err) // some kind of I/O error if so
-			//console.log('Inserted Encrypted Seed Phrase to DB');
-		});
-
-		//return mnemonic;
-
-	} else {
-
-		var decryptedmnemonic = decrypt(value);
-		//console.log("Decrypted Mnemonic", decryptedmnemonic);
-
-		mnemonic = decryptedmnemonic;
-
-		//return mnemonic;
-
-	}
-
-
-	//console.log("Stored Denarius Mnemonic: ", mnemonic);
-
-	//Convert our mnemonic seed phrase to BIP39 Seed Buffer 
-	const seed = bip39.mnemonicToSeedSync(mnemonic);
-	//console.log("BIP39 Seed Phrase to Hex", seed.toString('hex'));
-	
-	// BIP32 From BIP39 Seed
-	const root = bip32.fromSeed(seed);
-
-	// Denarius Network Params Object
-	const network = {
-			messagePrefix: '\x19Denarius Signed Message:\n',
-			bech32: 'd',
-			bip32: {
-				public: 0x0488b21e,
-				private: 0x0488ade4
-			},
-			pubKeyHash: 0x1e,
-			scriptHash: 0x5a,
-			wif: 0x9e
-	};
-
-	// A for loop for how many addresses we want from the derivation path of the seed phrase
-	//
-	for (let i = 0; i < 10; i++) {
-
-		//Get 10 Addresses from the derived mnemonic
-		const addressPath = `m/44'/116'/0'/0/${i}`;
-
-		// Get the keypair from the address derivation path
-		const addressKeypair = root.derivePath(addressPath);
-
-		// Get the p2pkh base58 public address of the keypair
-		const p2pkhaddy = denarius.payments.p2pkh({ pubkey: addressKeypair.publicKey, network }).address;
-
-		const privatekey = addressKeypair.toWIF();
-	
-		//New Array called seedaddresses that is filled with address and path data currently, WIP and TODO
-		seedaddresses.push({ address: p2pkhaddy, privkey: privatekey, path: addressPath });
-	}
-
-	// Console Log the full array - want to eventually push these into scripthash hashing and retrieve balances and then send from them
-	//console.log("Seed Address Array", seedaddresses);
-
-	//Emit to our Socket.io Server
-	// io.on('connection', function (socket) {
-	// 	socket.emit("seed", {seedaddresses: seedaddresses});
-	// 	// setInterval(() => {
-	// 	// 	socket.emit("seed", {seedaddresses: seedaddresses});
-	// 	// }, 60000);		
-	// });
-
-});
-
-//console.log("Seed Address Array 2", seedaddresses);
-// //Wait under a half second to ensure the seedphrase to be grabbed from the LevelDB above
-// setTimeout(function bip39seed() {
-
-// 	console.log("Stored Denarius Mnemonic: ", mnemonic);
-
-// 	//Convert our mnemonic seed phrase to BIP39 Seed Buffer 
-// 	const seed = bip39.mnemonicToSeedSync(mnemonic);
-// 	console.log("BIP39 Seed Phrase to Hex", seed.toString('hex'));
-	
-// 	// BIP32 From BIP39 Seed
-// 	const root = bip32.fromSeed(seed);
-
-// 	// Denarius Network Params Object
-// 	const network = {
-// 			messagePrefix: '\x19Denarius Signed Message:\n',
-// 			bech32: 'd',
-// 			bip32: {
-// 				public: 0x0488b21e,
-// 				private: 0x0488ade4
-// 			},
-// 			pubKeyHash: 0x1e,
-// 			scriptHash: 0x5a,
-// 			wif: 0x9e
-// 	};
-
-// 	// A for loop for how many addresses we want from the derivation path of the seed phrase
-// 	//
-// 	for (let i = 0; i < 10; i++) {
-
-// 		//Get 10 Addresses from the derived mnemonic
-// 		const addressPath = `m/44'/116'/0'/0/${i}`;
-
-// 		// Get the keypair from the address derivation path
-// 		const addressKeypair = root.derivePath(addressPath);
-
-// 		// Get the p2pkh base58 public address of the keypair
-// 		const p2pkhaddy = denarius.payments.p2pkh({ pubkey: addressKeypair.publicKey, network }).address;
-
-// 		const privatekey = addressKeypair.toWIF();
-	
-// 		//New Array called seedaddresses that is filled with address and path data currently, WIP and TODO
-// 		seedaddresses.push({ address: p2pkhaddy, privkey: privatekey, path: addressPath });
-// 	}
-
-// 	// Console Log the full array - want to eventually push these into scripthash hashing and retrieve balances and then send from them
-// 	console.log("Seed Address Array", seedaddresses);
-
-// }, 1000);
-
 // GET Denarius Debug Log File
 exports.getDebugLog = (req, res) => {
 	const ip = require('ip');
@@ -321,6 +176,111 @@ exports.getDebugLog = (req, res) => {
 		res.render('debug', {title: 'Denarius Debug Log', lines: lines, debugloc: debugloc, staketoggle: staketoggle, balance: balance, chaindl: chaindl, chaindlbtn: chaindlbtn, offline: offline, offlinebtn: offlinebtn, sendicon: sendicon});
 	});
 });
+});
+});
+};
+
+// GET Terminal
+exports.terminal = (req, res) => {
+	const ip = require('ip');
+	const ipaddy = ip.address();
+
+	res.locals.lanip = ipaddy;
+
+		client.walletStatus(function (err, ws, resHeaders) {
+			if (err) {
+			  console.log(err);
+			  var offline = 'onlineoverlay';
+			  var offlinebtn = 'onlinebutton';
+			  var ws = '';
+			  var walletstatuss = 'locked';
+			  var sendicon = 'display: none !important';
+			} else {
+			  var offline = 'onlineoverlay';
+			  var offlinebtn = 'onlinebutton';
+		
+			  var walletstatuss = ws.wallet_status;
+			  var sendicon;
+			  
+			  if (walletstatuss == 'stakingonly') {
+						sendicon = 'display: none !important';
+					} else if (walletstatuss == 'unlocked') {
+						sendicon = 'display: visible !important;';
+					} else if (walletstatuss == 'unencrypted') {
+						sendicon = 'display: visible !important';
+					} else if (walletstatuss == 'locked') {
+						sendicon = 'display: none !important';
+					}
+			}
+		  client.getBalance(function (error, info, resHeaders) {
+			  if (error) {
+				var offline = 'onlineoverlay';
+				var offlinebtn = 'onlinebutton';
+				var balance = '~';
+				console.log(error);
+			  } else {
+				var offline = 'onlineoverlay';
+						var offlinebtn = 'onlinebutton';
+			  }
+		
+			  var chaindl = 'nooverlay';
+			  var chaindlbtn = 'nobtn';
+		
+			  var balance = info;
+		
+			  if (balance && balance <= 0) {
+				balance = 0;
+			  }
+
+			  client.getStakingInfo(function (error, stakeinfo, resHeaders) {
+
+				if (error) {
+					var enabled = 'Node Offline';
+					var staking = 'Node Offline';
+					var yourweight = 'Node Offline';
+					var netweight = 'Node Offline';
+					var expected = 'Node Offline';
+					var stakediff = 'Node Offline';
+		
+					var offline = 'onlineoverlay';
+		
+					var offlinebtn = 'onlineoverlay';
+		
+					console.log(error);
+		
+				} else {
+					var enabled = stakeinfo.enabled;
+					var staking = stakeinfo.staking;
+					var yourweight = stakeinfo.weight;
+					var netweight = stakeinfo.netstakeweight;
+					var expected = stakeinfo.expectedtime;
+					var stakediff = stakeinfo.difficulty;
+		
+					var offline = 'onlineoverlay';
+					var offlinebtn = 'onlinebutton';
+		
+					var staketoggle;
+					var enabletoggle;
+		
+					if (enabled && enabled == true) {
+						enabletoggle = 'Configured';
+					} else {
+						enabletoggle = 'Disabled';
+					}
+		
+					if (staking && staking == true) {
+						staketoggle = 'Staking';
+					} else {
+						staketoggle = 'Not Yet Staking';
+					}
+				}
+				var os = require('os');
+
+				// Initialize node-pty with an appropriate shell
+				var shell = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
+		
+		res.render('account/terminal', {title: 'Kronos Terminal', staketoggle: staketoggle, balance: balance, chaindl: chaindl, chaindlbtn: chaindlbtn, offline: offline, offlinebtn: offlinebtn, sendicon: sendicon});
+	});
 });
 });
 };
@@ -1220,6 +1180,25 @@ exports.login = (req, res) => {
 };
 
 /**
+ * GET /auth
+ * Kronos Auth Login
+ */
+exports.auth = (req, res) => {
+	db.get('username', function (err, value) {
+        if (err) {
+          
+          // If username does not exist in levelDB then go to page to create one
+          res.render('create', {title: 'Create Kronos Login'});
+
+        } else {
+		  
+		  res.render('auth', {title: 'Kronos Authorization'});
+
+		}
+	});
+};
+
+/**
  * POST /create
  * Kronos Auth Creation
  */
@@ -1250,6 +1229,31 @@ exports.create = (request, response) => {
 					db.put('password', encryptedpass, function (err) {
 						if (err) console.log('Ooops!', err) // some kind of I/O error if so
 						console.log('Encrypted Password to DB');
+					});
+
+					var mnemonic;
+					// Fetch the Kronos LevelDB Seedphrase
+					db.get('seedphrase', function (err, value) {
+						if (err) {
+							
+							// If seedphrase does not exist in levelDB then generate one with the password
+							mnemonic = bip39.generateMnemonic(256);
+
+							// Encrypt the seedphrase for storing in the DB
+							var encryptedmnemonic = encrypt(mnemonic);
+							//console.log("Encrypted Mnemonic", encryptedmnemonic);
+
+							// Put the encrypted passworded seedphrase in the DB
+							db.put('seedphrase', encryptedmnemonic, function (err) {
+								if (err) return console.log('Ooops!', err) // some kind of I/O error if so
+								console.log('Encrypted Seed Phrase to DB');
+							});
+
+						} else {
+							var decryptedmnemonic = decrypt(value);
+							mnemonic = decryptedmnemonic;
+						}
+
 					});
 					
 					// //Stored User/Pass to DB successfully now setup the session
@@ -1289,6 +1293,7 @@ exports.create = (request, response) => {
  */
 exports.logout = (req, res) => {
 	req.session.loggedin = false;
+	req.session.loggedin2 = false;
 	req.session.username = '';
 	req.toastr.error('Logged Out of Kronos', 'Logged Out!', { positionClass: 'toast-bottom-right' });
 	res.redirect('/login');
@@ -1352,18 +1357,78 @@ exports.postlogin = (request, response) => {
 	}
 };
 
-  //POST Wallet Notify
-  exports.notification = (req, res, next) => {
-	var notifydata = req.body.txid;
+/**
+ * POST /auth
+ * Kronos Auth Login
+ */
+exports.postAuth = (request, response) => {
+	var username = request.body.PPU1;
+	var password = request.body.PPP1;
+	
+	if (username && password) {
 
-	console.log("Transaction Notify Received: ", notifydata);
+		db.get('username', function (err, value) {
+			if (err) {
+			  // If username does not exist in levelDB then go to page to create one
+			  //response.render('create', {title: 'Create Kronos Login'});
+			  //request.toastr.error('Username does not exist!', 'Error!', { positionClass: 'toast-bottom-right' });
+			} else {
+				//If it does exist
+				var decrypteduser = decrypt(value);
 
-	files.writeFile('notifies.txt', notifydata, function (err) {
-		if (err) throw err;
-		console.log('TXID Written to File');
-	});
+				db.get('password', function (err, value) {
+					if (err) {
+						// If password does not exist in levelDB then go to page to create one
+						//request.toastr.error('Password does not exist!', 'Error!', { positionClass: 'toast-bottom-right' });
+					  } else {
 
-	res.send('Got your notify!');
-	next();
-  
-  };
+						//If it does exist
+						var decryptedpass = decrypt(value);
+
+						if (request.body && (username == decrypteduser) && (password == decryptedpass)) {
+							request.session.loggedin = true;
+							request.session.loggedin2 = true;
+							request.session.username = username;
+							request.toastr.success('Authed Kronos', 'Success!', { positionClass: 'toast-bottom-right' });
+							response.redirect('/seed');
+							response.end();
+						} else {
+							//response.send('Incorrect Username and/or Password!');
+							//request.flash('success', { msg: 'TEST' });
+							request.toastr.error('Incorrect Username and/or Password!', 'Error!', { positionClass: 'toast-bottom-right' });
+							response.redirect('/auth');
+							response.end();
+						}
+					}
+
+				});
+	
+			}
+		});
+		
+		//response.end();
+	
+	} else {
+		//response.send('Please enter Username and Password!');
+		request.toastr.error('Please enter a Username and Password!', 'Error!', { positionClass: 'toast-bottom-right' });
+		response.redirect('/auth');
+		response.end();
+	}
+};
+
+
+//POST Wallet Notify
+exports.notification = (req, res, next) => {
+var notifydata = req.body.txid;
+
+console.log("Transaction Notify Received: ", notifydata);
+
+files.writeFile('notifies.txt', notifydata, function (err) {
+	if (err) throw err;
+	console.log('TXID Written to File');
+});
+
+res.send('Got your notify!');
+next();
+
+};
