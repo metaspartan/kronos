@@ -66,6 +66,10 @@ body {
   min-height: 100%;
 }
 
+.xterm-screen {
+  height: 500px !important;
+}
+
 @media only screen and (max-width: 767px) {
   .container {
     width: 100% !important;
