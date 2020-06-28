@@ -35,6 +35,7 @@ const appRoot = require('app-root-path');
 const files = require('fs');
 const db = dbr.db;
 const gritty = require('gritty');
+const rateLimit = require("express-rate-limit");
 
 
 //Print in console your LAN IP
@@ -228,22 +229,32 @@ var authterm = function(req,res,next){
 gritty.listen(io, {
   prefix: '/gritty',
 });
+ 
+const Limiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 50 // Max 50 Requests
+});
+
+const TXLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 100 // Max 100 Requests
+});
 
 //server.listen(portt, ipt);
 
 /**
  * Kronos Auth Login
  */
-app.get('/login', homeController.login);
-app.post('/login', homeController.postlogin);
-app.post('/create', homeController.create);
-app.get('/auth', auth, homeController.auth);
-app.post('/auth', auth, homeController.postAuth);
+app.get('/login', Limiter, homeController.login);
+app.post('/login', Limiter, homeController.postlogin);
+app.post('/create', Limiter, homeController.create);
+app.get('/auth', auth, Limiter, homeController.auth);
+app.post('/auth', auth, Limiter, homeController.postAuth);
 
-app.get('/autht', auth, homeController.autht);
-app.post('/autht', auth, homeController.postAutht);
+app.get('/autht', auth, Limiter, homeController.autht);
+app.post('/autht', auth, Limiter, homeController.postAutht);
 
-app.get('/terminal', auth, authterm, homeController.terminal);
+app.get('/terminal', auth, authterm, Limiter, homeController.terminal);
 
 app.get('/logout', homeController.logout);
 
@@ -255,7 +266,7 @@ app.post('/', auth, homeController.index);
 
 app.get('/ddebug', auth, homeController.getDebugLog);
 
-app.post('/walletnotify', homeController.notification);
+app.post('/walletnotify', TXLimiter, homeController.notification);
 
 // D Explorer Routes
 app.get('/tx/:tx', auth, walletController.gettx);
