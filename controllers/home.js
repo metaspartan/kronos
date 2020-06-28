@@ -187,6 +187,8 @@ exports.terminal = (req, res) => {
 
 	res.locals.lanip = ipaddy;
 
+	req.session.loggedin3 = false;
+
 		client.walletStatus(function (err, ws, resHeaders) {
 			if (err) {
 			  console.log(err);
@@ -1199,6 +1201,25 @@ exports.auth = (req, res) => {
 };
 
 /**
+ * GET /autht
+ * Kronos Terminal Auth Login
+ */
+exports.autht = (req, res) => {
+	db.get('username', function (err, value) {
+        if (err) {
+          
+          // If username does not exist in levelDB then go to page to create one
+          res.render('create', {title: 'Create Kronos Login'});
+
+        } else {
+		  
+		  res.render('autht', {title: 'Kronos Authorization'});
+
+		}
+	});
+};
+
+/**
  * POST /create
  * Kronos Auth Creation
  */
@@ -1415,6 +1436,71 @@ exports.postAuth = (request, response) => {
 		response.end();
 	}
 };
+
+/**
+ * POST /autht
+ * Kronos Terminal Auth Login
+ */
+exports.postAutht = (request, response) => {
+	var username = request.body.PPU1;
+	var password = request.body.PPP1;
+
+	const ip = require('ip');
+	const ipaddy = ip.address();
+  
+	response.locals.lanip = ipaddy;
+	
+	if (username && password) {
+
+		db.get('username', function (err, value) {
+			if (err) {
+			  // If username does not exist in levelDB then go to page to create one
+			  //response.render('create', {title: 'Create Kronos Login'});
+			  //request.toastr.error('Username does not exist!', 'Error!', { positionClass: 'toast-bottom-right' });
+			} else {
+				//If it does exist
+				var decrypteduser = decrypt(value);
+
+				db.get('password', function (err, value) {
+					if (err) {
+						// If password does not exist in levelDB then go to page to create one
+						//request.toastr.error('Password does not exist!', 'Error!', { positionClass: 'toast-bottom-right' });
+					  } else {
+
+						//If it does exist
+						var decryptedpass = decrypt(value);
+
+						if (request.body && (username == decrypteduser) && (password == decryptedpass)) {
+							request.session.loggedin = true;
+							request.session.loggedin3 = true;
+							request.session.username = username;
+							request.toastr.success('Authed Kronos', 'Success!', { positionClass: 'toast-bottom-right' });
+							response.redirect('http://'+ip.address()+':3300/terminal');
+							response.end();
+						} else {
+							//response.send('Incorrect Username and/or Password!');
+							//request.flash('success', { msg: 'TEST' });
+							request.toastr.error('Incorrect Username and/or Password!', 'Error!', { positionClass: 'toast-bottom-right' });
+							response.redirect('http://'+ip.address()+':3000/autht');
+							response.end();
+						}
+					}
+
+				});
+	
+			}
+		});
+		
+		//response.end();
+	
+	} else {
+		//response.send('Please enter Username and Password!');
+		request.toastr.error('Please enter a Username and Password!', 'Error!', { positionClass: 'toast-bottom-right' });
+		response.redirect('http://'+ip.address()+':3000/autht');
+		response.end();
+	}
+};
+
 
 
 //POST Wallet Notify

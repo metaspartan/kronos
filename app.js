@@ -61,18 +61,8 @@ const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const sharedsession = require("express-socket.io-session");
-//io.setMaxListeners(33);
-
-//const socket = io.listen(server);
-io.setMaxListeners(33);
-
-// const iot = require('socket.io');
-// const servert = require('http').createServer(app);
-// const sockett = iot.listen(servert);
- 
+io.setMaxListeners(33); 
 const port = 3000;
-// const portt = 3337;
-// const ipt = '0.0.0.0';
 
 /**
  * Express configuration.
@@ -223,6 +213,17 @@ var authseed = function(req,res,next){
   }
 };
 
+var authterm = function(req,res,next){
+  if (!req.session.loggedin3){
+      //console.log('You are NOT AUTHED');
+      return res.redirect("http://" + ip.address() + ":3000/autht");
+      //return res.render('login', { title: 'Kronos Login'});
+  } else {
+      //console.log('You are AUTHED');
+      return next();
+  }
+};
+
 //Damn Terminal Sockets running on port 3300
 gritty.listen(io, {
   prefix: '/gritty',
@@ -239,7 +240,10 @@ app.post('/create', homeController.create);
 app.get('/auth', auth, homeController.auth);
 app.post('/auth', auth, homeController.postAuth);
 
-app.get('/terminal', auth, homeController.terminal);
+app.get('/autht', auth, homeController.autht);
+app.post('/autht', auth, homeController.postAutht);
+
+app.get('/terminal', auth, authterm, homeController.terminal);
 
 app.get('/logout', homeController.logout);
 

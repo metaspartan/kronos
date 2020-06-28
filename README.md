@@ -12,9 +12,9 @@ Kronos - A secondary layer NodeJS/Socket.io/Express/Denarius powered Web Wallet 
 
 Send and Receive Funds, Create new addresses, View Transactions, Unlock/Lock Wallet, Stake D, Reboot your node, Import Private Keys, View Private Keys, Encrypt your wallet, Broadcast raw transactions, Sign and Verify Denarius messages, and much more!
 
-This was built for the Raspberry Pi in mind and one with at least 2GB of RAM, 4GB and 8GB models are recommended! Kronos will run on any Linux distro.
+This was built for the Raspberry Pi in mind and one with at least 2GB of RAM. 4GB and 8GB models are recommended! Kronos will run on any Linux distro with a minimal amount of 2GB of RAM.
 
-Running the installer script below installs denarius via snap install and then modifies your .env in Kronos and denarius.conf to a random rpcuser and rpcpass, Kronos then generates you a password to login into Kronos with, so be on the look out for that when the installer finishes. (Default Username is kronos). Kronos will then be running on your LAN (192.168.x.x:3000) on port 3000.
+Running the installer script below installs denarius via snap install and then modifies your .env in Kronos and denarius.conf to a random rpcuser and rpcpass, Kronos will then be running on your LAN (192.168.x.x:3000) on port 3000.
 
 Install Kronos with Denarius Now!
 -----------------
@@ -53,6 +53,8 @@ Recommended Devices and OS
 * CentOS
 * openSUSE
 
+Screenshots
+-----------------
 ![ss](https://user-images.githubusercontent.com/10162347/85916042-00c02e80-b80a-11ea-859f-7f82d17353c9.png)
 
 ![ss2](https://user-images.githubusercontent.com/10162347/85956259-09b41b80-b942-11ea-8b74-2ab4a7540872.gif)
