@@ -57,7 +57,7 @@ block content
                   .txaddress !{transaction.address}
                 p(align='center') 
                   | TX ID: 
-                  a.txid(href="https://chainz.cryptoid.info/d/tx.dws?" + transaction.txid, target='_blank') !{transaction.txid.substring(0,30)}
+                  a.txid(href="/tx/" + transaction.txid, target='_blank') !{transaction.txid.substring(0,30)}
             else if (transaction.category == 'send')
               .panel-heading.txsent.mb
                 .pull-left
@@ -73,7 +73,7 @@ block content
                   .txaddress !{transaction.address}
                 p(align='center') 
                   | TX ID: 
-                  a.txid(href="https://chainz.cryptoid.info/d/tx.dws?" + transaction.txid, target='_blank') !{transaction.txid.substring(0,30)}
+                  a.txid(href="/tx/" + transaction.txid, target='_blank') !{transaction.txid.substring(0,30)}
             else
               .panel-heading.txreceive.mb
                 .pull-left
@@ -97,7 +97,7 @@ block content
                   .txaddress !{transaction.address}
                 p(align='center') 
                   | TX ID: 
-                  a.txid(href="https://chainz.cryptoid.info/d/tx.dws?" + transaction.txid, target='_blank') !{transaction.txid.substring(0,30)}
+                  a.txid(href="/tx/" + transaction.txid, target='_blank') !{transaction.txid.substring(0,30)}
     else
       br
       h3(align='center', style='color: #bbb;') No Transactions Available
@@ -130,7 +130,7 @@ block content
                     .label.label-success(style='background: none;') !{transaction.confirmations}
                   td(align='center') !{transaction.address}
                   td(align='center') 
-                    a.txid(href="https://chainz.cryptoid.info/d/tx.dws?" + transaction.txid, target='_blank') !{transaction.txid}
+                    a.txid(href="/tx/" + transaction.txid, target='_blank') !{transaction.txid}
                   td(align='center') 
                     if (transaction.reward)
                       .label.label-primary !{transaction.reward.toFixed(8)} D
@@ -154,7 +154,7 @@ block content
                     .label.label-success(style='background: none;') !{transaction.confirmations}
                   td(align='center') !{transaction.address}
                   td(align='center') 
-                    a.txid(href="https://chainz.cryptoid.info/d/tx.dws?" + transaction.txid, target='_blank') !{transaction.txid}
+                    a.txid(href="/tx/" + transaction.txid, target='_blank') !{transaction.txid}
                   td(align='center') 
                     if (transaction.reward)
                       .label.label-primary !{transaction.reward.toFixed(8)} D
@@ -178,7 +178,7 @@ block content
                     .label.label-success(style='background: none;') !{transaction.confirmations}
                   td(align='center') !{transaction.address}
                   td(align='center') 
-                    a.txid(href="https://chainz.cryptoid.info/d/tx.dws?" + transaction.txid, target='_blank') !{transaction.txid}
+                    a.txid(href="/tx/" + transaction.txid, target='_blank') !{transaction.txid}
                   td(align='center') 
                     if (transaction.reward)
                       .label.label-primary !{transaction.reward.toFixed(8)} D

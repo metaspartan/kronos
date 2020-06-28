@@ -113,12 +113,12 @@ block content
                     if (status.collateral == 'Wallet is Locked')
                       a(href='/', style='color: red;') !{status.collateral}
                     else
-                      a(href='https://www.coinexplorer.net/D/address/' + status.collateral, target='_blank', style='color: #42B905;') !{status.collateral}
+                      a(href='/address/' + status.collateral, target='_blank', style='color: #42B905;') !{status.collateral}
                   td(align='center')
                     if (status.txid == 'Wallet is Locked')
                       a(href='/', style='color: red;') !{status.txid}
                     else if (status.txid)
-                      a(href='https://www.coinexplorer.net/D/transaction/' + status.txid, target='_blank', style='color: #777;font-size:11px;') !{status.txid.substring(0,30)}...
+                      a(href='/tx/' + status.txid, target='_blank', style='color: #777;font-size:11px;') !{status.txid.substring(0,30)}...
                     else if (!status.txid)
                       | No TXID Available
                   td(align='center')
@@ -159,9 +159,9 @@ block content
                     img(src='../img/fs.png', height='30px') 
                     |  !{fs.ip}
                   td(align='center')
-                    a(href='https://www.coinexplorer.net/D/address/' + fs.pubkey, target='_blank', style='color: #42B905;') !{fs.pubkey}
+                    a(href='/address/' + fs.pubkey, target='_blank', style='color: #42B905;') !{fs.pubkey}
                   td(align='center')
-                    a(href="https://chainz.cryptoid.info/d/tx.dws?" + fs.txid, target='_blank', style='color: #777;font-size:11px;') !{fs.txid.substring(0,30)}...
+                    a(href="/tx/" + fs.txid, target='_blank', style='color: #777;font-size:11px;') !{fs.txid.substring(0,30)}...
                   td(align='center') !{fs.rank}
                   td(align='center', style='font-size:11px;color: #777;')= new Date(fs.lastseen*1000).toUTCString().replace('GMT','')
                   td(align='center') !{(fs.activeseconds / 3600 / 24).toFixed(2)}

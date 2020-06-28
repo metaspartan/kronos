@@ -39,10 +39,10 @@ block content
   .row.rowclass.container(id="menu", style='margin: 0 auto; margin-top:15px;width:90%;')
     if (scripthasharray)
       h3(align='center') Details on Address
-      .div(style='font-weight:400;font-size:14px;padding:30px;background-color:#222;margin:15px;border-radius:15px;', align='center') 
+      .div(style='font-weight:400;font-size:14px;padding:30px!important;background-color:#222;margin:15px!important;margin-right:40px!important;border-radius:15px;', align='center') 
         span.hashm(style='font-size:22px;') #{scripthasharray[0].address}
       .divider(style='background-color:#2b2b2b !important;height:2px;width:90%;margin:0 auto;', align='center')
-      .row(style='font-weight:400;font-size:14px;padding:30px;background-color:#222;margin:15px;border-radius:15px;')
+      .row(style='font-weight:400;font-size:14px;padding:30px!important;background-color:#222;margin:15px!important;margin-right:40px!important;border-radius:15px;')
         .col-md-6
           p(style='font-size:21px;') Balance: 
             if (scripthasharray[0].ismine == true)
@@ -80,7 +80,7 @@ block content
               if (tx.scripthashtxhistory != null)
                 h4 P2PKH Denarius Transactions
                 each script in tx.scripthashtxhistory
-                  .row(style='color:#eee;margin:5px;padding:10px;background-color:#222;border-radius:5px;')
+                  .row(style='color:#eee;margin:15px!important;margin-right:40px!important;padding:10px!important;background-color:#222;border-radius:5px;')
                     .col-md-6
                       a.hashm(href='/tx/'+script.tx_hash) #{script.tx_hash}
                     .col-md-6(align='right')
@@ -89,7 +89,7 @@ block content
               if (tx.p2pktxhistory != '')
                 h4 P2PK Denarius Transactions
                 each script in tx.p2pktxhistory
-                  .row(style='color:#eee;margin:5px;padding:10px;background-color:#222;border-radius:5px;')
+                  .row(style='color:#eee;margin:15px!important;margin-right:40px!important;padding:10px!important;background-color:#222;border-radius:5px;')
                     .col-md-6
                       a.hashm(href='/tx/'+script.tx_hash) #{script.tx_hash}
                     .col-md-6(align='right')

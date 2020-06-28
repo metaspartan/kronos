@@ -42,7 +42,7 @@ block content
         i.fas.fa-cube
         |  Block 
         strong #{blockinfo.height}
-      .row(style='font-weight:400;font-size:14px;padding:30px;background-color:#222;margin:15px;border-radius:15px;', align='center')
+      .row(style='font-weight:400;font-size:14px;padding:30px!important;background-color:#222;margin:15px!important;margin-right:40px!important;border-radius:15px;', align='center')
         .col-md-2(align='left')
           a(href='/block/'+blockinfo.previousblockhash)
             i.fas.fa-arrow-left.fa-3x
@@ -52,7 +52,7 @@ block content
           a(href='/block/'+blockinfo.nextblockhash)
             i.fas.fa-arrow-right.fa-3x
       .divider(style='background-color:#2b2b2b !important;height:2px;width:90%;margin:0 auto;', align='center')
-      .row(style='font-weight:400;font-size:14px;padding:30px;background-color:#222;margin:15px;border-radius:15px;')
+      .row(style='font-weight:400;font-size:14px;padding:30px!important;background-color:#222;margin:15px!important;margin-right:40px!important;border-radius:15px;')
         .col-md-6
           p Time: 
             span= new Date(blockinfo.time*1000).toUTCString()
