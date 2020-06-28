@@ -20,10 +20,10 @@ const appRoot = require('app-root-path');
 const split = require('split');
 const os = require('os');
 const dbr = require('../db.js');
+const db = dbr.db;
 const { isNullOrUndefined } = require('util');
 const ElectrumClient = require('electrum-cash').Client;
 const bs58 = require('bs58');
-const db = dbr.db;
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
@@ -68,12 +68,12 @@ db.get('seedphrase', function (err, value) {
 	if (err) {
 		
 		// If seedphrase does not exist in levelDB then generate one
-		mnemonic = bip39.generateMnemonic();
-		console.log("~Generated Denarius Mnemonic~ ", mnemonic);
+		mnemonic = bip39.generateMnemonic(256);
+		//console.log("~Generated Denarius Mnemonic~ ", mnemonic);
 
 		// Encrypt the seedphrase for storing in the DB
 		var encryptedmnemonic = encrypt(mnemonic);
-		console.log("Encrypted Mnemonic", encryptedmnemonic);
+		//console.log("Encrypted Mnemonic", encryptedmnemonic);
 
 		// Put the encrypted seedphrase in the DB
 		db.put('seedphrase', encryptedmnemonic, function (err) {
@@ -86,7 +86,7 @@ db.get('seedphrase', function (err, value) {
 	} else {
 
 		var decryptedmnemonic = decrypt(value);
-		console.log("Decrypted Mnemonic", decryptedmnemonic);
+		//console.log("Decrypted Mnemonic", decryptedmnemonic);
 
 		mnemonic = decryptedmnemonic;
 
@@ -95,11 +95,11 @@ db.get('seedphrase', function (err, value) {
 	}
 
 
-	console.log("Stored Denarius Mnemonic: ", mnemonic);
+	//console.log("Stored Denarius Mnemonic: ", mnemonic);
 
 	//Convert our mnemonic seed phrase to BIP39 Seed Buffer 
 	const seed = bip39.mnemonicToSeedSync(mnemonic);
-	console.log("BIP39 Seed Phrase to Hex", seed.toString('hex'));
+	//console.log("BIP39 Seed Phrase to Hex", seed.toString('hex'));
 	
 	// BIP32 From BIP39 Seed
 	const root = bip32.fromSeed(seed);
@@ -137,7 +137,7 @@ db.get('seedphrase', function (err, value) {
 	}
 
 	// Console Log the full array - want to eventually push these into scripthash hashing and retrieve balances and then send from them
-	console.log("Seed Address Array", seedaddresses);
+	//console.log("Seed Address Array", seedaddresses);
 
 	//Emit to our Socket.io Server
 	// io.on('connection', function (socket) {
@@ -1205,7 +1205,82 @@ exports.lock = (req, res, next) => {
  * Kronos Auth Login
  */
 exports.login = (req, res) => {
-	res.render('login', {title: 'Kronos Login'});
+	db.get('username', function (err, value) {
+        if (err) {
+          
+          // If username does not exist in levelDB then go to page to create one
+          res.render('create', {title: 'Create Kronos Login'});
+
+        } else {
+		  
+		  res.render('login', {title: 'Kronos Login'});
+
+		}
+	});
+};
+
+/**
+ * POST /create
+ * Kronos Auth Creation
+ */
+exports.create = (request, response) => {
+	var username = request.body.PPU1;
+	var password = request.body.PPP1;
+	var password2 = request.body.PPP2;
+	
+	if (username && password) {
+
+		if (request.body && password == password2) {
+
+			db.get('password', function (err, value) {
+				if (err) {
+				  
+					// If password does not exist in levelDB then go to page to create one
+					// Encrypt the user and pass for storing in the DB
+					var encryptedpass = encrypt(password);
+					var encrypteduser = encrypt(username);
+
+					// Put the encrypted username in the DB
+					db.put('username', encrypteduser, function (err) {
+						if (err) console.log('Ooops!', err) // some kind of I/O error if so
+						console.log('Encrypted Username to DB');
+					});
+			
+					// Put the encrypted password in the DB
+					db.put('password', encryptedpass, function (err) {
+						if (err) console.log('Ooops!', err) // some kind of I/O error if so
+						console.log('Encrypted Password to DB');
+					});
+					
+					// //Stored User/Pass to DB successfully now setup the session
+					request.session.loggedin = true;
+					request.session.username = username;
+					request.toastr.success('Logged into Kronos', 'Success!', { positionClass: 'toast-bottom-right' });
+					response.redirect('/');
+					response.end();
+		
+				} else {
+
+				  //Found password in DB so redirecting back to login
+				  response.render('login', {title: 'Kronos Login'});
+				  response.end();
+				}
+			});			
+
+		} else {
+			request.toastr.error('Passwords do not match!', 'Error!', { positionClass: 'toast-bottom-right' });
+			response.redirect('/login');
+			response.end();
+		}
+		
+		//response.end();
+	
+	} else {
+		//response.send('Please enter Username and Password!');
+		request.toastr.error('Please enter Username and Password!', 'Error!', { positionClass: 'toast-bottom-right' });
+		response.redirect('/login');
+		response.end();
+	}
 };
 
 /**
@@ -1215,7 +1290,8 @@ exports.login = (req, res) => {
 exports.logout = (req, res) => {
 	req.session.loggedin = false;
 	req.session.username = '';
-	res.render('login', {title: 'Kronos Login'});
+	req.toastr.error('Logged Out of Kronos', 'Logged Out!', { positionClass: 'toast-bottom-right' });
+	res.redirect('/login');
 };
 
 /**
@@ -1226,27 +1302,51 @@ exports.postlogin = (request, response) => {
 	var username = request.body.PPU1;
 	var password = request.body.PPP1;
 	
-	var saveduser = process.env.KRONOSUSER;
-	var savedpass =  process.env.KRONOSPASS;
-	
 	if (username && password) {
 
-		if (request.body && (username == saveduser) && (password == savedpass)) {
-			request.session.loggedin = true;
-			request.session.username = username;
-			response.redirect('/');
-		} else {
-			//response.send('Incorrect Username and/or Password!');
-			//request.flash('success', { msg: 'TEST' });
-			//request.toastr.error('Incorrect Username and/or Password!', 'Invalid!', { positionClass: 'toast-bottom-right' });
-			response.redirect('/login');
-		}
+		db.get('username', function (err, value) {
+			if (err) {
+			  // If username does not exist in levelDB then go to page to create one
+			  //response.render('create', {title: 'Create Kronos Login'});
+			  //request.toastr.error('Username does not exist!', 'Error!', { positionClass: 'toast-bottom-right' });
+			} else {
+				//If it does exist
+				var decrypteduser = decrypt(value);
+
+				db.get('password', function (err, value) {
+					if (err) {
+						// If password does not exist in levelDB then go to page to create one
+						//request.toastr.error('Password does not exist!', 'Error!', { positionClass: 'toast-bottom-right' });
+					  } else {
+
+						//If it does exist
+						var decryptedpass = decrypt(value);
+
+						if (request.body && (username == decrypteduser) && (password == decryptedpass)) {
+							request.session.loggedin = true;
+							request.session.username = username;
+							request.toastr.success('Logged into Kronos', 'Success!', { positionClass: 'toast-bottom-right' });
+							response.redirect('/');
+							response.end();
+						} else {
+							//response.send('Incorrect Username and/or Password!');
+							//request.flash('success', { msg: 'TEST' });
+							request.toastr.error('Incorrect Username and/or Password!', 'Error!', { positionClass: 'toast-bottom-right' });
+							response.redirect('/login');
+							response.end();
+						}
+					}
+
+				});
+	
+			}
+		});
 		
-		response.end();
+		//response.end();
 	
 	} else {
 		//response.send('Please enter Username and Password!');
-		//request.toastr.error('Please enter Username and Password!', 'Invalid!', { positionClass: 'toast-bottom-right' });
+		request.toastr.error('Please enter a Username and Password!', 'Error!', { positionClass: 'toast-bottom-right' });
 		response.redirect('/login');
 		response.end();
 	}

@@ -201,6 +201,7 @@ var auth = function(req,res,next){
  */
 app.get('/login', homeController.login);
 app.post('/login', homeController.postlogin);
+app.post('/create', homeController.create);
 
 app.get('/logout', homeController.logout);
 
@@ -243,6 +244,7 @@ app.get('/peers', auth, walletController.peers);
 app.get('/fs', auth, walletController.fs);
 app.get('/withdraw', auth, walletController.getWithdraw);
 app.get('/rawtx', auth, walletController.getRaw);
+app.get('/seed', auth, walletController.getSeed);
 
 //Other POST and GET Routes for WalletController
 app.get('/import', auth, walletController.getPriv);
@@ -268,8 +270,8 @@ app.use(errorHandler());
 app.listen(3000, '0.0.0.0', () => {
   var tri = tribus.digest('Denarius');
   console.log('✓ Tribus Hash of "Denarius"', tri);
-  console.log('✓ Kronos Interface is running at http://' + ip.address() + ':%d in %s mode', '3000', app.get('env'));
-  console.log('✓ Open the URL above in your web browser on your local network to use Kronos!\n');
+  console.log('✓ Kronos Interface is running at http://' + ip.address() + ':%d', '3000', app.get('env'));
+  console.log('✓ Open the URL above in your web browser on your local network to start using Kronos!\n');
 });
 
 // var http = require('http');

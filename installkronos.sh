@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION='v1.2.8-alpha'
+VERSION='v1.2.9-alpha'
 
 TEMP=/tmp/answer$$
 whiptail --title "Kronos ${VERSION} for Denarius"  --menu  "Installer for Kronos Secondary Layer :" 20 0 0 1 "Install Kronos w/ Denarius Config" 2 "Install Kronos w/ Denarius Config & Chaindata" 3 "Update & Upgrade Kronos ${VERSION}" 2>$TEMP
@@ -247,19 +247,11 @@ sed -i "s/.*DNRPASS=.*/DNRPASS="${PWPD2}"/" .env
 
 sed -i "s/.*SECRET_KEY=.*/SECRET_KEY="${PWPD3}"/" .env
 
-echo "Successfully injected generated username and password to Kronos"
-
-PWDPI3=$(pwgen 15 1)
-
-echo "Updating Kronos Protection and Generating Password..."
-
-sed -i "s/.*KRONOSPASS=.*/KRONOSPASS="${PWDPI3}"/" .env
+echo "Successfully injected generated Denarius username and password to Kronos"
 
 nohup npm start &
 
 echo "Kronos and Denarius are successfully installed! Kronos is now running on port 3000, open your browser to this devices local LAN IP, e.g. 192.168.x.x:3000"
-
-echo "$(tput setaf 7)Your Kronos credentials are $(tput setaf 2)kronos $(tput setaf 7)& password is $(tput setaf 3)$PWDPI3"
                 ;;
 2) echo 2 "Installer for Kronos with fast chain sync"
 #COLORS
@@ -504,19 +496,11 @@ sed -i "s/.*DNRPASS=.*/DNRPASS="${PWPD2}"/" .env
 
 sed -i "s/.*SECRET_KEY=.*/SECRET_KEY="${PWPD3}"/" .env
 
-echo "Successfully injected generated username and password to Kronos"
-
-PWDPI3=$(pwgen 15 1)
-
-echo "Updating Kronos Protection and Generating Password..."
-
-sed -i "s/.*KRONOSPASS=.*/KRONOSPASS="${PWDPI3}"/" .env
+echo "Successfully injected generated Denarius username and password to Kronos"
 
 nohup npm start &
 
 echo "Kronos and Denarius are successfully installed! Kronos is now running on port 3000, open your browser to this devices local LAN IP, e.g. 192.168.x.x:3000"
-
-echo "$(tput setaf 7)Your Kronos credentials are username: $(tput setaf 2)kronos $(tput setaf 7)& password is $(tput setaf 3)$PWDPI3"
                 ;;
 3) echo 3 "Update Kronos ${VERSION} for Denarius"
 
@@ -589,7 +573,7 @@ npm update
 
 nohup npm start &
 
-echo "Updated Kronos to ${VERSION}, Login with your previous password. Default Username: kronos"
+echo "Successfully Updated Kronos to ${VERSION}, You may now login from your web browser."
                 ;;
 esac
 echo Selected $choice

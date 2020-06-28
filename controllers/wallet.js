@@ -11,11 +11,19 @@ const sha256 = require('sha256');
 //const instantiateSecp256k1 = require('@bitauth/libauth'); Unused
 const appRoot = require('app-root-path');
 const files = require('fs');
+const dbr = require('../db.js');
+const db = dbr.db;
+const CryptoJS = require("crypto-js");
+const bip39 = require("bip39");
+const bip32 = require("bip32d");
+const denarius = require('denariusjs');
 
 var sendJSONResponse = function (res, status, content) {
     res.status(status);
     res.json(content);
 };
+
+const SECRET_KEY = process.env.SECRET_KEY;
 
 // all config options are optional
 var client = new bitcoin.Client({
@@ -25,6 +33,23 @@ var client = new bitcoin.Client({
     pass: process.env.DNRPASS,
     timeout: 30000
 });
+
+function shahash(key) {
+	key = CryptoJS.SHA256(key, SECRET_KEY);
+	return key.toString();
+}
+
+function encrypt(data) {
+	data = CryptoJS.AES.encrypt(data, SECRET_KEY);
+	data = data.toString();
+	return data;
+}
+
+function decrypt(data) {
+	data = CryptoJS.AES.decrypt(data, SECRET_KEY);
+	data = data.toString(CryptoJS.enc.Utf8);
+	return data;
+}
 
 /**
  * GET /withdraw
@@ -2947,3 +2972,288 @@ exports.backupWallet = (req, res, next) => {
 })
 };
 
+exports.getseed = (req, res, next) => {
+  var mnemonic;
+let seedaddresses = [];
+
+// Fetch the Kronos LevelDB
+db.get('seedphrase', function (err, value) {
+	if (err) {
+		
+		// If seedphrase does not exist in levelDB then generate one
+		mnemonic = bip39.generateMnemonic();
+		console.log("~Generated Denarius Mnemonic~ ", mnemonic);
+
+		// Encrypt the seedphrase for storing in the DB
+		var encryptedmnemonic = encrypt(mnemonic);
+		console.log("Encrypted Mnemonic", encryptedmnemonic);
+
+		// Put the encrypted seedphrase in the DB
+		db.put('seedphrase', encryptedmnemonic, function (err) {
+			if (err) return console.log('Ooops!', err) // some kind of I/O error if so
+			//console.log('Inserted Encrypted Seed Phrase to DB');
+		});
+
+		//return mnemonic;
+
+	} else {
+
+		var decryptedmnemonic = decrypt(value);
+		console.log("Decrypted Mnemonic", decryptedmnemonic);
+
+		mnemonic = decryptedmnemonic;
+
+		//return mnemonic;
+
+	}
+
+
+	console.log("Stored Denarius Mnemonic: ", mnemonic);
+
+	//Convert our mnemonic seed phrase to BIP39 Seed Buffer 
+	const seed = bip39.mnemonicToSeedSync(mnemonic);
+	console.log("BIP39 Seed Phrase to Hex", seed.toString('hex'));
+	
+	// BIP32 From BIP39 Seed
+	const root = bip32.fromSeed(seed);
+
+	// Denarius Network Params Object
+	const network = {
+			messagePrefix: '\x19Denarius Signed Message:\n',
+			bech32: 'd',
+			bip32: {
+				public: 0x0488b21e,
+				private: 0x0488ade4
+			},
+			pubKeyHash: 0x1e,
+			scriptHash: 0x5a,
+			wif: 0x9e
+	};
+
+	// A for loop for how many addresses we want from the derivation path of the seed phrase
+	//
+	for (let i = 0; i < 10; i++) {
+
+		//Get 10 Addresses from the derived mnemonic
+		const addressPath = `m/44'/116'/0'/0/${i}`;
+
+		// Get the keypair from the address derivation path
+		const addressKeypair = root.derivePath(addressPath);
+
+		// Get the p2pkh base58 public address of the keypair
+		const p2pkhaddy = denarius.payments.p2pkh({ pubkey: addressKeypair.publicKey, network }).address;
+
+		const privatekey = addressKeypair.toWIF();
+	
+		//New Array called seedaddresses that is filled with address and path data currently, WIP and TODO
+		seedaddresses.push({ address: p2pkhaddy, privkey: privatekey, path: addressPath });
+	}
+
+	// Console Log the full array - want to eventually push these into scripthash hashing and retrieve balances and then send from them
+	console.log("Seed Address Array", seedaddresses);
+
+	//Emit to our Socket.io Server
+	// io.on('connection', function (socket) {
+	// 	socket.emit("seed", {seedaddresses: seedaddresses});
+	// 	// setInterval(() => {
+	// 	// 	socket.emit("seed", {seedaddresses: seedaddresses});
+	// 	// }, 60000);		
+	// });
+
+});
+};
+
+exports.getSeed = (req, res) => {
+  const ip = require('ip');
+  const ipaddy = ip.address();
+
+  res.locals.lanip = ipaddy;
+
+  client.walletStatus(function (err, ws, resHeaders) {
+    if (err) {
+      console.log(err);
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var ws = '';
+      var walletstatuss = 'locked';
+      var sendicon = 'display: none !important';
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+
+      var walletstatuss = ws.wallet_status;
+      var sendicon;
+      
+      if (walletstatuss == 'stakingonly') {
+				sendicon = 'display: none !important';
+			} else if (walletstatuss == 'unlocked') {
+				sendicon = 'display: visible !important;';
+			} else if (walletstatuss == 'unencrypted') {
+				sendicon = 'display: visible !important';
+			} else if (walletstatuss == 'locked') {
+				sendicon = 'display: none !important';
+			}
+    }
+  client.getStakingInfo(function (error, stakeinfo, resHeaders) {
+
+      if (error) {
+        var enabled = 'Node Offline';
+        var staking = 'Node Offline';
+        var yourweight = 'Node Offline';
+        var netweight = 'Node Offline';
+        var expected = 'Node Offline';
+        var stakediff = 'Node Offline';
+  
+        var offline = 'offlineoverlay';
+  
+        var offlinebtn = 'offlinebutton';
+  
+        console.log(error);
+  
+      } else {
+        var enabled = stakeinfo.enabled;
+        var staking = stakeinfo.staking;
+        var yourweight = stakeinfo.weight;
+        var netweight = stakeinfo.netstakeweight;
+        var expected = stakeinfo.expectedtime;
+        var stakediff = stakeinfo.difficulty;
+  
+        var offline = 'onlineoverlay';
+        var offlinebtn = 'onlinebutton';
+  
+        var staketoggle;
+        var enabletoggle;
+  
+        if (enabled == true) {
+          enabletoggle = 'Configured';
+        } else {
+          enabletoggle = 'Disabled';
+        }
+  
+        if (staking == true) {
+          staketoggle = 'Staking';
+        } else {
+          staketoggle = 'Not Yet Staking';
+        }
+      }
+  client.getBalance(function (error, info, resHeaders) {
+      if (error) {
+        var offline = 'offlineoverlay';
+        var offlinebtn = 'offlinebutton';
+        var balance = '0';
+        console.log(error);
+      } else {
+        var offline = 'onlineoverlay';
+				var offlinebtn = 'onlinebutton';
+      }
+
+      var chaindl = 'nooverlay';
+      var chaindlbtn = 'nobtn';
+
+      var balance = info;
+
+      if (balance <= 0) {
+        balance = 0;
+      }
+
+      var mnemonic;
+      let seedaddresses = [];
+      let store = [];
+
+      // Fetch the Kronos LevelDB
+      db.get('seedphrase', function (err, value) {
+        if (err) {
+          
+          // // If seedphrase does not exist in levelDB then generate one
+          // mnemonic = bip39.generateMnemonic(256);
+          // console.log("~Generated Denarius Mnemonic~ ", mnemonic);
+
+          // // Encrypt the seedphrase for storing in the DB
+          // var encryptedmnemonic = encrypt(mnemonic);
+          // console.log("Encrypted Mnemonic", encryptedmnemonic);
+
+          // // Put the encrypted seedphrase in the DB
+          // db.put('seedphrase', encryptedmnemonic, function (err) {
+          //   if (err) return console.log('Ooops!', err) // some kind of I/O error if so
+          //   //console.log('Inserted Encrypted Seed Phrase to DB');
+          // });
+
+          //return mnemonic;
+
+        } else {
+
+          var decryptedmnemonic = decrypt(value);
+          //console.log("Decrypted Mnemonic", decryptedmnemonic);
+
+          mnemonic = decryptedmnemonic;
+
+          //return mnemonic;
+
+        }
+
+        //console.log("Stored Denarius Mnemonic: ", mnemonic);
+
+        //Convert our mnemonic seed phrase to BIP39 Seed Buffer 
+        const seed = bip39.mnemonicToSeedSync(mnemonic);
+        //console.log("BIP39 Seed Phrase to Hex", seed.toString('hex'));
+        
+        // BIP32 From BIP39 Seed
+        const root = bip32.fromSeed(seed);
+
+        // Denarius Network Params Object
+        const network = {
+            messagePrefix: '\x19Denarius Signed Message:\n',
+            bech32: 'd',
+            bip32: {
+              public: 0x0488b21e,
+              private: 0x0488ade4
+            },
+            pubKeyHash: 0x1e,
+            scriptHash: 0x5a,
+            wif: 0x9e
+        };
+
+        // A for loop for how many addresses we want from the derivation path of the seed phrase
+        //
+        for (let i = 0; i < 21; i++) { //20
+
+          //Get 10 Addresses from the derived mnemonic
+          const addressPath = `m/44'/116'/0'/0/${i}`;
+
+          // Get the keypair from the address derivation path
+          const addressKeypair = root.derivePath(addressPath);
+
+          // Get the p2pkh base58 public address of the keypair
+          const p2pkhaddy = denarius.payments.p2pkh({ pubkey: addressKeypair.publicKey, network }).address;
+
+          const privatekey = addressKeypair.toWIF();
+        
+          //New Array called seedaddresses that is filled with address and path data currently, WIP and TODO
+          seedaddresses.push({ address: p2pkhaddy, privkey: privatekey, path: addressPath });
+        }
+        
+        // Console Log the full array - want to eventually push these into scripthash hashing and retrieve balances and then send from them
+        //console.log("Seed Address Array", seedaddresses);
+
+        store.push({mnemonic: mnemonic, seedaddresses: seedaddresses});
+
+        //console.log(store);
+
+        res.locals.seedphrase = store;
+  
+    res.render('account/getseed', {
+        title: 'Denarius Seed Phrase',
+        balance: balance,
+        seedphrase: store,
+        offline: offline,
+        sendicon: sendicon,
+        offlinebtn: offlinebtn,
+        staketoggle: staketoggle,
+        chaindl: chaindl,
+        chaindlbtn: chaindlbtn
+    });
+  });
+});
+});
+});
+};

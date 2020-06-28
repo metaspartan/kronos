@@ -1,0 +1,48 @@
+extends ../layout
+
+block content
+  script.
+    function updateDue() {
+      var amnt = parseFloat(document.getElementById("amount").value);
+      if (!amnt) { amnt = 0; }
+      var total = document.getElementById("totalwithdraw");
+      total.value = (amnt - 0.0001).toFixed(8);
+    }
+    function clicked() {
+      $('#addy').val($('#sendaddress').val());
+      $('#total').val($('#totalwithdraw').val());
+    }
+    function confirmed() {
+      $('#sendform').submit();
+    }
+  #notify
+  .container(style='margin-top:30px;')
+    h1(align='center', style='font-size:73px;font-weight:100;margin-top:42px !important;') Denarius Seed Phrase
+    p
+      .titlesmall(align='center') Your Denarius seed phrase, this is your BIP39 Seed Phrase compatible with any BIP39 wallet.
+    p
+      .balancebig(align='center') Balance: 
+        strong #{balance} D
+    div.rowclass(style='font-weight:400;font-size:14px;padding:30px;background-color:#222;margin:15px;border-radius:15px;', align='center')
+      h3 BIP39 Seed Phrase
+      if (seedphrase)
+        p(style='font-weight:400;font-size:14px;padding:30px;background-color:#222;margin:15px;border-radius:15px;') #{seedphrase[0].mnemonic}
+        h3(style='margin-top:35px;') Derived Addresses from Seed
+        .divider(style='background-color:#2b2b2b !important;height:2px;width:90%;margin:0 auto;', align='center')
+        .row(style='padding:5px;margin:5px;background-color:#111;border-radius:5px;')
+          .col-md-6
+            span(style='color:#aaa;') Address
+            br
+            span(style='color:#444;') Derviation Path
+          .col-md-6(style='margin-top:8px;')
+            span.hashm(style='color:#666;') Private Key
+        each seed in seedphrase[0].seedaddresses
+          .row(style='padding:5px;margin:5px;background-color:#111;border-radius:5px;')
+            .col-md-6
+              span(style='color:#aaa;') #{seed.address}
+              br
+              span(style='color:#444;') #{seed.path}
+            .col-md-6(style='margin-top:8px;')
+              span.hashm(style='color:#666;') #{seed.privkey} 
+            
+        
