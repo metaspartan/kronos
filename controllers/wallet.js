@@ -6,6 +6,7 @@ const QRCode = require('qrcode');
 const unirest = require('unirest');
 const toastr = require('express-toastr');
 const ElectrumClient = require('electrum-cash').Client;
+const ElectrumCluster = require('electrum-cash').Cluster;
 const bs58 = require('bs58');
 const sha256 = require('sha256');
 //const instantiateSecp256k1 = require('@bitauth/libauth'); Unused
@@ -716,12 +717,11 @@ exports.addresses = function (req, res) {
 
   res.locals.lanip = ipaddy;
 
-  //The used Electrumx Host, may swap to Clusters to run all x1-x4 nodes
-  // May move electrumx connections globally todo
-  //
-  const delectrumxhost = 'electrumx1.denarius.pro';
-  //
-  //
+  //The used Electrumx Hosts for our Kronos ElectrumX Cluster
+  const delectrumxhost1 = 'electrumx1.denarius.pro';
+  const delectrumxhost2 = 'electrumx2.denarius.pro';
+  const delectrumxhost3 = 'electrumx3.denarius.pro';
+  const delectrumxhost4 = 'electrumx4.denarius.pro';
 
   //Global Vars
   var addressed;
@@ -878,11 +878,17 @@ exports.addresses = function (req, res) {
         const scripthash = changeEndianness(shaaddress);
 
         const scripthasha = async () => {
-          // Initialize an electrum client.
-          const electrum = new ElectrumClient('Kronos ElectrumX', '1.4.1', delectrumxhost);
-  
-          // Wait for the client to connect
-          await electrum.connect();
+          // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+          const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+          
+          // Add some servers to the cluster.
+          electrum.addServer(delectrumxhost1);
+          electrum.addServer(delectrumxhost2);
+          electrum.addServer(delectrumxhost3);
+          electrum.addServer(delectrumxhost4);
+          
+          // Wait for enough connections to be available.
+          await electrum.ready();
 
           //Convert P2PK Address to Scripthash for ElectrumX Balance Fetching
           //Convert Compressed Pub Key to Uncompressed
@@ -901,18 +907,6 @@ exports.addresses = function (req, res) {
           }
           
           const scripthashp2pk = changeEndianness(shaaddress1);
-
-          // Initialize an Electrum cluster where 1 out of 4 needs to be consistent, polled randomly with fail-over.
-          // const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4.1', 1, 4, ElectrumCluster.ORDER.RANDOM);
-          
-          // Add some servers to the cluster.
-          // electrum.addServer('electrumx1.denarius.pro');
-          // electrum.addServer('electrumx2.denarius.pro');
-          // electrum.addServer('electrumx3.denarius.pro');
-          // electrum.addServer('electrumx4.denarius.pro');
-          
-          // Wait for enough connections to be available.
-          // await electrum.ready();
           
           // Request the balance of the requested Scripthash D address
 
@@ -930,8 +924,8 @@ exports.addresses = function (req, res) {
 
           const addedbalance = balancefinal + p2pkbalancefinal;
 
-          await electrum.disconnect();
-          // await electrum.shutdown();
+          //await electrum.disconnect();
+          await electrum.shutdown();
   
           return addedbalance;
         }
@@ -1020,11 +1014,17 @@ exports.addresses = function (req, res) {
             const scripthash1 = changeEndianness(shaaddress1);
 
             const scripthashb = async () => {
-              // Initialize an electrum client.
-              const electrum = new ElectrumClient('Kronos ElectrumX', '1.4.1', delectrumxhost);
-      
-              // Wait for the client to connect
-              await electrum.connect();
+              // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+              const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+              
+              // Add some servers to the cluster.
+              electrum.addServer(delectrumxhost1);
+              electrum.addServer(delectrumxhost2);
+              electrum.addServer(delectrumxhost3);
+              electrum.addServer(delectrumxhost4);
+              
+              // Wait for enough connections to be available.
+              await electrum.ready();
 
               //Convert P2PK Address to Scripthash for ElectrumX Balance Fetching
               //Convert Compressed Pub Key
@@ -1059,7 +1059,8 @@ exports.addresses = function (req, res) {
 
               const addedbalance1 = balancefinal1 + p2pkbalancefinal1;
 
-              await electrum.disconnect();
+              //await electrum.disconnect();
+              await electrum.shutdown();
       
               return addedbalance1;
             }
@@ -1181,11 +1182,17 @@ exports.addresses = function (req, res) {
           // const p2pkscripthash2 = changeEndianness(shaaddress2p);
 
           const scripthashe = async () => {
-            // Initialize an electrum client.
-            const electrum = new ElectrumClient('Kronos ElectrumX', '1.4.1', delectrumxhost);
-    
-            // Wait for the client to connect
-            await electrum.connect();
+            // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+            const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+            
+            // Add some servers to the cluster.
+            electrum.addServer(delectrumxhost1);
+            electrum.addServer(delectrumxhost2);
+            electrum.addServer(delectrumxhost3);
+            electrum.addServer(delectrumxhost4);
+            
+            // Wait for enough connections to be available.
+            await electrum.ready();
 
             //Convert P2PK Address to Scripthash for ElectrumX Balance Fetching
             //Convert Compressed Pub Key to Uncompressed
@@ -1220,7 +1227,8 @@ exports.addresses = function (req, res) {
 
             const addedbalance2 = balancefinal2 + p2pkbalancefinal2;
 
-            await electrum.disconnect();
+            //await electrum.disconnect();
+            await electrum.shutdown();
     
             return addedbalance2;
           }
@@ -1957,12 +1965,11 @@ exports.getaddress = function (req, res) {
 
   res.locals.lanip = ipaddy;
 
-  //The used Electrumx Host, may swap to Clusters to run all x1-x4 nodes
-  // May move electrumx connections globally todo
-  //
-  const delectrumxhost = 'electrumx1.denarius.pro';
-  //
-  //
+  //The used Electrumx Hosts for our Kronos ElectrumX Cluster
+  const delectrumxhost1 = 'electrumx1.denarius.pro';
+  const delectrumxhost2 = 'electrumx2.denarius.pro';
+  const delectrumxhost3 = 'electrumx3.denarius.pro';
+  const delectrumxhost4 = 'electrumx4.denarius.pro';
 
   //Global Vars
   var scripthasharray = [];
@@ -2123,11 +2130,17 @@ exports.getaddress = function (req, res) {
           var p2pkscripthash = changeEndianness(shaaddress1p);
 
           const scripthashf = async () => {
-            // Initialize an electrum client.
-            const electrum = new ElectrumClient('Kronos ElectrumX', '1.4.1', delectrumxhost);
-    
-            // Wait for the client to connect
-            await electrum.connect();
+            // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+            const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+            
+            // Add some servers to the cluster.
+            electrum.addServer(delectrumxhost1);
+            electrum.addServer(delectrumxhost2);
+            electrum.addServer(delectrumxhost3);
+            electrum.addServer(delectrumxhost4);
+            
+            // Wait for enough connections to be available.
+            await electrum.ready();
 
             // Request the balance of the requested Scripthash D address
             const balancescripthash1 = await electrum.request('blockchain.scripthash.get_balance', scripthash);
@@ -2148,7 +2161,8 @@ exports.getaddress = function (req, res) {
 
             const addedbalance1 = balancefinal1 + p2pkbalancefinal1;
 
-            await electrum.disconnect();
+            //await electrum.disconnect();
+            await electrum.shutdown();
     
             return addedbalance1;
           }
@@ -2169,11 +2183,17 @@ exports.getaddress = function (req, res) {
               }      
 
           const scripthashtx = async () => {
-            // Initialize an electrum client.
-            const electrum = new ElectrumClient('Kronos ElectrumX', '1.4.1', delectrumxhost);
-    
-            // Wait for the client to connect
-            await electrum.connect();
+            // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+            const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+            
+            // Add some servers to the cluster.
+            electrum.addServer(delectrumxhost1);
+            electrum.addServer(delectrumxhost2);
+            electrum.addServer(delectrumxhost3);
+            electrum.addServer(delectrumxhost4);
+            
+            // Wait for enough connections to be available.
+            await electrum.ready();
 
             const scripthashhistory = await electrum.request('blockchain.scripthash.get_history', scripthash);
 
@@ -2191,7 +2211,8 @@ exports.getaddress = function (req, res) {
 
             //console.log(txhistoryarray)            
 
-            await electrum.disconnect();
+            //await electrum.disconnect();
+            await electrum.shutdown();
     
             return txhistoryarray;
           }

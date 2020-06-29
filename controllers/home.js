@@ -23,6 +23,7 @@ const dbr = require('../db.js');
 const db = dbr.db;
 const { isNullOrUndefined } = require('util');
 const ElectrumClient = require('electrum-cash').Client;
+const ElectrumCluster = require('electrum-cash').Cluster;
 const bs58 = require('bs58');
 
 const SECRET_KEY = process.env.SECRET_KEY;
@@ -402,7 +403,11 @@ const ipaddy = ip.address();
 
 res.locals.lanip = ipaddy;
 
-const delectrumxhost = 'electrumx1.denarius.pro';
+//ElectrumX Hosts for Denarius
+const delectrumxhost1 = 'electrumx1.denarius.pro';
+const delectrumxhost2 = 'electrumx2.denarius.pro';
+const delectrumxhost3 = 'electrumx3.denarius.pro';
+const delectrumxhost4 = 'electrumx4.denarius.pro';
 
 let socket_id = [];
 let socket_id2 = [];
@@ -690,11 +695,17 @@ res.io.on('connection', function (socket) {
 	res.io.removeAllListeners('connection'); 
 	}
 	const latestblocks = async () => {
-		// Initialize an electrum client.
-		const electrum = new ElectrumClient('Kronos ElectrumX', '1.4.1', delectrumxhost);
-
-		// Wait for the client to connect
-		await electrum.connect();
+		// Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+		const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+		
+		// Add some servers to the cluster.
+		electrum.addServer(delectrumxhost1);
+		electrum.addServer(delectrumxhost2);
+		electrum.addServer(delectrumxhost3);
+		electrum.addServer(delectrumxhost4);
+		
+		// Wait for enough connections to be available.
+		await electrum.ready();
 
 		// Set up a callback function to handle new blocks.
 		const handleNewBlocks = function(data)
