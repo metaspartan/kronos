@@ -96,6 +96,16 @@ script.
                 a(href='http://'+lanip+':3000/addresses', onclick="javascript:event.target.port=3000") 
                   i.fas.fa-at  
                   |   Addresses
+              li.divider
+              li
+                a(href='http://'+lanip+':3000/backup', onclick="javascript:event.target.port=3000") 
+                  i.fas.fa-server  
+                  |   Backup Wallet
+              li.divider(style=sendicon)
+              li(style=sendicon)
+                a(href='http://'+lanip+':3000/import', onclick="javascript:event.target.port=3000") 
+                  i.fas.fa-key   
+                  |   Import a private key
           li.dropdown(class=(title == 'Tools') ? 'active' : undefined)
             a.dropdown-toggle(href='#', data-toggle='dropdown')
               span 
@@ -103,10 +113,6 @@ script.
               |   Tools 
               i.caret
             ul.dropdown-menu
-              li
-                a(href='http://'+lanip+':3000/backup', onclick="javascript:event.target.port=3000") 
-                  i.fas.fa-server  
-                  |   Backup Wallet
               li
                 a(href='http://'+lanip+':3000/ddebug', onclick="javascript:event.target.port=3000") 
                   i.fas.fa-bug  
@@ -125,11 +131,15 @@ script.
                 a(href='http://'+lanip+':3000/rawtx', onclick="javascript:event.target.port=3000") 
                   i.far.fa-paper-plane  
                   |   Send Raw Transaction
-              li.divider(style=sendicon)
-              li(style=sendicon)
-                a(href='http://'+lanip+':3000/import', onclick="javascript:event.target.port=3000") 
-                  i.fas.fa-key   
-                  |   Import a private key
+              li.divider
+              li
+                a(href='http://'+lanip+':3000/genmini', onclick="javascript:event.target.port=3000") 
+                  i.fas.fa-plus   
+                  |   Generate Minikey
+              li
+                a(href='http://'+lanip+':3000/convertmini', onclick="javascript:event.target.port=3000") 
+                  i.fas.fa-sync-alt    
+                  |   Convert Minikey
           li
             a(href='#', style='font-size:14px;color:#FFF;background-color: rgba(0, 0, 0, 0.2);') #{balance} D
           if (staketoggle == 'Staking')
@@ -158,7 +168,7 @@ script.
               i.caret
             ul.dropdown-menu
               li(class=(title == 'Version') ? 'active' : undefined)
-                a(href='https://github.com/carsenk/kronos') Kronos v1.3.1-Alpha
+                a(href='https://github.com/carsenk/kronos') Kronos v1.3.2-Alpha
               li.divider
               li
                 a(href='http://'+lanip+':3300/terminal', onclick="javascript:event.target.port=3300")

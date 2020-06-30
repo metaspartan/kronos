@@ -1,0 +1,42 @@
+extends ../layout
+
+block content
+  script(src='../js/convertmini.min.js')
+  script.
+    function updateDue() {
+      var amnt = parseFloat(document.getElementById("amount").value);
+      if (!amnt) { amnt = 0; }
+      var total = document.getElementById("totalwithdraw");
+      total.value = (amnt - 0.0001).toFixed(8);
+    }
+    function clicked() {
+      $('#addy').val($('#sendaddress').val());
+      $('#total').val($('#totalwithdraw').val());
+    }
+    function confirmed() {
+      $('#sendform').submit();
+    }
+  #notify  
+  .container
+    h1(align='center', style='font-size:73px;font-weight:100;margin-top:42px !important;') Denarius MiniKey Converter
+    p(align='center')
+      | This tool provides the ability to convert Minikeys to Private Key (WIF) Wallet Import Format keys that will be accepted by the Denarius wallet.
+    .row(align='center', style='margin-top:5px;')
+      .col-md-12
+        p
+          a.btn.btn-default(href='/import' role='button') Import Private Key
+  .container.row.rowclass(style='font-weight:400;font-size:14px;padding:30px;background-color:#222;margin:15px;border-radius:15px;', align='center')
+    .col-md-12
+      span.text-muted(style='font-size:0.8em;display:block;') Denarius Minikey
+      form.form.form-inline(role='form')
+        input.blackinput2#minikey.form-control(type='text' value='' placeholder='S6c56bnXQiBjk9mqSYE7ykVQ7NzrRy')  
+        input.btn.btn-default(type='button' value='Convert' onclick='mini2wif();', style='margin-left:10px;')
+      br
+    .row
+      .col-md-6
+        #address-container
+          span.hashm#address
+      .col-md-6
+        #wif-container
+          span.hashm#wifkey
+

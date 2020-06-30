@@ -1,6 +1,6 @@
 {
   "name": "Kronos",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "A Dashboard styled wallet for denariusd in NodeJS for Raspberry Pis & other Linux distros",
   "repository": {
     "type": "git",
@@ -9,7 +9,7 @@
   "author": "Carsen Klock",
   "license": "MIT",
   "scripts": {
-    "start": "node ./bin/kronos",
+    "start": "node -r esm ./bin/kronos",
     "test": "mocha --reporter spec"
   },
   "dependencies": {
@@ -32,6 +32,7 @@
     "dotenv": "^8.2.0",
     "electrum-cash": "^1.0.1",
     "errorhandler": "^1.5.1",
+    "esm": "^3.2.25",
     "express": "^4.17.1",
     "express-flash": "^0.0.2",
     "express-rate-limit": "^5.1.3",

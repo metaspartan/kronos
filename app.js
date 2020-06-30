@@ -314,6 +314,9 @@ app.get('/withdraw', auth, walletController.getWithdraw);
 app.get('/rawtx', auth, walletController.getRaw);
 app.get('/seed', auth, authseed, walletController.getSeed);
 
+app.get('/genmini', auth, walletController.genMini);
+app.get('/convertmini', auth, walletController.convertMini);
+
 //Other POST and GET Routes for WalletController
 app.get('/import', auth, walletController.getPriv);
 app.post('/importpriv', auth, walletController.importPriv);
