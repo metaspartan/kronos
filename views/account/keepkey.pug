@@ -35,7 +35,7 @@ block content
     top: 20%;
     }
     .modal-dialog {
-    background: #111;
+    background: #1e1e1e;
     border: #333333 solid 0px;
     border-radius: 5px;
     margin-left: -200px;
@@ -111,7 +111,7 @@ block content
         #keepkey2(style='display:none;')
       br
       .row 
-        .col-md-12(style='height:450px;padding:60px;background-image:url("../img/keepkey.png");background-repeat:no-repeat;background-position:center;background-size:fit;')
+        .col-md-12(style='height:450px;padding:75px;background-image:url("../img/keepkey.png");background-repeat:no-repeat;background-position:center;background-size:fit;')
           select#keyring(style='position:relative;height:25px;background-color:#000;color:#FFF;border:0px;' size='4')
           h4#pairtitle Pair Your KeepKey to View Info
           p
@@ -142,30 +142,30 @@ block content
               | Use the PIN layout shown on your Keepkey to find the location to
               | press on this PIN pad.
           .modal-body
-            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(7)', style='margin:10px;color:#777;')
+            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(7)', style='margin:10px;color:#777;font-size:23px;padding:20px;')
               | &#x25CF;
-            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(8)', style='margin:10px;color:#777;')
+            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(8)', style='margin:10px;color:#777;font-size:23px;padding:20px;')
               | &#x25CF;
-            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(9)', style='margin:10px;color:#777;')
-              | &#x25CF;
-            br
-            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(4)', style='margin:10px;color:#777;')
-              | &#x25CF;
-            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(5)', style='margin:10px;color:#777;')
-              | &#x25CF;
-            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(6)', style='margin:10px;color:#777;')
+            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(9)', style='margin:10px;color:#777;font-size:23px;padding:20px;')
               | &#x25CF;
             br
-            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(1)', style='margin:10px;color:#777;')
+            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(4)', style='margin:10px;color:#777;font-size:23px;padding:20px;')
               | &#x25CF;
-            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(2)', style='margin:10px;color:#777;')
+            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(5)', style='margin:10px;color:#777;font-size:23px;padding:20px;')
               | &#x25CF;
-            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(3)', style='margin:10px;color:#777;')
+            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(6)', style='margin:10px;color:#777;font-size:23px;padding:20px;')
+              | &#x25CF;
+            br
+            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(1)', style='margin:10px;color:#777;font-size:23px;padding:20px;')
+              | &#x25CF;
+            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(2)', style='margin:10px;color:#777;font-size:23px;padding:20px;')
+              | &#x25CF;
+            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(3)', style='margin:10px;color:#777;font-size:23px;padding:20px;')
               | &#x25CF;
             br
             input.blackinput4(id='#pinInput' type='text' style='-webkit-text-security: disc;')
-            button.button.button-outline.btn.btn-default(onclick="handlePinDigit('')")
-              | x
+            button.button.button-outline.btn.btn-default(onclick="handlePinDigit('')", style='padding:8px;margin-bottom:4px;')
+              | <
           .modal-footer(style='border: 0 !important;')
             button.button.button-outline.btn.btn-default(onclick='pinEntered()')
               | Unlock

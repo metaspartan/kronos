@@ -96,10 +96,10 @@ block content
         | #{xpub}
         if (balancearray[0])
           h1(style='font-size:42px;font-weight:100;font-family:"Heebo", sans-serif;') Balance: #{balancearray[0].balance} D
-          p
-            .qrcode(align='center')
-              img(src='' + balancearray[0].qr, align='center', style='border-radius:10px; width:125px;')
-          p.hashm(style='font-size:16px;') Address #0: #{balancearray[0].address}
+          .qrcode(align='center', style='margin:45px;')
+            img(src='' + balancearray[0].qr, align='center', style='border-radius:10px; width:125px;')
+          p.hashm(style='font-size:16px;') Address #0: 
+            strong #{balancearray[0].address}
           p.hashm P2PKH Pub Key: #{balancearray[0].p2pkh}
           p.hashm P2PK Pub Key: #{balancearray[0].p2pk}
           p &nbsp;
@@ -120,7 +120,7 @@ block content
           //-       | Verify Message
       br
       .row 
-        .col-md-12(style='height:450px;padding:90px;background-image:url("../img/keepkey.png");background-repeat:no-repeat;background-position:center;background-size:fit;')
+        .col-md-12(style='height:353px;padding:69px;background-image:url("../img/keepkey.png");background-repeat:no-repeat;background-position:center;background-size:fit;')
           select#keyring(style='position:relative;height:25px;background-color:#000;color:#FFF;border:0px;' size='4')
           h4#pairtitle Look Below for Transaction History
           p
