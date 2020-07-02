@@ -3476,6 +3476,11 @@ exports.xpub = (req, res) => {
   var xpubkk = req.body.xpubin;
   var daddress0 = req.body.addrin;
 
+  const ip = require('ip');
+  const ipaddy = ip.address();
+
+  res.locals.lanip = ipaddy;
+
   const scripthasharray = [];
   const transactionhistoryarray = [];
   const utxoarray = [];
