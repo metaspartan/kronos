@@ -55,6 +55,7 @@ block content
             strong #{blockinfo.tx.length}
         .col-md-6(align='right')
           p Block Size: #{blockinfo.size} bytes
+          p TX Size: #{txinfo.size} bytes
           p Block Diff: #{blockinfo.difficulty}
           if (blockinfo.flags == 'proof-of-work')
             p
@@ -72,7 +73,7 @@ block content
       .row(style='margin:15px;')
         .col-md-6
           h2(style='font-weight:100;font-size:64px;') Inputs 
-            i.fas.fa-arrow-down
+            i.fas.fa-arrow-down(style='font-size:48px;')
           br
           if (txinfo.vin)
             each vin in txinfo.vin
@@ -84,14 +85,10 @@ block content
                 .label.label-info 
                   | COINBASE INPUT
         .col-md-2(align='center', style='margin-top:30px;')
-          i.fas.fa-long-arrow-alt-right.fa-4x
-          br
-          i.fas.fa-long-arrow-alt-right.fa-4x
-          br
-          i.fas.fa-long-arrow-alt-right.fa-4x
+          i.fas.fa-arrow-circle-right.fa-4x(style='color:#444;margin-top:100px;')
         .col-md-4
           h2(style='font-weight:100;font-size:64px;') Outputs 
-            i.fas.fa-arrow-up
+            i.fas.fa-arrow-up(style='font-size:48px;')
           br
           if (txinfo.vout)
             each vout in txinfo.vout
