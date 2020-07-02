@@ -1,0 +1,185 @@
+extends ../layout
+
+block content
+  span#lanip(data-value=lanip)
+  script(src="/socket.io/socket.io.js")
+  script.
+    var lanip = document.getElementById("lanip").getAttribute("data-value");
+    var socket = io('//'+ lanip +':3300');
+    socket.on('disconnect', () => {
+        socket.open();
+    });
+    socket.on('kkbalance', function (data) {
+        console.log('GOT NOTIFY BALANCE', data);
+        $('#balancearray').html(data.balancearray);
+    });
+  style.
+    .modale:before {
+    content: "";
+    display: none;
+    background: rgba(0, 0, 0, 0.6);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    }
+    .opened:before {
+    display: block;
+    }
+    .opened .modal-dialog {
+    -webkit-transform: translate(0, 0);
+    -ms-transform: translate(0, 0);
+    transform: translate(0, 0);
+    top: 20%;
+    }
+    .modal-dialog {
+    background: #111;
+    border: #333333 solid 0px;
+    border-radius: 5px;
+    margin-left: -200px;
+    text-align: center;
+    position: fixed;
+    left: 50%;
+    top: -100%;
+    z-index: 11;
+    width: 360px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    -webkit-transform: translate(0, -500%);
+    -ms-transform: translate(0, -500%);
+    transform: translate(0, -500%);
+    -webkit-transition: -webkit-transform 0.3s ease-out;
+    -moz-transition: -moz-transform 0.3s ease-out;
+    -o-transition: -o-transform 0.3s ease-out;
+    transition: transform 0.3s ease-out;
+    }
+    .modal-body {
+    padding: 20px;
+    }
+    .modal-body input {
+    width: 200px;
+    padding: 8px;
+    border: 1px solid #333;
+    color: #888;
+    outline: 0;
+    font-size: 14px;
+    font-weight: bold;
+    }
+    .modal-header,
+    .modal-footer {
+    padding: 10px 20px;
+    }
+    .modal-header {
+    border-bottom: #222 solid 1px;
+    }
+    .modal-header h2 {
+    font-size: 20px;
+    }
+  script.
+    function updateDue() {
+      var amnt = parseFloat(document.getElementById("amount").value);
+      if (!amnt) { amnt = 0; }
+      var total = document.getElementById("totalwithdraw");
+      total.value = (amnt - 0.0001).toFixed(8);
+    }
+    function getxpub() {
+      $('#sendxpub').submit();
+    }
+    function confirmed() {
+      $('#sendform').submit();
+    }
+  #notify
+  .container
+    h1(align='center', style='font-size:73px;font-weight:100;margin-top:42px !important;') Denarius KeepKey Manager
+    p(align='center')
+      | This tool provides the ability to access your KeepKey device through Kronos and acts as a KeepKey client for Denarius, This only works by visiting Kronos on your localhost via localhost:3000 or 127.0.0.1:3000 and is a major WIP.
+    br
+    br
+  .row.container.rowclass(style='font-weight:400;font-size:14px;padding:30px;background-color:#222;margin:15px;border-radius:15px;', align='center')
+    .col-md-12
+      p
+        button#keepkey.btn.btn-default(style='width:450px;height:60px;font-size:16px;') Pair with your KeepKey
+        button#nextbutton.btn.btn-default(style='width:450px;height:60px;font-size:16px;background-color:#222;display:none;') Get your Denarius Address
+        form.form-horizontal#sendxpub(action='/keepkeyaddr', method='POST')
+          input(type='hidden', name='_csrf', value=_csrf)
+          input#xpubin(type='hidden', name='xpubin', value='')
+          input#addrin(type='hidden', name='addrin', value='')
+          button#nextbutton2.btn.btn-success(style='width:450px;height:60px;background-color:#41B805;font-size:16px;display:none;', type='submit', onclick='getxpub()')
+            | Get your Balance
+        #xpub(style='display:none;')
+        #keepkey2(style='display:none;')
+      br
+      .row 
+        .col-md-12(style='height:450px;padding:60px;background-image:url("../img/keepkey.png");background-repeat:no-repeat;background-position:center;background-size:fit;')
+          select#keyring(style='position:relative;height:25px;background-color:#000;color:#FFF;border:0px;' size='4')
+          h4#pairtitle Pair Your KeepKey to View Info
+          p
+            span#labelinfo
+            br
+            span#vendorinfo
+            span#modelinfo
+            br
+            span#deviceidinfo
+            br
+            span#firmwareinfo
+          p &nbsp;
+          p &nbsp;
+          p &nbsp;
+          p &nbsp;
+          p &nbsp;
+          p &nbsp;
+          p &nbsp;
+          p &nbsp;
+          p &nbsp;
+          p &nbsp;
+          p &nbsp;
+      .modale(id='#pinModal' aria-hidden='true')
+        .modal-dialog
+          .modal-header
+            h3 Enter PIN
+            p
+              | Use the PIN layout shown on your Keepkey to find the location to
+              | press on this PIN pad.
+          .modal-body
+            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(7)', style='margin:10px;color:#777;')
+              | &#x25CF;
+            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(8)', style='margin:10px;color:#777;')
+              | &#x25CF;
+            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(9)', style='margin:10px;color:#777;')
+              | &#x25CF;
+            br
+            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(4)', style='margin:10px;color:#777;')
+              | &#x25CF;
+            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(5)', style='margin:10px;color:#777;')
+              | &#x25CF;
+            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(6)', style='margin:10px;color:#777;')
+              | &#x25CF;
+            br
+            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(1)', style='margin:10px;color:#777;')
+              | &#x25CF;
+            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(2)', style='margin:10px;color:#777;')
+              | &#x25CF;
+            button.button.button-outline.btn.btn-default(onclick='handlePinDigit(3)', style='margin:10px;color:#777;')
+              | &#x25CF;
+            br
+            input.blackinput4(id='#pinInput' type='text' style='-webkit-text-security: disc;')
+            button.button.button-outline.btn.btn-default(onclick="handlePinDigit('')")
+              | x
+          .modal-footer(style='border: 0 !important;')
+            button.button.button-outline.btn.btn-default(onclick='pinEntered()')
+              | Unlock
+      .modale(id='#passphraseModal' aria-hidden='true')
+        .modal-dialog
+          .modal-header
+            h3 Enter Passphrase
+            p Enter your BIP39 Passphrase.
+          .modal-body
+            form
+              input(id='#passphraseInput' type='password' autocomplete='bip39-passphrase')
+          .modal-footer
+            button.button.button-outline(onclick='passphraseEntered()')
+              | Unlock
+  script(src='https://unpkg.com/debug@4.0.1/dist/debug.js')
+  script(src='https://code.jquery.com/jquery-3.3.1.min.js' integrity='sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=' crossorigin='anonymous')
+  script(src='http://'+lanip+':3000/js/keepkey.js')

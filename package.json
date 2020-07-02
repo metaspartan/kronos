@@ -1,6 +1,6 @@
 {
   "name": "Kronos",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "A Dashboard styled wallet for denariusd in NodeJS for Raspberry Pis & other Linux distros",
   "repository": {
     "type": "git",
@@ -27,8 +27,7 @@
     "cpu-stats": "^1.0.0",
     "cputilization": "^1.0.0",
     "crypto-js": "^4.0.0",
-    "denariusjs": "git://github.com/carsenk/denariusjs-lib",
-    "denariusjs-lib": "git://github.com/carsenk/denariusjs-lib.git",
+    "denariusjs": "git://github.com/carsenk/denariusjs-lib.git",
     "dotenv": "^8.2.0",
     "electrum-cash": "^1.0.1",
     "errorhandler": "^1.5.1",
@@ -68,7 +67,6 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "mocha": "^8.0.1",
-    "supertest": "^4.0.2"
+    "mocha": "^8.0.1"
   }
 }

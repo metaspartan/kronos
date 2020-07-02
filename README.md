@@ -81,6 +81,7 @@ Features
 - Broadcast Raw Transaction
 - View FortunaStake Nodes
 - Generate FS Key
+- KeepKey Client (View Denarius Address and Balance and TX History) (No TX Signing Yet)
 - Easy to install
 - Full Terminal inside of Kronos for managing your device
 - Auto Updates for Denarius via Snap

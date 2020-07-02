@@ -36,6 +36,7 @@ const files = require('fs');
 const db = dbr.db;
 const gritty = require('gritty');
 const rateLimit = require("express-rate-limit");
+// const https = require('https');
 
 
 //Print in console your LAN IP
@@ -47,6 +48,11 @@ console.log('Your LAN', ip.address());
 //dotenv.load({ path: '.env' });
 
 dotenv.config({ path: '.env' });
+
+// var privateKey  = fs.readFileSync('./ssl/kronos.key', 'utf8');
+// var certificate = fs.readFileSync('./ssl/kronos.crt', 'utf8');
+
+// var credentials = {key: privateKey, cert: certificate};
 
 /**
  * Controllers (route handlers).
@@ -60,6 +66,7 @@ const walletController = require('./controllers/wallet');
 const app = express();
 
 const server = require('http').Server(app);
+//const httpsserver = require('https').createServer(credentials, app);
 const io = require('socket.io')(server);
 const sharedsession = require("express-socket.io-session");
 io.setMaxListeners(33); 
@@ -316,6 +323,10 @@ app.get('/seed', auth, authseed, walletController.getSeed);
 
 app.get('/genmini', auth, walletController.genMini);
 app.get('/convertmini', auth, walletController.convertMini);
+
+//KeepKey Routes
+app.get('/keepkey', auth, walletController.keepkey);
+app.post('/keepkeyaddr', auth, walletController.xpub);
 
 //Other POST and GET Routes for WalletController
 app.get('/import', auth, walletController.getPriv);

@@ -1703,7 +1703,6 @@ exports.postAuthk = (request, response) => {
 };
 
 
-
 //POST Wallet Notify
 exports.notification = (req, res, next) => {
 var notifydata = req.body.txid;

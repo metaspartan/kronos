@@ -1,4 +1,4 @@
-'use strict';
+'use esversion:6';
 
 const bitcoin = require('bitcoin');
 const WAValidator = require('wallet-address-validator');
@@ -3464,6 +3464,434 @@ exports.convertMini = function (req, res) {
         }
 
     res.render('account/convertmini', { title: 'Convert MiniKey', staketoggle: staketoggle, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
+    });
+
+  });
+});
+};
+
+
+//POST for KeepKey XPUBS
+exports.xpub = (req, res) => {
+  var xpubkk = req.body.xpubin;
+  var daddress0 = req.body.addrin;
+
+  const scripthasharray = [];
+  const transactionhistoryarray = [];
+  const utxoarray = [];
+  const promises = [];
+
+  //ElectrumX Hosts for Denarius
+  const delectrumxhost1 = 'electrumx1.denarius.pro';
+  const delectrumxhost2 = 'electrumx2.denarius.pro';
+  const delectrumxhost3 = 'electrumx3.denarius.pro';
+  const delectrumxhost4 = 'electrumx4.denarius.pro';
+
+  client.getBalance(function (error, info, resHeaders) {
+    if (error) {
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var balance = '0';
+      console.log(error);
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+    }
+
+    var chaindl = 'nooverlay';
+    var chaindlbtn = 'nobtn';
+
+    var balance = info;
+
+    if (balance <= 0) {
+      balance = 0;
+    }
+
+  client.walletStatus(function (err, ws, resHeaders) {
+    if (err) {
+      console.log(err);
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var ws = '';
+      var walletstatuss = 'locked';
+      var sendicon = 'display: none !important';
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+
+      var walletstatuss = ws.wallet_status;
+      var sendicon;
+      
+      if (walletstatuss == 'stakingonly') {
+				sendicon = 'display: none !important';
+			} else if (walletstatuss == 'unlocked') {
+				sendicon = 'display: visible !important;';
+			} else if (walletstatuss == 'unencrypted') {
+				sendicon = 'display: visible !important';
+			} else if (walletstatuss == 'locked') {
+				sendicon = 'display: none !important';
+			}
+    }
+
+  client.getStakingInfo(function (error, stakeinfo, resHeaders) {
+
+        if (error) {
+          var enabled = 'Node Offline';
+          var staking = 'Node Offline';
+          var yourweight = 'Node Offline';
+          var netweight = 'Node Offline';
+          var expected = 'Node Offline';
+          var stakediff = 'Node Offline';
+    
+          var offline = 'offlineoverlay';
+    
+          var offlinebtn = 'offlinebutton';
+    
+          console.log(error);
+    
+        } else {
+          var enabled = stakeinfo.enabled;
+          var staking = stakeinfo.staking;
+          var yourweight = stakeinfo.weight;
+          var netweight = stakeinfo.netstakeweight;
+          var expected = stakeinfo.expectedtime;
+          var stakediff = stakeinfo.difficulty;
+    
+          var offline = 'onlineoverlay';
+          var offlinebtn = 'onlinebutton';
+    
+          var staketoggle;
+          var enabletoggle;
+    
+          if (enabled == true) {
+            enabletoggle = 'Configured';
+          } else {
+            enabletoggle = 'Disabled';
+          }
+    
+          if (staking == true) {
+            staketoggle = 'Staking';
+          } else {
+            staketoggle = 'Not Yet Staking';
+          }
+        }
+  
+  if (xpubkk && daddress0) {
+    //console.log("XPUB KEEPKEY Received: ", xpubkk);
+    //req.locals.xpub = xpubkk;
+    //req.locals.daddress = daddress0;
+
+    //Convert P2PKH Address to Scripthash for ElectrumX Balance Fetching
+    const bytes = bs58.decode(daddress0);
+    const byteshex = bytes.toString('hex');
+    const remove00 = byteshex.substring(2);
+    const removechecksum = remove00.substring(0, remove00.length-8);
+    const HASH160 = "76A914" + removechecksum.toUpperCase() + "88AC";
+    const BUFFHASH160 = Buffer.from(HASH160, "hex");
+    const shaaddress = sha256(BUFFHASH160);
+
+    //Convert P2PK Address to Scripthash for ElectrumX Balance Fetching
+    //Convert XPUB to Compressed Pubkey
+    const XPUBTOBASE = bs58.decode(xpubkk);
+    const XPUBBYTESTOHEX = XPUBTOBASE.toString('hex');
+    //console.log(XPUBBYTESTOHEX); // 164
+    const xpubtopub = XPUBBYTESTOHEX.substring(90, XPUBBYTESTOHEX.length - 8); // Decoded Base58 XPub to last 33 bytes (privkey 32 bytes)
+    //console.log("IS THIS THE COMPRESSED PUBKEY?" + xpubtopub);
+    const HASH1601 =  "21" + xpubtopub + "ac"; // 21 + COMPRESSED PUBKEY + OP_CHECKSIG = P2PK
+    //console.log(HASH1601);
+    const BUFFHASH1601 = Buffer.from(HASH1601, "hex");
+    const shaaddress1 = sha256(BUFFHASH1601);
+
+    const changeEndianness = (string) => {
+            const result = [];
+            let len = string.length - 2;
+            while (len >= 0) {
+              result.push(string.substr(len, 2));
+              len -= 2;
+            }
+            return result.join('');
+    }
+
+    const scripthash = changeEndianness(shaaddress);
+    const scripthashp2pk = changeEndianness(shaaddress1);
+
+    //End P2PKH and P2PK Scripthash calculations for Electrum and start Electrum
+
+    const scripthasha = async () => {
+      // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+      const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+      
+      // Add some servers to the cluster.
+      electrum.addServer(delectrumxhost1);
+      electrum.addServer(delectrumxhost2);
+      electrum.addServer(delectrumxhost3);
+      electrum.addServer(delectrumxhost4);
+      
+      // Wait for enough connections to be available.
+      await electrum.ready();
+      
+      // Request the balance of the requested Scripthash D address
+
+      const balancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthash);
+
+      const p2pkbalancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthashp2pk);
+
+      const balanceformatted = balancescripthash.confirmed;
+
+      const p2pkbalanceformatted = p2pkbalancescripthash.confirmed;
+
+      const balancefinal = balanceformatted / 100000000;
+
+      const p2pkbalancefinal = p2pkbalanceformatted / 100000000;
+
+      const addedbalance = balancefinal + p2pkbalancefinal;
+
+      //await electrum.disconnect();
+      await electrum.shutdown();
+
+      return addedbalance;
+    }
+
+    //Grab Full Transaction History from D ElectrumX
+    const txhistoryfull = async () => {
+      // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+      const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+      
+      // Add some servers to the cluster.
+      electrum.addServer(delectrumxhost1);
+      electrum.addServer(delectrumxhost2);
+      electrum.addServer(delectrumxhost3);
+      electrum.addServer(delectrumxhost4);
+      
+      // Wait for enough connections to be available.
+      await electrum.ready();
+      
+      // Request the balance of the requested Scripthash D address
+
+      const txs = [];
+
+      const gethistory1 = await electrum.request('blockchain.scripthash.get_history', scripthash);
+
+      const gethistory2 = await electrum.request('blockchain.scripthash.get_history', scripthashp2pk);
+
+      console.log(gethistory1);
+      console.log(gethistory2);
+
+      // const history1formatted = gethistory1[0].tx_hash;
+
+      // const histoy2formatted = gethistory2[0].tx_hash;
+
+      // const history1height = gethistory1[0].height;
+
+      // const histoy2height = gethistory2[0].height;
+
+      const fullhistory = txs.push({p2pkhtxs: gethistory1, p2pktxs: gethistory2, });
+
+      //const p2pkbalancefinal = p2pkbalanceformatted / 100000000;
+
+      //const addedbalance = balancefinal + p2pkbalancefinal;
+
+      //await electrum.disconnect();
+      await electrum.shutdown();
+
+      return txs;
+    }
+
+    //Grab UTXO Transaction History from D ElectrumX
+    const utxohistory = async () => {
+      // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+      const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+      
+      // Add some servers to the cluster.
+      electrum.addServer(delectrumxhost1);
+      electrum.addServer(delectrumxhost2);
+      electrum.addServer(delectrumxhost3);
+      electrum.addServer(delectrumxhost4);
+      
+      // Wait for enough connections to be available.
+      await electrum.ready();
+      
+      // Request the balance of the requested Scripthash D address
+
+      const utxos = [];
+
+      const getuhistory1 = await electrum.request('blockchain.scripthash.listunspent', scripthash);
+
+      const getuhistory2 = await electrum.request('blockchain.scripthash.listunspent', scripthashp2pk);
+
+      console.log(getuhistory1);
+      console.log(getuhistory2);
+
+      // const history1formatted = gethistory1[0].tx_hash;
+
+      // const histoy2formatted = gethistory2[0].tx_hash;
+
+      // const history1height = gethistory1[0].height;
+
+      // const histoy2height = gethistory2[0].height;
+
+      const fullutxohistory = utxos.push({p2pkhutxos: getuhistory1, p2pkutxos: getuhistory2, });
+
+      //const p2pkbalancefinal = p2pkbalanceformatted / 100000000;
+
+      //const addedbalance = balancefinal + p2pkbalancefinal;
+
+      //await electrum.disconnect();
+      await electrum.shutdown();
+
+      return utxos;
+    }
+
+    const qrcodeasync = async () => {
+      const qrcoded = await QRCode.toDataURL(daddress0, { color: { dark: '#000000FF', light:"#333333FF" } });
+
+      //console.log(qrcoded)
+
+      return qrcoded;
+    }
+
+    promises.push(new Promise((res, rej) => {
+      qrcodeasync().then(qrcodedata => {
+        scripthasha().then(globalData => {
+          txhistoryfull().then(TXHistory => {
+            utxohistory().then(UTXOHistory => {
+        
+        scripthasharray.push({address: daddress0, qr: qrcodedata, p2pkh: removechecksum, p2pk: xpubtopub, balance: globalData, txs: TXHistory, utxos: UTXOHistory});
+        res({daddress0, qrcodedata, removechecksum, xpubtopub, globalData, TXHistory, UTXOHistory});
+
+      });
+    });
+    });
+      });
+    }) );
+
+    Promise.all(promises).then((values) => {
+
+          //req.locals.balancearray = scripthasharray;
+          //console.log(scripthasharray);
+
+          // var socket_id33 = [];
+          // //Emit to our Socket.io Server
+          // res.io.on('connection', function (socket) {
+          //   socket_id33.push(socket.id);
+          //   if (socket_id33[0] === socket.id) {
+          //     // remove the connection listener for any subsequent 
+          //     // connections with the same ID
+          //     res.io.removeAllListeners('connection'); 
+          //   }
+          //   socket.emit("kkbalance", {balancearray: scripthasharray,});
+          //   console.log("EMITTED BALANCE");
+          // });
+
+        res.render('account/keepkeybal', { title: 'Kronos KeepKey Balance', balancearray: scripthasharray, staketoggle: staketoggle, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
+    });
+  } else {
+    console.log('ERROR DIDNT GET XPUB');
+  }
+
+});
+});
+});
+};
+
+//GET for KeepKey Denarius Client Page
+exports.keepkey = function (req, res) {
+
+  const ip = require('ip');
+  const ipaddy = ip.address();
+
+  res.locals.lanip = ipaddy;
+
+  client.getBalance(function (error, info, resHeaders) {
+    if (error) {
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var balance = '0';
+      console.log(error);
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+    }
+
+    var chaindl = 'nooverlay';
+    var chaindlbtn = 'nobtn';
+
+    var balance = info;
+
+    if (balance <= 0) {
+      balance = 0;
+    }
+
+  client.walletStatus(function (err, ws, resHeaders) {
+    if (err) {
+      console.log(err);
+      var offline = 'offlineoverlay';
+      var offlinebtn = 'offlinebutton';
+      var ws = '';
+      var walletstatuss = 'locked';
+      var sendicon = 'display: none !important';
+    } else {
+      var offline = 'onlineoverlay';
+      var offlinebtn = 'onlinebutton';
+
+      var walletstatuss = ws.wallet_status;
+      var sendicon;
+      
+      if (walletstatuss == 'stakingonly') {
+				sendicon = 'display: none !important';
+			} else if (walletstatuss == 'unlocked') {
+				sendicon = 'display: visible !important;';
+			} else if (walletstatuss == 'unencrypted') {
+				sendicon = 'display: visible !important';
+			} else if (walletstatuss == 'locked') {
+				sendicon = 'display: none !important';
+			}
+    }
+
+  client.getStakingInfo(function (error, stakeinfo, resHeaders) {
+
+        if (error) {
+          var enabled = 'Node Offline';
+          var staking = 'Node Offline';
+          var yourweight = 'Node Offline';
+          var netweight = 'Node Offline';
+          var expected = 'Node Offline';
+          var stakediff = 'Node Offline';
+    
+          var offline = 'offlineoverlay';
+    
+          var offlinebtn = 'offlinebutton';
+    
+          console.log(error);
+    
+        } else {
+          var enabled = stakeinfo.enabled;
+          var staking = stakeinfo.staking;
+          var yourweight = stakeinfo.weight;
+          var netweight = stakeinfo.netstakeweight;
+          var expected = stakeinfo.expectedtime;
+          var stakediff = stakeinfo.difficulty;
+    
+          var offline = 'onlineoverlay';
+          var offlinebtn = 'onlinebutton';
+    
+          var staketoggle;
+          var enabletoggle;
+    
+          if (enabled == true) {
+            enabletoggle = 'Configured';
+          } else {
+            enabletoggle = 'Disabled';
+          }
+    
+          if (staking == true) {
+            staketoggle = 'Staking';
+          } else {
+            staketoggle = 'Not Yet Staking';
+          }
+        }
+
+    res.render('account/keepkey', { title: 'Kronos KeepKey', staketoggle: staketoggle, sendicon: sendicon, balance: balance, offline: offline, offlinebtn: offlinebtn, chaindl: chaindl, chaindlbtn: chaindlbtn });
     });
 
   });
