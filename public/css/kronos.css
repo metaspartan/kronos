@@ -55,6 +55,14 @@ body {
   margin: 0 auto !important;
 }
 
+.keepkey {
+  height:450px;padding:75px;background-image:url("../img/keepkey.png");background-repeat:no-repeat;background-position:center;
+}
+
+.unplugged {
+  height:450px;padding:75px;background-image:url("../img/keepkeyunplugged.png");background-repeat:no-repeat;background-position:center;
+}
+
 #myVideo {
   position: fixed;
   top: 0;

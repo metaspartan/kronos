@@ -111,9 +111,9 @@ block content
         #keepkey2(style='display:none;')
       br
       .row 
-        .col-md-12(style='height:450px;padding:75px;background-image:url("../img/keepkey.png");background-repeat:no-repeat;background-position:center;background-size:fit;')
-          select#keyring(style='position:relative;height:25px;background-color:#000;color:#FFF;border:0px;' size='4')
+        .col-md-12#kkgraphic.unplugged
           h4#pairtitle Pair Your KeepKey to View Info
+          select#keyring(style='position:relative;height:25px;background-color:#00000000;color:#FFF;border:0px;' size='4')
           p
             span#labelinfo
             br
@@ -134,6 +134,74 @@ block content
           p &nbsp;
           p &nbsp;
           p &nbsp;
+      .row
+        .col-md-4
+          button#recovery.btn.btn-success(style='width:250px;height:50px;background-color:#059cb7;font-size:16px;display:none;')
+            | Recover Device
+        .col-md-4
+          button#pinswap.btn.btn-success(style='width:250px;height:50px;background-color:#059cb7;font-size:16px;display:none;')
+            | Set or Change PIN
+        .col-md-4
+          button#reset.btn.btn-success(style='width:150px;height:50px;background-color:#b73d05;font-size:16px;display:none;')
+            | Wipe Device
+      br
+      .modale(id='#popupsure' aria-hidden='true')
+        .modal-dialog(style='width:650px;left:40%;')
+          .modal-header
+            h3 Set Device Seed Phrase
+            p(style='color:#aa3f3f;')
+              | Are you sure you want to set this seed phrase? 
+              | Make sure you have written it down!
+          .modal-body
+            p
+              h4
+                | Device Label: 
+                strong
+                  span#seedlabel(data-val='')
+            p
+              | Enabling BIP39 Password:  
+              strong
+                span#bip39pass(data-val='')
+            .divider(style='#background-color:#212121;height:1px;')
+            p(style='background-color:#111;border-raidus:15px;padding:20px;')
+              span#seedphrase(data-val='', style='font-size:23px;')
+            br
+          .modal-footer(style='border: 0 !important;')
+            button#submitdevice.button.button-outline.btn.btn-default
+              | Push to Device
+      .modale(id='#popupinput' aria-hidden='true')
+        .modal-dialog(style='width:650px;left:40%;')
+          .modal-header
+            h3 Set Device Seed Phrase
+            p(style='color:#aa3f3f;')
+              | Use the box below to setup a new BIP39 seed phrase on your KeepKey device
+              | you must write this phrase down and it must be 12, 18, or 24 words. 
+              | Warning: This will set your seed to whatever you enter on your device.
+              | Ensure you have a written down a backup of your seed phrase!
+          .modal-body
+            p
+              span#seedinfo(style='color:#aa3f3f;font-weight:bold;font-size:14px;') 
+            br
+            .form-group
+              label.col-sm-3.control-label Device Label
+              .col-sm-8(style='margin-bottom:15px;')
+                input#inputlabel.blackinput4(style='width:98%;', type='text', placeholder='Kronos KeepKey')
+            .form-group
+              label.col-sm-3.control-label BIP39 Password?
+              .col-sm-8(style='margin-bottom:25px;')
+                select.blackinput4#inputpass
+                  option(value='true' selected) Yes
+                  option(value='false') No, Recommended to Set PIN after
+            .form-group
+              .col-sm-12(style='margin-bottom:25px;')
+                label(align='center') Enter BIP39 Seed Phrase
+                br
+                textarea#inputmem.blackinput4(style='height:133px;padding:30px;margin-top:10px;font-size:16px;', rows='6', col='12', placeholder='struggle demand museum physical change joke wall brand unit gown property hair purchase useful swear bread calm omit cinnamon tag shadow special lawsuit toy')
+                | 
+            br
+          .modal-footer(style='border: 0 !important;')
+            button#submitload.button.button-outline.btn.btn-default
+              | Set Seed
       .modale(id='#pinModal' aria-hidden='true')
         .modal-dialog
           .modal-header
@@ -170,16 +238,16 @@ block content
             button.button.button-outline.btn.btn-default(onclick='pinEntered()')
               | Unlock
       .modale(id='#passphraseModal' aria-hidden='true')
-        .modal-dialog
+        .modal-dialog(style='width:600px;left:42%;')
           .modal-header
-            h3 Enter Passphrase
-            p Enter your BIP39 Passphrase.
+            h3 BIP39 Password
+            p Enter your BIP39 Seed Password if you are using it, if not, leave blank. 
           .modal-body
             form
-              input(id='#passphraseInput' type='password' autocomplete='bip39-passphrase')
-          .modal-footer
-            button.button.button-outline(onclick='passphraseEntered()')
-              | Unlock
+              input.blackinput4(id='#passphraseInput' type='password' autocomplete='bip39-passphrase', style='width:80%;')
+          .modal-footer(style='border:0;')
+            button.button.button-outline.btn.btn-default(onclick='passphraseEntered()')
+              | Continue
   script(src='https://unpkg.com/debug@4.0.1/dist/debug.js')
   script(src='https://code.jquery.com/jquery-3.3.1.min.js' integrity='sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=' crossorigin='anonymous')
   script(src='http://'+lanip+':3000/js/keepkey.js')
