@@ -110,8 +110,8 @@ block content
           //-     input#rawtxhex(type='hidden', name='rawtxhex', value='')
           //-     //- input#addrin(type='hidden', name='addrin', value='')
           //-     //- button#nextbuttontx.btn.btn-default(style='width:450px;display:none;', type='submit', onclick='signtx()')
-          //-   button#nextbuttontx.btn.btn-default(style='width:450px;display:none;')
-          //-     | Sign UTXO and Send Denarius
+          button#nextbuttontx.btn.btn-default(style='width:450px;')
+            | Sign UTXO and Send Denarius
           //-   p
           //-     button#dSign.btn.btn-default(style='width:250px;')
           //-       | Sign Message
@@ -171,7 +171,7 @@ block content
       else
         h1(style='color:#666;') No Transactions Available
           //- p #{tx_hash.p2pkhtxs}
-      .modale(id='#pinModal' aria-hidden='true')
+      .modale#pinModal(aria-hidden='true')
         .modal-dialog
           .modal-header
             h3 Enter PIN
@@ -206,17 +206,17 @@ block content
           .modal-footer(style='border: 0 !important;')
             button.button.button-outline.btn.btn-default(onclick='pinEntered()')
               | Unlock
-      .modale(id='#passphraseModal' aria-hidden='true')
-        .modal-dialog
+      .modale#passphraseModal(aria-hidden='true')
+        .modal-dialog(style='width:600px;left:42%;')
           .modal-header
-            h3 Enter Passphrase
-            p Enter your BIP39 Passphrase.
+            h3 BIP39 Password
+            p Enter your BIP39 Seed Password if you are using it, if not, leave blank. 
           .modal-body
             form
-              input(id='#passphraseInput' type='password' autocomplete='bip39-passphrase')
-          .modal-footer
-            button.button.button-outline(onclick='passphraseEntered()')
-              | Unlock
+              input.blackinput4(id='#passphraseInput' type='password' autocomplete='bip39-passphrase', style='width:80%;')
+          .modal-footer(style='border:0;')
+            button.button.button-outline.btn.btn-default(onclick='passphraseEntered()')
+              | Continue
   script(src='https://unpkg.com/debug@4.0.1/dist/debug.js')
   script(src='https://code.jquery.com/jquery-3.3.1.min.js' integrity='sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=' crossorigin='anonymous')
-  script(src='../js/keepkey.js')
+  script(src='http://'+lanip+':3000/js/keepkey.js')
