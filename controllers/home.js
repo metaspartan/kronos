@@ -1104,6 +1104,9 @@ res.io.on('connection', function (socket) {
 			chaindlbtn: chaindlbtn,
 			cryptoidblocks: cryptoidblocks,
 			blockpercent: blockpercent,
+			peers: peers,
+			datasent: datasent,
+			datareceived: datareceived,
 			blockperc: blockperc,
 			sendicon: sendicon,
 			fscount: fscount

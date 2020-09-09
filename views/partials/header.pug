@@ -10,25 +10,47 @@ div(class=offline)
 div(class=chaindl)
   #container3(name='container3') &nbsp;
   div(class=chaindlbtn)
-    p(align='center')
-      h1 Denarius Node Syncing... 
-        strong #{blockperc} %
+    //- script.
+    //-   setInterval(function() {
+    //-       cache_clear()
+    //-   }, 60000);
+
+    //-   function cache_clear() {
+    //-     window.location=window.location;
+    //-     // window.location.reload(); use this if you do not remove cache
+    //-   }
+    img(src="https://user-images.githubusercontent.com/10162347/85637883-9fe5fa00-b641-11ea-9f4b-22901d7911c4.png", height="200px", width="221px", align="center")
+    br
+    br 
+    div(align='center', style='background-color:#141414; width:500px; margin: 0 auto; padding:30px;border-radius:15px;')
+      h1 Denarius Node Syncing...
       p
-        | Please wait...This can take awhile...Downloading Blocks
-      p
+        div(style='background-color: #222;padding:15px;border-radius:15px;margin-left:20px;margin-right:20px;')
+          h1(style='margin:0;padding:0;')
+            strong #{blockperc} %
+      p(style='font-size:18px;')
         | On Block 
-        strong #{blockheight} / #{cryptoidblocks}
+        strong #{blockheight} 
+        | out of 
+        strong #{cryptoidblocks}
         br
         #blockpp
-      p Peer Connections: #{peers}
+      img(src='../img/syncing.svg', alt='Syncing Blocks...', border='0', style='height:75px;')
+      p(style='font-size:18px;') Peer Connections: 
+        strong #{peers}
       p
         i.fa.fa-arrow-up
-        | Data Sent #{datasent}
-        br
+        |  Data Sent 
+        strong #{datasent}
+      p
         i.fa.fa-arrow-down
-        | Data Received #{datareceived} 
+        |  Data Received 
+        strong #{datareceived}
+      hr(style='border-top: 1px solid #222;')
+      p(style='color:#666;')
+        | Please wait...This can take awhile...Denarius is downloading blocks. When Denarius is synced, you will be able to access Kronos.
     p
-      img(src='../img/syncing.svg', alt='Syncing Blocks...', border='0')
+      //- img(src='../img/syncing.svg', alt='Syncing Blocks...', border='0')
       #blockcount(data-value=blockpercent)
 span#lanip(data-value=lanip)
 script(src="/socket.io/socket.io.js")
