@@ -1,16 +1,20 @@
 {
   "name": "Kronos",
-  "version": "1.3.3",
-  "description": "A Dashboard styled wallet for denariusd in NodeJS for Raspberry Pis & other Linux distros",
+  "version": "1.5.0",
+  "description": "A Dashboard Interface for Denarius (D) in NodeJS and Electron",
   "repository": {
     "type": "git",
     "url": "https://github.com/carsenk/kronos.git"
   },
   "author": "Carsen Klock",
   "license": "MIT",
+  "main": "src/main.js",
   "scripts": {
-    "start": "node -r esm ./bin/kronos",
-    "test": "mocha --reporter spec"
+    "kronos": "electron-forge start",
+    "headless": "node -r esm ./bin/kronos",
+    "test": "mocha --reporter spec",
+    "package": "electron-forge package",
+    "build": "electron-forge make"
   },
   "dependencies": {
     "app-root-path": "^3.0.0",
@@ -23,39 +27,50 @@
     "cheerio": "^1.0.0-rc.3",
     "compression": "^1.7.4",
     "connect-flash": "^0.1.1",
-    "cookie-parser": "^1.4.5",
     "cpu-stats": "^1.0.0",
     "cputilization": "^1.0.0",
     "crypto-js": "^4.0.0",
     "denariusjs": "git://github.com/carsenk/denariusjs-lib.git",
     "dotenv": "^8.2.0",
+    "electron": "^10.1.1",
+    "electron-compile": "6.4.4",
+    "electron-squirrel-startup": "^1.0.0",
     "electrum-cash": "^1.0.1",
+    "envfile": "^6.14.0",
     "errorhandler": "^1.5.1",
     "esm": "^3.2.25",
     "express": "^4.17.1",
     "express-flash": "^0.0.2",
     "express-rate-limit": "^5.1.3",
-    "express-session": "^1.14.2",
+    "express-session": "^1.17.1",
     "express-socket.io-session": "^1.3.5",
     "express-status-monitor": "git://github.com/carsenk/express-status-monitor.git",
     "express-toastr": "^2.0.2",
     "fs": "0.0.1-security",
     "gritty": "^4.8.13",
+    "hotkeys-js": "^3.8.1",
     "ip": "^1.1.5",
+    "jquery": "^3.5.1",
+    "keymaster": "^1.6.2",
     "level": "^6.0.1",
     "lob": "^6.1.0",
+    "lodash": "^4.17.15",
     "lusca": "^1.6.1",
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
+    "node": "^14.4.0",
     "os": "^0.1.1",
     "progressbar.js": "^1.1.0",
     "pug": "^3.0.0",
     "qrcode": "^1.4.4",
+    "randomstring": "^1.1.5",
+    "request": "^2.88.2",
     "sha256": "^0.2.0",
     "shelljs": "^0.8.4",
     "socket.io": "^2.3.0",
     "split": "^1.0.1",
     "sprintf-js": "^1.1.2",
+    "strip": "^3.0.0",
     "system-sleep": "^1.3.6",
     "systeminformation": "^4.26.5",
     "thirty-two": "^1.0.2",
@@ -66,7 +81,41 @@
     "wallet-address-validator": "git://github.com/carsenk/wallet-address-validator.git"
   },
   "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.53",
+    "@electron-forge/maker-deb": "^6.0.0-beta.53",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.53",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.53",
+    "@electron-forge/maker-zip": "^6.0.0-beta.53",
+    "electron-prebuilt-compile": "8.2.0",
     "chai": "^4.2.0",
+    "electron": "^10.1.1",
     "mocha": "^8.0.1"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "Kronos"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ]
+    }
   }
 }

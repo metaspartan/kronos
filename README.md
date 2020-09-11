@@ -7,16 +7,21 @@
 
 [![HitCount](http://hits.dwyl.io/carsenk/kronos.svg)](http://hits.dwyl.io/carsenk/kronos)
 <a href="https://discord.gg/UPpQy3n"><img src="https://discordapp.com/api/guilds/334361453320732673/embed.png" alt="Discord server" /></a>
+![Code Climate](https://codeclimate.com/github/carsenk/kronos/badges/gpa.svg)
 
-Kronos - A secondary layer NodeJS/Socket.io/Express/Denarius powered Web Wallet Dashboard with Statistics of your device typically on your LAN by default, though can be setup to be accessed remotely. This is a major project with active development in progress and this repo will be updated in time, be warned, things can break and always always backup backup backup!
+[![Build history](https://buildstats.info/travisci/chart/carsenk/kronos?branch=master)](https://travis-ci.org/carsenk/kronos?branch=master)
+
+Kronos - A secondary layer NodeJS/Socket.io/Express/Electron/Denarius powered Web Wallet Dashboard with Statistics of your device typically on your LAN by default, though can be setup to be accessed remotely. This is a major project with active development in progress and this repo will be updated in time, be warned, things can break and always always backup backup backup!
 
 Send and Receive Funds, Create new addresses, View Transactions, Unlock/Lock Wallet, Stake D, Reboot your node, Import Private Keys, View Private Keys, Encrypt your wallet, Broadcast raw transactions, Sign and Verify Denarius messages, and much more!
+
+As of v1.5.0 Beta of Kronos it is now built with Electron for Windows, macOS, and Linux as an AIO app to use alongside a Denarius node.
 
 This was built for the Raspberry Pi in mind and one with at least 2GB of RAM. 4GB and 8GB models are recommended! Kronos will run on any Linux distro with a minimal amount of 2GB of RAM.
 
 Running the installer script below installs denarius via snap install and then modifies your .env in Kronos and denarius.conf to a random rpcuser and rpcpass, Kronos will then be running on your LAN (192.168.x.x:3000) on port 3000.
 
-Install Kronos with Denarius Now!
+Install Headless Kronos with Denarius Now!
 -----------------
 
 Simply run the single command below in your Terminal or via SSH, then choose one of the options if you want to Install Kronos with or without Denarius chaindata or if you want to just update!:
@@ -33,6 +38,8 @@ You can choose an option 1-3 from the installer script above to either install K
 
 Recommended Devices and OS
 -----------------
+* Windows 10
+* macOS 10.11 or greater
 * Raspberry Pi 4 4GB - Ubuntu 20.04 Server Image
 * Raspberry Pi 4 8GB - Ubuntu 20.04 Server Image
 * Ubuntu 20.04

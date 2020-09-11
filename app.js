@@ -24,7 +24,6 @@ const unirest = require('unirest');
 const tribus = require('tribus-hashjs');
 const si = require('systeminformation');
 const ProgressBar = require('progressbar.js');
-const cookieParser = require('cookie-parser');
 const toastr = require('express-toastr');
 const upload = multer({ dest: path.join(__dirname, 'uploads') });
 const ip = require('ip');
@@ -36,6 +35,23 @@ const files = require('fs');
 const db = dbr.db;
 const gritty = require('gritty');
 const rateLimit = require("express-rate-limit");
+const randomstring = require("randomstring");
+
+const randosecret = randomstring.generate(42);
+const randosess = randomstring.generate(42);
+const secretenv = files.readFileSync('./.senv', 'utf-8');
+const sessenv = files.readFileSync('./.sen', 'utf-8');
+
+if (secretenv == '') {
+  files.writeFileSync('./.senv', 'SECRET_KEY='+randosecret);
+}
+
+if (sessenv == '') {
+  files.writeFileSync('./.sen', 'SESSION_SECRET='+randosess);
+}
+
+//Empty .senv on release to git
+
 // const https = require('https');
 
 
@@ -95,7 +111,7 @@ app.use(flash());
 
 app.use(gritty());
 
-app.use(lusca.xframe('SAMEORIGIN'));
+//app.use(lusca.xframe('ALLOW-FROM 127.0.0.1'));
 
 app.use(lusca.xssProtection(true));
 
@@ -163,12 +179,15 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cookieParser('secret'));
+//app.use(cookieParser('secret'));
 
 app.use(flashc());
 
+
+const SESSION_SECRET = files.readFileSync('./.sen', 'utf-8'); //process.env.SESSION_SECRET
+
 const sess = session({
-  secret: process.env.SESSION_SECRET,
+  secret: SESSION_SECRET,
   resave: true,
   saveUninitialized: true,
   unset: 'destroy',
@@ -266,6 +285,7 @@ const TXLimiter = rateLimit({
 app.get('/login', Limiter, homeController.login);
 app.post('/login', Limiter, homeController.postlogin);
 app.post('/create', Limiter, homeController.create);
+app.post('/setup', Limiter, homeController.setup);
 app.get('/auth', auth, Limiter, homeController.auth);
 app.post('/auth', auth, Limiter, homeController.postAuth);
 
@@ -386,6 +406,7 @@ app.listen(port, '0.0.0.0', () => {
 
 // }).listen(3333);
 // console.log('✓ Started Kronos Wallet Notify Server on Port 3333');
+
 
 module.exports = {app: app, server: server};
 

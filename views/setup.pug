@@ -1,10 +1,10 @@
-//- loginPage.pug
+//- setup.pug
 
 doctype html
 html(dir="ltr", lang="en-US")
 	head
 		meta(http-equiv="content-type", content="text/html; charset=utf-8")
-		meta(name="author", content="Kronos Auth")
+		meta(name="author", content="Kronos")
 		link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/css/toastr.min.css')
 		style.
 			/* style.css */	
@@ -114,18 +114,27 @@ html(dir="ltr", lang="en-US")
 			margin-bottom: 0px;
 			}
 	body
-		.container(style='margin-top:100px !important;margin:0;padding:0;', align='center')
-			img(src="https://user-images.githubusercontent.com/10162347/85637883-9fe5fa00-b641-11ea-9f4b-22901d7911c4.png", height="240px", width="261px", align="center")
+		.container(style='margin-top:50px !important;margin:0;padding:0;', align='center')
+			img(src="https://user-images.githubusercontent.com/10162347/85637883-9fe5fa00-b641-11ea-9f4b-22901d7911c4.png", height="140px", width="151px", align="center")
 		.container(style='margin-top:20px !important;margin:0;padding:0;', align='center')
-			form(action="/login" method="post")
+			form(action="/setup" method="post")
 				.form-content
-					input(type="text" id="PPU1" name="PPU1" placeholder="username")
-					input(type="password" id="PPP1" name="PPP1" placeholder="password")
+					span(style='color:#ccc;')
+						| Denarius Node Configuration
 					br
-					input.button(style='background-color: #444;', type="submit" value="Login") 
+					span(style='color:#777;font-size:11px;')
+						| Enter your Denarius Node RPC Details that you want to use with Kronos, You can obtain these details from your denarius.conf
+					br
+					br
+					input(type="text" id="HOST" name="HOST" placeholder="127.0.0.1")
+					input(type="text" id="PORT" name="PORT" placeholder="32369")
+					input(type="text" id="USER" name="USER" placeholder="rpcuser")
+					input(type="password" id="PASS" name="PASS" placeholder="rpcpassword")
+					br
+					input.button(style='background-color: #444;', type="submit" value="Connect to Denarius")
 				br
-				span(style='color:#777;')
-					| Version: v1.5.0-Beta
+				span(style='color:#666;')
+					| Step 1 of 2 in Setup
 		script(src='/js/lib/jquery-3.1.1.min.js')
 		script(src='//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/js/toastr.min.js')
 		script(src='//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/js/all.min.js')

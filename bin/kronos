@@ -4,6 +4,8 @@ var app = require('../app').app;
 //var debug = require('debug')('kronos:server');
 var http = require('http');
 var ip = require('ip');
+// const electron = require('electron');
+// const BrowserWindow = electron.BrowserWindow;
 
 // var iot = require('socket.io');
 // var gritty = require('gritty');
@@ -66,6 +68,35 @@ function onError(error) {
   }
 }
 
+//let mainWindow;
+
+// let mainWindow;
+
+// mainWindow = new BrowserWindow({
+//   width: 1280,
+//   height: 720,
+//   autoHideMenuBar: true,
+//   useContentSize: true,
+//   resizable: false,
+// });
+// mainWindow.loadURL('http://localhost:3000/');
+// mainWindow.focus();
+
+// function createWindow() {
+//   mainWindow = new BrowserWindow({
+//        width: 1280,
+//        height: 720,
+//        autoHideMenuBar: true,
+//        useContentSize: true,
+//        resizable: false,
+//        show: true,
+//      });
+//   mainWindow.loadURL(`http://192.168.1.158:3000/`);
+//   mainWindow.on('close', event => {
+//     mainWindow = null;
+//   });
+// }
+
 
 function onListening() {
   var addr = server.address();
@@ -74,4 +105,26 @@ function onListening() {
     : 'port ' + addr.port;
   console.log('Socket.io Server Listening on ' + JSON.stringify(addr.address) + ' on ' + bind);
   //debug('Listening on ' + bind);
+  //main();
 }
+
+// app.removeAllListeners('ready');
+
+// app.on('ready', createWindow);
+
+//Quit when all windows are closed
+// app.on('window-all-closed', function(){
+
+//   // On macOS specific close process
+//   if(process.platform !== 'darwin'){
+//       app.quit();
+//   }
+// });
+
+// app.on('activate', function(){
+//   //macOS specific close process
+//   if(win === null){
+//       createWindow();
+//   }
+// });
+//server.on('ready', main);

@@ -24,16 +24,7 @@ var sendJSONResponse = function (res, status, content) {
     res.json(content);
 };
 
-const SECRET_KEY = process.env.SECRET_KEY;
-
-// all config options are optional
-var client = new bitcoin.Client({
-    host: process.env.DNRHOST,
-    port: process.env.DNRPORT,
-    user: process.env.DNRUSER,
-    pass: process.env.DNRPASS,
-    timeout: 30000
-});
+const SECRET_KEY = files.readFileSync('./.senv', 'utf-8'); //process.env.SECRET_KEY
 
 function shahash(key) {
 	key = CryptoJS.SHA256(key, SECRET_KEY);
@@ -51,6 +42,15 @@ function decrypt(data) {
 	data = data.toString(CryptoJS.enc.Utf8);
 	return data;
 }
+
+// all config options are optional
+var client = new bitcoin.Client({
+	host: decrypt(process.env.DHOST),
+	port: decrypt(process.env.DPORT),
+	user: decrypt(process.env.DUSER),
+	pass: decrypt(process.env.DPASS),
+  timeout: 30000
+});
 
 /**
  * GET /withdraw

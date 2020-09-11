@@ -13,6 +13,7 @@ logs
 results
 tmp
 kronosleveldb
+out
 package-lock.json
 
 # Dependency directory

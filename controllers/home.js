@@ -25,18 +25,11 @@ const { isNullOrUndefined } = require('util');
 const ElectrumClient = require('electrum-cash').Client;
 const ElectrumCluster = require('electrum-cash').Cluster;
 const bs58 = require('bs58');
+const envfile = require('envfile');
+const sourcePath = '.env';
+const randomstring = require("randomstring");
 
-const SECRET_KEY = process.env.SECRET_KEY;
-
-
- //Connect to our D node
-const client = new bitcoin.Client({
-    host: process.env.DNRHOST,
-    port: process.env.DNRPORT,
-    user: process.env.DNRUSER,
-    pass: process.env.DNRPASS,
-    timeout: 30000
-});
+const SECRET_KEY = files.readFileSync('./.senv', 'utf-8'); //process.env.SECRET_KEY
 
 function shahash(key) {
 	key = CryptoJS.SHA256(key, SECRET_KEY);
@@ -54,6 +47,15 @@ function decrypt(data) {
 	data = data.toString(CryptoJS.enc.Utf8);
 	return data;
 }
+
+//Connect to our D node
+const client = new bitcoin.Client({
+	host: decrypt(process.env.DHOST),
+	port: decrypt(process.env.DPORT),
+	user: decrypt(process.env.DUSER),
+	pass: decrypt(process.env.DPASS),
+	timeout: 30000
+});
 
 // GET Denarius Debug Log File
 exports.getDebugLog = (req, res) => {
@@ -1118,6 +1120,7 @@ res.io.on('connection', function (socket) {
 });
 });
 });
+// });
 };
 
 
@@ -1288,15 +1291,28 @@ exports.lock = (req, res, next) => {
  * Kronos Auth Login
  */
 exports.login = (req, res) => {
-	db.get('username', function (err, value) {
-        if (err) {
-          
-          // If username does not exist in levelDB then go to page to create one
-          res.render('create', {title: 'Create Kronos Login'});
+	db.get('rpcuser', function (err, value) {
+		if (err) {
+		
+		// If rpcuser does not exist in levelDB then go to page to create one
+		res.render('setup', {title: 'Setup Kronos'});
 
-        } else {
-		  
-		  res.render('login', {title: 'Kronos Login'});
+		} else {
+		
+		// res.render('login', {title: 'Kronos Login'});
+
+		db.get('username', function (err, value) {
+			if (err) {
+			  
+			  // If username does not exist in levelDB then go to page to create one
+			  res.render('create', {title: 'Create Kronos Login'});
+	
+			} else {
+			  
+			  res.render('login', {title: 'Kronos Login'});
+	
+			}
+		});
 
 		}
 	});
@@ -1307,15 +1323,27 @@ exports.login = (req, res) => {
  * Kronos Auth Login
  */
 exports.auth = (req, res) => {
-	db.get('username', function (err, value) {
+	db.get('rpcuser', function (err, value) {
         if (err) {
           
-          // If username does not exist in levelDB then go to page to create one
-          res.render('create', {title: 'Create Kronos Login'});
+          // If rpcuser does not exist in levelDB then go to page to create one
+          res.render('setup', {title: 'Setup Kronos'});
 
         } else {
 		  
-		  res.render('auth', {title: 'Kronos Authorization'});
+		  
+		db.get('username', function (err, value) {
+			if (err) {
+			
+			// If username does not exist in levelDB then go to page to create one
+			res.render('create', {title: 'Create Kronos Login'});
+
+			} else {
+			
+			res.render('auth', {title: 'Kronos Authorization'});
+
+			}
+		});
 
 		}
 	});
@@ -1326,18 +1354,30 @@ exports.auth = (req, res) => {
  * Kronos Terminal Auth Login
  */
 exports.autht = (req, res) => {
-	db.get('username', function (err, value) {
+	db.get('rpcuser', function (err, value) {
         if (err) {
           
-          // If username does not exist in levelDB then go to page to create one
-          res.render('create', {title: 'Create Kronos Login'});
+          // If rpcuser does not exist in levelDB then go to page to create one
+          res.render('setup', {title: 'Setup Kronos'});
 
         } else {
 		  
-		  res.render('autht', {title: 'Kronos Authorization'});
+			db.get('username', function (err, value) {
+				if (err) {
+				  
+				  // If username does not exist in levelDB then go to page to create one
+				  res.render('create', {title: 'Create Kronos Login'});
+		
+				} else {
+				  
+				  res.render('autht', {title: 'Kronos Authorization'});
+		
+				}
+			});
 
 		}
 	});
+
 };
 
 /**
@@ -1345,18 +1385,147 @@ exports.autht = (req, res) => {
  * Kronos Terminal Pop Auth Login
  */
 exports.authk = (req, res) => {
-	db.get('username', function (err, value) {
+	db.get('rpcuser', function (err, value) {
         if (err) {
           
-          // If username does not exist in levelDB then go to page to create one
-          res.render('create', {title: 'Create Kronos Login'});
+          // If rpcuser does not exist in levelDB then go to page to create one
+          res.render('setup', {title: 'Setup Kronos'});
 
         } else {
 		  
-		  res.render('authk', {title: 'Kronos Authorization'});
+			db.get('username', function (err, value) {
+				if (err) {
+				  
+				  // If username does not exist in levelDB then go to page to create one
+				  res.render('create', {title: 'Create Kronos Login'});
+		
+				} else {
+				  
+				  res.render('authk', {title: 'Kronos Authorization'});
+		
+				}
+			});
 
 		}
 	});
+
+};
+
+/**
+ * POST /setup
+ * Kronos Setup Configuration Post
+ */
+exports.setup = (request, response) => {
+	var rpcuser = request.body.USER;
+	var rpcpass = request.body.PASS;
+	var rpchost = request.body.HOST;
+	var rpcport = request.body.PORT;
+
+	//var secretkey = request.body.SECRET;
+	
+	if (rpcuser && rpcpass && rpchost && rpcport) {
+
+		const newclient = new bitcoin.Client({
+			host: rpchost,
+			port: rpcport,
+			user: rpcuser,
+			pass: rpcpass,
+			timeout: 30000
+		});
+
+		newclient.getBalance(function(err, balance, resHeaders) {
+			if (err) {
+				// request.toastr.error('Connection to Denarius Failed, Retry configuration', 'Error!', { positionClass: 'toast-bottom-right' });
+				// response.redirect('/login');
+				// response.end();
+				console.log('Denarius Connection Error, Check your configuration...');
+			}
+
+			//console.log('Balance:', balance);
+
+			if (request.body && balance >= 0 && typeof balance != 'undefined') {
+
+				console.log('Denarius Connected Successfully!');
+
+				db.get('rpcpass', function (err, value) {
+					if (err) {
+					  
+						// If rpc password does not exist in levelDB then go to page to create one
+						// Encrypt the rpc user and pass for storing in the DB
+						var encryptedrpcpass = encrypt(rpcpass);
+						var encryptedrpcuser = encrypt(rpcuser);
+						var encryptedrpchost = encrypt(rpchost);
+						var encryptedrpcport = encrypt(rpcport);
+	
+						// Put the encrypted rpc username in the DB
+						db.put('rpcuser', encryptedrpcuser, function (err) {
+							if (err) console.log('Ooops!', err) // some kind of I/O error if so
+							console.log('Encrypted RPC Username to DB');
+						});
+				
+						// Put the encrypted rpc password in the DB
+						db.put('rpcpass', encryptedrpcpass, function (err) {
+							if (err) console.log('Ooops!', err) // some kind of I/O error if so
+							console.log('Encrypted RPC Password to DB');
+						});
+	
+						// Put the encrypted rpc host in the DB
+						db.put('rpchost', encryptedrpchost, function (err) {
+							if (err) console.log('Ooops!', err) // some kind of I/O error if so
+							console.log('Encrypted RPC Host to DB');
+						});
+	
+						// Put the encrypted rpc port in the DB
+						db.put('rpcport', encryptedrpcport, function (err) {
+							if (err) console.log('Ooops!', err) // some kind of I/O error if so
+							console.log('Encrypted RPC Port to DB');
+						});
+	
+						let parsedFile = envfile.parse(sourcePath);
+
+						//console.log(envfile.parse(sourcePath));
+
+						parsedFile.DHOST = encryptedrpchost;
+						parsedFile.DPORT = encryptedrpcport;
+						parsedFile.DUSER = encryptedrpcuser;
+						parsedFile.DPASS = encryptedrpcpass;
+						// parsedFile.SECRET_KEY = randomstring.generate(33);
+						// parsedFile.SESSION_KEY = randomstring.generate(33);
+
+						files.writeFileSync('./.env', envfile.stringify(parsedFile));
+
+						//console.log(envfile.stringify(parsedFile));
+
+						request.toastr.success('Kronos Denarius Configuration Successful', 'Success!', { positionClass: 'toast-bottom-right' });
+						response.redirect('/login');
+						response.end();
+			
+					} else {
+	
+					  //Found rpcpass in DB so redirecting back to login
+					  response.render('login', {title: 'Kronos Login'});
+					  response.end();
+					}
+				});			
+	
+			} else {
+				// request.toastr.error('Error!', 'Error!', { positionClass: 'toast-bottom-right' });
+				// response.redirect('/login');
+				// response.end();
+				request.toastr.error('Connection to Denarius Failed, Retry your configuration!', 'Error!', { positionClass: 'toast-bottom-right' });
+				response.redirect('/login');
+				response.end();
+			}
+		});
+		
+		//response.end();
+	
+	} else {
+		//response.send('Please enter Username and Password!');
+		request.toastr.error('Please enter your Denarius RPC User, Pass, Host, and Port!', 'Error!', { positionClass: 'toast-bottom-right' });
+		response.redirect('/login');
+		response.end();
+	}
 };
 
 /**
@@ -1418,10 +1587,10 @@ exports.create = (request, response) => {
 					});
 					
 					// //Stored User/Pass to DB successfully now setup the session
-					request.session.loggedin = true;
+					request.session.loggedin = false;
 					request.session.username = username;
-					request.toastr.success('Logged into Kronos', 'Success!', { positionClass: 'toast-bottom-right' });
-					response.redirect('/');
+					request.toastr.success('Created Kronos User', 'Success!', { positionClass: 'toast-bottom-right' });
+					response.redirect('/login');
 					response.end();
 		
 				} else {

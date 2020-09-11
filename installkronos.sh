@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION='v1.3.3-alpha'
+VERSION='v1.5.0-beta'
 
 TEMP=/tmp/answer$$
 whiptail --title "Kronos ${VERSION} for Denarius"  --menu  "Installer for Kronos Secondary Layer :" 20 0 0 1 "Install Kronos w/ Denarius Config" 2 "Install Kronos w/ Denarius Config & Chaindata" 3 "Update & Upgrade Kronos ${VERSION}" 2>$TEMP
@@ -241,15 +241,15 @@ echo "Successfully Installed Kronos Node Modules"
 echo "Updating Enviroment..."
 
 #Update enviroment file
-sed -i "s/.*DNRUSER=.*/DNRUSER="${PWUD1}"/" .env
+sed -i "s/.*DUSER=.*/DUSER="${PWUD1}"/" .env
 
-sed -i "s/.*DNRPASS=.*/DNRPASS="${PWPD2}"/" .env
+sed -i "s/.*DPASS=.*/DPASS="${PWPD2}"/" .env
 
-sed -i "s/.*SECRET_KEY=.*/SECRET_KEY="${PWPD3}"/" .env
+#sed -i "s/.*SECRET_KEY=.*/SECRET_KEY="${PWPD3}"/" .env
 
-echo "Successfully injected generated Denarius username and password to Kronos"
+echo "Successfully injected generated Denarius RPC username and password"
 
-nohup npm start &
+nohup node -r esm ./bin/kronos &
 
 echo "Kronos and Denarius are successfully installed! Kronos is now running on port 3000, open your browser to this devices local LAN IP, e.g. 192.168.x.x:3000"
                 ;;
@@ -490,15 +490,15 @@ echo "Successfully Installed Kronos Node Modules"
 echo "Updating Enviroment..."
 
 #Update enviroment file
-sed -i "s/.*DNRUSER=.*/DNRUSER="${PWUD1}"/" .env
+sed -i "s/.*DUSER=.*/DUSER="${PWUD1}"/" .env
 
-sed -i "s/.*DNRPASS=.*/DNRPASS="${PWPD2}"/" .env
+sed -i "s/.*DPASS=.*/DPASS="${PWPD2}"/" .env
 
-sed -i "s/.*SECRET_KEY=.*/SECRET_KEY="${PWPD3}"/" .env
+#sed -i "s/.*SECRET_KEY=.*/SECRET_KEY="${PWPD3}"/" .env
 
-echo "Successfully injected generated Denarius username and password to Kronos"
+echo "Successfully injected generated Denarius username and password"
 
-nohup npm start &
+nohup node -r esm ./bin/kronos &
 
 echo "Kronos and Denarius are successfully installed! Kronos is now running on port 3000, open your browser to this devices local LAN IP, e.g. 192.168.x.x:3000"
                 ;;
@@ -549,6 +549,8 @@ sudo rm -rf package.json
 
 mv .env ~/.env
 
+mv .senv ~/.senv
+
 mv kronosleveldb ~/kronosleveldb
 
 git checkout .
@@ -557,7 +559,11 @@ git pull
 
 sudo rm -rf .env
 
+sudo rm -rf .senv
+
 mv ~/.env .env
+
+mv ~/.senv .senv
 
 mv ~/kronosleveldb kronosleveldb
 
@@ -571,7 +577,7 @@ npm install
 
 npm update
 
-nohup npm start &
+nohup node -r esm ./bin/kronos &
 
 echo "Successfully Updated Kronos to ${VERSION}, You may now login from your web browser."
                 ;;
