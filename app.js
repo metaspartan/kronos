@@ -97,6 +97,7 @@ const kronosController = require('./controllers/kronos');
 const dashController = require('./controllers/dashboard');
 const toolsController = require('./controllers/tools');
 const walletController = require('./controllers/wallet');
+const explorerController = require('./controllers/explorer');
 
 /**
  * Create Express server.
@@ -331,12 +332,15 @@ app.get('/', auth, dashController.index);
 app.post('/', auth, dashController.index);
 
 
+// Kronos Explorer Controller
+app.get('/tx/:tx', auth, explorerController.gettx);
+app.get('/block/:block', auth, explorerController.getblock);
+app.get('/address/:addr', auth, explorerController.getaddress);
+app.post('/search', auth, explorerController.search);
+
+
 // Wallet Controller
 /////////////////////
-// D Explorer Routes
-app.get('/tx/:tx', auth, walletController.gettx);
-app.get('/block/:block', auth, walletController.getblock);
-app.get('/address/:addr', auth, walletController.getaddress);
 
 //POST Routes for WalletController
 app.post('/newaddress', auth, walletController.address);
@@ -345,7 +349,6 @@ app.post('/getnewaddress', auth, walletController.address);
 app.post('/getgenkey', auth, walletController.genkey);
 app.post('/withdraw/send', auth, walletController.withdraw);
 app.post('/sendrawtx', auth, walletController.sendRaw);
-app.post('/search', auth, walletController.search);
 
 //GET Routes for WalletController
 app.get('/addresses', auth, walletController.addresses);
