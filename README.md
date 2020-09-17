@@ -21,6 +21,17 @@ This was built for the Raspberry Pi in mind and one with at least 2GB of RAM. 4G
 
 Running the installer script below installs denarius via snap install and then modifies your .env in Kronos and denarius.conf to a random rpcuser and rpcpass, Kronos will then be running on your LAN (192.168.x.x:3000) on port 3000.
 
+Run the app version of Kronos
+-----------------
+You must have Node v12.18.4 LTS installed either via https://nodejs.org or NVM (Node Version Manager) to run or build the app or headless version of Kronos
+
+```bash
+git clone https://github.com/carsenk/kronos.git
+cd kronos
+npm install
+electron-forge start
+```
+
 Install Headless Kronos with Denarius Now!
 -----------------
 

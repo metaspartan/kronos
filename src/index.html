@@ -58,6 +58,25 @@
       .togglebtn:focus {
           outline:0;
       }
+
+      .window-title {
+        font-family: 'Ubuntu', sans-serif;
+        font-weight: 100;
+        margin-left: 15px !important;
+        font-size: 21px;
+        color: #FFF;
+      }
+
+      .titlebar {
+        font-family: 'Ubuntu', sans-serif;
+        font-weight: 100;
+        font-size: 16px;
+        color: #FFF;
+      }
+
+      .menubar {
+        display: none !important;
+      }
     </style>
   </head>
 
@@ -68,10 +87,18 @@
     <div id="serverLog"></div>
     <div style="position:absolute;z-index:9999999;bottom:0px;right:0px;"><button onclick="togglelog()" class="togglebtn">Toggle Logs</button></div>
     <!-- <iframe id="expressApp" class="expressApp" frameborder="0"></iframe> -->
-    <webview id="expressApp" class="expressApp" src="http://127.0.0.1:3000"></webview>
+    <webview id="expressApp" class="expressApp"></webview>
 
     <script>
       window.$ = window.jQuery = require("../node_modules/jquery/dist/jquery.min.js");
+
+      const customTitlebar = require('custom-electron-titlebar');
+ 
+      new customTitlebar.Titlebar({
+          backgroundColor: customTitlebar.Color.fromHex('#333'),
+          unfocusEffect: true
+          //icon: '../public/img/caesarsmall.png'
+      });
 
       const { ipcRenderer } = require("electron"),
         ip = require("ip"),

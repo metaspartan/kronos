@@ -2,6 +2,7 @@ const electron = require("electron"),
   app = electron.app,
   BrowserWindow = electron.BrowserWindow;
 
+//require('@treverix/remote/main').initialize();
 let mainWindow;
 
 function createWindow() {
@@ -9,11 +10,13 @@ function createWindow() {
     autoHideMenuBar: true,
     width: 1450,
     height: 900,
-    frame: true,
-    icon: __dirname + '../public/img/caesar.png',
+    frame: false,
+    titleBarStyle: 'hidden',
+    icon: __dirname + '../public/img/caesarsmall.png',
     webPreferences: {
       nodeIntegration: true,
       webSecurity: true,
+      enableRemoteModule: true,
       webviewTag: true
     }
   });

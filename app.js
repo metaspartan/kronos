@@ -1,6 +1,26 @@
 /**
+ * 
+ * 
+ * 
  * Kronos by Carsen Klock 2020, Main app.js
- * Module dependencies.
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * KRONOS - DECENTRALIZED APPLICATION AND LAN SERVER
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * 
+ *  _        _______  _______  _        _______  _______ 
+ * | \    /\(  ____ )(  ___  )( (    /|(  ___  )(  ____ \
+ * |  \  / /| (    )|| (   ) ||  \  ( || (   ) || (    \/
+ * |  (_/ / | (____)|| |   | ||   \ | || |   | || (_____ 
+ * |   _ (  |     __)| |   | || (\ \) || |   | |(_____  )
+ * |  ( \ \ | (\ (   | |   | || | \   || |   | |      ) |
+ * |  /  \ \| ) \ \__| (___) || )  \  || (___) |/\____) |
+ * |_/    \/|/   \__/(_______)|/    )_)(_______)\_______)
+ *
+ *
+ * Kronos Module dependencies.
+ * 
+ * 
+ * 
  */
 const express = require('express');
 const compression = require('compression');
@@ -73,7 +93,9 @@ dotenv.config({ path: '.env' });
 /**
  * Controllers (route handlers).
  */
-const homeController = require('./controllers/home');
+const kronosController = require('./controllers/kronos');
+const dashController = require('./controllers/dashboard');
+const toolsController = require('./controllers/tools');
 const walletController = require('./controllers/wallet');
 
 /**
@@ -108,8 +130,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(flash());
-
-app.use(gritty());
 
 //app.use(lusca.xframe('ALLOW-FROM 127.0.0.1'));
 
@@ -179,10 +199,7 @@ app.use((req, res, next) => {
   next();
 });
 
-//app.use(cookieParser('secret'));
-
 app.use(flashc());
-
 
 const SESSION_SECRET = files.readFileSync('./.sen', 'utf-8'); //process.env.SESSION_SECRET
 
@@ -277,51 +294,49 @@ const TXLimiter = rateLimit({
   max: 100 // Max 100 Requests
 });
 
-//server.listen(portt, ipt);
-
-/**
- * Kronos Auth Login
- */
-app.get('/login', Limiter, homeController.login);
-app.post('/login', Limiter, homeController.postlogin);
-app.post('/create', Limiter, homeController.create);
-app.post('/setup', Limiter, homeController.setup);
-app.get('/auth', auth, Limiter, homeController.auth);
-app.post('/auth', auth, Limiter, homeController.postAuth);
-
-app.get('/autht', auth, Limiter, homeController.autht);
-app.post('/autht', auth, Limiter, homeController.postAutht);
-
-app.get('/authk', auth, Limiter, homeController.authk);
-app.post('/authk', auth, Limiter, homeController.postAuthk);
-
-app.get('/terminal', auth, authterm, Limiter, homeController.terminal);
-app.get('/termpop', auth, authtermpop, Limiter, homeController.termPop);
-
-app.get('/logout', homeController.logout);
-
 /**
  * Primary app routes.
  */
-app.get('/', auth, homeController.index);
-app.post('/', auth, homeController.index);
 
-app.get('/ddebug', auth, homeController.getDebugLog);
+//Kronos Controller
+app.get('/login', Limiter, kronosController.login);
+app.get('/auth', auth, Limiter, kronosController.auth);
+app.get('/autht', auth, Limiter, kronosController.autht);
+app.get('/authk', auth, Limiter, kronosController.authk);
+app.get('/logout', kronosController.logout);
 
-app.post('/walletnotify', TXLimiter, homeController.notification);
+//POST Routes for kronosController
+app.post('/login', Limiter, kronosController.postlogin);
+app.post('/create', Limiter, kronosController.create);
+app.post('/setup', Limiter, kronosController.setup);
+app.post('/auth', auth, Limiter, kronosController.postAuth);
+app.post('/autht', auth, Limiter, kronosController.postAutht);
+app.post('/authk', auth, Limiter, kronosController.postAuthk);
+app.post('/unlock', auth, kronosController.unlock);
+app.post('/unlockstaking', auth, kronosController.unlockstaking);
+app.post('/lock', auth, kronosController.lock);
+app.post('/encrypt', auth, kronosController.encrypt);
+app.post('/reboot', auth, kronosController.reboot);
+app.post('/privkey', auth, kronosController.privkey);
+app.post('/walletnotify', TXLimiter, kronosController.notification);
 
+//Tools Controller
+app.get('/ddebug', auth, toolsController.getDebugLog);
+app.get('/settings', auth, Limiter, toolsController.getSettings);
+app.get('/terminal', auth, authterm, Limiter, toolsController.terminal);
+app.get('/termpop', auth, authtermpop, Limiter, toolsController.termPop);
+
+//DashBoard Controller
+app.get('/', auth, dashController.index);
+app.post('/', auth, dashController.index);
+
+
+// Wallet Controller
+/////////////////////
 // D Explorer Routes
 app.get('/tx/:tx', auth, walletController.gettx);
 app.get('/block/:block', auth, walletController.getblock);
 app.get('/address/:addr', auth, walletController.getaddress);
-
-//POST Routes for HomeController
-app.post('/unlock', auth, homeController.unlock);
-app.post('/unlockstaking', auth, homeController.unlockstaking);
-app.post('/lock', auth, homeController.lock);
-app.post('/encrypt', auth, homeController.encrypt);
-app.post('/reboot', auth, homeController.reboot);
-app.post('/privkey', auth, homeController.privkey);
 
 //POST Routes for WalletController
 app.post('/newaddress', auth, walletController.address);
@@ -375,37 +390,6 @@ app.listen(port, '0.0.0.0', () => {
   console.log('✓ Kronos Interface is running at http://' + ip.address() + ':%d', '3000', app.get('env'));
   console.log('✓ Open the URL above in your web browser on your local network to start using Kronos!\n');
 });
-
-//server.listen(port, ip.address());
-
-// var http = require('http');
-// http.createServer(function (req, res) {
-//   // var data = '';
-//   res.writeHead(200, {'Content-Type': 'text/plain'});
-//   res.write('Got your notify!');
-
-//   req.on('data', chunk => {
-
-//     // data += chunk;
-//     console.log('Transaction Notify Received:', chunk.toString());
-
-//     db.put('txid', chunk.toString(), function (err) {
-// 			if (err) return console.log('Ooops!', err) // some kind of I/O error if so
-//     });
-    
-//     // fs.writeFile('notifies.txt', chunk.toString(), function (err) {
-//     //   if (err) throw err;
-//     //   //console.log('Loaded, Written to File');
-//     // });
-
-//   });
-
-//   // console.log(data.toString());
-
-//   res.end();
-
-// }).listen(3333);
-// console.log('✓ Started Kronos Wallet Notify Server on Port 3333');
 
 
 module.exports = {app: app, server: server};

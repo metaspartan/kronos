@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION='v1.5.0-beta'
+VERSION='v1.5.1-Beta'
 
 TEMP=/tmp/answer$$
 whiptail --title "Kronos ${VERSION} for Denarius"  --menu  "Installer for Kronos Secondary Layer :" 20 0 0 1 "Install Kronos w/ Denarius Config" 2 "Install Kronos w/ Denarius Config & Chaindata" 3 "Update & Upgrade Kronos ${VERSION}" 2>$TEMP
@@ -249,7 +249,7 @@ sed -i "s/.*DPASS=.*/DPASS="${PWPD2}"/" .env
 
 echo "Successfully injected generated Denarius RPC username and password"
 
-nohup node -r esm ./bin/kronos &
+nohup npm run headless &
 
 echo "Kronos and Denarius are successfully installed! Kronos is now running on port 3000, open your browser to this devices local LAN IP, e.g. 192.168.x.x:3000"
                 ;;
@@ -498,7 +498,7 @@ sed -i "s/.*DPASS=.*/DPASS="${PWPD2}"/" .env
 
 echo "Successfully injected generated Denarius username and password"
 
-nohup node -r esm ./bin/kronos &
+nohup npm run headless &
 
 echo "Kronos and Denarius are successfully installed! Kronos is now running on port 3000, open your browser to this devices local LAN IP, e.g. 192.168.x.x:3000"
                 ;;
@@ -551,6 +551,8 @@ mv .env ~/.env
 
 mv .senv ~/.senv
 
+mv .sen ~/.sen
+
 mv kronosleveldb ~/kronosleveldb
 
 git checkout .
@@ -561,9 +563,13 @@ sudo rm -rf .env
 
 sudo rm -rf .senv
 
+sudo rm -rf .sen
+
 mv ~/.env .env
 
 mv ~/.senv .senv
+
+mv ~/.sen .sen
 
 mv ~/kronosleveldb kronosleveldb
 
@@ -577,7 +583,7 @@ npm install
 
 npm update
 
-nohup node -r esm ./bin/kronos &
+nohup npm run headless &
 
 echo "Successfully Updated Kronos to ${VERSION}, You may now login from your web browser."
                 ;;

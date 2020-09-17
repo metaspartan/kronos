@@ -1,6 +1,6 @@
 {
   "name": "Kronos",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "A Dashboard Interface for Denarius (D) in NodeJS and Electron",
   "repository": {
     "type": "git",
@@ -30,6 +30,7 @@
     "cpu-stats": "^1.0.0",
     "cputilization": "^1.0.0",
     "crypto-js": "^4.0.0",
+    "custom-electron-titlebar": "^3.2.4",
     "denariusjs": "git://github.com/carsenk/denariusjs-lib.git",
     "dotenv": "^8.2.0",
     "electron": "^10.1.1",
@@ -47,7 +48,7 @@
     "express-status-monitor": "git://github.com/carsenk/express-status-monitor.git",
     "express-toastr": "^2.0.2",
     "fs": "0.0.1-security",
-    "gritty": "^4.8.13",
+    "gritty": "git://github.com/carsenk/gritty.git",
     "hotkeys-js": "^3.8.1",
     "ip": "^1.1.5",
     "jquery": "^3.5.1",
@@ -58,7 +59,7 @@
     "lusca": "^1.6.1",
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
-    "node": "^14.4.0",
+    "node": "12.18.4",
     "os": "^0.1.1",
     "progressbar.js": "^1.1.0",
     "pug": "^3.0.0",
@@ -86,14 +87,17 @@
     "@electron-forge/maker-rpm": "^6.0.0-beta.53",
     "@electron-forge/maker-squirrel": "^6.0.0-beta.53",
     "@electron-forge/maker-zip": "^6.0.0-beta.53",
-    "electron-prebuilt-compile": "8.2.0",
     "chai": "^4.2.0",
     "electron": "^10.1.1",
+    "electron-prebuilt-compile": "8.2.0",
+    "electron-rebuild": "^2.0.3",
     "mocha": "^8.0.1"
   },
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "icon": "public/img/caesarsmall.icns"
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",

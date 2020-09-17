@@ -53,7 +53,8 @@ div(class=chaindl)
       //- img(src='../img/syncing.svg', alt='Syncing Blocks...', border='0')
       #blockcount(data-value=blockpercent)
 span#lanip(data-value=lanip)
-script(src="/socket.io/socket.io.js")
+//- script(src="/socket.io/socket.io.js")
+script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js")
 script.
   var lanip = document.getElementById("lanip").getAttribute("data-value");
   var socket = io('//'+ lanip +':3300');
@@ -90,7 +91,7 @@ script.
         img.res(src='../img/kronos.svg', alt='Denarius', border='0')
     .collapse.navbar-collapse
       ul.nav.navbar-nav
-          li(class=(title == 'Home') ? 'active' : undefined)
+          li(class=(title == 'Dashboard') ? 'active' : undefined)
             a(href='http://'+lanip+':3000/', onclick="javascript:event.target.port=3000") 
               i.fas.fa-tachometer-alt  
               |   Dashboard
@@ -194,13 +195,15 @@ script.
                 i.fas.fa-cog
               i.caret
             ul.dropdown-menu
-              li(class=(title == 'Version') ? 'active' : undefined)
-                a(href='https://github.com/carsenk/kronos', target='_blank') Kronos v1.5.0-Beta
+              li
+                a(href='http://'+lanip+':3000/settings', onclick="javascript:event.target.port=3000")
+                  i.fas.fa-wrench  
+                  |    Settings
               li.divider
               li
                 a(href='http://'+lanip+':3300/terminal', onclick="javascript:event.target.port=3300")
                   i.fas.fa-terminal  
-                  |   Terminal (Super Alpha)
+                  |   Terminal 
               li
                 a(href='http://'+lanip+':3000/seed', onclick="javascript:event.target.port=3000")
                   i.fas.fa-mask     

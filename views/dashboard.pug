@@ -4,11 +4,6 @@ block content
   script(src='../js/lib/jquery-3.1.1.min.js') 
   script(src='../js/jquery.sparkline.min.js')
   script.
-    socket.on('cpudata', function (data) {
-      // console.log(data);
-      $('#cores').html(data.cores);
-      $('#threads').html(data.threads);
-    });
     socket.on('cpuspeed', function (data) {
       // console.log(data);
       $('#avg').html(data.avg);
@@ -388,7 +383,7 @@ block content
               p Protocol v#{protocol}
               p Is Syncing: #{syncing}
               p Peer Connections: 
-                strong#peers
+                strong #{peers}
           .col-md-3
             p(style='margin-top:62px;') Node IP Address: #{ip}:33369
               p LAN IP: 
@@ -433,7 +428,7 @@ block content
               | #{staketoggle}
           p
             | Network Stake Weight 
-            strong#netweight            
+            strong#netweight        
           p
             | Your Stake Weight 
             strong#yourweight
@@ -465,11 +460,6 @@ block content
           i.fas.fa-microchip 
           |  System Info
         .col-sm-6
-          p Physical Cores 
-            span#cores
-            |  /  
-            span#threads
-            |  Threads
           p Core Clock Speed: 
             span#avg
             |  GHz - CPU Load: 
@@ -486,20 +476,20 @@ block content
             span#memt 
             |  GB Total
           p Architecture: 
-            span#arch
+            span #{arch}
           #ram(data-value=mempp)
           #cpu(data-value=cpu)
         .col-sm-4
           p OS Name: 
-            span#osname
+            span #{osname}
           p Platform: 
-            span#platform
+            span #{platform}
           p Release: 
-            span#release
+            span #{release}
           p Kernel: 
-            span#kernel
+            span #{kernel}
           p Hostname: 
-            span#hostname
+            span #{hostname}
         .col-sm-2
           .row
             .col-xs-12(align='center')
