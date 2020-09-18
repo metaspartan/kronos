@@ -2,6 +2,8 @@ const electron = require("electron"),
   app = electron.app,
   BrowserWindow = electron.BrowserWindow;
 
+require('update-electron-app')();
+
 //require('@treverix/remote/main').initialize();
 let mainWindow;
 
@@ -27,6 +29,10 @@ function createWindow() {
   });
   mainWindow.on("closed", () => {
     mainWindow = null;
+  });
+  mainWindow.webContents.on('new-window', function(e, url) {
+    e.preventDefault();
+    electron.shell.openExternal(url);
   });
 }
 

@@ -38,8 +38,9 @@ const bs58 = require('bs58');
 const envfile = require('envfile');
 const sourcePath = '.env';
 const randomstring = require("randomstring");
+const Storage = require('json-storage-fs');
 
-const SECRET_KEY = files.readFileSync('./.senv', 'utf-8'); //process.env.SECRET_KEY
+const SECRET_KEY = Storage.get('key'); //process.env.SECRET_KEY
 
 function shahash(key) {
 	key = CryptoJS.SHA256(key, SECRET_KEY);
@@ -58,14 +59,12 @@ function decrypt(data) {
 	return data;
 }
 
-//Connect to our D node
-const client = new bitcoin.Client({
-	host: decrypt(process.env.DHOST),
-	port: decrypt(process.env.DPORT),
-	user: decrypt(process.env.DUSER),
-	pass: decrypt(process.env.DPASS),
-	timeout: 30000
-});
+if (typeof Storage.get('rpchost') == 'undefined') {
+	Storage.set('rpchost', '127.0.0.1');
+	Storage.set('rpcport', '32369');
+	Storage.set('rpcuser', 'null');
+	Storage.set('rpcpass', 'null');
+}
 
 //Get information
 exports.index = (req, res) => {
@@ -74,6 +73,16 @@ const ip = require('ip');
 const ipaddy = ip.address();
 
 res.locals.lanip = ipaddy;
+
+//Connect to our D node 
+//process.env.DUSER
+const client = new bitcoin.Client({
+	host: decrypt(Storage.get('rpchost')),
+	port: decrypt(Storage.get('rpcport')),
+	user: decrypt(Storage.get('rpcuser')),
+	pass: decrypt(Storage.get('rpcpass')),
+	timeout: 30000
+});
 
 //ElectrumX Hosts for Denarius
 const delectrumxhost1 = 'electrumx1.denarius.pro';

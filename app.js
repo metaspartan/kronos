@@ -56,19 +56,26 @@ const db = dbr.db;
 const gritty = require('gritty');
 const rateLimit = require("express-rate-limit");
 const randomstring = require("randomstring");
+const Storage = require('json-storage-fs');
 
 const randosecret = randomstring.generate(42);
 const randosess = randomstring.generate(42);
-const secretenv = files.readFileSync('./.senv', 'utf-8');
-const sessenv = files.readFileSync('./.sen', 'utf-8');
 
-if (secretenv == '') {
-  files.writeFileSync('./.senv', 'SECRET_KEY='+randosecret);
+if (typeof Storage.get('key') == 'undefined') {
+	Storage.set('key', randosecret);
+	Storage.set('session', randosess);
 }
 
-if (sessenv == '') {
-  files.writeFileSync('./.sen', 'SESSION_SECRET='+randosess);
-}
+// const secretenv = files.readFileSync('./.senv', 'utf-8');
+// const sessenv = files.readFileSync('./.sen', 'utf-8');
+
+// if (secretenv == '') {
+//   files.writeFileSync('./.senv', 'SECRET_KEY='+randosecret);
+// }
+
+// if (sessenv == '') {
+//   files.writeFileSync('./.sen', 'SESSION_SECRET='+randosess);
+// }
 
 //Empty .senv on release to git
 
@@ -94,6 +101,7 @@ dotenv.config({ path: '.env' });
  * Controllers (route handlers).
  */
 const kronosController = require('./controllers/kronos');
+const authController = require('./controllers/auth');
 const dashController = require('./controllers/dashboard');
 const toolsController = require('./controllers/tools');
 const walletController = require('./controllers/wallet');
@@ -202,7 +210,7 @@ app.use((req, res, next) => {
 
 app.use(flashc());
 
-const SESSION_SECRET = files.readFileSync('./.sen', 'utf-8'); //process.env.SESSION_SECRET
+const SESSION_SECRET = Storage.get('session'); //process.env.SESSION_SECRET
 
 const sess = session({
   secret: SESSION_SECRET,
@@ -299,20 +307,22 @@ const TXLimiter = rateLimit({
  * Primary app routes.
  */
 
-//Kronos Controller
-app.get('/login', Limiter, kronosController.login);
-app.get('/auth', auth, Limiter, kronosController.auth);
-app.get('/autht', auth, Limiter, kronosController.autht);
-app.get('/authk', auth, Limiter, kronosController.authk);
-app.get('/logout', kronosController.logout);
+//Kronos Auth Controller
+app.get('/login', Limiter, authController.login);
+app.get('/auth', auth, Limiter, authController.auth);
+app.get('/autht', auth, Limiter, authController.autht);
+app.get('/authk', auth, Limiter, authController.authk);
+app.get('/logout', authController.logout);
+
+//POST Auth Routes
+app.post('/login', Limiter, authController.postlogin);
+app.post('/create', Limiter, authController.create);
+app.post('/setup', Limiter, authController.setup);
+app.post('/auth', auth, Limiter, authController.postAuth);
+app.post('/autht', auth, Limiter, authController.postAutht);
+app.post('/authk', auth, Limiter, authController.postAuthk);
 
 //POST Routes for kronosController
-app.post('/login', Limiter, kronosController.postlogin);
-app.post('/create', Limiter, kronosController.create);
-app.post('/setup', Limiter, kronosController.setup);
-app.post('/auth', auth, Limiter, kronosController.postAuth);
-app.post('/autht', auth, Limiter, kronosController.postAutht);
-app.post('/authk', auth, Limiter, kronosController.postAuthk);
 app.post('/unlock', auth, kronosController.unlock);
 app.post('/unlockstaking', auth, kronosController.unlockstaking);
 app.post('/lock', auth, kronosController.lock);

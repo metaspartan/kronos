@@ -13,6 +13,7 @@ logs
 results
 tmp
 kronosleveldb
+data
 out
 package-lock.json
 

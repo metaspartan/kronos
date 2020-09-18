@@ -28,13 +28,14 @@ const CryptoJS = require("crypto-js");
 const bip39 = require("bip39");
 const bip32 = require("bip32d");
 const denarius = require('denariusjs');
+const Storage = require('json-storage-fs');
 
 var sendJSONResponse = function (res, status, content) {
     res.status(status);
     res.json(content);
 };
 
-const SECRET_KEY = files.readFileSync('./.senv', 'utf-8'); //process.env.SECRET_KEY
+const SECRET_KEY = Storage.get('key'); //process.env.SECRET_KEY
 
 function shahash(key) {
 	key = CryptoJS.SHA256(key, SECRET_KEY);
@@ -53,19 +54,27 @@ function decrypt(data) {
 	return data;
 }
 
-// all config options are optional
-var client = new bitcoin.Client({
-	host: decrypt(process.env.DHOST),
-	port: decrypt(process.env.DPORT),
-	user: decrypt(process.env.DUSER),
-	pass: decrypt(process.env.DPASS),
-  timeout: 30000
-});
+if (typeof Storage.get('rpchost') == 'undefined') {
+	Storage.set('rpchost', '127.0.0.1');
+	Storage.set('rpcport', '32369');
+	Storage.set('rpcuser', 'null');
+	Storage.set('rpcpass', 'null');
+}
 
 //GET Get Address Information
 exports.getaddress = function (req, res) {
   var urladdy = req.params.addr;
   //console.log('PASSED ADDRESS: ', urladdy);
+
+  //Connect to our D node 
+//process.env.DUSER
+const client = new bitcoin.Client({
+	host: decrypt(Storage.get('rpchost')),
+	port: decrypt(Storage.get('rpcport')),
+	user: decrypt(Storage.get('rpcuser')),
+	pass: decrypt(Storage.get('rpcpass')),
+	timeout: 30000
+});
 
   const ip = require('ip');
   const ipaddy = ip.address();
@@ -382,6 +391,16 @@ exports.gettx = function (req, res) {
       var urltx = req.params.tx;
       //console.log('PASSED TXID: ', urltx);
 
+      //Connect to our D node 
+      //process.env.DUSER
+      const client = new bitcoin.Client({
+        host: decrypt(Storage.get('rpchost')),
+        port: decrypt(Storage.get('rpcport')),
+        user: decrypt(Storage.get('rpcuser')),
+        pass: decrypt(Storage.get('rpcpass')),
+        timeout: 30000
+      });
+
       const ip = require('ip');
       const ipaddy = ip.address();
 
@@ -519,6 +538,16 @@ exports.getblock = function (req, res) {
 
   const ip = require('ip');
   const ipaddy = ip.address();
+
+  //Connect to our D node 
+  //process.env.DUSER
+  const client = new bitcoin.Client({
+    host: decrypt(Storage.get('rpchost')),
+    port: decrypt(Storage.get('rpcport')),
+    user: decrypt(Storage.get('rpcuser')),
+    pass: decrypt(Storage.get('rpcpass')),
+    timeout: 30000
+  });
 
   res.locals.lanip = ipaddy;
 

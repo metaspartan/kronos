@@ -1,6 +1,6 @@
 {
   "name": "Kronos",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "A Dashboard Interface for Denarius (D) in NodeJS and Electron",
   "repository": {
     "type": "git",
@@ -14,7 +14,8 @@
     "headless": "node -r esm ./bin/kronos",
     "test": "mocha --reporter spec",
     "package": "electron-forge package",
-    "build": "electron-forge make"
+    "build": "electron-forge make",
+    "re-build": "./node_modules/.bin/electron-rebuild"
   },
   "dependencies": {
     "app-root-path": "^3.0.0",
@@ -33,7 +34,7 @@
     "custom-electron-titlebar": "^3.2.4",
     "denariusjs": "git://github.com/carsenk/denariusjs-lib.git",
     "dotenv": "^8.2.0",
-    "electron": "^10.1.1",
+    "electron": "^10.1.2",
     "electron-compile": "6.4.4",
     "electron-squirrel-startup": "^1.0.0",
     "electrum-cash": "^1.0.1",
@@ -48,10 +49,11 @@
     "express-status-monitor": "git://github.com/carsenk/express-status-monitor.git",
     "express-toastr": "^2.0.2",
     "fs": "0.0.1-security",
-    "gritty": "git://github.com/carsenk/gritty.git",
+    "gritty": "^5.0.0",
     "hotkeys-js": "^3.8.1",
     "ip": "^1.1.5",
     "jquery": "^3.5.1",
+    "json-storage-fs": "^1.1.0",
     "keymaster": "^1.6.2",
     "level": "^6.0.1",
     "lob": "^6.1.0",
@@ -59,7 +61,7 @@
     "lusca": "^1.6.1",
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
-    "node": "12.18.4",
+    "node": "12.16.3",
     "os": "^0.1.1",
     "progressbar.js": "^1.1.0",
     "pug": "^3.0.0",
@@ -78,6 +80,7 @@
     "toastr": "^2.1.4",
     "tribus-hashjs": "^1.0.3",
     "unirest": "^0.6.0",
+    "update-electron-app": "^1.5.0",
     "validator": "^13.1.1",
     "wallet-address-validator": "git://github.com/carsenk/wallet-address-validator.git"
   },
@@ -88,7 +91,7 @@
     "@electron-forge/maker-squirrel": "^6.0.0-beta.53",
     "@electron-forge/maker-zip": "^6.0.0-beta.53",
     "chai": "^4.2.0",
-    "electron": "^10.1.1",
+    "electron": "^10.1.2",
     "electron-prebuilt-compile": "8.2.0",
     "electron-rebuild": "^2.0.3",
     "mocha": "^8.0.1"
@@ -98,6 +101,18 @@
       "packagerConfig": {
         "icon": "public/img/caesarsmall.icns"
       },
+      "publishers": [
+        {
+          "name": "@electron-forge/publisher-github",
+          "config": {
+            "repository": {
+              "owner": "carsenk",
+              "name": "kronos"
+            },
+            "prerelease": false
+          }
+        }
+      ],
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
