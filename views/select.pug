@@ -1,0 +1,135 @@
+//- select.pug
+doctype html
+html(dir="ltr", lang="en-US")
+	head
+		meta(http-equiv="content-type", content="text/html; charset=utf-8")
+		meta(name="author", content="Kronos")
+		link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/css/toastr.min.css')
+		style.
+			/* style.css */	
+
+			@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap');
+					
+			*,
+			*::before,
+			*::after {
+			box-sizing: border-box;
+			}
+
+			html {
+			background-color: #111;
+			font-family: 'Open Sans', sans-serif;
+			}
+
+			body {
+			font-weight: 500;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+			text-rendering: optimizeLegibility;
+			background-color: #111;
+			}
+
+			h1 {
+			font-weight: 700;
+			color: #000;
+			text-align: center;
+			margin-bottom: .5em;
+			margin-top: 0em;
+			color: #FFF;
+			}
+
+			a {
+			font-size: 0.98em;
+			color: #8a97a0;
+			text-decoration: none;
+			}
+			a:hover {
+			color: green;
+			}
+
+			.container {
+			display: flex;
+			-webkit-display: box;
+			-moz-display: box;
+			-ms-display: flexbox;
+			-webkit-display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			align-content: center;
+			padding: 10%;
+			height: 100vh !import;
+			margin: 0;
+			}
+
+			form {
+			background-color: #fff;
+			padding: 2em;
+			border-radius: 8px;
+			max-width: 400px;
+			display: flex;
+			flex-wrap: wrap;
+			flex-direction: column;
+			justify-content: center;
+			box-shadow: 0 10px 40px -14px rgba(0, 0, 0, 0.25);
+			display: flex;
+			flex-wrap: wrap;
+			flex-direction: column;
+				background-color: #333;
+			}
+			form input {
+			color: #FFF;
+			background-color: #222;
+			box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03) inset;
+			border: none;
+			border-radius: 4px;
+			padding: 1em;
+			width: 100%;
+			}
+			form input:focus {
+			outline: none;
+			}
+
+			.button, input {
+			font-weight: 600;
+			text-align: center;
+			font-size: 19px;
+			color: #FFF;
+			background-color: #333;
+			width: 100%;
+			border: none;
+			border-radius: 4px;
+			padding: .75em;
+			margin-top: 0em;
+			margin-bottom: 1em; 
+			cursor: pointer;
+			overflow: hidden;
+			transition: all 200ms ease-in-out;
+			box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+			}
+
+
+			.button {
+			padding: 1em;
+			margin-bottom: 0px;
+			}
+	body
+		.container(style='margin-top:50px !important;margin:0;padding:0;', align='center')
+			img(src="https://user-images.githubusercontent.com/10162347/85637883-9fe5fa00-b641-11ea-9f4b-22901d7911c4.png", height="140px", width="151px", align="center")
+		.container(style='margin-top:20px !important;margin:0;padding:0;width:80%;', align='center')
+			.row
+				.col-md-6
+					form(action="/selectkronos" method="post")
+						.form-content
+							input.button(style='background-color: #444;', type="submit" value="Kronos Only")
+				.col-md-6
+					form(action="/selectdenarius" method="post")
+						.form-content
+							input.button(style='background-color: #444;', type="submit" value="Denarius Node")
+				br
+				span(style='color:#666;')
+					| Step 1 of 3 in Setup
+		script(src='/js/lib/jquery-3.1.1.min.js')
+		script(src='//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/js/toastr.min.js')
+		script(src='//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/js/all.min.js')
+
+		!=toasts

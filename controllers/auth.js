@@ -35,8 +35,6 @@ const { isNullOrUndefined } = require('util');
 const ElectrumClient = require('electrum-cash').Client;
 const ElectrumCluster = require('electrum-cash').Cluster;
 const bs58 = require('bs58');
-const envfile = require('envfile');
-const sourcePath = '.env';
 const randomstring = require("randomstring");
 const Storage = require('json-storage-fs');
 

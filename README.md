@@ -23,12 +23,16 @@ Running the installer script below installs denarius via snap install and then m
 
 Run the app version of Kronos
 -----------------
-You must have Node v12.18.4 LTS installed either via https://nodejs.org or NVM (Node Version Manager) to run or build the app or headless version of Kronos
-
 ```bash
+npm install -g node-gyp electron electron-forge electron-rebuild
 git clone https://github.com/carsenk/kronos.git
 cd kronos
 npm install
+cd node_modules/node-pty-prebuilt-multiarch
+node-gyp configure
+node-gyp build
+cd ..
+cd ..
 electron-forge start
 ```
 

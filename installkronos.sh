@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION='v1.5.2-Beta'
+VERSION='v1.5.3-Beta'
 
 TEMP=/tmp/answer$$
 whiptail --title "Kronos ${VERSION} for Denarius"  --menu  "Installer for Kronos Secondary Layer :" 20 0 0 1 "Install Kronos w/ Denarius Config" 2 "Install Kronos w/ Denarius Config & Chaindata" 3 "Update & Upgrade Kronos ${VERSION}" 2>$TEMP
@@ -170,9 +170,9 @@ wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 source ~/.nvm/nvm.sh
 source ~/.profile
 source ~/.bashrc
-nvm install v12
-nvm use v12
-npm install -g npm
+nvm install v12.16.3
+nvm use v12.16.3
+npm install -g npm node-gyp electron electron-forge electron-rebuild
 #fi
 
 printf "${GREEN}Successfully Installed NVM and Node Version 8.x!${NC}\n"
@@ -235,6 +235,16 @@ cd kronos
 echo "Installing Kronos Node Modules..."
 
 npm install
+
+cd node_modules/node-pty-prebuilt-multiarch
+
+node-gyp configure
+
+node-gyp build
+
+cd ..
+
+cd ..
 
 echo "Successfully Installed Kronos Node Modules"
 
@@ -389,9 +399,9 @@ wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 source ~/.nvm/nvm.sh
 source ~/.profile
 source ~/.bashrc
-nvm install v12
-nvm use v12
-npm install -g npm
+nvm install v12.16.3
+nvm use v12.16.3
+npm install -g npm node-gyp electron electron-forge electron-rebuild
 #fi
 
 printf "${GREEN}Successfully Installed NVM and Node Version 8.x!${NC}\n"
@@ -485,6 +495,16 @@ echo "Installing Kronos Node Modules..."
 
 npm install
 
+cd node_modules/node-pty-prebuilt-multiarch
+
+node-gyp configure
+
+node-gyp build
+
+cd ..
+
+cd ..
+
 echo "Successfully Installed Kronos Node Modules"
 
 echo "Updating Enviroment..."
@@ -525,9 +545,9 @@ wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 source ~/.nvm/nvm.sh
 source ~/.profile
 source ~/.bashrc
-nvm install v12
-nvm use v12
-npm install -g npm
+nvm install v12.16.3
+nvm use v12.16.3
+npm install -g npm node-gyp electron electron-forge electron-rebuild
 
 if [ ! -f ~/snap/denarius/common/.denarius/walletnotify.sh ]; then
 touch ~/snap/denarius/common/.denarius/walletnotify.sh
@@ -574,6 +594,16 @@ sudo kill -9 ${NODEPID}
 npm install
 
 npm update
+
+cd node_modules/node-pty-prebuilt-multiarch
+
+node-gyp configure
+
+node-gyp build
+
+cd ..
+
+cd ..
 
 nohup npm run headless &
 
