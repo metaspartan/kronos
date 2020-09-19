@@ -369,9 +369,9 @@ exports.create = (request, response) => {
 					});
 					
 					// //Stored User/Pass to DB successfully now setup the session
-					request.session.loggedin = false;
+					request.session.loggedin = false; //Make them sign in again after setup
 					request.session.username = username;
-					request.toastr.success('Created Kronos User, Setup Successful, Reboot Kronos', 'Success!', { positionClass: 'toast-bottom-right' });
+					request.toastr.success('Created Kronos User, Setup Successful, Please login!', 'Success!', { positionClass: 'toast-bottom-right' });
 					response.redirect('/login');
 					response.end();
 		

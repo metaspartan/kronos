@@ -80,21 +80,6 @@
     </style>
   </head>
   <body>
-    <script type="text/javascript">
-      const shell = require('electron').shell
-
-        const links = document.querySelectorAll('a[href]')
-        
-        Array.prototype.forEach.call(links, function (link) {
-          const url = link.getAttribute('href')
-          if (url.indexOf('http') === 0) {
-              link.addEventListener('click', function (e) {
-                  e.preventDefault()
-                  shell.openExternal(url)
-              })
-          }
-        })
-      </script>
     <div id="loading" align="center">
       <div style="top:40%;text-align:center;position:absolute;margin:0 auto;width:100%;"><img src="../public/img/syncing.svg" border="0" /></div>
     </div>
@@ -114,6 +99,16 @@
           //icon: '../public/img/caesarsmall.png'
       });
 
+      $('body').on('click', 'a.external', (event) => {
+        event.preventDefault();
+        let link = event.target.href;
+        require("electron").shell.openExternal(link);
+      });
+
+      //Check what OS you are running for the Node spawn
+      const os = require('os');
+      const nodeloc = os.platform() === 'win32' ? '.\\node_modules\\node\\bin\\node.exe' : './node_modules/node/bin/node';
+
       const { ipcRenderer } = require("electron"),
         ip = require("ip"),
         lanip = ip.address(),
@@ -124,7 +119,7 @@
         app = require('electron').remote.app,
         //node spawn is "./node_modules/node/bin/node" for Linux/Unix - Setup for Windows
         node = spawn(
-          ".\\node_modules\\node\\bin\\node.exe",
+          nodeloc,
           ["./bin/kronos"],
           {
             cwd: app.getAppPath()

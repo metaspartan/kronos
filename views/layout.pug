@@ -43,5 +43,15 @@ html
     script(src='/js/main.js')
     script(src='/js/sorttable.js')
     script(src='/js/jquery.sparkline.min.js')
+    script.
+      window.nodeRequire = require;
+      delete window.require;
+      delete window.exports;
+      delete window.module;
+      $('body').on('click', 'a.external', (event) => {
+        event.preventDefault();
+        let link = event.target.href;
+        require("electron").shell.openExternal(link);
+      });
 
     !=toasts
