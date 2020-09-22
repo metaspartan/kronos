@@ -1,6 +1,6 @@
 {
   "name": "Kronos",
-  "version": "1.5.3",
+  "version": "1.5.5-Beta",
   "description": "A Dashboard Interface for Denarius (D) in NodeJS and Electron",
   "repository": {
     "type": "git",
@@ -71,6 +71,7 @@
     "qrcode": "^1.4.4",
     "randomstring": "^1.1.5",
     "request": "^2.88.2",
+    "rpg-awesome": "^0.2.0",
     "sha256": "^0.2.0",
     "shelljs": "^0.8.4",
     "socket.io": "^2.3.0",

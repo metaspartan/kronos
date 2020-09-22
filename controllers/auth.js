@@ -79,11 +79,19 @@ const client = new bitcoin.Client({
  * Kronos Auth Login
  */
 exports.login = (req, res) => {
-	db.get('rpcuser', function (err, value) {
+	db.get('created', function (err, value) { //Change from rpcuser to created and give bool for when done with setup
 		if (err) {
+
+		// if (Storage.get('mode') != 'simple') {
+		// 	res.render('login', {title: 'Kronos Login'});
+		// } else if (Storage.get('mode') != 'advanced') {
+		// 	res.render('login', {title: 'Kronos Login'});
+		// }
+
+		res.render('select', {title: 'Setup Kronos'}); //Other Setup
 		
 		// If rpcuser does not exist in levelDB then go to page to create one
-		res.render('setup', {title: 'Setup Kronos'});
+		//res.render('setup', {title: 'Setup Kronos'}); //Other Setup
 
 		} else {
 		
@@ -111,11 +119,11 @@ exports.login = (req, res) => {
  * Kronos Auth Login
  */
 exports.auth = (req, res) => {
-	db.get('rpcuser', function (err, value) {
+	db.get('created', function (err, value) {
         if (err) {
           
-          // If rpcuser does not exist in levelDB then go to page to create one
-          res.render('setup', {title: 'Setup Kronos'});
+          // If created does not exist in levelDB then go to page to create one
+          res.render('select', {title: 'Setup Kronos'});
 
         } else {
 		  
@@ -142,11 +150,11 @@ exports.auth = (req, res) => {
  * Kronos Terminal Auth Login
  */
 exports.autht = (req, res) => {
-	db.get('rpcuser', function (err, value) {
+	db.get('created', function (err, value) {
         if (err) {
           
           // If rpcuser does not exist in levelDB then go to page to create one
-          res.render('setup', {title: 'Setup Kronos'});
+          res.render('select', {title: 'Setup Kronos'});
 
         } else {
 		  
@@ -173,11 +181,11 @@ exports.autht = (req, res) => {
  * Kronos Terminal Pop Auth Login
  */
 exports.authk = (req, res) => {
-	db.get('rpcuser', function (err, value) {
+	db.get('created', function (err, value) {
         if (err) {
           
           // If rpcuser does not exist in levelDB then go to page to create one
-          res.render('setup', {title: 'Setup Kronos'});
+          res.render('select', {title: 'Setup Kronos'});
 
         } else {
 		  
@@ -200,7 +208,7 @@ exports.authk = (req, res) => {
 };
 
 /**
- * POST /setup
+ * POST /setup 2/3
  * Kronos Setup Configuration Post
  */
 exports.setup = (request, response) => {
@@ -244,6 +252,14 @@ exports.setup = (request, response) => {
 						var encryptedrpcuser = encrypt(rpcuser);
 						var encryptedrpchost = encrypt(rpchost);
 						var encryptedrpcport = encrypt(rpcport);
+
+						// var createdinfo = "true";
+
+						// // Put created true into DB
+						// db.put('created', createdinfo, function (err) {
+						// 	if (err) console.log('Ooops!', err) // some kind of I/O error if so
+						// 	console.log('New Setup: True');
+						// });
 	
 						// Put the encrypted rpc username in the DB
 						db.put('rpcuser', encryptedrpcuser, function (err) {
@@ -270,16 +286,16 @@ exports.setup = (request, response) => {
 						});
 
 						//Store into localStorage for dynamic pulling upon login
-
 						Storage.set('rpchost', encryptedrpchost);
 						Storage.set('rpcport', encryptedrpcport);
 						Storage.set('rpcuser', encryptedrpcuser);
 						Storage.set('rpcpass', encryptedrpcpass);
+						Storage.set('mode', 'advanced');
 
 						//console.log(envfile.stringify(parsedFile));
 
-						request.toastr.success('Kronos Denarius Configuration Successful', 'Success!', { positionClass: 'toast-bottom-right' });
-						response.redirect('/login');
+						request.toastr.success('Kronos Advanced Denarius Configuration Successful', 'Success!', { positionClass: 'toast-bottom-right' });
+						response.render('create', {title: 'Kronos Login Creation'});
 						response.end();
 			
 					} else {
@@ -331,6 +347,14 @@ exports.create = (request, response) => {
 					var encryptedpass = encrypt(password);
 					var encrypteduser = encrypt(username);
 
+					var createdinfo = "true";
+
+					// Put created true into DB
+					db.put('created', createdinfo, function (err) {
+						if (err) console.log('Ooops!', err) // some kind of I/O error if so
+						console.log('New Setup: True');
+					});
+
 					// Put the encrypted username in the DB
 					db.put('username', encrypteduser, function (err) {
 						if (err) console.log('Ooops!', err) // some kind of I/O error if so
@@ -343,30 +367,30 @@ exports.create = (request, response) => {
 						console.log('Encrypted Password to DB');
 					});
 
-					var mnemonic;
-					// Fetch the Kronos LevelDB Seedphrase
-					db.get('seedphrase', function (err, value) {
-						if (err) {
+					// var mnemonic;
+					// // Fetch the Kronos LevelDB Seedphrase
+					// db.get('seedphrase', function (err, value) {
+					// 	if (err) {
 							
-							// If seedphrase does not exist in levelDB then generate one with the password
-							mnemonic = bip39.generateMnemonic(256);
+					// 		// If seedphrase does not exist in levelDB then generate one with the password
+					// 		mnemonic = bip39.generateMnemonic(256);
 
-							// Encrypt the seedphrase for storing in the DB
-							var encryptedmnemonic = encrypt(mnemonic);
-							//console.log("Encrypted Mnemonic", encryptedmnemonic);
+					// 		// Encrypt the seedphrase for storing in the DB
+					// 		var encryptedmnemonic = encrypt(mnemonic);
+					// 		//console.log("Encrypted Mnemonic", encryptedmnemonic);
 
-							// Put the encrypted passworded seedphrase in the DB
-							db.put('seedphrase', encryptedmnemonic, function (err) {
-								if (err) return console.log('Ooops!', err) // some kind of I/O error if so
-								console.log('Encrypted Seed Phrase to DB');
-							});
+					// 		// Put the encrypted passworded seedphrase in the DB
+					// 		db.put('seedphrase', encryptedmnemonic, function (err) {
+					// 			if (err) return console.log('Ooops!', err) // some kind of I/O error if so
+					// 			console.log('Encrypted Seed Phrase to DB');
+					// 		});
 
-						} else {
-							var decryptedmnemonic = decrypt(value);
-							mnemonic = decryptedmnemonic;
-						}
+					// 	} else {
+					// 		var decryptedmnemonic = decrypt(value);
+					// 		mnemonic = decryptedmnemonic;
+					// 	}
 
-					});
+					// });
 					
 					// //Stored User/Pass to DB successfully now setup the session
 					request.session.loggedin = false; //Make them sign in again after setup
@@ -398,6 +422,80 @@ exports.create = (request, response) => {
 		response.end();
 	}
 };
+
+//POST
+exports.simple = (request, response) => {
+	var seedphrase = request.body.SEED;
+
+	//var secretkey = request.body.SECRET;
+	
+	if (seedphrase) {
+			//console.log('Balance:', balance);
+
+			if (request.body) {
+
+						db.get('seedphrase', function (err, value) {
+							if (err) {
+
+								var encryptedseed = encrypt(seedphrase);
+
+								// Put the encrypted passworded seedphrase in the DB
+								db.put('seedphrase', encryptedseed, function (err) {
+									if (err) return console.log('Ooops!', err) // some kind of I/O error if so
+									console.log('Encrypted Seed Phrase to DB');
+								});
+
+							} else {
+								var decryptedmnemonic = decrypt(value);
+								seedphrase = decryptedmnemonic;
+							}
+
+						});
+
+						Storage.set('mode', 'simple');
+
+						//console.log(envfile.stringify(parsedFile));
+
+						request.toastr.success('Kronos Simple Configuration Successful', 'Success!', { positionClass: 'toast-bottom-right' });
+						response.render('create', {title: 'Kronos Login Creation'});
+						response.end();	
+	
+			} else {
+				request.toastr.error('Failed!', 'Error!', { positionClass: 'toast-bottom-right' });
+				response.redirect('/login');
+				response.end();
+			}
+	
+	} else {
+		request.toastr.error('Please select a seed phrase!', 'Error!', { positionClass: 'toast-bottom-right' });
+		response.redirect('/login');
+		response.end();
+	}
+};
+
+//GET SIMPLE MODE
+exports.getsimple = (req, res) => {
+
+	var mnemonic;
+			
+	// Generate Seed Phrase and pass it to our rendered view
+	mnemonic = bip39.generateMnemonic(256);
+
+	res.render('simple', {
+        title: 'Simple Mode Setup', seedphrase: mnemonic
+    });
+
+};
+
+//GET ADVANCED MODE
+exports.getsetup = (req, res) => {
+
+	res.render('setup', {
+        title: 'Advanced Mode Setup'
+    });
+
+};
+
 
 /**
  * GET /logout
@@ -443,8 +541,15 @@ exports.postlogin = (request, response) => {
 							request.session.loggedin = true;
 							request.session.username = username;
 							request.toastr.success('Logged into Kronos', 'Success!', { positionClass: 'toast-bottom-right' });
-							response.redirect('/');
-							response.end();
+
+							if (Storage.get('mode') == 'simple') {
+								//Storage.set('mode', 'simple');
+								response.redirect('/dashsimple');
+								response.end();
+							} else if (Storage.get('mode') == 'advanced') {
+								response.redirect('/');
+								response.end();
+							}
 						} else {
 							//response.send('Incorrect Username and/or Password!');
 							//request.flash('success', { msg: 'TEST' });

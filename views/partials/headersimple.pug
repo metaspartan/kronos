@@ -1,57 +1,3 @@
-div(class=offline)
-  div(class=offlinebtn)
-    p 
-      h1 Denarius Node Offline
-    p
-      #rebooter
-      button.btn.btn-danger(type='submit', id='submitrb',  onclick='reboot()') REBOOT DENARIUS NODE
-      form.form-horizontal(action='/reboot', method='POST', id='sendreboot')
-        input(type='hidden', name='_csrf', value=_csrf)
-div(class=chaindl)
-  #container3(name='container3') &nbsp;
-  div(class=chaindlbtn)
-    //- script.
-    //-   setInterval(function() {
-    //-       cache_clear()
-    //-   }, 60000);
-
-    //-   function cache_clear() {
-    //-     window.location=window.location;
-    //-     // window.location.reload(); use this if you do not remove cache
-    //-   }
-    img(src="https://user-images.githubusercontent.com/10162347/85637883-9fe5fa00-b641-11ea-9f4b-22901d7911c4.png", height="200px", width="221px", align="center")
-    br
-    br 
-    div(align='center', style='background-color:#141414; width:500px; margin: 0 auto; padding:30px;border-radius:15px;')
-      h1 Denarius Node Syncing...
-      p
-        div(style='background-color: #222;padding:15px;border-radius:15px;margin-left:20px;margin-right:20px;')
-          h1(style='margin:0;padding:0;')
-            strong #{blockperc} %
-      p(style='font-size:18px;')
-        | On Block 
-        strong #{blockheight} 
-        | out of 
-        strong #{cryptoidblocks}
-        br
-        #blockpp
-      img(src='../img/syncing.svg', alt='Syncing Blocks...', border='0', style='height:75px;')
-      p(style='font-size:18px;') Peer Connections: 
-        strong #{peers}
-      p
-        i.fa.fa-arrow-up
-        |  Data Sent 
-        strong #{datasent}
-      p
-        i.fa.fa-arrow-down
-        |  Data Received 
-        strong #{datareceived}
-      hr(style='border-top: 1px solid #222;')
-      p(style='color:#666;')
-        | Please wait...This can take awhile...Denarius is downloading blocks. When Denarius is synced, you will be able to access Kronos.
-    p
-      //- img(src='../img/syncing.svg', alt='Syncing Blocks...', border='0')
-      #blockcount(data-value=blockpercent)
 span#lanip(data-value=lanip)
 //- script(src="/socket.io/socket.io.js")
 script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js")
@@ -79,7 +25,7 @@ script.
     var c = document.getElementById("notificationtx")
     c.style.display = "none";
   }
-.navbar.navbar-default.navbar-fixed-top
+.navbar.navbar-default.navbar-fixed-top(style='border-top: 2px solid #42b905;')
   .hcontainer
     .navbar-header
       button.navbar-toggle.pull-right.ml(type='button', data-toggle='collapse', data-target='.navbar-collapse')
@@ -92,17 +38,9 @@ script.
     .collapse.navbar-collapse
       ul.nav.navbar-nav
           li(class=(title == 'Dashboard') ? 'active' : undefined)
-            a(href='http://'+lanip+':3000/', onclick="javascript:event.target.port=3000") 
+            a(href='http://'+lanip+':3000/dashsimple', onclick="javascript:event.target.port=3000") 
               i.fas.fa-tachometer-alt  
               |   Dashboard
-          li(class=(title == 'FortunaStakes') ? 'active' : undefined)
-            a(href='http://'+lanip+':3000/fs', onclick="javascript:event.target.port=3000") 
-              i.fas.fa-th   
-              |   FS
-          li(class=(title == 'Peers') ? 'active' : undefined)
-            a(href='http://'+lanip+':3000/peers', onclick="javascript:event.target.port=3000") 
-              i.fas.fa-network-wired    
-              |   Peers
           li.dropdown(class=(title == 'Wallet') ? 'active' : undefined)
             a.dropdown-toggle(href='#', data-toggle='dropdown')
               span 
@@ -136,20 +74,6 @@ script.
               |   Tools 
               i.caret
             ul.dropdown-menu
-              li
-                a(href='http://'+lanip+':3000/ddebug', onclick="javascript:event.target.port=3000") 
-                  i.fas.fa-bug  
-                  |   Denarius Debug Log
-              li.divider
-              li
-                a(href='http://'+lanip+':3000/sign', onclick="javascript:event.target.port=3000") 
-                  i.fas.fa-signature  
-                  |   Sign a message
-              li
-                a(href='http://'+lanip+':3000/verify', onclick="javascript:event.target.port=3000") 
-                  i.fas.fa-certificate  
-                  |   Verify a message
-              li.divider(style=sendicon)
               li(style=sendicon)
                 a(href='http://'+lanip+':3000/rawtx', onclick="javascript:event.target.port=3000") 
                   i.far.fa-paper-plane  
@@ -163,13 +87,10 @@ script.
                 a(href='http://'+lanip+':3000/convertmini', onclick="javascript:event.target.port=3000") 
                   i.fas.fa-sync-alt    
                   |   Convert Minikey
-              li.divider
-              li
-                a(href='http://127.0.0.1:3000/keepkey', onclick="javascript:event.target.port=3000") 
-                  i.fab.fa-usb  
-                  |   KeepKey Client
           li
-            a(href='#', style='font-size:14px;color:#FFF;background-color: rgba(0, 0, 0, 0.2);') #{balance} D
+            a(href='#', style='font-size:14px;color:#FFF;background-color: rgba(0, 0, 0, 0.2);') #{totalbal} D
+          li
+            a Simple Mode
           if (staketoggle == 'Staking')
             li.animate__animated.animate__pulse.animate__infinite
               a(style='padding-top:18px !important;')
@@ -181,14 +102,6 @@ script.
             a(href='http://'+lanip+':3000/withdraw')
               i.fa.fa-paper-plane 
               |   SEND
-          li
-            #searchinput.animate__animated.animate__fadeInRight(style='margin-top:8px;display:none;')
-              form.form-horizontal(action='http://'+lanip+':3000/search', method='POST', id='explorer')
-                input(type='hidden', name='_csrf', value=_csrf)
-                input.form-control.blackinput4(style='min-width:350px;', type='text', align='center', name='explorersearch', id='explorersearch', placeholder='Search the chain for TX Hashes, Block #, or Address')
-          li
-            a(href='#', onclick='togglesearch()')
-              i.fas.fa-search
           li.dropdown(class=(title == 'Community') ? 'active' : undefined)
             a.dropdown-toggle(href='#', data-toggle='dropdown')
               span 
@@ -204,6 +117,10 @@ script.
                 a(href='http://'+lanip+':3300/terminal', onclick="javascript:event.target.port=3300")
                   i.fas.fa-terminal  
                   |   Terminal 
+              li
+                a(href='http://'+lanip+':3000/seed', onclick="javascript:event.target.port=3000")
+                  i.fas.fa-mask     
+                  |   View Seed
               li.divider
               li
                 a(href='https://blockforums.org', target='_blank') 

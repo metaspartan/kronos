@@ -5,10 +5,14 @@ html(dir="ltr", lang="en-US")
 		meta(http-equiv="content-type", content="text/html; charset=utf-8")
 		meta(name="author", content="Kronos")
 		link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/css/toastr.min.css')
+		link(rel='stylesheet', href='//stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css')
+		link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css')
+		link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css')
+		link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/rpg-awesome/0.2.0/css/rpg-awesome.min.css')
 		style.
 			/* style.css */	
 
-			@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap');
+			@import url('https://fonts.googleapis.com/css?family=Lato:100,200,400|Quicksand:300|Roboto:100,300|Open Sans:100,300|Poppins:100,200,400|Heebo:100,200,400|Ubuntu:100,300|Muli:100,300');
 					
 			*,
 			*::before,
@@ -18,11 +22,11 @@ html(dir="ltr", lang="en-US")
 
 			html {
 			background-color: #111;
-			font-family: 'Open Sans', sans-serif;
+			font-family: "Roboto", sans-serif;
 			}
 
 			body {
-			font-weight: 500;
+			font-weight: 200;
 			-webkit-font-smoothing: antialiased;
 			-moz-osx-font-smoothing: grayscale;
 			text-rendering: optimizeLegibility;
@@ -39,7 +43,7 @@ html(dir="ltr", lang="en-US")
 			}
 
 			a {
-			font-size: 0.98em;
+			font-size: 0.99em;
 			color: #8a97a0;
 			text-decoration: none;
 			}
@@ -113,23 +117,41 @@ html(dir="ltr", lang="en-US")
 			margin-bottom: 0px;
 			}
 	body
-		.container(style='margin-top:50px !important;margin:0;padding:0;', align='center')
-			img(src="https://user-images.githubusercontent.com/10162347/85637883-9fe5fa00-b641-11ea-9f4b-22901d7911c4.png", height="140px", width="151px", align="center")
-		.container(style='margin-top:20px !important;margin:0;padding:0;width:80%;', align='center')
-			.row
-				.col-md-6
-					form(action="/selectkronos" method="post")
-						.form-content
-							input.button(style='background-color: #444;', type="submit" value="Kronos Only")
-				.col-md-6
-					form(action="/selectdenarius" method="post")
-						.form-content
-							input.button(style='background-color: #444;', type="submit" value="Denarius Node")
-				br
-				span(style='color:#666;')
-					| Step 1 of 3 in Setup
+		.container(style='margin-top:50px !important;margin:0 auto;padding:0;', align='center')
+			img(src="https://user-images.githubusercontent.com/10162347/93844293-ed323180-fc59-11ea-9331-9f8ac37f797c.png", height="200px", width="200px", align="center")
+		.start(style='background-color:#333;border-radius:15px;width:95%;padding:30px;margin: 0 auto;margin-top: 45px; ')
+			h1(style='font-family: "Lato", sans-serif; font-size:34px; font-weight:100;') SELECT YOUR MODE
+			.row(style='background-color:#333; margin:0 auto; width:100%;' align='center')
+				.col-md-4
+					.modes(style='padding:30px;background-color:#222;border-radius:15px;')
+						p
+							i.ra.ra-level-two.fa-5x(style='color:#777;')
+						span(style='color:#999;font-family: "Roboto", sans-serif;font-weight:300;') Start Kronos in "Simple Mode", A standalone mode of Kronos that runs Kronos by itself, leveraging ElectrumX technology. For those that are new to cryptocurrency!
+						p
+							br
+							a.btn.button(href='/simplesetup', style='background-color: #444;border-radius:15px;color:#eee;width:100%;') Simple Mode
+						.span(style='background-color:#00ad00;width:30%;padding:5px;border-radius:15px;color:#FFF;') Beginner
+				.col-md-4
+					.modes(style='padding:30px;background-color:#222;border-radius:15px;opacity:0.3;')
+						p
+							i.ra.ra-level-two-advanced.fa-5x(style='color:#777;')
+						span(style='color:#999;font-family: "Roboto", sans-serif;font-weight:300;') Start Kronos in "Hybrid Mode", A standalone mode of Kronos that runs Kronos with denariusd inside, doing all the configuration of advanced mode for you.
+						p
+							br
+							a.btn.button(style='background-color: #444;border-radius:15px;color:#eee;' disabled) Hybrid Mode
+						.span(style='background-color:#c1a400;width:50%;padding:5px;border-radius:15px;color:#FFF;') Intermediate
+				.col-md-4
+					.modes(style='padding:30px;background-color:#222;border-radius:15px;')
+						p
+							i.ra.ra-level-three-advanced.fa-5x(style='color:#777;')
+						span(style='color:#999;font-family: "Roboto", sans-serif;font-weight:300;') Start Kronos in "Advanced Mode", An advanced mode of Kronos that runs Kronos and provides the ability to configure a RPC connection to Denarius.
+						p
+							br
+							a.btn.button(href='/setup', style='background-color: #444;border-radius:15px;color:#eee;') Advanced Mode
+						.span(style='background-color:#b53900;width:80%;padding:5px;border-radius:15px;color:#FFF;') Expert
 		script(src='/js/lib/jquery-3.1.1.min.js')
 		script(src='//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/js/toastr.min.js')
+		script(src='//stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js')
 		script(src='//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/js/all.min.js')
 
 		!=toasts

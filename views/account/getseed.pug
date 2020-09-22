@@ -1,4 +1,4 @@
-extends ../layout
+extends ../layoutsimple
 
 block content
   script.
@@ -22,7 +22,7 @@ block content
       .titlesmall(align='center') Your Denarius seed phrase, this is your BIP39 Seed Phrase compatible with any BIP39 wallet.
     p
       .balancebig(align='center') Balance: 
-        strong #{balance} D
+        strong #{totalbal} D
     div.rowclass(style='font-weight:400;font-size:14px;padding:30px;background-color:#222;margin:15px;border-radius:15px;', align='center')
       h3 BIP39 Seed Phrase
       if (seedphrase)

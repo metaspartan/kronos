@@ -1,4 +1,4 @@
-//- setup.pug
+//- simple.pug
 
 doctype html
 html(dir="ltr", lang="en-US")
@@ -7,6 +7,7 @@ html(dir="ltr", lang="en-US")
 		meta(name="author", content="Kronos")
 		link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/css/toastr.min.css')
 		link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css')
+		link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css')
 		style.
 			/* style.css */	
 
@@ -67,7 +68,7 @@ html(dir="ltr", lang="en-US")
 			background-color: #fff;
 			padding: 2em;
 			border-radius: 8px;
-			max-width: 400px;
+			max-width: 600px;
 			display: flex;
 			flex-wrap: wrap;
 			flex-direction: column;
@@ -114,30 +115,35 @@ html(dir="ltr", lang="en-US")
 			padding: 1em;
 			margin-bottom: 0px;
 			}
+
+			.fa-sync {
+				cursor: pointer;
+			}
 	body
 		.container(style='margin-top:50px !important;margin:0;padding:0;', align='center')
 			img(src="https://user-images.githubusercontent.com/10162347/93844293-ed323180-fc59-11ea-9331-9f8ac37f797c.png", height="200px", width="200px", align="center")
 		.container(style='margin-top:20px !important;margin:0;padding:0;', align='center')
-			form(action="/setup" method="post")
+			form(action="/simplesetup" method="post")
 				.form-content
 					span(style='color:#ccc;')
-						| Denarius Node Configuration
+						| Simple Mode Setup
 					br
-					span(style='color:#777;font-size:11px;')
-						| Enter your Denarius Node RPC Details that you want to use with Kronos, You can obtain these details from your denarius.conf
+					span(style='color:#777;font-size:12px;')
+						| Below is your BIP39 Generated 24 Word Seed "Phrase", Ensure that you write these words down and save it somewhere safe. Your Kronos wallet will be derived from this phrase along with the password you use on the next page.
 					br
 					br
-					input(type="text" id="HOST" name="HOST" placeholder="127.0.0.1")
-					input(type="text" id="PORT" name="PORT" placeholder="32369")
-					input(type="text" id="USER" name="USER" placeholder="rpcuser")
-					input(type="password" id="PASS" name="PASS" placeholder="rpcpassword")
+					a(onClick="window.location.reload();", style="color:#777;")
+						i.fas.fa-sync.fa-2x
 					br
-					input.button(style='background-color: #444;', type="submit" value="Connect to Denarius")
+					input(type="hidden" id="SEED" name="SEED" value=seedphrase)
+					p.animate__animated.animate__fadeIn(style='background-color:#000;color:#FFF;padding:20px;border-radius:15px;font-size:21px;') #{seedphrase}
+					br
+					input.button(style='background-color: #444;', type="submit" value="Next Step")
 				br
 				span(style='color:#666;')
 					a(onclick='window.history.back()', style='color:#666;cursor: pointer;')
 							i.fas.fa-arrow-left
-					|   Step 1 of 2 in Advanced Setup
+					|   Step 1 of 2 in Simple Mode Setup
 		script(src='/js/lib/jquery-3.1.1.min.js')
 		script(src='//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/js/toastr.min.js')
 		script(src='//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/js/all.min.js')

@@ -1,0 +1,311 @@
+extends ../layoutsimple
+
+block content
+  script(src='../js/lib/jquery-3.1.1.min.js') 
+  script(src='../js/jquery.sparkline.min.js')
+  script.
+    socket.on('cpuspeed', function (data) {
+      // console.log(data);
+      $('#avg').html(data.avg);
+    });
+    socket.on('newblock', function (data) {
+      //console.log('SOCKET GOT NEW BLOCK', data);
+      if (!data.block[0] && !data.error) {
+        var height = data.block.height;
+        var hexhash = data.block.hex.toString();
+        //$('#blockheight').html(height);
+        $('#blockhash').html('<a href="/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;">BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
+        $('#link').html('<span class="blockcount"><a href="/block/'+height+'">'+height+'</a></span>'); 
+
+      } else {
+        var height = data.block[0].height;
+        var hexhash = data.block[0].hex.toString();
+        //$('#blockheight').html(height);
+        $('#blockhash').html('<a href="/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;">BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
+        $('#link').html('<span class="blockcount"><a href="/block/'+height+'">'+height+'</a>'); 
+
+      }
+    });
+    socket.on('temp', function (data) {
+      // console.log(data);
+      $('#temp').html(data.temp);
+    });
+    socket.on('seed', function (data) {
+      // console.log(data);
+      $('#addresses').html(data.seedaddresses);
+    });
+    socket.on('osinfo', function (data) {
+      // console.log(data);
+      $('#osname').html(data.osname);
+      $('#kernel').html(data.kernel);
+      $('#platform').html(data.platform);
+      $('#release').html(data.release);
+      $('#hostname').html(data.hostname);
+      $('#arch').html(data.arch);
+    });
+    socket.on('usdinfo', function (data) {
+      // console.log(data);
+      $('#balance').html(data.dbalance.toFixed(8));
+      $('#unbalance').html(data.unbal.toFixed(8));
+      $('#usdbalance').html(data.usdbalance.toFixed(2));
+      $('#currentprice').html(data.currentprice.toFixed(2));
+    });
+    let progcpu = [];
+
+    progcpu.push(0);
+    socket.on('cpuload', function (data1) {
+      //console.log(data1.cpu);
+      //$('#cpu').html(data.cpu);
+      //$('#cpu').data('value',data1.cpu);
+      ldbar1 = new ldBar("#cpuy", {
+                    "stroke-width": 8,
+                    "preset": "circle",
+                    "pattern-size": "32",
+                    "stroke": "../img/maze.svg",
+                    "stroke-linecap": "round"
+                    });
+      ldbar1.set(data1.cpu.toFixed(2) * 100, true);
+
+      var progresscpu2 = data1.cpu.toFixed(2) * 100;
+      var progresscpu = progresscpu2.toFixed(2);
+
+      progcpu.push(progresscpu);
+
+      $('.cpumini').sparkline(progcpu, {
+                type: 'line',
+                width: '93%',
+                height: '20px',
+                disableTooltips: 'true',
+                highlightLineColor: '#ffff00',
+                highlightSpotColor: '#ffff00',
+                disableInteraction: 'true',
+                spotColor: '#ffff00',
+                lineColor: '#ffff00',
+                fillColor: '#303030'});
+
+      $('#avgload').html(progresscpu);
+
+    });
+    let progarray = [];
+
+    progarray.push(0);
+    socket.on('memory', function (data2) {
+      //console.log(data2.mempp);
+      //$('.ldBar').attr('data-value', data2.mempp.toFixed(2) * 100);
+    
+      ldbar = new ldBar("#rammy", {
+                    "stroke-width": 8,
+                    "preset": "circle",
+                    "pattern-size": "32",
+                    "stroke": "../img/maze.svg",
+                    "stroke-linecap": "round"
+                    });
+      ldbar.set(data2.mempp.toFixed(2) * 100, true);
+
+      var progressmem2 = data2.mempp.toFixed(2) * 100;
+      var progressmem = progressmem2.toFixed(2);
+
+      progarray.push(progressmem);
+
+      $('.memini').sparkline(progarray, {
+                type: 'line',
+                width: '93%',
+                height: '20px',
+                lineColor: '#ffff00',
+                highlightLineColor: '#ffff00',
+                highlightSpotColor: '#ffff00',
+                disableInteraction: 'true',
+                spotColor: '#ffff00',
+                fillColor: '#303030'});
+
+      $('#memu').html(data2.memu);
+      $('#memt').html(data2.memt);
+      $('#memf').html(data2.memf);
+      //$('#rammy').html("data-value=" + data2.mempp.toFixed(2) + "")
+    });
+    //console.log(progarray);
+  script. 
+    function confirmedu() {
+      $('#sendunlock').submit();
+    }
+    function confirmedus() {
+      $('#sendunlocks').submit();
+    }
+    function confirmedl() {
+      $('#sendlock').submit();
+    }
+    function confirmede() {
+      $('#sendencrypt').submit();
+    }
+    function displayus() {
+      var y = document.getElementById("DisplayModalUnlock");
+      y.style.display = "none";      
+    }
+    function toggl() {
+      var x = document.getElementById("pkey");
+      var y = document.getElementById("reveal");
+      if (x.style.display === "none") {
+        x.style.display = "block";
+        y.style.display = "none";
+      } else {
+        x.style.display = "none";
+      }
+    }
+  //- #notify
+  .maincontent(style='border: none !important;')
+    .container(style='width:90%')
+      //- .div(style='margin-top:25px;')
+      //-   form.form-horizontal(action='/search', method='POST', id='explorer')
+      //-     input(type='hidden', name='_csrf', value=_csrf)
+      //-     input.form-control.blackinput4(type='text', align='center', name='explorersearch', id='explorersearch', placeholder='Search Kronos for Denarius Block # or Transaction Hash or D Address')
+      .row.mobilerow(style='margin-top:9px;')
+        .col-md-4(align='left', style='margin-top:40px;')
+          .row
+            .col-xs-1(align='right')
+              span(style='color:#444;') RAM
+            .col-xs-11(align='left')
+              .memini
+          .row
+            .col-xs-1(align='right')
+              span(style='color:#444;') CPU
+            .col-xs-11(align='left')
+              .cpumini
+        .col-md-4.mobilerow2(align='center')
+          h3(align='center', style='margin:35px;').animate__animated.animate__bounce
+            | Everything is 
+            span(style='color: #42B905;') Great!
+            br
+            span.mobilerow2(style='font-size:12px;color:#999;') KRONOS IS CONNECTED
+        .col-md-4(style='margin-top:35px;')
+          p(align='center')
+            span.animate__animated.animate__fadeIn#link
+            br
+            span.animate__animated.animate__fadeIn#blockhash(style='margin-bottom:10px;')
+            br
+      .row(class='rowclass balancerow').animate__animated.animate__fadeIn
+        .col-sm-6
+          h3(style='font-size:48px;color: #393939;margin-top:0px;') 
+            i.fas.fa-wallet 
+            |  Balance
+          p 
+          .bal(style='font-size:2.5em;') 
+            span#balance
+            small(style='font-size:16px;')  D
+          p
+          .bal(style='font-size:1.6em;color:#888;') $
+            span#usdbalance
+            small(style='font-size:16px;')  USD @ $
+              span#currentprice
+              |  ea
+        .col-sm-3
+          h3(style='font-weight:light;font-size:28px;color: #393939;margin-top:15px;') Unconfirmed
+          p 
+          .bal(style='font-size:1.7em;')
+            span#unbalance
+            small(style='font-size:16px;')  D
+      .divider(style='background-color:#2b2b2b !important;height:2px;width:60%;margin:0 auto;', align='center')
+      .row(class='rowclass').animate__animated.animate__fadeIn
+        .row
+          .col-md-4
+            .qrcode(align='center')
+                a(href='#' + seedphrase[0].seedaddresses[0].address)
+                  img(src='' + qrcode, style='border-radius:10px;')
+          .col-md-8
+            .bal(style='font-size:1.9vw;font-weight:100;text-align:center;margin-top:5vh;', align='center') #{seedphrase[0].seedaddresses[0].address}
+      .divider(style='background-color:#2b2b2b !important;height:2px;width:60%;margin:0 auto;', align='center')
+      .row(class='rowclass').animate__animated.animate__fadeIn
+        h3(style='font-size:48px;color: #393939;margin-top:0px;') 
+              i.fas.fa-history  
+              |  Transaction History
+        br
+        if (balancearray[0].txs[0].p2pkhtxs)
+          .row(style='color:#eee;margin:5px !important;padding:20px;border-radius:5px;') 
+            .col-md-3(align='center', style='margin-top:5px;')
+              p(style='font-size:21px;') Block Height
+            .col-md-9(align='center', style='margin-top:5px;')
+              p(style='font-size:21px;') Transaction ID
+          each bal in balancearray
+            each tx_hash in bal.txs
+              each p2pkhtx in tx_hash.p2pkhtxs
+                .txbg(style='color:#eee;margin:5px;padding:20px;border-radius:5px;')
+                  .row
+                    .col-md-3(align='center', style='margin-top:5px;')
+                      p 
+                        a(href='#'+p2pkhtx.height, target='_blank') #{p2pkhtx.height}
+                    .col-md-9(align='center', style='margin-top:5px;')
+                      p.hashm 
+                        a(href='#'+p2pkhtx.tx_hash, target='_blank') #{p2pkhtx.tx_hash}
+              each p2pktx in tx_hash.p2pktxs
+                .txbg(style='color:#eee;margin:5px;padding:20px;border-radius:5px;')
+                  .row
+                    .col-md-3(align='center', style='margin-top:5px;')
+                      p 
+                        a(href='#'+p2pktx.height, target='_blank') #{p2pktx.height}
+                    .col-md-9(align='center', style='margin-top:5px;')
+                      p.hashm 
+                        a(href='#'+p2pktx.tx_hash, target='_blank') #{p2pktx.tx_hash}
+        else
+          h1(style='color:#666;', align='center') No Transactions Available
+      //- .divider(style='background-color:#2b2b2b !important;height:2px;width:60%;margin:0 auto;', align='center')
+      //- .row(class='rowclass').animate__animated.animate__fadeIn
+      //-   .col-sm-3
+      //-     p(align='center')
+      //-       img(src='../img/denarius.png', height='128px;', align='center')
+      .divider(style='background-color:#2b2b2b !important;height:2px;width:60%;margin:0 auto;', align='center')
+      .row(class='rowclass', style='margin-bottom:50px;').animate__animated.animate__fadeIn
+        h3(style='font-weight:light;font-size:48px;color: #393939;margin-top:0px;margin-bottom:30px;') 
+          i.fas.fa-microchip 
+          |  System Info
+        .col-sm-6
+          p LAN IP: 
+            span#lanip(data-value=lanip) #{lanip}
+          p Core Clock Speed: 
+            span#avg
+            |  GHz - CPU Load: 
+            span#avgload 
+            | %
+          p CPU Tempature: 
+            span#temp 
+            |  °C
+          p Memory Usage:  
+            span#memu
+            |  GB Used / 
+            span#memf
+            |  GB Free / 
+            span#memt 
+            |  GB Total
+          p Architecture: 
+            span #{arch}
+          #ram(data-value=mempp)
+          #cpu(data-value=cpu)
+        .col-sm-4
+          p OS Name: 
+            span #{osname}
+          p Platform: 
+            span #{platform}
+          p Release: 
+            span #{release}
+          p Kernel: 
+            span #{kernel}
+          p Hostname: 
+            span #{hostname}
+        .col-sm-2
+          .row
+            .col-xs-12(align='center')
+              span(style='color:#444;') RAM Usage
+            .col-xs-12(align='left')
+              .memini
+          .row
+            .col-xs-12(align='center')
+              span(style='color:#444;') CPU Usage
+            .col-xs-12(align='left')
+              .cpumini
+      .row
+        .col-md-12
+          .row
+            .col-sm-6(align='center')
+              #rammy.label-center(style='width:250px;height:250px;')
+              span(style='color:#777;') RAM Usage
+            .col-sm-6(align='center')              
+              #cpuy.label-center(style='width:250px;height:250px;')
+              span(style='color:#777;') CPU Usage

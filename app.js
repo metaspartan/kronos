@@ -239,6 +239,7 @@ dotenv.config({ path: '.env' });
 const kronosController = require('./controllers/kronos');
 const authController = require('./controllers/auth');
 const dashController = require('./controllers/dashboard');
+const sDashController = require('./controllers/simple/dashboard');
 const toolsController = require('./controllers/tools');
 const walletController = require('./controllers/wallet');
 const explorerController = require('./controllers/explorer');
@@ -450,6 +451,14 @@ app.get('/autht', auth, Limiter, authController.autht);
 app.get('/authk', auth, Limiter, authController.authk);
 app.get('/logout', authController.logout);
 
+//Simple Mode
+app.get('/simplesetup', authController.getsimple);
+app.post('/simplesetup', Limiter, authController.simple);
+app.get('/dashsimple', auth, sDashController.simpleindex);
+
+//Advanced Mode
+app.get('/setup', authController.getsetup);
+
 //POST Auth Routes
 app.post('/login', Limiter, authController.postlogin);
 app.post('/create', Limiter, authController.create);
@@ -457,6 +466,7 @@ app.post('/setup', Limiter, authController.setup);
 app.post('/auth', auth, Limiter, authController.postAuth);
 app.post('/autht', auth, Limiter, authController.postAutht);
 app.post('/authk', auth, Limiter, authController.postAuthk);
+
 
 //POST Routes for kronosController
 app.post('/unlock', auth, kronosController.unlock);
