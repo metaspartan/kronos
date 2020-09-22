@@ -1,7 +1,7 @@
 # Kronos
-#### Denarius Dashboard and AIO Interface
+#### Denarius Dashboard and AIO Wallet Interface
 =======================
-![Kronos Logo](https://user-images.githubusercontent.com/10162347/85915874-88a53900-b808-11ea-9a0f-1b68b7a2e61e.png)
+![Kronos Logo](https://user-images.githubusercontent.com/10162347/93870495-8bd68680-fc8a-11ea-85f7-a5ca7b52d1ba.png)
 
 [![Build Status](https://travis-ci.org/carsenk/kronos.svg?branch=master)](https://travis-ci.org/carsenk/kronos) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/carsenk/kronos) [![Dependency Status](https://david-dm.org/carsenk/kronos/status.svg?style=flat)](https://david-dm.org/carsenk/kronos) [![devDependencies Status](https://david-dm.org/carsenk/kronos/dev-status.svg)](https://david-dm.org/carsenk/kronos?type=dev) [![Join the chat at https://discord.gg/UPpQy3n](https://img.shields.io/badge/Discord-Chat-blue.svg?logo=discord)](https://discord.gg/UPpQy3n)
 
@@ -16,6 +16,8 @@ Kronos - A secondary layer NodeJS/Socket.io/Express/Electron/Denarius powered We
 Send and Receive Funds, Create new addresses, View Transactions, Unlock/Lock Wallet, Stake D, Reboot your node, Import Private Keys, View Private Keys, Encrypt your wallet, Broadcast raw transactions, Sign and Verify Denarius messages, and much more!
 
 As of v1.5.0 Beta of Kronos it is now built with Electron for Windows, macOS, and Linux as an AIO app to use alongside a Denarius node.
+
+As of v1.5.5 Beta of Kronos it now features multi modes "Simple" which only relays on ElectrumX SPV Servers and a more "Advanced" mode where you can configure the RPC details to your Denarius node.
 
 This was built for the Raspberry Pi in mind and one with at least 2GB of RAM. 4GB and 8GB models are recommended! Kronos will run on any Linux distro with a minimal amount of 2GB of RAM.
 
