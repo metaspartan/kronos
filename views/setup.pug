@@ -115,9 +115,9 @@ html(dir="ltr", lang="en-US")
 			margin-bottom: 0px;
 			}
 	body
-		.container(style='margin-top:50px !important;margin:0;padding:0;', align='center')
+		.container(style='margin-top:18px !important;margin:0;padding:0;', align='center')
 			img(src="https://user-images.githubusercontent.com/10162347/93844293-ed323180-fc59-11ea-9331-9f8ac37f797c.png", height="200px", width="200px", align="center")
-		.container(style='margin-top:20px !important;margin:0;padding:0;', align='center')
+		.container(style='margin-top:8px !important;margin:0;padding:0;', align='center')
 			form(action="/setup" method="post")
 				.form-content
 					span(style='color:#ccc;')
@@ -135,9 +135,10 @@ html(dir="ltr", lang="en-US")
 					input.button(style='background-color: #444;', type="submit" value="Connect to Denarius")
 				br
 				span(style='color:#666;')
-					a(onclick='window.history.back()', style='color:#666;cursor: pointer;')
-							i.fas.fa-arrow-left
-					|   Step 1 of 2 in Advanced Setup
+					| Step 1 of 2 in Advanced Setup
+		span(style='color:#333;bottom:0;left:0;position:absolute;')
+			a(onclick='window.history.back()', style='color:#666;cursor: pointer;')
+					i.fas.fa-arrow-left.fa-3x
 		script(src='/js/lib/jquery-3.1.1.min.js')
 		script(src='//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/js/toastr.min.js')
 		script(src='//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/js/all.min.js')

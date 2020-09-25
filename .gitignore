@@ -16,6 +16,7 @@ kronosleveldb
 data
 out
 package-lock.json
+.env
 
 # Dependency directory
 node_modules

@@ -109,14 +109,14 @@
         {
           "name": "@electron-forge/publisher-github",
           "config": {
-            "repository": {
-              "owner": "carsenk",
-              "name": "kronos"
-            },
             "prerelease": false
           }
         }
       ],
+      "github_repository": {
+        "owner": "carsenk",
+        "name": "kronos"
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
