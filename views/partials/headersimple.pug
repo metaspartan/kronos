@@ -41,52 +41,52 @@ script.
             a(href='http://'+lanip+':3000/dashsimple', onclick="javascript:event.target.port=3000") 
               i.fas.fa-tachometer-alt  
               |   Dashboard
-          li.dropdown(class=(title == 'Wallet') ? 'active' : undefined)
-            a.dropdown-toggle(href='#', data-toggle='dropdown')
-              span 
-              i.fa.fa-wallet  
-              |   Wallet
-              i.caret
-            ul.dropdown-menu
-              li
-                a(href='http://'+lanip+':3000/transactions', onclick="javascript:event.target.port=3000") 
-                  i.fas.fa-exchange-alt  
-                  |   Transactions
-              li.divider
-              li
-                a(href='http://'+lanip+':3000/addresses', onclick="javascript:event.target.port=3000") 
-                  i.fas.fa-at  
-                  |   Addresses
-              li.divider
-              li
-                a(href='http://'+lanip+':3000/backup', onclick="javascript:event.target.port=3000") 
-                  i.fas.fa-server  
-                  |   Backup Wallet
-              li.divider(style=sendicon)
-              li(style=sendicon)
-                a(href='http://'+lanip+':3000/import', onclick="javascript:event.target.port=3000") 
-                  i.fas.fa-key   
-                  |   Import a private key
-          li.dropdown(class=(title == 'Tools') ? 'active' : undefined)
-            a.dropdown-toggle(href='#', data-toggle='dropdown')
-              span 
-              i.fas.fa-tools  
-              |   Tools 
-              i.caret
-            ul.dropdown-menu
-              li(style=sendicon)
-                a(href='http://'+lanip+':3000/rawtx', onclick="javascript:event.target.port=3000") 
-                  i.far.fa-paper-plane  
-                  |   Send Raw Transaction
-              li.divider
-              li
-                a(href='http://'+lanip+':3000/genmini', onclick="javascript:event.target.port=3000") 
-                  i.fas.fa-plus   
-                  |   Generate Minikey
-              li
-                a(href='http://'+lanip+':3000/convertmini', onclick="javascript:event.target.port=3000") 
-                  i.fas.fa-sync-alt    
-                  |   Convert Minikey
+          //- li.dropdown(class=(title == 'Wallet') ? 'active' : undefined)
+          //-   a.dropdown-toggle(href='#', data-toggle='dropdown')
+          //-     span 
+          //-     i.fa.fa-wallet  
+          //-     |   Wallet
+          //-     i.caret
+          //-   ul.dropdown-menu
+          //-     li
+          //-       a(href='http://'+lanip+':3000/transactions', onclick="javascript:event.target.port=3000") 
+          //-         i.fas.fa-exchange-alt  
+          //-         |   Transactions
+          //-     li.divider
+          //-     li
+          //-       a(href='http://'+lanip+':3000/addresses', onclick="javascript:event.target.port=3000") 
+          //-         i.fas.fa-at  
+          //-         |   Addresses
+          //-     li.divider
+          //-     li
+          //-       a(href='http://'+lanip+':3000/backup', onclick="javascript:event.target.port=3000") 
+          //-         i.fas.fa-server  
+          //-         |   Backup Wallet
+              //- li.divider(style=sendicon)
+              //- li(style=sendicon)
+              //-   a(href='http://'+lanip+':3000/import', onclick="javascript:event.target.port=3000") 
+              //-     i.fas.fa-key   
+              //-     |   Import a private key
+          //- li.dropdown(class=(title == 'Tools') ? 'active' : undefined)
+          //-   a.dropdown-toggle(href='#', data-toggle='dropdown')
+          //-     span 
+          //-     i.fas.fa-tools  
+          //-     |   Tools 
+          //-     i.caret
+            //- ul.dropdown-menu
+              //- li(style=sendicon)
+              //-   a(href='http://'+lanip+':3000/rawtx', onclick="javascript:event.target.port=3000") 
+              //-     i.far.fa-paper-plane  
+              //-     |   Send Raw Transaction
+              //- li.divider
+              //- li
+              //-   a(href='http://'+lanip+':3000/genmini', onclick="javascript:event.target.port=3000") 
+              //-     i.fas.fa-plus   
+              //-     |   Generate Minikey
+              //- li
+              //-   a(href='http://'+lanip+':3000/convertmini', onclick="javascript:event.target.port=3000") 
+              //-     i.fas.fa-sync-alt    
+              //-     |   Convert Minikey
           li
             a(href='#', style='font-size:14px;color:#FFF;background-color: rgba(0, 0, 0, 0.2);') #{totalbal} D
           li
@@ -98,25 +98,25 @@ script.
                   i.fas.fa-coins  
                   |  #{staketoggle}
       ul.nav.navbar-nav.navbar-right
-          li(style=sendicon,class=(title == 'Send D') ? 'active' : undefined)
-            a(href='http://'+lanip+':3000/withdraw')
-              i.fa.fa-paper-plane 
-              |   SEND
+          //- li(style=sendicon,class=(title == 'Send D') ? 'active' : undefined)
+          //-   a(href='http://'+lanip+':3000/withdraw')
+          //-     i.fa.fa-paper-plane 
+          //-     |   SEND
           li.dropdown(class=(title == 'Community') ? 'active' : undefined)
             a.dropdown-toggle(href='#', data-toggle='dropdown')
               span 
                 i.fas.fa-cog
               i.caret
             ul.dropdown-menu
-              li
-                a(href='http://'+lanip+':3000/settings', onclick="javascript:event.target.port=3000")
-                  i.fas.fa-wrench  
-                  |    Settings
-              li.divider
-              li
-                a(href='http://'+lanip+':3300/terminal', onclick="javascript:event.target.port=3300")
-                  i.fas.fa-terminal  
-                  |   Terminal 
+              //- li
+              //-   a(href='http://'+lanip+':3000/settings', onclick="javascript:event.target.port=3000")
+              //-     i.fas.fa-wrench  
+              //-     |    Settings
+              //- li.divider
+              //- li
+              //-   a(href='http://'+lanip+':3300/terminal', onclick="javascript:event.target.port=3300")
+              //-     i.fas.fa-terminal  
+              //-     |   Terminal 
               li
                 a(href='http://'+lanip+':3000/seed', onclick="javascript:event.target.port=3000")
                   i.fas.fa-mask     
