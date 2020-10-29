@@ -17,8 +17,8 @@ html
     link(rel='stylesheet', href='/css/loading-bar.min.css')
     script(src='/js/pace.min.js')
     script(src='/js/loading-bar.min.js')
-    script(src='/js/lib/jquery-3.1.1.min.js') 
-    script(src='/js/jquery.sparkline.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js') 
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js')
 
   body
     script.
@@ -34,24 +34,23 @@ html
 
     include partials/footer
 
-    script(src='/js/lib/jquery-3.1.1.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js')
     script(src='//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/js/toastr.min.js')
     script(src='//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/js/all.min.js')
     script(src='/js/lib/bootstrap.min.js')
     script(src='/js/lib/bootstrap-toggle.min.js')
     script(src='/js/progressbar.min.js')
-    script(src='/js/main.js')
     script(src='/js/sorttable.js')
-    script(src='/js/jquery.sparkline.min.js')
-    script.
-      window.nodeRequire = require;
-      delete window.require;
-      delete window.exports;
-      delete window.module;
-      $('body').on('click', 'a.external', (event) => {
-        event.preventDefault();
-        let link = event.target.href;
-        require("electron").shell.openExternal(link);
-      });
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js')
+    //- script.
+    //-   window.nodeRequire = require;
+    //-   delete window.require;
+    //-   delete window.exports;
+    //-   delete window.module;
+    //-   $('body').on('click', 'a.external', (event) => {
+    //-     event.preventDefault();
+    //-     let link = event.target.href;
+    //-     require("electron").shell.openExternal(link);
+    //-   });
 
     !=toasts

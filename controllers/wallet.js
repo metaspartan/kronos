@@ -11,7 +11,7 @@
 'use esversion:6';
 
 const bitcoin = require('bitcoin');
-const WAValidator = require('wallet-address-validator');
+const WAValidator = require('wallet-address-validatord');
 const QRCode = require('qrcode');
 const unirest = require('unirest');
 const toastr = require('express-toastr');

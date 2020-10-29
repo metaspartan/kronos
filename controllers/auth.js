@@ -12,7 +12,7 @@
 /* eslint-disable no-mixed-spaces-and-tabs */
 const si = require('systeminformation');
 const bitcoin = require('bitcoin');
-const WAValidator = require('wallet-address-validator');
+const WAValidator = require('wallet-address-validatord');
 const QRCode = require('qrcode');
 const unirest = require('unirest');
 const ProgressBar = require('progressbar.js');
@@ -367,6 +367,10 @@ exports.create = (request, response) => {
 						console.log('Encrypted Password to DB');
 					});
 
+					Storage.set('created', createdinfo);
+					Storage.set('username', encrypteduser);
+					Storage.set('password', encryptedpass);
+
 					// var mnemonic;
 					// // Fetch the Kronos LevelDB Seedphrase
 					// db.get('seedphrase', function (err, value) {
@@ -444,6 +448,8 @@ exports.simple = (request, response) => {
 									if (err) return console.log('Ooops!', err) // some kind of I/O error if so
 									console.log('Encrypted Seed Phrase to DB');
 								});
+
+								Storage.set('seed', encryptedseed);
 
 							} else {
 								var decryptedmnemonic = decrypt(value);
@@ -607,7 +613,7 @@ exports.postAuth = (request, response) => {
 							request.session.loggedin2 = true;
 							request.session.username = username;
 							request.toastr.success('Authed Kronos', 'Success!', { positionClass: 'toast-bottom-right' });
-							response.redirect('/seed');
+							response.redirect('/sseed');
 							response.end();
 						} else {
 							//response.send('Incorrect Username and/or Password!');

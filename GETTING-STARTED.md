@@ -1,5 +1,6 @@
 # KRONOS GETTING STARTED
 
+Kronos creates a /data and a /kronosleveldb folder directories for storing your data and local databases. If you wish to start fresh with Kronos and get back to the selection screen, simply delete these folders after shutting down Kronos and then reboot it.
 
 KRONOS HEADLESS MODE:
 -----------------

@@ -1,12 +1,13 @@
 extends ../layoutsimple
 
 block content
-  script(src='../js/lib/jquery-3.1.1.min.js') 
-  script(src='../js/jquery.sparkline.min.js')
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js') 
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js')
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js")
   script.
-    socket.on('cpuspeed', function (data) {
+    socket.on('cpuspeed', function (data99) {
       // console.log(data);
-      $('#avg').html(data.avg);
+      $('#avg').html(data99.avg);
     });
     socket.on('newblock', function (data) {
       //console.log('SOCKET GOT NEW BLOCK', data);
@@ -26,37 +27,24 @@ block content
 
       }
     });
-    socket.on('temp', function (data) {
+    socket.on('temp', function (data3) {
       // console.log(data);
-      $('#temp').html(data.temp);
+      $('#temp').html(data3.temp);
     });
-    socket.on('seed', function (data) {
-      // console.log(data);
-      $('#addresses').html(data.seedaddresses);
-    });
-    socket.on('osinfo', function (data) {
-      // console.log(data);
-      $('#osname').html(data.osname);
-      $('#kernel').html(data.kernel);
-      $('#platform').html(data.platform);
-      $('#release').html(data.release);
-      $('#hostname').html(data.hostname);
-      $('#arch').html(data.arch);
-    });
-    socket.on('usdinfo', function (data) {
-      // console.log(data);
-      $('#balance').html(data.dbalance.toFixed(8));
-      $('#unbalance').html(data.unbal.toFixed(8));
-      $('#usdbalance').html(data.usdbalance.toFixed(2));
-      $('#currentprice').html(data.currentprice.toFixed(2));
-    });
+    //- socket.on('seed', function (data) {
+    //-   // console.log(data);
+    //-   $('#addresses').html(data.seedaddresses);
+    //- });
+    //- socket.on('usdinfo', function (data) {
+    //-   // console.log(data);
+    //-   $('#balance').html(data.dbalance.toFixed(8));
+    //-   $('#unbalance').html(data.unbal.toFixed(8));
+    //-   $('#usdbalance').html(data.usdbalance.toFixed(2));
+    //-   $('#currentprice').html(data.currentprice.toFixed(2));
+    //- });
     let progcpu = [];
-
     progcpu.push(0);
     socket.on('cpuload', function (data1) {
-      //console.log(data1.cpu);
-      //$('#cpu').html(data.cpu);
-      //$('#cpu').data('value',data1.cpu);
       ldbar1 = new ldBar("#cpuy", {
                     "stroke-width": 8,
                     "preset": "circle",
@@ -87,12 +75,8 @@ block content
 
     });
     let progarray = [];
-
     progarray.push(0);
-    socket.on('memory', function (data2) {
-      //console.log(data2.mempp);
-      //$('.ldBar').attr('data-value', data2.mempp.toFixed(2) * 100);
-    
+    socket.on('memory', function (data2) {   
       ldbar = new ldBar("#rammy", {
                     "stroke-width": 8,
                     "preset": "circle",
@@ -117,41 +101,10 @@ block content
                 disableInteraction: 'true',
                 spotColor: '#ffff00',
                 fillColor: '#303030'});
-
       $('#memu').html(data2.memu);
       $('#memt').html(data2.memt);
       $('#memf').html(data2.memf);
-      //$('#rammy').html("data-value=" + data2.mempp.toFixed(2) + "")
     });
-    //console.log(progarray);
-  script. 
-    function confirmedu() {
-      $('#sendunlock').submit();
-    }
-    function confirmedus() {
-      $('#sendunlocks').submit();
-    }
-    function confirmedl() {
-      $('#sendlock').submit();
-    }
-    function confirmede() {
-      $('#sendencrypt').submit();
-    }
-    function displayus() {
-      var y = document.getElementById("DisplayModalUnlock");
-      y.style.display = "none";      
-    }
-    function toggl() {
-      var x = document.getElementById("pkey");
-      var y = document.getElementById("reveal");
-      if (x.style.display === "none") {
-        x.style.display = "block";
-        y.style.display = "none";
-      } else {
-        x.style.display = "none";
-      }
-    }
-  //- #notify
   .maincontent(style='border: none !important;')
     .container(style='width:90%')
       //- .div(style='margin-top:25px;')
@@ -183,69 +136,151 @@ block content
             span.animate__animated.animate__fadeIn#blockhash(style='margin-bottom:10px;')
             br
       .row(class='rowclass balancerow').animate__animated.animate__fadeIn
-        .col-sm-6
-          h3(style='font-size:48px;color: #393939;margin-top:0px;') 
-            i.fas.fa-wallet 
-            |  Balance
+        .col-sm-4(align='center')
+          p
+            img.res(src='../img/denarius.png', alt='D', border='0', style='height:75px !important;width: 75px !important;margin:0px 0px 0px !important;')
           p 
           .bal(style='font-size:2.5em;') 
-            span#balance
+            span #{totalbal}
             small(style='font-size:16px;')  D
           p
           .bal(style='font-size:1.6em;color:#888;') $
-            span#usdbalance
+            span #{usdbalance}
             small(style='font-size:16px;')  USD @ $
-              span#currentprice
+              span #{currentprice}
               |  ea
-        .col-sm-3
-          h3(style='font-weight:light;font-size:28px;color: #393939;margin-top:15px;') Unconfirmed
+        .col-sm-4(align='center')
+          p
+            img.res(src='../img/eth.png', alt='ETH', border='0', style='height:75px !important;width:75px !important;margin:0px 0px 0px !important;')
           p 
-          .bal(style='font-size:1.7em;')
-            span#unbalance
-            small(style='font-size:16px;')  D
+          .bal(style='font-size:2.5em;') 
+            span #{totalethbal}
+            small(style='font-size:16px;')  ETH
+          p
+          .bal(style='font-size:1.6em;color:#888;') $
+            span #{ethbalance}
+            small(style='font-size:16px;')  USD @ $
+              span #{currentethprice}
+              |  ea
+        .col-sm-4(align='center')
+          p
+            img.res(src='../img/ari.png', alt='ARI', border='0', style='height:75px !important;width:75px !important;margin:0px 0px 0px !important;')
+          p 
+          .bal(style='font-size:2.5em;') 
+            span #{totalaribal}
+            small(style='font-size:16px;')  ARI
+          p
+          .bal(style='font-size:1.6em;color:#888;') $
+            span #{aribalance}
+            small(style='font-size:16px;')  USD @ $
+              span #{currentariprice}
+              |  ea
       .divider(style='background-color:#2b2b2b !important;height:2px;width:60%;margin:0 auto;', align='center')
       .row(class='rowclass').animate__animated.animate__fadeIn
         .row
-          .col-md-4
+          .col-md-6
             .qrcode(align='center')
-                a(href='#' + seedphrase[0].seedaddresses[0].address)
+                a(href='#' + mainaddy)
                   img(src='' + qrcode, style='border-radius:10px;')
-          .col-md-8
-            .bal(style='font-size:1.9vw;font-weight:100;text-align:center;margin-top:5vh;', align='center') #{seedphrase[0].seedaddresses[0].address}
-      .divider(style='background-color:#2b2b2b !important;height:2px;width:60%;margin:0 auto;', align='center')
-      .row(class='rowclass').animate__animated.animate__fadeIn
-        h3(style='font-size:48px;color: #393939;margin-top:0px;') 
+            .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:5vh;', align='center') Denarius Address
+              p(style='background-color:#111;border-radius:15px;padding:10px;width:85%;margin:0 auto;margin-top:10px;') #{mainaddy}
+          .col-md-6
+            .qrcode(align='center')
+                a(href='#' + ethaddy)
+                  img(src='' + ethqrcode, style='border-radius:10px;')
+            .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:5vh;', align='center') ETH & ARI Address
+              p(style='background-color:#111;border-radius:15px;padding:10px;width:85%;margin:0 auto;margin-top:10px;') #{ethaddy}
+      .wrapper
+        nav.tabs
+          .selector
+          a.tab1.active(href='#')
+            img.res(src='../img/denarius.png', alt='D', border='0', style='height:32px !important;width: 32px !important;margin:0px 0px 0px !important;')
+            |  D Transaction History
+          a.tab2(href='#')
+            img.res(src='../img/eth.png', alt='ETH', border='0', style='height:32px !important;width: 32px !important;margin:0px 0px 0px !important;')
+            |  ETH Transaction History
+          a.tab3(href='#')
+            img.res(src='../img/ari.png', alt='ARI', border='0', style='height:32px !important;width: 32px !important;margin:0px 0px 0px !important;')
+            |  ARI Transaction History
+      .row(class='rowclass', style='padding-right: 20px !important;').animate__animated.animate__fadeIn#tab1
+        h3(style='font-size:48px;color: #393939;margin-top:0px;', align='center') 
               i.fas.fa-history  
-              |  Transaction History
-        br
-        if (balancearray[0].txs[0].p2pkhtxs)
-          .row(style='color:#eee;margin:5px !important;padding:20px;border-radius:5px;') 
-            .col-md-3(align='center', style='margin-top:5px;')
-              p(style='font-size:21px;') Block Height
-            .col-md-9(align='center', style='margin-top:5px;')
-              p(style='font-size:21px;') Transaction ID
-          each bal in balancearray
-            each tx_hash in bal.txs
-              each p2pkhtx in tx_hash.p2pkhtxs
-                .txbg(style='color:#eee;margin:5px;padding:20px;border-radius:5px;')
-                  .row
-                    .col-md-3(align='center', style='margin-top:5px;')
-                      p 
-                        a(href='#'+p2pkhtx.height, target='_blank') #{p2pkhtx.height}
-                    .col-md-9(align='center', style='margin-top:5px;')
-                      p.hashm 
-                        a(href='#'+p2pkhtx.tx_hash, target='_blank') #{p2pkhtx.tx_hash}
-              each p2pktx in tx_hash.p2pktxs
-                .txbg(style='color:#eee;margin:5px;padding:20px;border-radius:5px;')
-                  .row
-                    .col-md-3(align='center', style='margin-top:5px;')
-                      p 
-                        a(href='#'+p2pktx.height, target='_blank') #{p2pktx.height}
-                    .col-md-9(align='center', style='margin-top:5px;')
-                      p.hashm 
-                        a(href='#'+p2pktx.tx_hash, target='_blank') #{p2pktx.tx_hash}
+              |  Denarius (D) Transaction History
+        if (typeof balancearray != 'undefined')
+          .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;') 
+            table.sortable#fst
+              thead
+                tr
+                  th Block Height
+                  th TXID
+              tbody
+                each bal in balancearray
+                  each tx_hash in bal.txs
+                    each p2pkhtx in tx_hash.p2pkhtxs
+                      tr
+                        td(align='center') 
+                          a(href='#'+p2pkhtx.height, target='_blank') #{p2pkhtx.height}
+                        td(align='center') 
+                          a(href='#'+p2pkhtx.tx_hash, target='_blank') #{p2pkhtx.tx_hash}
+                    each p2pktx in tx_hash.p2pktxs
+                      tr
+                        td(align='center') 
+                          a(href='#'+p2pktx.height, target='_blank') #{p2pktx.height}
+                        td(align='center')
+                          a(href='#'+p2pktx.tx_hash, target='_blank') #{p2pktx.tx_hash}
         else
           h1(style='color:#666;', align='center') No Transactions Available
+      .row(class='rowclass', style='padding-right: 20px !important;').animate__animated.animate__fadeIn#tab3
+        h3(style='font-size:48px;color: #393939;margin-top:0px;', align='center') 
+              i.fas.fa-history  
+              |  Denarii (ARI) Transaction History
+        if (typeof erctxs != 'undefined')
+          .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;')
+            table.sortable#fst
+              thead
+                tr
+                  th Block Height
+                  th.sorttable_nosort Time (GMT)
+                  th Confirmations
+                  th TXID
+              tbody
+                each tx in erctxs
+                  tr
+                    td(align='center') !{tx.blockNumber}
+                    td(align='center') 
+                      .date= new Date(tx.timeStamp*1000).toUTCString().replace('GMT','')
+                    td(align='center') 
+                      .label.label-success(style='background: none;') !{tx.confirmations}
+                    td(align='center') 
+                      a.txid(href="https://etherscan.io/tx/" + tx.hash, target='_blank') !{tx.hash}
+        else
+          h1(style='color:#666;', align='center') No ARI Transactions Available
+      .row(class='rowclass', style='padding-right: 20px !important;').animate__animated.animate__fadeIn#tab2
+        h3(style='font-size:48px;color: #393939;margin-top:0px;', align='center') 
+              i.fas.fa-history  
+              |  Ethereum (ETH) Transaction History
+        if (typeof ethtxs != 'undefined')
+          .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;')
+            table.sortable#fst
+              thead
+                tr
+                  th Block Height
+                  th.sorttable_nosort Time (GMT)
+                  th Confirmations
+                  th TXID
+              tbody
+                each tx in ethtxs
+                  tr
+                    td(align='center') !{tx.blockNumber}
+                    td(align='center') 
+                      .date= new Date(tx.timeStamp*1000).toUTCString().replace('GMT','')
+                    td(align='center') 
+                      .label.label-success(style='background: none;') !{tx.confirmations}
+                    td(align='center') 
+                      a.txid(href="https://etherscan.io/tx/" + tx.hash, target='_blank') !{tx.hash}
+
+        else
+          h1(style='color:#666;', align='center') No ETH Transactions Available
       //- .divider(style='background-color:#2b2b2b !important;height:2px;width:60%;margin:0 auto;', align='center')
       //- .row(class='rowclass').animate__animated.animate__fadeIn
       //-   .col-sm-3
@@ -309,3 +344,51 @@ block content
             .col-sm-6(align='center')              
               #cpuy.label-center(style='width:250px;height:250px;')
               span(style='color:#777;') CPU Usage
+    script.
+      var tabs = $('.tabs');
+      var selector = $('.tabs').find('a').length;
+      //var selector = $(".tabs").find(".selector");
+      var activeItem = tabs.find('.active');
+      var activeWidth = activeItem.innerWidth();
+      $('#tab2').hide();
+      $('#tab3').hide();
+      $(".selector").css({
+        "left": activeItem.position.left + "px", 
+        "width": activeWidth + "px"
+      });
+
+      $(".tabs").on("click","a",function(e){
+        e.preventDefault();
+        $('.tabs a').removeClass("active");
+        $(this).addClass('active');
+        var activeWidth = $(this).innerWidth();
+        var itemPos = $(this).position();
+        //- $('.selectord').toggle();
+        //- $('.selectorari').toggle();
+        //- $('.selectoreth').toggle();
+        $(".selector").css({
+          "left":itemPos.left + "px", 
+          "width": activeWidth + "px"
+        });
+      });
+      $(".tab1").on("click", function(){
+        $("#tab2").addClass('hide');
+        $("#tab3").addClass('hide');
+        $("#tab1").fadeIn(1000);
+        $('#tab2').fadeOut(1000);
+        $('#tab3').fadeOut(1000);
+      });
+
+      $(".tab2").on("click", function(){
+        $("#tab2").removeClass('hide');
+        $("#tab1").fadeOut();
+        $("#tab3").fadeOut();
+        $('#tab2').fadeIn(1000);
+      });
+
+      $(".tab3").on("click", function(){
+        $("#tab3").removeClass('hide');
+        $("#tab1").fadeOut();
+        $("#tab2").fadeOut();
+        $('#tab3').fadeIn(1000);
+      });

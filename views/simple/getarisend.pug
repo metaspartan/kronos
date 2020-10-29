@@ -1,0 +1,102 @@
+extends ../layoutsimple
+
+block content
+  script.
+    function ethGasEstimate() {
+      $.get( "https://ethgasstation.info/api/ethgasAPI.json?api-key=", function( data ) {
+        var gasprice = data.fast / 10 * 1e9 / 1e18 * 21000;
+        var gwei = data.fast / 10;
+        // 31 gwei 0.000000031 ETH
+        $('#gasfee').val(gasprice.toFixed(9));
+        $('#gasfeer').val(gasprice.toFixed(9));
+        $('#gwei').text(gwei);
+      }); 
+    }
+    ethGasEstimate();
+    setTimeout(function(){ 
+      ethGasEstimate();
+    }, 15000);
+    function updateDue() {
+      var amnt = parseFloat(document.getElementById("amount").value);
+      var gasfee = parseFloat(document.getElementById("gasfee").value);
+      if (!amnt) { amnt = 0; }
+      var total = document.getElementById("totalwithdraw");
+      total.value = amnt;
+    }
+    function clicked() {
+      $('#addy').val($('#sendaddress').val());
+      $('#total').val($('#totalwithdraw').val());
+    }
+    function confirmed() {
+      $('#sendform').submit();
+    }
+  #notify
+  .container(style='margin-top:30px;')
+    h1(align='center', style='font-size:73px;font-weight:100;margin-top:42px !important;') Send 
+      img.res(src='../img/ari.png', alt='ARI', border='0', style='height:100px !important;width: 100px !important;margin:-25px 0px 0px !important;')
+      |  ARI
+    p
+      .titlesmall(align='center') Send ARI to any other ERC20 Ethereum address!
+    br
+    div.rowclass(style='font-weight:400;font-size:14px;padding:30px;background-color:#222;margin:15px;border-radius:15px;', align='center')
+      p
+        .balancebig(align='center', style='font-size:33px;') Total Balance: 
+          strong #{totalaribal} ARI
+      br
+      #SubmitDisplayModal.modal
+        .modal-dialog
+            .modal-content(style='color:#FFF !important;background-color:#111 !important; border-color: #444 !important;')
+                .modal-header(style='border-bottom: none !important;')
+                    button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+                    h4.modal-title Confirm Withdrawal
+                .modal-body
+                  .form-horizontal
+                    p(align='center')
+                      strong Are you sure you want to withdraw?
+                    .form-group
+                      label.col-sm-3.control-label(for='addy') Confirm Address
+                      .col-sm-8
+                        input.form-control.blackinput2(type='text', id='addy', disabled)
+                    .form-group
+                      label.col-sm-3.control-label(for='total') Confirm Total
+                      .col-sm-8
+                        .input-group
+                          input.form-control.blackinput2(type='text', id='total', disabled)
+                          span.input-group-addon(style='background-color:#333;color:#FFF;border:none;') ARI
+                .modal-footer(style='border-top: none !important;')
+                    button.btn.btn-success(type='submit', id='submit', onclick='confirmed()') Confirm and Send ARI
+                    button.btn.btn-default(type='button', data-dismiss='modal') Close      
+      p
+        form.form-horizontal(action='/arisend', method='POST', id='sendform')
+          input(type='hidden', name='_csrf', value=_csrf)
+          input(type='hidden', name='gasfeer', id='gasfeer')
+          .form-group
+            label.col-sm-3.control-label(for='sendaddress') To ARI Wallet Address
+            .col-sm-7
+              input.form-control.blackinput3(type='text', name='sendaddress', id='sendaddress', placeholder='0xDB5802f5579b97bE83bD48aCAD271187F7813148')
+          .form-group
+            label.col-sm-3.control-label(for='amount') Amount to Send
+            .col-sm-7
+              .input-group
+                input.form-control.blackinput3(type='text', name='amount', id='amount', placeholder='1.333',  onkeyup='updateDue()')
+                span.input-group-addon(style='background-color:#333;color:#FFF;border:none;') ARI
+          .form-group
+            label.col-sm-3.control-label(for='gasfee') Network Fee
+            .col-sm-7
+              .input-group
+                input.form-control.blackinput3(type='text', name='gasfee', id='gasfee', value='',  disabled)
+                span.input-group-addon(style='background-color:#333;color:#FFF;border:none;') Approx. ETH Gas Fee 
+                  | (Gwei: 
+                  span#gwei
+                  | ) Fast
+          .form-group
+            label.col-sm-3.control-label(for='total') Total ARI
+            .col-sm-7
+              .input-group
+                input.form-control.blackinput3(type='text', name='total', id='totalwithdraw', value='', disabled)
+                span.input-group-addon(style='background-color:#333;color:#FFF;border:none;') Total ARI
+          .form-group
+            .col-sm-12
+              button.btn.btn-default(type='button', id='sendDNR', onclick='clicked()', data-toggle='modal', data-target='#SubmitDisplayModal')
+                i.fa.fa-paper-plane
+                |  Send Denarii

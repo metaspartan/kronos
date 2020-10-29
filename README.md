@@ -19,6 +19,8 @@ As of v1.5.0 Beta of Kronos it is now built with Electron for Windows, macOS, an
 
 As of v1.5.5 Beta of Kronos it now features multi modes "Simple" which only relays on ElectrumX SPV Servers and a more "Advanced" mode where you can configure the RPC details to your Denarius node.
 
+As of v1.6.0 Beta of Kronos it now features ETH and ARI support fully, you can send and receive ARI or ETH in Simple Mode in Kronos
+
 This was built for the Raspberry Pi in mind and one with at least 2GB of RAM. 4GB and 8GB models are recommended! Kronos will run on any Linux distro with a minimal amount of 2GB of RAM.
 
 Running the installer script below installs denarius via snap install and then modifies your .env in Kronos and denarius.conf to a random rpcuser and rpcpass, Kronos will then be running on your LAN (192.168.x.x:3000) on port 3000.

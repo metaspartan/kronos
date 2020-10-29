@@ -36,7 +36,7 @@ const path = require('path');
 const expressStatusMonitor = require('express-status-monitor');
 const multer = require('multer');
 const bitcoin = require('bitcoin');
-const WAValidator = require('wallet-address-validator');
+const WAValidator = require('wallet-address-validatord');
 const QRCode = require('qrcode');
 const base32 = require('thirty-two');
 const sprintf = require('sprintf-js');
@@ -240,6 +240,7 @@ const kronosController = require('./controllers/kronos');
 const authController = require('./controllers/auth');
 const dashController = require('./controllers/dashboard');
 const sDashController = require('./controllers/simple/dashboard');
+const sTXController = require('./controllers/simple/txs.js');
 const toolsController = require('./controllers/tools');
 const walletController = require('./controllers/wallet');
 const explorerController = require('./controllers/explorer');
@@ -455,6 +456,17 @@ app.get('/logout', authController.logout);
 app.get('/simplesetup', authController.getsimple);
 app.post('/simplesetup', Limiter, authController.simple);
 app.get('/dashsimple', auth, sDashController.simpleindex);
+
+app.get('/createtx', Limiter, sTXController.getsend);
+app.post('/simplesend', Limiter, sTXController.postcreate);
+
+app.get('/sendeth', Limiter, sTXController.getethsend);
+app.post('/ethsend', Limiter, sTXController.postethsend);
+
+app.get('/sendari', Limiter, sTXController.getarisend);
+app.post('/arisend', Limiter, sTXController.postarisend);
+
+app.get('/sseed', auth, authseed, sTXController.getSimpleSeed);
 
 //Advanced Mode
 app.get('/setup', authController.getsetup);

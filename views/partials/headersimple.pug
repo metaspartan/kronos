@@ -15,17 +15,17 @@ script.
         x.style.display = "none";
       }
     }
-  socket.on('notifications', function (data) {
-      console.log('GOT NOTIFY', data);
-      if (data.notifydb != '') {
-        $('#notify').html("<div class='notifytx animate__animated animate__zoomInRight' id='notificationtx' style='background-color:#000000e8;border:3px solid #ffffff3d;border-radius:15px;padding:30px;font-size:13px;width:600px;position:fixed;right:0;bottom:5px;z-index:9999999;display:visible;' align='center'>Denarius TX Notification<br/><a href='/tx/"+ data.notifydb.toString() +"' style='color:#999;font-size:0.85rem;'>"+ data.notifydb.toString() +"</a><div id='buttonfloat' style='top:36px;position:absolute;right:15px;' onclick='closeNotify()'><button type='submit' style='background-color:transparent;color:#666;border:none;' onclick='closeNotify()'>X</button></div></div>");
-      }
-  });
+  //- socket.on('notifications', function (data) {
+  //-     console.log('GOT NOTIFY', data);
+  //-     if (data.notifydb != '') {
+  //-       $('#notify').html("<div class='notifytx animate__animated animate__zoomInRight' id='notificationtx' style='background-color:#000000e8;border:3px solid #ffffff3d;border-radius:15px;padding:30px;font-size:13px;width:600px;position:fixed;right:0;bottom:5px;z-index:9999999;display:visible;' align='center'>Denarius TX Notification<br/><a href='/tx/"+ data.notifydb.toString() +"' style='color:#999;font-size:0.85rem;'>"+ data.notifydb.toString() +"</a><div id='buttonfloat' style='top:36px;position:absolute;right:15px;' onclick='closeNotify()'><button type='submit' style='background-color:transparent;color:#666;border:none;' onclick='closeNotify()'>X</button></div></div>");
+  //-     }
+  //- });
   function closeNotify() {
     var c = document.getElementById("notificationtx")
     c.style.display = "none";
   }
-.navbar.navbar-default.navbar-fixed-top(style='border-top: 2px solid #42b905;')
+.navbar.navbar-default.navbar-fixed-top
   .hcontainer
     .navbar-header
       button.navbar-toggle.pull-right.ml(type='button', data-toggle='collapse', data-target='.navbar-collapse')
@@ -88,20 +88,45 @@ script.
               //-     i.fas.fa-sync-alt    
               //-     |   Convert Minikey
           li
-            a(href='#', style='font-size:14px;color:#FFF;background-color: rgba(0, 0, 0, 0.2);') #{totalbal} D
+            a 
+              .label.label-success(style='background-color:#405456;') Simple Mode
           li
-            a Simple Mode
-          if (staketoggle == 'Staking')
-            li.animate__animated.animate__pulse.animate__infinite
-              a(style='padding-top:18px !important;')
-                .label.label-success(style='background-color:#41B805;')  
-                  i.fas.fa-coins  
-                  |  #{staketoggle}
+            a
+              | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          li
+            a(href='#', style='font-size:14px;color:#FFF;') #{totalbal || 0} 
+              img.res(src='../img/denarius.png', alt='D', border='0', style='height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;')
+              span(style='color:#888;') D
+          li
+            a(href='http://'+lanip+':3000/createtx', style='border-right:1px #444 solid;padding-left:0px !important;')
+              div(style='background-color:#4f4f4f;border-radius:15px;padding-right:15px;padding-left:15px;font-size:12px;color:#fff;')
+                |   SEND
+          li
+            a(href='#', style='font-size:14px;color:#FFF;') #{totalethbal || 0} 
+              img.res(src='../img/eth.png', alt='ETH', border='0', style='height:24px !important;width: 24px !important;margin:-15px 0px -12px !important;')
+              span(style='color:#888;') ETH
+          li
+            a(href='http://'+lanip+':3000/sendeth', style='border-right:1px #444 solid;padding-left:0px !important;')
+              div(style='background-color:#3f3b54;border-radius:15px;padding-right:15px;padding-left:15px;font-size:12px;color:#fff;')
+                |   SEND
+          li
+            a(href='#', style='font-size:14px;color:#FFF;') #{totalaribal || 0} 
+              img.res(src='../img/ari.png', alt='ARI', border='0', style='height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;')
+              span(style='color:#888;') ARI
+          li
+            a(href='http://'+lanip+':3000/sendari', style='padding-left:0px !important;')
+              div(style='background-color:#3d1f56;border-radius:15px;padding-right:15px;padding-left:15px;font-size:12px;color:#fff;')
+                |   SEND
+          //- if (staketoggle == 'Staking')
+          //-   li.animate__animated.animate__pulse.animate__infinite
+          //-     a(style='padding-top:18px !important;')
+          //-       .label.label-success(style='background-color:#41B805;')  
+          //-         i.fas.fa-coins  
+          //-         |  #{staketoggle}
       ul.nav.navbar-nav.navbar-right
-          //- li(style=sendicon,class=(title == 'Send D') ? 'active' : undefined)
-          //-   a(href='http://'+lanip+':3000/withdraw')
-          //-     i.fa.fa-paper-plane 
-          //-     |   SEND
+          li
+            a(onClick='window.location.href = window.location.href;')
+                i.fa.fa-sync.animate__animated.animate__rotateIn
           li.dropdown(class=(title == 'Community') ? 'active' : undefined)
             a.dropdown-toggle(href='#', data-toggle='dropdown')
               span 
@@ -118,7 +143,7 @@ script.
               //-     i.fas.fa-terminal  
               //-     |   Terminal 
               li
-                a(href='http://'+lanip+':3000/seed', onclick="javascript:event.target.port=3000")
+                a(href='http://'+lanip+':3000/sseed', onclick="javascript:event.target.port=3000")
                   i.fas.fa-mask     
                   |   View Seed
               li.divider
