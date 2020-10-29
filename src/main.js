@@ -18,7 +18,7 @@ let mainWindow;
 function createWindow() {
   mainWindow = new BrowserWindow({
     autoHideMenuBar: true,
-    width: 1450,
+    width: 1550,
     height: 900,
     frame: false,
     titleBarStyle: 'hidden',

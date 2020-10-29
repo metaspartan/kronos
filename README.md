@@ -81,6 +81,8 @@ Recommended Devices and OS
 
 Screenshots
 -----------------
+![simplemode](https://user-images.githubusercontent.com/10162347/97545811-26fd0300-1991-11eb-8423-8d82f6e5ba74.png)
+
 ![ss](https://user-images.githubusercontent.com/10162347/85916042-00c02e80-b80a-11ea-859f-7f82d17353c9.png)
 
 ![ss2](https://user-images.githubusercontent.com/10162347/85956259-09b41b80-b942-11ea-8b74-2ab4a7540872.gif)
@@ -91,6 +93,8 @@ Screenshots
 Features
 --------
 
+- Send and Receive ETH and ARI in Simple Mode
+- Simple Mode and Advanced Mode
 - Send and Receive D
 - Wallet Addresses
 - Address Balances Powered by Scripthash and ElectrumX (denarius.pro)
@@ -124,7 +128,7 @@ Prerequisites
 -------------
 
 - [denariusd](https://github.com/carsenk/denarius)
-- [Node.js 6.0+](http://nodejs.org)
+- [Node.js 12+](http://nodejs.org)
 
 Getting Started
 ---------------
