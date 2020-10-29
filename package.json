@@ -107,7 +107,6 @@
     "chai": "^4.2.0",
     "electron": "^10.1.2",
     "electron-prebuilt-compile": "8.2.0",
-    "electron-prebuilt": "github:brave/electron-prebuilt",
     "electron-builder": "^19.52.1",
     "electron-rebuild": "^2.0.3",
     "mocha": "^8.0.1"
