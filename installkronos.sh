@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION='v1.6.3-Beta'
+VERSION='v1.6.4-Beta'
 
 TEMP=/tmp/answer$$
 whiptail --title "Kronos ${VERSION} for Denarius"  --menu  "Installer for Kronos Secondary Layer :" 20 0 0 1 "Install Kronos w/ Denarius Config" 2 "Install Kronos w/ Denarius Config & Chaindata" 3 "Update & Upgrade Kronos ${VERSION}" 2>$TEMP
@@ -592,6 +592,8 @@ mv kronosleveldb ~/kronosleveldb
 
 mv data ~/data
 
+mv .env ~/.env
+
 git checkout .
 
 git pull
@@ -605,6 +607,8 @@ sudo rm -rf .sen
 mv ~/kronosleveldb kronosleveldb
 
 mv ~/data data
+
+mv ~/.env .env
 
 NODEPID=$(pidof node)
 
