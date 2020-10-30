@@ -198,7 +198,7 @@ var currentOS = os.platform();
 if (currentOS === 'linux') {
   const randosecret = randomstring.generate(42);
   const randosess = randomstring.generate(42);
-  let linkey = process.env.LINUX_KEY;
+  let linkey = files.readFileSync('.env', 'utf-8');
   
   if (linkey == '') {
     fs.writeFileSync('.env', `LINUX_KEY=${randosecret}\nSESS_KEY=${randosess}`);
