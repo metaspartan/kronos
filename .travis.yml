@@ -6,6 +6,9 @@ jobs:
 cache:  
   directories:
     - "node_modules"
+before_install:
+  - sudo apt-get update
+  - sudo apt-get -y install libsecret-1-dev
 install:
   - npm install
   - exit 0
