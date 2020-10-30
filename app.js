@@ -49,6 +49,7 @@ const upload = multer({ dest: path.join(__dirname, 'uploads') });
 const ip = require('ip');
 const shell = require('shelljs');
 const fs = require('fs');
+const os = require('os');
 const dbr = require('./db.js');
 const appRoot = require('app-root-path');
 const files = require('fs');
@@ -192,21 +193,32 @@ const readline = require('readline')
 //   askUser()  
 
 // })()
+var currentOS = os.platform();
 
+if (currentOS === 'linux') {
+  const randosecret = randomstring.generate(42);
+  const randosess = randomstring.generate(42);
+  let linkey = process.env.LINUX_KEY;
+  
+  if (linkey == '') {
+    fs.writeFileSync('.env', `LINUX_KEY=${randosecret}\nSESS_KEY=${randosess}`);
+  }
 
-const randosecret = randomstring.generate(42);
-const randosess = randomstring.generate(42);
-let keytary = keytar.getPasswordSync('Kronos', 'localkey');
+} else {
+  const randosecret = randomstring.generate(42);
+  const randosess = randomstring.generate(42);
+  let keytary = keytar.getPasswordSync('Kronos', 'localkey');
 
-// console.log('Keytar: ' + keytary);
+  // console.log('Keytar: ' + keytary);
 
-if (keytary == null) {
-  keytar.setPasswordSync('Kronos', 'localkey', randosecret);
-  keytar.setPasswordSync('Kronos', 'localses', randosess);
+  if (keytary == null) {
+    keytar.setPasswordSync('Kronos', 'localkey', randosecret);
+    keytar.setPasswordSync('Kronos', 'localses', randosess);
+  }
 }
 
 //Print in console your LAN IP
-console.log('Your LAN', ip.address());
+console.log(`Kronos running on your LAN: ${ip.address()} on platform ${currentOS}`);
 
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
@@ -335,23 +347,44 @@ app.use((req, res, next) => {
 
 app.use(flashc());
 
-const SESSION_SECRET = keytar.getPasswordSync('Kronos', 'localses'); //process.env.SESSION_SECRET
+if (currentOS === 'linux') {
+  const SESSION_SECRET = process.env.SESS_KEY;
 
-const sess = session({
-  secret: SESSION_SECRET,
-  resave: true,
-  saveUninitialized: true,
-  unset: 'destroy',
-  name: 'KronosAuth',
-  cookie: {
-      maxAge: (1000 * 60 * 60 * 24) // default is 1 day
-  }
-});
+  const sess = session({
+    secret: SESSION_SECRET,
+    resave: true,
+    saveUninitialized: true,
+    unset: 'destroy',
+    name: 'KronosAuth',
+    cookie: {
+        maxAge: (1000 * 60 * 60 * 24) // default is 1 day
+    }
+  });
+  
+  //New Auth Sharing Session with Sockets.io
+  app.use(sess);
+  
+  io.use(sharedsession(sess));
+} else {
 
-//New Auth Sharing Session with Sockets.io
-app.use(sess);
+  const SESSION_SECRET = keytar.getPasswordSync('Kronos', 'localses'); //process.env.SESSION_SECRET
 
-io.use(sharedsession(sess)); 
+  const sess = session({
+    secret: SESSION_SECRET,
+    resave: true,
+    saveUninitialized: true,
+    unset: 'destroy',
+    name: 'KronosAuth',
+    cookie: {
+        maxAge: (1000 * 60 * 60 * 24) // default is 1 day
+    }
+  });
+
+  //New Auth Sharing Session with Sockets.io
+  app.use(sess);
+
+  io.use(sharedsession(sess));
+}
 
 app.set('trust proxy',1);
  

@@ -43,23 +43,47 @@ const main = require('progressbar.js');
 const ethers = require('ethers');
 const keytar = require('keytar-extra');
 
-let SECRET_KEY = keytar.getPasswordSync('Kronos', 'localkey'); //process.env.SECRET_KEY
+var currentOS = os.platform(); 
 
-function shahash(key) {
-	key = CryptoJS.SHA256(key, SECRET_KEY);
-	return key.toString();
-}
+if (currentOS === 'linux') {
+    let SECRET_KEY = process.env.LINUX_KEY;
 
-function encrypt(data) {
-	data = CryptoJS.AES.encrypt(data, SECRET_KEY);
-	data = data.toString();
-	return data;
-}
+    function shahash(key) {
+        key = CryptoJS.SHA256(key, SECRET_KEY);
+        return key.toString();
+    }
 
-function decrypt(data) {
-	data = CryptoJS.AES.decrypt(data, SECRET_KEY);
-	data = data.toString(CryptoJS.enc.Utf8);
-	return data;
+    function encrypt(data) {
+        data = CryptoJS.AES.encrypt(data, SECRET_KEY);
+        data = data.toString();
+        return data;
+    }
+
+    function decrypt(data) {
+        data = CryptoJS.AES.decrypt(data, SECRET_KEY);
+        data = data.toString(CryptoJS.enc.Utf8);
+        return data;
+    }
+
+} else {
+    let SECRET_KEY = keytar.getPasswordSync('Kronos', 'localkey'); //process.env.SECRET_KEY
+
+    function shahash(key) {
+        key = CryptoJS.SHA256(key, SECRET_KEY);
+        return key.toString();
+    }
+
+    function encrypt(data) {
+        data = CryptoJS.AES.encrypt(data, SECRET_KEY);
+        data = data.toString();
+        return data;
+    }
+
+    function decrypt(data) {
+        data = CryptoJS.AES.decrypt(data, SECRET_KEY);
+        data = data.toString(CryptoJS.enc.Utf8);
+        return data;
+    }
 }
 
 
@@ -857,7 +881,7 @@ exports.simpleindex = (req, res) => {
                             var usdformatted = usdbalance.toFixed(3);
         
                             socket.emit("usdinfo", {dbalance: totalbal, usdbalance: usdformatted, currentprice: currentprice});
-                            
+
                             Storage.set('usdbal', usdformatted);
                             Storage.set('currentprice', currentprice);
                         } else { 
