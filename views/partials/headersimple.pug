@@ -87,12 +87,7 @@ script.
               //-   a(href='http://'+lanip+':3000/convertmini', onclick="javascript:event.target.port=3000") 
               //-     i.fas.fa-sync-alt    
               //-     |   Convert Minikey
-          li
-            a 
-              .label.label-success(style='background-color:#405456;') Simple Mode
-          li
-            a
-              | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      ul.nav.navbar-nav.centerbal
           li
             a(href='#', style='font-size:14px;color:#FFF;') #{totalbal || 0} 
               img.res(src='../img/denarius.png', alt='D', border='0', style='height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;')
@@ -125,8 +120,11 @@ script.
           //-         |  #{staketoggle}
       ul.nav.navbar-nav.navbar-right
           li
+                a 
+                  .label(style='color: #0c50ff; cursor: default; font-size:16px; background: linear-gradient(317deg, rgba(221,76,76,1) 0%, rgba(208,170,57,1) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;') Simple Mode  
+          li
             a(onClick='window.location.href = window.location.href;')
-                i.fa.fa-sync.animate__animated.animate__rotateIn
+                i.fa.fa-sync.animate__animated.animate__rotateIn(style='cursor:pointer;')
           li.dropdown(class=(title == 'Community') ? 'active' : undefined)
             a.dropdown-toggle(href='#', data-toggle='dropdown')
               span 

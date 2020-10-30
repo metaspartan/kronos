@@ -102,9 +102,9 @@ exports.simpleindex = (req, res) => {
     
     res.locals.lanip = ipaddy;
     
-    const scripthasharray = [];
-    const ethereumarray = [];
-    const promises = [];
+    let scripthasharray = [];
+    let ethereumarray = [];
+    let promises = [];
   
     //ElectrumX Hosts for Denarius
     const delectrumxhost1 = 'electrumx1.denarius.pro';
@@ -116,10 +116,8 @@ exports.simpleindex = (req, res) => {
     let socket_id2 = [];
     let socket_id3 = [];
     let socket_id4 = [];
-    let socket_id5 = [];
-    let socket_id6 = [];
     let socket_id7 = [];
-    let socket_idg = [];
+    let socket_id33 = [];
 
     var mnemonic;
     var ps;
@@ -140,8 +138,6 @@ exports.simpleindex = (req, res) => {
         },
         alchemy: 'W5yjuu3Ade1lsIn3Od8rTqJsYiFJszVY'
     });
-
-    let socket_id33 = [];
 
     res.io.on('connection', function (socket) {
         socket_id33.push(socket.id);

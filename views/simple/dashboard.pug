@@ -219,82 +219,86 @@ block content
       .row(class='rowclass', style='padding-right: 20px !important;').animate__animated.animate__fadeIn#tab1
         h3(style='font-size:48px;color: #393939;margin-top:0px;', align='center') 
               i.fas.fa-history  
-              |  Denarius (D) Transaction History
+              |  Denarius Transaction History
         if (typeof balancearray != 'undefined')
-          .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;') 
-            table.sortable#fst
-              thead
-                tr
-                  th Block Height
-                  th TXID
-              tbody
-                each bal in balancearray
-                  each tx_hash in bal.txs
-                    each p2pkhtx in tx_hash.p2pkhtxs
-                      tr
-                        td(align='center') 
-                          a.txid(href='#'+p2pkhtx.height, target='_blank') #{p2pkhtx.height}
-                        td(align='center') 
-                          a.txid(href='#'+p2pkhtx.tx_hash, target='_blank') #{p2pkhtx.tx_hash}
-                    each p2pktx in tx_hash.p2pktxs
-                      tr
-                        td(align='center') 
-                          a.txid(href='#'+p2pktx.height, target='_blank') #{p2pktx.height}
-                        td(align='center')
-                          a.txid(href='#'+p2pktx.tx_hash, target='_blank') #{p2pktx.tx_hash}
-        else
-          h1(style='color:#666;', align='center') No Transactions Available
+          if (typeof balancearray[0].txs[0].tx_hash != 'undefined')
+            .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;') 
+              table.sortable#fst
+                thead
+                  tr
+                    th Block Height
+                    th TXID
+                tbody
+                  each bal in balancearray
+                    each tx_hash in bal.txs
+                      each p2pkhtx in tx_hash.p2pkhtxs
+                        tr
+                          td(align='center') 
+                            a.txid(href='#'+p2pkhtx.height, target='_blank') #{p2pkhtx.height}
+                          td(align='center') 
+                            a.txid(href='#'+p2pkhtx.tx_hash, target='_blank') #{p2pkhtx.tx_hash}
+                      each p2pktx in tx_hash.p2pktxs
+                        tr
+                          td(align='center') 
+                            a.txid(href='#'+p2pktx.height, target='_blank') #{p2pktx.height}
+                          td(align='center')
+                            a.txid(href='#'+p2pktx.tx_hash, target='_blank') #{p2pktx.tx_hash}
+          else
+            h1(style='color:#666;', align='center') No Transactions Available
       .row(class='rowclass', style='padding-right: 20px !important;').animate__animated.animate__fadeIn#tab3
         h3(style='font-size:48px;color: #393939;margin-top:0px;', align='center') 
               i.fas.fa-history  
-              |  Denarii (ARI) Transaction History
+              |  Denarii Transaction History
         if (typeof erctxs != 'undefined')
-          .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;')
-            table.sortable#fst
-              thead
-                tr
-                  th Block Height
-                  th.sorttable_nosort Time (GMT)
-                  th Confirmations
-                  th TXID
-              tbody
-                each tx in erctxs
+          if (typeof erctxs[0] != 'undefined')
+            .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;')
+              table.sortable#fst
+                thead
                   tr
-                    td(align='center') !{tx.blockNumber}
-                    td(align='center') 
-                      .date= new Date(tx.timeStamp*1000).toUTCString().replace('GMT','')
-                    td(align='center') 
-                      .label.label-success(style='background: none;') !{tx.confirmations}
-                    td(align='center') 
-                      a.txid(href=`https://etherscan.io/tx/${tx.hash}`, target='_blank') !{tx.hash}
-        else
-          h1(style='color:#666;', align='center') No ARI Transactions Available
+                    th Block Height
+                    th.sorttable_nosort Time (GMT)
+                    th Confirmations
+                    th TXID
+                tbody
+                  each tx in erctxs
+                    tr
+                      td(align='center') !{tx.blockNumber}
+                      td(align='center') 
+                        if (typeof tx.timeStamp != 'undefined')
+                          .date= new Date(tx.timeStamp*1000).toUTCString().replace('GMT','')
+                      td(align='center') 
+                        .label.label-success(style='background: none;') !{tx.confirmations}
+                      td(align='center') 
+                        a.txid(href=`https://etherscan.io/tx/${tx.hash}`, target='_blank') !{tx.hash}
+          else
+            h1(style='color:#666;', align='center') No ARI Transactions Available
       .row(class='rowclass', style='padding-right: 20px !important;').animate__animated.animate__fadeIn#tab2
         h3(style='font-size:48px;color: #393939;margin-top:0px;', align='center') 
               i.fas.fa-history  
-              |  Ethereum (ETH) Transaction History
+              |  Ethereum Transaction History
         if (typeof ethtxs != 'undefined')
-          .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;')
-            table.sortable#fst
-              thead
-                tr
-                  th Block Height
-                  th.sorttable_nosort Time (GMT)
-                  th Confirmations
-                  th TXID
-              tbody
-                each tx in ethtxs
+          if (typeof ethtxs[0] != 'undefined')
+            .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;')
+              table.sortable#fst
+                thead
                   tr
-                    td(align='center') !{tx.blockNumber}
-                    td(align='center') 
-                      .date= new Date(tx.timeStamp*1000).toUTCString().replace('GMT','')
-                    td(align='center') 
-                      .label.label-success(style='background: none;') !{tx.confirmations}
-                    td(align='center') 
-                      a.txid(href=`https://etherscan.io/tx/${tx.hash}`, target='_blank') !{tx.hash}
+                    th Block Height
+                    th.sorttable_nosort Time (GMT)
+                    th Confirmations
+                    th TXID
+                tbody
+                  each tx in ethtxs
+                    tr
+                      td(align='center') !{tx.blockNumber}
+                      td(align='center') 
+                        .date= new Date(tx.timeStamp*1000).toUTCString().replace('GMT','')
+                      td(align='center') 
+                        .label.label-success(style='background: none;') !{tx.confirmations}
+                      td(align='center') 
+                        a.txid(href=`https://etherscan.io/tx/${tx.hash}`, target='_blank') !{tx.hash}
 
-        else
-          h1(style='color:#666;', align='center') No ETH Transactions Available
+          else
+            h1(style='color:#666;', align='center') No ETH Transactions Available
       //- .divider(style='background-color:#2b2b2b !important;height:2px;width:60%;margin:0 auto;', align='center')
       //- .row(class='rowclass').animate__animated.animate__fadeIn
       //-   .col-sm-3
