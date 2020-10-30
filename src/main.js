@@ -5,6 +5,8 @@ const electron = require("electron"),
 const path = require('path');
 const url = require('url');
 const fs = require('fs');
+const randomstring = require("randomstring");
+const Storage = require('json-storage-fs');
 
 const { shell, session, Menu, ipcMain } = require('electron');
 
@@ -30,6 +32,14 @@ function createWindow() {
       webviewTag: true
     }
   });
+
+  // const randosecret = randomstring.generate(42);
+  // const randosess = randomstring.generate(42);
+
+  // if (typeof Storage.get('key') == 'undefined') {
+  //   Storage.set('key', randosecret);
+  //   Storage.set('session', randosess);
+  // }
 
   //extensions.loadMetamask(session, mainWindow);
 
@@ -70,8 +80,9 @@ function createWindow() {
   ipcMain.on('open-link', (evt, link) => {
     shell.openExternal(link);
   });
-}
 
+  mainWindow.webContents.session.clearCache();
+}
 
 app.on("ready", createWindow);
 

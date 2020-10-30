@@ -38,7 +38,9 @@ const bs58 = require('bs58');
 const randomstring = require("randomstring");
 const Storage = require('json-storage-fs');
 
-const SECRET_KEY = Storage.get('key'); //process.env.SECRET_KEY
+const keytar = require('keytar-extra');
+
+let SECRET_KEY = keytar.getPasswordSync('Kronos', 'localkey'); //process.env.SECRET_KEY
 
 function shahash(key) {
 	key = CryptoJS.SHA256(key, SECRET_KEY);

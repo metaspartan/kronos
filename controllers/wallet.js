@@ -35,7 +35,9 @@ var sendJSONResponse = function (res, status, content) {
     res.json(content);
 };
 
-const SECRET_KEY = Storage.get('key'); //process.env.SECRET_KEY
+const keytar = require('keytar-extra');
+
+let SECRET_KEY = keytar.getPasswordSync('Kronos', 'localkey'); //process.env.SECRET_KEY
 
 function shahash(key) {
 	key = CryptoJS.SHA256(key, SECRET_KEY);

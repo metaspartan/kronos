@@ -41,8 +41,11 @@ const randomstring = require("randomstring");
 const Storage = require('json-storage-fs');
 const PromiseLoadingSpinner = require('promise-loading-spinner');
 const main = require('progressbar.js');
-const SECRET_KEY = Storage.get('key'); //process.env.SECRET_KEY
 const ethers = require('ethers');
+
+const keytar = require('keytar-extra');
+
+let SECRET_KEY = keytar.getPasswordSync('Kronos', 'localkey'); //process.env.SECRET_KEY
 
 function shahash(key) {
 	key = CryptoJS.SHA256(key, SECRET_KEY);
@@ -67,13 +70,9 @@ const delectrumxhost2 = 'electrumx2.denarius.pro';
 const delectrumxhost3 = 'electrumx3.denarius.pro';
 const delectrumxhost4 = 'electrumx4.denarius.pro';
 
-var passsworddb = Storage.get('password');
 var seedphrasedb = Storage.get('seed');
-
 var mnemonic;
-
 let ethnetworktype = 'homestead'; //homestead is mainnet, ropsten for testing, choice for UI selection eventually
-
 let provider = ethers.getDefaultProvider(ethnetworktype, {
     etherscan: 'JMBXKNZRZYDD439WT95P2JYI72827M4HHR',
     // Or if using a project secret:
@@ -83,11 +82,6 @@ let provider = ethers.getDefaultProvider(ethnetworktype, {
     },
     alchemy: 'W5yjuu3Ade1lsIn3Od8rTqJsYiFJszVY'
 });
-
-var decryptedmnemonic = decrypt(seedphrasedb);
-mnemonic = decryptedmnemonic;
-let ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
-let ethwalletp = ethwallet.connect(provider); //Set wallet provider
 
 
 //Get Send ETH
@@ -138,14 +132,11 @@ exports.getsend = (req, res) => {
   
     res.locals.lanip = ipaddy;
 
-    var utxolist = Storage.get('accountarray');
-    var utxos = utxolist[0].utxos[0].p2pkhutxos;
-
-    console.log(utxos);
-
-    var totalethbal = Storage.get('totaleth');
-    var totalbal = Storage.get('totalbal');
-    var totalaribal = Storage.get('totalaribal');
+    let totalethbal = Storage.get('totaleth');
+    let totalbal = Storage.get('totalbal');
+    let totalaribal = Storage.get('totalaribal');
+    let utxos = Storage.get('dutxo');
+    res.locals.utxos = utxos;
 
     res.render('simple/getsend', {
         utxos: utxos,
@@ -168,13 +159,11 @@ exports.postcreate = (req, res) => {
     //Selected UTXO to create transaction from
     var sutxo = sortedsplit[0];
     var sindex = sortedsplit[1];
-
     var samnt = sortedsplit[2];
 
     //Converted Available Amount from UTXO
-    var csamnt = samnt / 100000000;
-
-    var convertedamount = amount * 100000000;
+    var csamnt = samnt / 100000000; // / 1e8
+    var convertedamount = amount * 1e8;
 
     var totalbal = Storage.get('totalbal');
 
@@ -205,14 +194,18 @@ exports.postcreate = (req, res) => {
         //CREATE A NEW TRANSACTION FROM THE SELECTED UTXO
         var tx = new denarius.TransactionBuilder(network);
 
-        //const data = Buffer.from('KRONOS', 'utf8'); //OP_RETURN DATA TO SEND
+        const data = Buffer.from('KRONOS', 'utf8'); //OP_RETURN DATA TO SEND
         //const dataScript = denarius.payments.embed({ data: [data] });
 
+        console.log(convertedamount);
+        console.log(sutxo);
+        console.log(sendtoaddress);
+
         // Add the input (who is paying) of the form [previous transaction hash, index of the output to use]
-        tx.addInput(Buffer.from(sutxo, 'hex'), parseInt(sindex));
+        tx.addInput(`${sutxo}`, parseInt(sindex));
 
         // Add the output (who to pay to) of the form [payee's address, amount in satoshis]
-        tx.addOutput(Buffer.from(sendtoaddress, 'hex'), convertedamount); //15000 need to take amount * 100000000
+        tx.addOutput(`${sendtoaddress}`, convertedamount); //15000 need to take amount * 100000000
 
         //tx.addOutput(dataScript.output, 0); // OP_RETURN always with 0 value unless you want to burn coins
 
@@ -247,9 +240,11 @@ exports.postcreate = (req, res) => {
 
         const privkey = addressKeypair0.toWIF();
 
-        console.log(privkey);
+        //console.log(privkey);
 
         var key = denarius.ECPair.fromWIF(privkey, network); //QTVf9dEh3Jj8SthFDvACsCoBjtzo4dLS3EfEe1F7Mu7aJ26K2oHD
+
+        //console.log(key.pub.getAddress().toString());
 
         //SIGN THE TRANSACTION
         // Sign the first input with the new key
@@ -311,6 +306,11 @@ exports.postethsend = (req, res) => {
 
     var valid = ETHValidator.validate(`${sendtoaddress}`, 'ETH');
 
+    var decryptedmnemonic = decrypt(seedphrasedb);
+    mnemonic = decryptedmnemonic;
+    let ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
+    let ethwalletp = ethwallet.connect(provider); //Set wallet provider
+
     console.log(gasfee);
 
     if (parseFloat(amount) + parseFloat(gasfee) > parseFloat(totalethbal)) {
@@ -339,8 +339,8 @@ exports.postethsend = (req, res) => {
             
             ethwalletp.sendTransaction(transaction).then(function (hash) {
                 console.log('Sent ETH Success: ' + JSON.stringify(hash));
-                req.toastr.success(`${amount} ETH was sent successfully! ${JSON.stringify(hash.hash)}`, 'Success!', { positionClass: 'toast-bottom-right' });
-                req.flash('success', { msg: `Your <strong>${amount} ETH</strong> was sent successfully! <a href="https://etherscan.io/tx/${JSON.stringify(hash.hash)}" target="_blank">${JSON.stringify(hash.hash)}</a>` });
+                req.toastr.success(`${amount} ETH was sent successfully! ${hash.hash}`, 'Success!', { positionClass: 'toast-bottom-right' });
+                req.flash('success', { msg: `Your <strong>${amount} ETH</strong> was sent successfully! <a href="https://etherscan.io/tx/${hash.hash}" target="_blank">${hash.hash}</a>` });
                 return res.redirect('/sendeth');
             });    
         });
@@ -366,6 +366,11 @@ exports.postarisend = (req, res) => {
     const ariAddress = "0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670"; // 0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670 Denarii (ARI)
 
     var valid = ETHValidator.validate(`${sendtoaddress}`, 'ETH');
+
+    var decryptedmnemonic = decrypt(seedphrasedb);
+    mnemonic = decryptedmnemonic;
+    let ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
+    let ethwalletp = ethwallet.connect(provider); //Set wallet provider
 
     if (parseFloat(gasfee) > parseFloat(totalethbal)) {
 
@@ -394,8 +399,8 @@ exports.postarisend = (req, res) => {
         
         ariContract.transfer(sendtoaddress, transferamount).then(function (hash) {
             console.log('Sent ARI Success: ' + JSON.stringify(hash.hash));
-            req.toastr.success(`${amount} ARI was sent successfully! ${JSON.stringify(hash.hash)}`, 'Success!', { positionClass: 'toast-bottom-right' });
-            req.flash('success', { msg: `Your <strong>${amount} ARI</strong> was sent successfully! <a href="https://etherscan.io/tx/${JSON.stringify(hash.hash)}" target="_blank">${JSON.stringify(hash.hash)}</a>` });
+            req.toastr.success(`${amount} ARI was sent successfully! ${hash.hash}`, 'Success!', { positionClass: 'toast-bottom-right' });
+            req.flash('success', { msg: `Your <strong>${amount} ARI</strong> was sent successfully! <a href="https://etherscan.io/tx/${hash.hash}" target="_blank">${hash.hash}</a>` });
             return res.redirect('/sendari');
         });
 
@@ -426,6 +431,11 @@ exports.getSimpleSeed = (req, res) => {
     var ps;
     let seedaddresses = [];
     let store = [];
+
+    var decryptedmnemonic = decrypt(seedphrasedb);
+    mnemonic = decryptedmnemonic;
+    let ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
+    let ethwalletp = ethwallet.connect(provider); //Set wallet provider
   
     db.get('password', function(err, value) {
       if (err) {

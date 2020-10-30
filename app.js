@@ -57,6 +57,7 @@ const gritty = require('gritty');
 const rateLimit = require("express-rate-limit");
 const randomstring = require("randomstring");
 const Storage = require('json-storage-fs');
+const keytar = require('keytar-extra');
 
 
 const crypto = require('crypto')
@@ -193,30 +194,16 @@ const readline = require('readline')
 // })()
 
 
-
 const randosecret = randomstring.generate(42);
 const randosess = randomstring.generate(42);
+let keytary = keytar.getPasswordSync('Kronos', 'localkey');
 
-if (typeof Storage.get('key') == 'undefined') {
-	Storage.set('key', randosecret);
-	Storage.set('session', randosess);
+// console.log('Keytar: ' + keytary);
+
+if (keytary == null) {
+  keytar.setPasswordSync('Kronos', 'localkey', randosecret);
+  keytar.setPasswordSync('Kronos', 'localses', randosess);
 }
-
-// const secretenv = files.readFileSync('./.senv', 'utf-8');
-// const sessenv = files.readFileSync('./.sen', 'utf-8');
-
-// if (secretenv == '') {
-//   files.writeFileSync('./.senv', 'SECRET_KEY='+randosecret);
-// }
-
-// if (sessenv == '') {
-//   files.writeFileSync('./.sen', 'SESSION_SECRET='+randosess);
-// }
-
-//Empty .senv on release to git
-
-// const https = require('https');
-
 
 //Print in console your LAN IP
 console.log('Your LAN', ip.address());
@@ -254,7 +241,7 @@ const server = require('http').Server(app);
 //const httpsserver = require('https').createServer(credentials, app);
 const io = require('socket.io')(server);
 const sharedsession = require("express-socket.io-session");
-io.setMaxListeners(33); 
+io.setMaxListeners(69); 
 const port = 3000;
 
 /**
@@ -348,7 +335,7 @@ app.use((req, res, next) => {
 
 app.use(flashc());
 
-const SESSION_SECRET = Storage.get('session'); //process.env.SESSION_SECRET
+const SESSION_SECRET = keytar.getPasswordSync('Kronos', 'localses'); //process.env.SESSION_SECRET
 
 const sess = session({
   secret: SESSION_SECRET,

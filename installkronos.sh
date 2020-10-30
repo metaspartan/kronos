@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION='v1.6.0-Beta'
+VERSION='v1.6.3-Beta'
 
 TEMP=/tmp/answer$$
 whiptail --title "Kronos ${VERSION} for Denarius"  --menu  "Installer for Kronos Secondary Layer :" 20 0 0 1 "Install Kronos w/ Denarius Config" 2 "Install Kronos w/ Denarius Config & Chaindata" 3 "Update & Upgrade Kronos ${VERSION}" 2>$TEMP
@@ -153,13 +153,13 @@ lsof /var/lib/dpkg/lock >/dev/null 2>&1
 
 sudo apt-get update -y && sudo apt-get upgrade -y
 
-sudo apt-get install -y git unzip build-essential libssl-dev autogen automake curl wget jq snap snapd pwgen
+sudo apt-get install -y git unzip build-essential libssl-dev autogen automake curl wget jq snap snapd pwgen libsecret-1-dev
 
 sudo apt-get remove -y nodejs npm
 
 printf "${GREEN}Dependancies Installed Successfully!${NC}\n"
 
-printf "${GREEN}Installing NVM and Node Version 8.x!${NC}\n"
+printf "${GREEN}Installing NVM and Node Version 12.x!${NC}\n"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -175,7 +175,7 @@ nvm use v12.16.3
 npm install -g npm node-gyp electron electron-forge electron-rebuild
 #fi
 
-printf "${GREEN}Successfully Installed NVM and Node Version 8.x!${NC}\n"
+printf "${GREEN}Successfully Installed NVM and Node Version 12.x!${NC}\n"
 
 printf "${GREEN}Snap installing Denarius...${NC}\n"
 
@@ -237,6 +237,16 @@ echo "Installing Kronos Node Modules..."
 npm install
 
 cd node_modules/node-pty-prebuilt-multiarch
+
+node-gyp configure
+
+node-gyp build
+
+cd ..
+
+cd ..
+
+cd node_modules/keytar-extra
 
 node-gyp configure
 
@@ -382,13 +392,13 @@ lsof /var/lib/dpkg/lock >/dev/null 2>&1
 
 sudo apt-get update -y && sudo apt-get upgrade -y
 
-sudo apt-get install -y git unzip build-essential libssl-dev autogen automake curl wget jq snap snapd pwgen
+sudo apt-get install -y git unzip build-essential libssl-dev autogen automake curl wget jq snap snapd pwgen libsecret-1-dev
 
 sudo apt-get remove -y nodejs npm
 
 printf "${GREEN}Dependancies Installed Successfully!${NC}\n"
 
-printf "${GREEN}Installing NVM and Node Version 8.x!${NC}\n"
+printf "${GREEN}Installing NVM and Node Version 12.x!${NC}\n"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -404,7 +414,7 @@ nvm use v12.16.3
 npm install -g npm node-gyp electron electron-forge electron-rebuild
 #fi
 
-printf "${GREEN}Successfully Installed NVM and Node Version 8.x!${NC}\n"
+printf "${GREEN}Successfully Installed NVM and Node Version 12.x!${NC}\n"
 
 printf "${GREEN}Snap installing Denarius...${NC}\n"
 
@@ -506,6 +516,16 @@ cd ..
 
 cd ..
 
+cd node_modules/keytar-extra
+
+node-gyp configure
+
+node-gyp build
+
+cd ..
+
+cd ..
+
 echo "Successfully Installed Kronos Node Modules"
 
 echo "Updating Enviroment..."
@@ -597,6 +617,16 @@ npm install
 npm update
 
 cd node_modules/node-pty-prebuilt-multiarch
+
+node-gyp configure
+
+node-gyp build
+
+cd ..
+
+cd ..
+
+cd node_modules/keytar-extra
 
 node-gyp configure
 

@@ -40,8 +40,10 @@ const randomstring = require("randomstring");
 const Storage = require('json-storage-fs');
 const PromiseLoadingSpinner = require('promise-loading-spinner');
 const main = require('progressbar.js');
-const SECRET_KEY = Storage.get('key'); //process.env.SECRET_KEY
 const ethers = require('ethers');
+const keytar = require('keytar-extra');
+
+let SECRET_KEY = keytar.getPasswordSync('Kronos', 'localkey'); //process.env.SECRET_KEY
 
 function shahash(key) {
 	key = CryptoJS.SHA256(key, SECRET_KEY);
@@ -113,6 +115,26 @@ exports.simpleindex = (req, res) => {
             projectSecret: '6a2d027562de4857a1536774d6e65667',
         },
         alchemy: 'W5yjuu3Ade1lsIn3Od8rTqJsYiFJszVY'
+    });
+
+    let socket_id33 = [];
+
+    res.io.on('connection', function (socket) {
+        socket_id33.push(socket.id);
+        if (socket_id33[0] === socket.id) {
+        // remove the connection listener for any subsequent 
+        // connections with the same ID
+        res.io.removeAllListeners('connection'); 
+        }
+        provider.on('block', (blockNumber) => {
+            let ethblock = blockNumber;
+
+            provider.getBlock(blockNumber).then((block) => {
+                let blockhash = block.hash;
+                //console.log(blockhash);
+                socket.emit("newblocketh", {ethblock: ethblock, ethhash: blockhash});
+            });
+        });
     });
     
     si.cpuCurrentspeed(function (data2) {
@@ -317,13 +339,13 @@ exports.simpleindex = (req, res) => {
             const handleNewBlocks = function(data)
             {
                 socket.emit("newblock", {block: data});
-                Storage.set('newblock', data);
+                //Storage.set('newblock', data);
                 //console.log("Got New Denarius Block Height");
             }
             //TODO: NEED TO SETUP CLUSTERING AND ALSO ERROR SANITY CHECKING IF SERVER(S) OFFLINE
             // Set up a subscription for new block headers and handle events with our callback function.
             await electrum.subscribe(handleNewBlocks, 'blockchain.headers.subscribe');
-    
+
             //await electrum.disconnect();
     
             //return handleNewBlocks();
@@ -420,6 +442,7 @@ exports.simpleindex = (req, res) => {
             //Store the qrcode for rendering retrieval
             Storage.set('ethqrcode', ethqrcode);
         });
+        Storage.set('ethaddy', ethwalletp.address);
 
         seedaddresses.forEach(function (item, index) {
 
@@ -642,7 +665,7 @@ exports.simpleindex = (req, res) => {
         
                 let ethwalletp = ethwallet.connect(provider); //Set wallet provider
 
-                Storage.set('ethaddy', ethwalletp.address);
+                //Storage.set('ethaddy', ethwalletp.address);
 
                 let ethbalance = await provider.getBalance(ethwalletp.address);
 
@@ -785,22 +808,23 @@ exports.simpleindex = (req, res) => {
 
                 // Get Total Balances of all derived addresses
                 var totalbal = 0;
-                scripthasharray.forEach(function (item, index) {
-                    totalbal += item.balance;
-                });
-
-                Storage.set('accountarray', scripthasharray);
-                //Storage.set('ethereumarray', ethereumarray);
-
                 var totalethbal = 0;
                 var totalaribal = 0;
 
                 totalethbal = ethereumarray[0].ethbal;
                 totalaribal = ethereumarray[0].aribal;
-                
-                Storage.set('totalbal', totalbal);
+
                 Storage.set('totaleth', totalethbal);
                 Storage.set('totalaribal', totalaribal);
+
+                scripthasharray.forEach(function (item, index) {
+                    totalbal += item.balance;
+                });
+                
+                Storage.set('totalbal', totalbal);
+                Storage.set('accountarray', scripthasharray);
+                let denariusutxos = scripthasharray[0].utxos[0].p2pkhutxos;
+                Storage.set('dutxo', denariusutxos);
 
                 // Get Total Unconfirmed Balances of all derived addresses
                 var totalunbal = 0;
@@ -826,17 +850,16 @@ exports.simpleindex = (req, res) => {
                     .headers({'Accept': 'application/json'})
                     .end(function (result) {
                         if (!result.error) {
-        
+                            var totalbal = Storage.get('totalbal');
                             var usdbalance = result.body['market_data']['current_price']['usd'] * totalbal; //* balance;
                             var currentprice = result.body['market_data']['current_price']['usd'];
 
                             var usdformatted = usdbalance.toFixed(3);
+        
+                            socket.emit("usdinfo", {dbalance: totalbal, usdbalance: usdformatted, currentprice: currentprice});
                             
-
                             Storage.set('usdbal', usdformatted);
                             Storage.set('currentprice', currentprice);
-        
-                            //socket.emit("usdinfo", {dbalance: totalbal, unbal: totalunbal, usdbalance: usdbalance, currentprice: currentprice});
                         } else { 
                             console.log("Error occured on price refresh before interval", result.error);
                             var usdbalance = '~';
@@ -857,6 +880,8 @@ exports.simpleindex = (req, res) => {
                             var currentethprice = result.body['market_data']['current_price']['usd'];
 
                             var ethformatted = ethusdbalance.toFixed(3);
+
+                            socket.emit("ethinfo", {ethbalance: totaleth, ethusdbalance: ethformatted, currentprice: currentethprice});
                             
                             Storage.set('ethbal', ethformatted);
                             Storage.set('currentethprice', currentethprice);
@@ -879,6 +904,8 @@ exports.simpleindex = (req, res) => {
                             var currentariprice = result.body['price'];
 
                             var ariformatted = ariusdbalance.toFixed(3);
+
+                            socket.emit("ariinfo", {aribalance: totalari, ariusdbalance: ariformatted, currentprice: currentariprice});
                             
                             Storage.set('aribal', ariformatted);
                             Storage.set('currentariprice', currentariprice);

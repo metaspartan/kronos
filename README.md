@@ -1,5 +1,5 @@
 # Kronos
-#### Denarius Dashboard and AIO Wallet Interface
+#### A Dashboard Interface and Wallet for Denarius (D), Ethereum (ETH), and Denarii (ARI) in NodeJS and Electron
 =======================
 ![Kronos Logo](https://user-images.githubusercontent.com/10162347/93870495-8bd68680-fc8a-11ea-85f7-a5ca7b52d1ba.png)
 
@@ -11,19 +11,15 @@
 
 [![Build history](https://buildstats.info/travisci/chart/carsenk/kronos?branch=master)](https://travis-ci.org/carsenk/kronos?branch=master)
 
-Kronos - A secondary layer NodeJS/Socket.io/Express/Electron/Denarius powered Web Wallet Dashboard with Statistics of your device typically on your LAN by default, though can be setup to be accessed remotely. This is a major project with active development in progress and this repo will be updated in time, be warned, things can break and always always backup backup backup!
+Kronos - Wallet Dashboard Interface. This is a massive project with active development in progress and this repo will be updated in time, be warned, things can break and always always backup backup backup!
 
-Send and Receive Funds, Create new addresses, View Transactions, Unlock/Lock Wallet, Stake D, Reboot your node, Import Private Keys, View Private Keys, Encrypt your wallet, Broadcast raw transactions, Sign and Verify Denarius messages, and much more!
-
-As of v1.5.0 Beta of Kronos it is now built with Electron for Windows, macOS, and Linux as an AIO app to use alongside a Denarius node.
-
-As of v1.5.5 Beta of Kronos it now features multi modes "Simple" which only relays on ElectrumX SPV Servers and a more "Advanced" mode where you can configure the RPC details to your Denarius node.
-
-As of v1.6.0 Beta of Kronos it now features ETH and ARI support fully, you can send and receive ARI or ETH in Simple Mode in Kronos
+Send and Receive D, ETH, and ARI Funds, create new addresses, view transactions, unlock/lock wallet, stake D, reboot your node, import private keys, encrypt your wallet, broadcast raw transactions, sign and verify Denarius messages, and much more!
 
 This was built for the Raspberry Pi in mind and one with at least 2GB of RAM. 4GB and 8GB models are recommended! Kronos will run on any Linux distro with a minimal amount of 2GB of RAM.
 
-Running the installer script below installs denarius via snap install and then modifies your .env in Kronos and denarius.conf to a random rpcuser and rpcpass, Kronos will then be running on your LAN (192.168.x.x:3000) on port 3000.
+Running the Kronos headless installer script below installs denarius via snap install and then modifies your .env in Kronos and denarius.conf to a random rpcuser and rpcpass, Kronos will then be running on your LAN (192.168.x.x:3000) on port 3000.
+
+[GET STARTED USING KRONOS](https://github.com/carsenk/kronos/blob/master/GETTING-STARTED.md)
 
 Run the app version of Kronos
 -----------------
@@ -33,6 +29,11 @@ git clone https://github.com/carsenk/kronos.git
 cd kronos
 npm install
 cd node_modules/node-pty-prebuilt-multiarch
+node-gyp configure
+node-gyp build
+cd ..
+cd ..
+cd node_modules/keytar-extra
 node-gyp configure
 node-gyp build
 cd ..
@@ -59,25 +60,9 @@ Recommended Devices and OS
 -----------------
 * Windows 10
 * macOS 10.11 or greater
-* Raspberry Pi 4 4GB - Ubuntu 20.04 Server Image
-* Raspberry Pi 4 8GB - Ubuntu 20.04 Server Image
-* Ubuntu 20.04
-* Ubuntu 19.10
-* Ubuntu 19.04
-* Ubuntu 18.04
-* Ubuntu 16.04
-* Raspberry Pi OS
-
-* Linux Mint
-* Debian
-* Arch Linux
-* Fedora
-* Red Hat
-* Manjaro
-* ZorinOS
-* elementaryOS
-* CentOS
-* openSUSE
+* Linux (Any modern distro, Ubuntu preferred)
+* 4GB RAM recommended for Advanced Mode with Denarius running
+* 2GB RAM recommended for Simple Mode without Denarius running
 
 Screenshots
 -----------------
@@ -124,6 +109,16 @@ Features
 
 -More features will be coming!
 
+Changes
+-------------
+As of v1.5.0 Beta of Kronos it is now built with Electron for Windows, macOS, and Linux as an AIO app to use alongside a Denarius node.
+
+As of v1.5.5 Beta of Kronos it now features multi modes "Simple" which only relays on ElectrumX SPV Servers and a more "Advanced" mode where you can configure the RPC details to your Denarius node.
+
+As of v1.6.0 Beta of Kronos it now features ETH and ARI support fully, you can send and receive ARI or ETH in Simple Mode in Kronos
+
+As of v1.6.3 Beta of Kronos it now features using OS built keychain security for storing randomly generated secret keys for use with Kronos encryption.
+
 Prerequisites
 -------------
 
@@ -132,47 +127,15 @@ Prerequisites
 
 Getting Started
 ---------------
+[GET STARTED USING KRONOS](https://github.com/carsenk/kronos/blob/master/GETTING-STARTED.md)
 
-The easiest way to get started is to run the following bash command:
-
-```bash
-wget -qO- https://raw.githubusercontent.com/carsenk/kronos/master/installkronos.sh | bash
-```
-or
-```bash
-curl -o- https://raw.githubusercontent.com/carsenk/kronos/master/installkronos.sh | bash
-```
-
-```bash
-# Get the latest snapshot
-git clone --depth=1 https://github.com/carsenk/kronos.git kronos
-
-# Change directory
-cd kronos
-
-# Install NPM dependencies
-npm install
-
-# Then simply start Kronos
-node ./bin/kronos
-
-or
-
-npm start
-
-# Or, if you are using nodemon
-nodemon app.js
-
-#Or, if you are using forever
-forever start app.js
-```
 
 License
 -------
 
 The MIT License (MIT)
 
-Copyright (c) 2020 Carsen Klock
+Copyright (c) 2020-2021 Carsen Klock
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

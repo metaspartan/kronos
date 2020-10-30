@@ -58,8 +58,11 @@ block content
             label.col-sm-3.control-label(for='UTXO') UTXO Input
             .col-sm-7
               select.form-control.blackinput3(type='text', name='UTXO', id='UTXO')
-                each utxo in utxos
-                  option(value=utxo.tx_hash+','+utxo.tx_pos+','+utxo.value) #{utxo.value / 100000000} D - #{utxo.tx_hash} - TXPOS: #{utxo.tx_pos}
+                if (utxos)
+                  each utxo in utxos
+                    option(value=utxo.tx_hash+','+utxo.tx_pos+','+utxo.value) #{utxo.value / 100000000} D - #{utxo.tx_hash} - TXPOS: #{utxo.tx_pos}
+                else
+                    option(value='' disabled) No UTXOs Available
           .form-group
             label.col-sm-3.control-label(for='sendaddress') To D Wallet Address
             .col-sm-7
