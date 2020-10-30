@@ -94,7 +94,6 @@ const delectrumxhost2 = 'electrumx2.denarius.pro';
 const delectrumxhost3 = 'electrumx3.denarius.pro';
 const delectrumxhost4 = 'electrumx4.denarius.pro';
 
-var seedphrasedb = Storage.get('seed');
 var mnemonic;
 let ethnetworktype = 'homestead'; //homestead is mainnet, ropsten for testing, choice for UI selection eventually
 let provider = ethers.getDefaultProvider(ethnetworktype, {
@@ -450,16 +449,12 @@ exports.getSimpleSeed = (req, res) => {
     var totalbal = Storage.get('totalbal');
     var totalethbal = Storage.get('totaleth');
     var totalaribal = Storage.get('totalaribal');
+    var seedphrasedb = Storage.get('seed');
   
     var mnemonic;
     var ps;
     let seedaddresses = [];
     let store = [];
-
-    var decryptedmnemonic = decrypt(seedphrasedb);
-    mnemonic = decryptedmnemonic;
-    let ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
-    let ethwalletp = ethwallet.connect(provider); //Set wallet provider
   
     db.get('password', function(err, value) {
       if (err) {
@@ -477,6 +472,10 @@ exports.getSimpleSeed = (req, res) => {
           var decryptedmnemonic = decrypt(value);
           mnemonic = decryptedmnemonic;
         }
+
+        // ETH and ARI
+        let ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
+        let ethwalletp = ethwallet.connect(provider); //Set wallet provider
   
         //Convert our mnemonic seed phrase to BIP39 Seed Buffer 
         const seed = bip39.mnemonicToSeedSync(mnemonic, ps);
