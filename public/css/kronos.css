@@ -342,15 +342,15 @@ footer {
 }
 
 .blackinput2 {
-  background-color: #333 !important;
+  background-color: #212121 !important;
   border-color: #444 !important;
-  color: #FFF !important;
-  width: 320px !important;
+  color: #a4a4a4 !important;
+  width: 370px !important;
 }
 
 .blackinput3 {
-  background-color: #333 !important;
-  border-color: #444 !important;
+  background-color: #181818 !important;
+  border-color: #313131 !important;
   color: #FFF !important;
 }
 
@@ -360,6 +360,12 @@ footer {
   color: #FFF !important;
   width: 98%;
   margin: 0 auto;
+}
+
+.blackinput5 {
+  background-color: #212121 !important;
+  border-color: #444 !important;
+  color: #a4a4a4 !important;
 }
 
 .blockcount a {
@@ -385,6 +391,54 @@ footer {
   .centerbal {
     display:inline-block;text-align:center;position: absolute;left: 50%;transform: translatex(-50%);
   }
+}
+
+#sendloading {
+  background-color:#111;
+  width:100%;
+  height:100%;
+  position: absolute;
+  top: -15px;
+  z-index:99999;
+  display: none;
+}
+
+#loader {
+  margin: 0 auto;
+}
+
+.loadtxt {
+  text-align: center;
+  top: 30%;
+  position: absolute;
+  left: 50%;
+  transform: translatex(-50%);
+  color: #0c50ff; 
+  cursor: default;
+  background: linear-gradient(317deg,rgba(173,76,221,1) 0%,rgba(208,170,57,1) 77%);
+  -webkit-background-clip: text;
+  background-clip: text; 
+  background-size: 400% 400%;
+  -webkit-text-fill-color: transparent;
+  -webkit-animation: AnimationName 8s ease infinite;
+  -moz-animation: AnimationName 8s ease infinite;
+  animation: AnimationName 8s ease infinite;
+}
+
+@-webkit-keyframes AnimationName {
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+@-moz-keyframes AnimationName {
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+@keyframes AnimationName {
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
 }
 
 .wrapper{

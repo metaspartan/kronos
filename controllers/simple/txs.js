@@ -327,8 +327,13 @@ exports.postethsend = (req, res) => {
     var totalethbal = Storage.get('totaleth');
     var transferamount = ethers.utils.parseEther(amount);
 
+    var gasandamount = amount + gasfee;
+
+    let totalcalcbale = totalethbal - gasandamount;
+
     var valid = ETHValidator.validate(`${sendtoaddress}`, 'ETH');
 
+    var seedphrasedb = Storage.get('seed');
     var decryptedmnemonic = decrypt(seedphrasedb);
     mnemonic = decryptedmnemonic;
     let ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
@@ -361,9 +366,10 @@ exports.postethsend = (req, res) => {
             console.log('Gas Limit Estimate: ' + estimate);
             
             ethwalletp.sendTransaction(transaction).then(function (hash) {
-                console.log('Sent ETH Success: ' + JSON.stringify(hash));
+                //console.log('Sent ETH Success: ' + JSON.stringify(hash));
                 req.toastr.success(`${amount} ETH was sent successfully! ${hash.hash}`, 'Success!', { positionClass: 'toast-bottom-right' });
                 req.flash('success', { msg: `Your <strong>${amount} ETH</strong> was sent successfully! <a href="https://etherscan.io/tx/${hash.hash}" target="_blank">${hash.hash}</a>` });
+                Storage.set('totaleth', totalcalcbale);
                 return res.redirect('/sendeth');
             });    
         });
@@ -381,6 +387,7 @@ exports.postethsend = (req, res) => {
 
 exports.postarisend = (req, res) => {
     var gasfee = req.body.gasfeer; //21000 Gas Limit * 31 Gwei Fee = 0.000651 ETH
+    var gwei = req.body.gasfeeg;
     var sendtoaddress = req.body.sendaddress;
     var amount = req.body.amount;
     var totalethbal = Storage.get('totaleth');
@@ -390,10 +397,14 @@ exports.postarisend = (req, res) => {
 
     var valid = ETHValidator.validate(`${sendtoaddress}`, 'ETH');
 
+    var seedphrasedb = Storage.get('seed');
     var decryptedmnemonic = decrypt(seedphrasedb);
     mnemonic = decryptedmnemonic;
     let ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
     let ethwalletp = ethwallet.connect(provider); //Set wallet provider
+
+    let totalcalcbal = parseFloat(totalaribal) - parseFloat(amount);
+    let totalcalcgas = parseFloat(totalethbal) - parseFloat(gasfee);
 
     if (parseFloat(gasfee) > parseFloat(totalethbal)) {
 
@@ -420,11 +431,38 @@ exports.postarisend = (req, res) => {
         // The Contract object
         const ariContract = new ethers.Contract(ariAddress, ariAbi, ethwalletp);
         
-        ariContract.transfer(sendtoaddress, transferamount).then(function (hash) {
-            console.log('Sent ARI Success: ' + JSON.stringify(hash.hash));
-            req.toastr.success(`${amount} ARI was sent successfully! ${hash.hash}`, 'Success!', { positionClass: 'toast-bottom-right' });
-            req.flash('success', { msg: `Your <strong>${amount} ARI</strong> was sent successfully! <a href="https://etherscan.io/tx/${hash.hash}" target="_blank">${hash.hash}</a>` });
-            return res.redirect('/sendari');
+        var options = {
+            gasLimit: 60000,
+            gasPrice: ethers.utils.parseUnits(gwei, 'gwei')
+        };
+
+        let promises = [];
+        let txarray = [];
+
+        const ariTX = async () => {
+            let aritransfer = await ariContract.transfer(sendtoaddress, transferamount, options);
+            return aritransfer;
+        }
+        //ariTX();
+
+        promises.push(new Promise((res, rej) => {
+            ariTX().then(globalData => {
+                txarray.push({aritx: globalData});
+                res({globalData});
+            });
+        }));
+
+        Promise.all(promises).then((values) => {
+
+            console.log(values);
+            console.log(txarray);
+
+            req.toastr.success(`${amount} ARI was sent successfully! ${txarray[0].aritx.hash}`, 'Success!', { positionClass: 'toast-bottom-right' });
+            req.flash('success', { msg: `Your <strong>${amount} ARI</strong> was sent successfully! (${gasfee} ETH gas fee) <a href="https://etherscan.io/tx/${txarray[0].aritx.hash}" target="_blank"><strong>${txarray[0].aritx.hash}</strong></a>` });
+            Storage.set('totalaribal', totalcalcbal);
+            Storage.set('totaleth', totalcalcgas);
+            return res.redirect('/sendari'); // ????
+
         });
 
     } else {

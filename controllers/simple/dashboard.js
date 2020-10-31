@@ -116,8 +116,10 @@ exports.simpleindex = (req, res) => {
     let socket_id2 = [];
     let socket_id3 = [];
     let socket_id4 = [];
+    let socket_id5 = [];
     let socket_id7 = [];
     let socket_id33 = [];
+    let socket_id34 = [];
 
     var mnemonic;
     var ps;
@@ -139,6 +141,21 @@ exports.simpleindex = (req, res) => {
         alchemy: 'W5yjuu3Ade1lsIn3Od8rTqJsYiFJszVY'
     });
 
+    var decryptedmnemonic = decrypt(seedphrasedb);
+    mnemonic = decryptedmnemonic;
+    const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
+    let ethwalletp = ethwallet.connect(provider); //Set wallet provider
+    const ariAddress = "0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670"; // 0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670 Denarii (ARI)
+    const ariAbi = [
+    // Some details about Denarii ERC20 ABI
+    "function name() view returns (string)",
+    "function symbol() view returns (string)",
+    "function balanceOf(address) view returns (uint)",
+    "function transfer(address to, uint amount)",
+    "event Transfer(address indexed from, address indexed to, uint amount)"
+    ];
+    const ariContract = new ethers.Contract(ariAddress, ariAbi, provider);
+
     res.io.on('connection', function (socket) {
         socket_id33.push(socket.id);
         if (socket_id33[0] === socket.id) {
@@ -155,6 +172,45 @@ exports.simpleindex = (req, res) => {
                 socket.emit("newblocketh", {ethblock: ethblock, ethhash: blockhash});
             });
         });
+        // ariContract.on(ethwalletp.address, (balance) => {
+        //     console.log('New ARI Balance: ' + balance);
+        //     socket.emit("newaribal", {aribal: balance});
+        // });
+    });
+
+    // Grab ETH and ARI balances in realtime (every 15s)
+    res.io.on('connection', function (socket) {
+        socket_id34.push(socket.id);
+        if (socket_id34[0] === socket.id) {
+        res.io.removeAllListeners('connection'); 
+        }
+        const ethWalletBal = async () => {
+            let ethbalance = await provider.getBalance(ethwalletp.address);
+            let ethbalformatted = ethers.utils.formatEther(ethbalance); //ethers.utils.formatUnits(ethbalance, 18);
+            Storage.set('totalethbal', JSON.parse(ethbalformatted));
+            socket.emit("newethbal", {ethbal: JSON.parse(ethbalformatted)});
+        }
+        ethWalletBal();
+        setInterval(function(){ 
+            ethWalletBal();
+        }, 15000);
+    });
+
+    res.io.on('connection', function (socket) {
+        socket_id5.push(socket.id);
+        if (socket_id5[0] === socket.id) {
+        res.io.removeAllListeners('connection'); 
+        }
+        const ariWalletBal = async () => {
+            let aribalance = await ariContract.balanceOf(ethwalletp.address);
+            let aribalformatted = ethers.utils.formatUnits(aribalance, 8);
+            Storage.set('totalaribal', JSON.parse(aribalformatted));
+            socket.emit("newaribal", {aribal: parseFloat(aribalformatted)});
+        }
+        ariWalletBal();
+        setInterval(function(){ 
+            ariWalletBal();
+        }, 15000);
     });
     
     si.cpuCurrentspeed(function (data2) {
@@ -444,8 +500,8 @@ exports.simpleindex = (req, res) => {
 
         var mainaddy = Storage.get('mainaddress');
 
-        const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
-        let ethwalletp = ethwallet.connect(provider); //Set wallet provider
+        //const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
+        //let ethwalletp = ethwallet.connect(provider); //Set wallet provider
 
         QRCode.toDataURL(mainaddy, { color: { dark: '#000000FF', light:"#777777FF" } }, function(err, qrcode) {
                 if (err) {
