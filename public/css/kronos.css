@@ -343,9 +343,9 @@ small {font-size:2.2rem;color:#eee;}
   content:' ';
   position: absolute;
   z-index:1;
-  width:50px;
-  height:50px;
-  left: 49%;
+  width:40px;
+  height:40px;
+  left: 50%;
   top: 7.3%;
   background-color: #4fbf2d!important;
   background-image: linear-gradient(90deg, #71c954, #33841a);
@@ -387,24 +387,19 @@ small {font-size:2.2rem;color:#eee;}
 .greenCircle {
   background-color: #4fbf2d!important;
   background-image: linear-gradient(90deg, #71c954, #33841a);
-  z-index: 99;
 }
 
 .greenCircler {
   background-color: #4fbf2d!important;
   background-image: linear-gradient(90deg, #71c954, #33841a);
-  z-index: -2;
 }
 .online-icon {
-  height:20px;
-  width:20px;
   position:absolute;
-  top:12.1%;
   left:50%;
   text-align:center;
   margin:-30px 0 0 -30px;
   border-radius:100px;
-  z-index:1
+  z-index:99;
 }
 .online-icon i {
   text-align:center;
@@ -412,13 +407,13 @@ small {font-size:2.2rem;color:#eee;}
 }
 .online-icon .ripple{
   position:absolute;
-  width:60px;
-  height:60px;
+  width:40px;
+  height:40px;
   z-index:-25;
   left:50%;
   top:50%;
   opacity:0;
-  margin:-30px 0 0 -30px;
+  margin:-20px 0 0 -20px;
   border-radius:100px;
   -webkit-animation:ripple 2.3s infinite;
   animation:ripple 2.3s infinite

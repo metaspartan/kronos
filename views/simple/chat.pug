@@ -24,7 +24,8 @@ block content
 
       const picker = new EmojiButton({
                         theme: 'dark',
-                        position: 'top-start'
+                        position: 'top-start',
+                        autoHide: false
                       });
       const trigger = document.querySelector('#emoji-trigger');
 
@@ -41,6 +42,31 @@ block content
       var ethaddy = document.getElementById("ethaccount").getAttribute("data-value");
 
       var daddy = document.getElementById("daccount").getAttribute("data-value");
+
+      function timeSince(date) {
+        var seconds = Math.floor((new Date() - date) / 1000);
+        var interval = seconds / 31536000;
+        if (interval > 1) {
+          return Math.floor(interval) + " years ago";
+        }
+        interval = seconds / 2592000;
+        if (interval > 1) {
+          return Math.floor(interval) + " months ago";
+        }
+        interval = seconds / 86400;
+        if (interval > 1) {
+          return Math.floor(interval) + " days ago";
+        }
+        interval = seconds / 3600;
+        if (interval > 1) {
+          return Math.floor(interval) + " hours ago";
+        }
+        interval = seconds / 60;
+        if (interval > 1) {
+          return Math.floor(interval) + " minutes ago";
+        }
+        return Math.floor(seconds) + " seconds ago";
+      }
 
       //console.log(ethaddy);
 
@@ -100,11 +126,12 @@ block content
           if(e.keyCode == 13){
             e.preventDefault();
             var messages = [];
-            var txt = $("#message").val().replace(/</g, "&lt;").replace(/>/g, "&gt;");;
+            var time = new Date().toUTCString().replace('GMT','');
+            var txt = $("#message").val().replace(/</g, "&lt;").replace(/>/g, "&gt;");
             if (txt == '') {
               return;
             }
-            messages.push({msg: txt, address: ethaddy, daddress: daddy, boxprofile: boxprofile});
+            messages.push({msg: txt, address: ethaddy, daddress: daddy, boxprofile: boxprofile, time: time});
             b.send(messages);
             $('#message').val('');
           }
@@ -113,11 +140,12 @@ block content
         document.getElementById("send").onmousedown = function(e){
           e.preventDefault();
           var messages = [];
-          var txt = $("#message").val().replace(/</g, "&lt;").replace(/>/g, "&gt;");;
+          var time = new Date().toUTCString().replace('GMT','');
+          var txt = $("#message").val().replace(/</g, "&lt;").replace(/>/g, "&gt;");
           if (txt == '') {
               return;
           }
-          messages.push({msg: txt, address: ethaddy, daddress: daddy, boxprofile: boxprofile});
+          messages.push({msg: txt, address: ethaddy, daddress: daddy, boxprofile: boxprofile, time: time});
           b.send(messages);
           $('#message').val('');
         };
@@ -126,7 +154,7 @@ block content
 
       b.on("seen", function(address) { 
         console.log(address + " [ seen ]");
-        $('#loader').html("Kronos Chat Peer ID: " + b.address() + " <span class='dot'></span> • CONNECTED <span id='connectdot'></div>");
+        $('#loader').html("Kronos Chat Peer ID: " + b.address() + " <span class='online-icon greenCircle' target='_blank'><span class='ripple greenCircler'></span><span class='ripple greenCircler'></span><span class='ripple greenCircler'></span></span> • CONNECTED <span id='connectdot'></div>");
         b.on("connections", function(connection) { 
           //console.log(connection + " [ connections ]");
           $('#connectdot').html(' • '+connection + ' connection(s)');
@@ -135,8 +163,14 @@ block content
 
       b.on("message", function(address, message) {
         //console.log("RECEIVED MESSAGE:" + address + ": " + message);
-        $('#messages').append("<div style='font-size:9px;color:#999;margin-top:10px !important; background-color:#22222296;border-radius:15px;padding:10px;' class='row'><div class='col-md-1'><img src="+message[0].boxprofile+" border='0' style='display:inline-block;height:40px;width:40px;border-radius:9999px;object-fit:cover;margin-right: 15px;'/></div><div class='col-md-11' style='display:inline-block;vertical-align:middle;margin-top:3px;'><span style='margin-top:15px;'>From • "+message[0].address+" • "+message[0].daddress+"</span><br/><span style='font-size:16px;color:#FFF;'>"+message[0].msg+"</span></div></div>");
+        $('#messages').append("<div style='font-size:9px;color:#999;margin-top:10px !important; background-color:#22222296;border-radius:15px;padding:10px;' class='row'><div class='col-md-1'><img src="+message[0].boxprofile+" border='0' style='display:inline-block;height:45px;width:45px;border-radius:9999px;object-fit:cover;margin-right: 15px;margin-top:2px;border: 3px #333 solid;'/></div><div class='col-md-11' style='display:inline-block;vertical-align:middle;margin-top:3px;'><span style='margin-top:15px;'>From • "+message[0].address+" • "+message[0].daddress+"</span><br/><span id='msgtime' data-value="+message[0].time+" style='color: #555;'>"+message[0].time+"</span><br/><span style='font-size:16px;color:#FFF;'>"+message[0].msg+"</span></div></div>");
       });
 
       b.on("connections", console.log.bind(console, "Connections:"));
       b.on("seen", console.log.bind(console, "Seen:"));
+
+      //- setInterval(function(){ 
+      //-     var msgtime = document.getElementById("msgtime").getAttribute("data-value");
+      //-     var timesince = timeSince(new Date(Date()-msgtime));
+      //-     $('#msgtime').html(timesince);       
+      //- }, 1000);
