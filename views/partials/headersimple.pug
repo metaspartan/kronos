@@ -41,6 +41,10 @@ script.
             a(href='http://'+lanip+':3000/dashsimple', onclick="javascript:event.target.port=3000") 
               i.fas.fa-tachometer-alt  
               |   Dashboard
+          li(class=(title == 'Chat') ? 'active' : undefined)
+            a(href='http://'+lanip+':3000/chat', onclick="javascript:event.target.port=3000") 
+              i.fas.fa-comment-dots   
+              |   Chat
           //- li.dropdown(class=(title == 'Wallet') ? 'active' : undefined)
           //-   a.dropdown-toggle(href='#', data-toggle='dropdown')
           //-     span 
@@ -158,3 +162,6 @@ script.
                 a(href='http://'+lanip+':3000/logout', onclick="javascript:event.target.port=3000")
                   i.fas.fa-sign-out-alt  
                   |   Logout
+          li
+            a(href='http://'+lanip+':3000/chat', onclick="javascript:event.target.port=3000")
+                img.res.threebox(src=''+threebox+'')

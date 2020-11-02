@@ -118,11 +118,13 @@ exports.getethsend = (req, res) => {
     var totalethbal = Storage.get('totaleth');
     var totalbal = Storage.get('totalbal');
     var totalaribal = Storage.get('totalaribal');
+    var threebox = Storage.get('threebox');
 
     res.render('simple/getethsend', {
         totalethbal: totalethbal,
         totalbal: totalbal,
-        totalaribal: totalaribal
+        totalaribal: totalaribal,
+        threebox: threebox
     });
 
 };
@@ -138,11 +140,13 @@ exports.getarisend = (req, res) => {
     var totalethbal = Storage.get('totaleth');
     var totalbal = Storage.get('totalbal');
     var totalaribal = Storage.get('totalaribal');
+    var threebox = Storage.get('threebox');
 
     res.render('simple/getarisend', {
         totalethbal: totalethbal,
         totalbal: totalbal,
-        totalaribal: totalaribal
+        totalaribal: totalaribal,
+        threebox: threebox
     });
 
 };
@@ -159,13 +163,40 @@ exports.getsend = (req, res) => {
     let totalbal = Storage.get('totalbal');
     let totalaribal = Storage.get('totalaribal');
     let utxos = Storage.get('dutxo');
+    let threebox = Storage.get('threebox');
     res.locals.utxos = utxos;
 
     res.render('simple/getsend', {
         utxos: utxos,
         totalethbal: totalethbal,
         totalbal: totalbal,
-        totalaribal: totalaribal
+        totalaribal: totalaribal,
+        threebox: threebox
+    });
+
+};
+
+
+//Get Kronos Chat
+exports.getchat = (req, res) => {
+
+    const ip = require('ip');
+    const ipaddy = ip.address();
+  
+    res.locals.lanip = ipaddy;
+
+    var totalethbal = Storage.get('totaleth');
+    var totalbal = Storage.get('totalbal');
+    var totalaribal = Storage.get('totalaribal');
+    var threebox = Storage.get('threebox');
+    var ethaddress = Storage.get('ethaddy');
+
+    res.render('simple/chat', {
+        totalethbal: totalethbal,
+        totalbal: totalbal,
+        totalaribal: totalaribal,
+        threebox: threebox,
+        ethaddress: ethaddress
     });
 
 };

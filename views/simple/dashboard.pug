@@ -129,12 +129,24 @@ block content
         $('#htotalethbal').html(bal + '<img class="res" src="../img/eth.png" alt="ETH" border="0" style="height:24px !important;width: 24px !important;margin:-15px 0px -12px !important;" /><span style="color:#888;">ETH</span>');
         var updatedethusd = bal * $('#currentethprice').text();
         $('#ethusdbalance').html(updatedethusd.toFixed(3));
+        document.querySelectorAll(".format").forEach((e) => {
+          let txt = e.innerHTML.split(".")
+          if (typeof txt[1] != 'undefined') {
+            e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
+          }
+        });
       } else {
         var bal = data69.ethbal[0];
         $('#totalethbal').html(bal); 
         $('#htotalethbal').html(bal + '<img class="res" src="../img/eth.png" alt="ETH" border="0" style="height:24px !important;width: 24px !important;margin:-15px 0px -12px !important;" /><span style="color:#888;">ETH</span>');
         var updatedethusd = bal * $('#currentethprice').text();
         $('#ethusdbalance').html(updatedethusd.toFixed(3));
+        document.querySelectorAll(".format").forEach((e) => {
+          let txt = e.innerHTML.split(".")
+          if (typeof txt[1] != 'undefined') {
+            e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
+          }
+        });
       }
     });
     socket.on('newaribal', function (data22) {
@@ -144,12 +156,22 @@ block content
         $('#htotalaribal').html(bal + '<img class="res" src="../img/ari.png" alt="ARI" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">ARI</span>');
         var updatedusd = bal * $('#currentariprice').text();
         $('#ariusdbalance').html(updatedusd.toFixed(3));
+        document.querySelectorAll(".format").forEach((e) => {
+          let txt = e.innerHTML.split(".")
+          if (typeof txt[1] != 'undefined') {
+            e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
+          }
+        });
       } else {
         var bal = data22.aribal[0];
         $('#totalaribal').html(bal);
         $('#htotalaribal').html(bal + '<img class="res" src="../img/ari.png" alt="ARI" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">ARI</span>');
         var updatedusd = bal * $('#currentariprice').text();
         $('#ariusdbalance').html(updatedusd.toFixed(3));
+        document.querySelectorAll(".format").forEach((e) => {
+          let txt = e.innerHTML.split(".")
+          e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
+        });
       }
     });
   .maincontent(style='border: none !important;')
@@ -183,7 +205,7 @@ block content
             img.res(src='../img/denarius.png', alt='D', border='0', style='height:75px !important;width: 75px !important;margin:0px 0px 0px !important;')
           p 
           .bal(style='font-size:2.5em;') 
-            span#totalbal #{totalbal || 0}
+            span#totalbal.format #{totalbal || 0}
             small(style='font-size:16px;')  D
           p
           .bal(style='font-size:1.6em;color:#888;') $
@@ -196,7 +218,7 @@ block content
             img.res(src='../img/eth.png', alt='ETH', border='0', style='height:75px !important;width:75px !important;margin:0px 0px 0px !important;')
           p 
           .bal(style='font-size:2.5em;') 
-            span#totalethbal #{totalethbal || 0}
+            span#totalethbal.format #{totalethbal || 0}
             small(style='font-size:16px;')  ETH
           p
           .bal(style='font-size:1.6em;color:#888;') $
@@ -209,7 +231,7 @@ block content
             img.res(src='../img/ari.png', alt='ARI', border='0', style='height:75px !important;width:75px !important;margin:0px 0px 0px !important;')
           p 
           .bal(style='font-size:2.5em;') 
-            span#totalaribal #{totalaribal || 0}
+            span#totalaribal.format #{totalaribal || 0}
             small(style='font-size:16px;')  ARI
           p
           .bal(style='font-size:1.6em;color:#888;') $
@@ -321,7 +343,8 @@ block content
                     tr
                       td(align='center') !{tx.blockNumber}
                       td(align='center') 
-                        .date= new Date(tx.timeStamp*1000).toUTCString().replace('GMT','')
+                        if (typeof tx.timeStamp != 'undefined')
+                          .date= new Date(tx.timeStamp*1000).toUTCString().replace('GMT','')
                       td(align='center') 
                         .label.label-success(style='background: none;') !{tx.confirmations}
                       td(align='center') 

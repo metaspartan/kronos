@@ -42,6 +42,8 @@ const PromiseLoadingSpinner = require('promise-loading-spinner');
 const main = require('progressbar.js');
 const ethers = require('ethers');
 const keytar = require('keytar-extra');
+const ThreeBox = require('3box');
+
 
 var currentOS = os.platform(); 
 
@@ -729,156 +731,215 @@ exports.simpleindex = (req, res) => {
                 return utxos;
             }
 
-            //Grab Denarii and Ethereum Data
-            const ethWalletBal = async () => {        
-                //let signer = provider.getSigner(0);
-        
-                const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
-        
-                // provider.getBlockNumber().then((blockNumber) => {
-                //     console.log("Current ETH block number: " + blockNumber);
-                // });
-        
-                let ethwalletp = ethwallet.connect(provider); //Set wallet provider
-
-                //Storage.set('ethaddy', ethwalletp.address);
-
-                let ethbalance = await provider.getBalance(ethwalletp.address);
-
-                let ethbalformatted = ethers.utils.formatEther(ethbalance); //ethers.utils.formatUnits(ethbalance, 18);
-
-                // provider.getBalance(ethwalletp.address).then((result) => {
-                //      console.log("ETH Balance: " + result);
-                // });
-
-                return JSON.parse(ethbalformatted);
-            }
-
-            const ariWalletBal = async () => {        
-                //let signer = provider.getSigner(0);
-        
-                const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
-        
-                // provider.getBlockNumber().then((blockNumber) => {
-                //     console.log("Current ETH block number: " + blockNumber);
-                // });
-        
-                let ethwalletp = ethwallet.connect(provider); //Set wallet provider
-
-                //let ethbalance = await provider.getBalance(ethwalletp.address);
-        
-                // You can also use an ENS name for the contract address
-                const ariAddress = "0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670"; // 0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670 Denarii (ARI)
-                const ariAbi = [
-                // Some details about the token
-                "function name() view returns (string)",
-                "function symbol() view returns (string)",
-        
-                // Get the account balance
-                "function balanceOf(address) view returns (uint)",
-        
-                // Send some of your tokens to someone else
-                "function transfer(address to, uint amount)",
-        
-                // An event triggered whenever anyone transfers to someone else
-                "event Transfer(address indexed from, address indexed to, uint amount)"
-                ];
-        
-                // The Contract object
-                const ariContract = new ethers.Contract(ariAddress, ariAbi, provider);
-        
-                // // // Get the ERC-20 token name
-                // ariContract.name().then((result) => {
-                //     console.log("Name: " + result);
-                // });
-        
-                // // Get the ERC-20 token symbol (for tickers and UIs)
-                // ariContract.symbol()
-        
-                // Get the balance of an address
-                let aribalance = await ariContract.balanceOf(ethwalletp.address)
-                // ethers.utils.formatUnits(aribalance, 8); // 8 decimals for ARI
-
-                let aribalformatted = ethers.utils.formatUnits(aribalance, 8);
-        
-                //console.log(formattedethbal);
-                //console.log("ARI Address: ", ethwalletp.address);
-
-                return parseFloat(aribalformatted);
-            }
-
-            const ethWalletTX = async () => {
-                const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
-        
-                let ethwalletp = ethwallet.connect(provider); //Set wallet provider
-
-                let etherscanProvider = new ethers.providers.EtherscanProvider(ethnetworktype);
-
-                let transactionhistory = await etherscanProvider.getHistory(ethwalletp.address);
-                let ethtxarray = [];
-
-                transactionhistory.forEach((tx) => {
-                    ethtxarray.push(tx);
-                });
-
-                return ethtxarray;
-            }
-
-            const ariWalletTX = async () => {
-                const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
-        
-                let ethwalletp = ethwallet.connect(provider); //Set wallet provider
-
-                let etherscanProvider = new ethers.providers.EtherscanProvider(ethnetworktype);
-
-                const ariAddress = "0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670"; // 0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670 Denarii (ARI)
-                const ariAbi = [
-                // Some details about the token
-                "function name() view returns (string)",
-                "function symbol() view returns (string)",
-                "function balanceOf(address) view returns (uint)",
-                "function transfer(address to, uint amount)",
-                "event Transfer(address indexed from, address indexed to, uint amount)"
-                ];
-                const ariContract = new ethers.Contract(ariAddress, ariAbi, ethwalletp);
-
-                let transactionhistory = await etherscanProvider.tokenTx(ethwalletp.address); //WIP Alpha
-                //http://api.etherscan.io/api?module=account&action=tokentx&address=0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670&startblock=0&endblock=999999999&sort=asc&apikey=JMBXKNZRZYDD439WT95P2JYI72827M4HHR
-
-                let aritxarray = [];
-
-                transactionhistory.forEach((tx) => {
-                    aritxarray.push(tx);
-                });
-
-                return aritxarray;
-            }
-
             promises.push(new Promise((res, rej) => {
                     scripthasha().then(globalData => {
                     scripthashb().then(globalData2 => {
                     txhistoryfull().then(TXHistory => {
                     utxohistory().then(UTXOHistory => {
-                    ethWalletBal().then(ethWalletBal => {
-                    ariWalletBal().then(ariWalletBal => {
-                    //ethWalletTX().then(ethWalletTX => {
-                    //ariWalletTX().then(ariWalletTX => {
 
-                    // scripthasharray.push({address: daddress0, qr: qrcodedata, p2pkh: removechecksum, p2pk: xpubtopub, balance: globalData, unconfirmedbal: globalData2, txs: TXHistory, utxos: UTXOHistory});
-                    // res({daddress0, qrcodedata, removechecksum, xpubtopub, globalData, TXHistory, UTXOHistory});
-                    ethereumarray.push({ethbal: ethWalletBal, aribal: ariWalletBal});
-                    scripthasharray.push({balance: globalData, unconfirmedbal: globalData2, txs: TXHistory, utxos: UTXOHistory});
-                    res({globalData, globalData2, TXHistory, UTXOHistory, ethWalletBal, ariWalletBal});
+                        scripthasharray.push({balance: globalData, unconfirmedbal: globalData2, txs: TXHistory, utxos: UTXOHistory});
+                        res({globalData, globalData2, TXHistory, UTXOHistory});
 
-                });
-            });
-            });
-            });
-            });
-            });
+                    });
+                    });
+                    });
+                    });
             }));
 
         });
+
+        //Grab Denarii and Ethereum Data
+        const ethWalletBal = async () => {        
+            //let signer = provider.getSigner(0);
+    
+            const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
+    
+            // provider.getBlockNumber().then((blockNumber) => {
+            //     console.log("Current ETH block number: " + blockNumber);
+            // });
+    
+            let ethwalletp = ethwallet.connect(provider); //Set wallet provider
+
+            //Storage.set('ethaddy', ethwalletp.address);
+
+            let ethbalance = await provider.getBalance(ethwalletp.address);
+
+            let ethbalformatted = ethers.utils.formatEther(ethbalance); //ethers.utils.formatUnits(ethbalance, 18);
+
+            // provider.getBalance(ethwalletp.address).then((result) => {
+            //      console.log("ETH Balance: " + result);
+            // });
+
+            return JSON.parse(ethbalformatted);
+        }
+
+        const ariWalletBal = async () => {        
+            //let signer = provider.getSigner(0);
+    
+            const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
+    
+            // provider.getBlockNumber().then((blockNumber) => {
+            //     console.log("Current ETH block number: " + blockNumber);
+            // });
+    
+            let ethwalletp = ethwallet.connect(provider); //Set wallet provider
+
+            //let ethbalance = await provider.getBalance(ethwalletp.address);
+    
+            // You can also use an ENS name for the contract address
+            const ariAddress = "0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670"; // 0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670 Denarii (ARI)
+            const ariAbi = [
+            // Some details about the token
+            "function name() view returns (string)",
+            "function symbol() view returns (string)",
+    
+            // Get the account balance
+            "function balanceOf(address) view returns (uint)",
+    
+            // Send some of your tokens to someone else
+            "function transfer(address to, uint amount)",
+    
+            // An event triggered whenever anyone transfers to someone else
+            "event Transfer(address indexed from, address indexed to, uint amount)"
+            ];
+    
+            // The Contract object
+            const ariContract = new ethers.Contract(ariAddress, ariAbi, provider);
+    
+            // // // Get the ERC-20 token name
+            // ariContract.name().then((result) => {
+            //     console.log("Name: " + result);
+            // });
+    
+            // // Get the ERC-20 token symbol (for tickers and UIs)
+            // ariContract.symbol()
+    
+            // Get the balance of an address
+            let aribalance = await ariContract.balanceOf(ethwalletp.address)
+            // ethers.utils.formatUnits(aribalance, 8); // 8 decimals for ARI
+
+            let aribalformatted = ethers.utils.formatUnits(aribalance, 8);
+    
+            //console.log(formattedethbal);
+            //console.log("ARI Address: ", ethwalletp.address);
+
+            return parseFloat(aribalformatted);
+        }
+
+        const ethWalletTX = async () => {
+            const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
+    
+            let ethwalletp = ethwallet.connect(provider); //Set wallet provider
+
+            let etherscanProvider = new ethers.providers.EtherscanProvider(ethnetworktype);
+
+            let transactionhistory = await etherscanProvider.getHistory(ethwalletp.address);
+            let ethtxarray = [];
+
+            transactionhistory.forEach((tx) => {
+                ethtxarray.push(tx);
+            });
+
+            return ethtxarray;
+        }
+
+        const ariWalletTX = async () => {
+            const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
+    
+            let ethwalletp = ethwallet.connect(provider); //Set wallet provider
+
+            let etherscanProvider = new ethers.providers.EtherscanProvider(ethnetworktype);
+
+            const ariAddress = "0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670"; // 0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670 Denarii (ARI)
+            const ariAbi = [
+            // Some details about the token
+            "function name() view returns (string)",
+            "function symbol() view returns (string)",
+            "function balanceOf(address) view returns (uint)",
+            "function transfer(address to, uint amount)",
+            "event Transfer(address indexed from, address indexed to, uint amount)"
+            ];
+            const ariContract = new ethers.Contract(ariAddress, ariAbi, ethwalletp);
+
+            let transactionhistory = await etherscanProvider.tokenTx(ethwalletp.address); //WIP Alpha
+            //http://api.etherscan.io/api?module=account&action=tokentx&address=0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670&startblock=0&endblock=999999999&sort=asc&apikey=JMBXKNZRZYDD439WT95P2JYI72827M4HHR
+
+            let aritxarray = [];
+
+            transactionhistory.forEach((tx) => {
+                aritxarray.push(tx);
+            });
+
+            return aritxarray;
+        }
+
+        const BoxProfile = async () => {
+            const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Wallet from our Kronos seed        
+            let ethwalletp = ethwallet.connect(provider); //Set wallet provider
+
+            //3Box Profile
+            const profile = await ThreeBox.getProfile(ethwalletp.address);
+            var profileimage;
+
+            //console.log(profileimage);
+
+            if (typeof profile.image == 'undefined') {
+                profileimage = profile.image;
+                console.log(profileimage);
+                var boximage = '';
+                if (typeof profileimage == 'undefined') {
+                    boximage = '../img/avatar.png'; //IPFS Default Avatar Hash
+                } else {
+                    profileimage = profile.image[0].contentUrl['/'];
+                    boximage = 'https://cloudflare-ipfs.com/ipfs/' + profileimage;
+                }
+                //console.log(boximage);
+
+                return boximage;
+
+            } else {
+                profileimage = profile.image[0].contentUrl['/'];
+                console.log(profileimage);
+                var boximage = '';
+                if (typeof profileimage == 'undefined') {
+                    boximage = '../img/avatar.png'; //IPFS Default Avatar Hash
+                } else {
+                    profileimage = profile.image[0].contentUrl['/'];
+                    boximage = 'https://cloudflare-ipfs.com/ipfs/' + profileimage;
+                }
+                //console.log(boximage);
+
+                return boximage;
+            }
+        }
+
+        // const SetupBoxSpace = async () => {
+        //     const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Wallet from our Kronos seed        
+        //     let ethwalletp = ethwallet.connect(provider); //Set wallet provider
+
+        //     var thebox = await ThreeBox.openBox(ethwalletp.address, provider);
+
+        //     //await thebox.syncDone;
+
+        //     //const chatSpace = await thebox.openSpace('Kronos');
+
+        //     //const thread = await chatSpace.joinThread('Kronos v1.7.0');
+
+        //     return thebox;
+        // }
+
+        promises.push(new Promise((res, rej) => {
+            ethWalletBal().then(ethWalletBal => {
+            ariWalletBal().then(ariWalletBal => {
+            BoxProfile().then(threeboxprofile => {
+
+                ethereumarray.push({ethbal: ethWalletBal, aribal: ariWalletBal, boxprofile: threeboxprofile});
+                res({ethWalletBal, ariWalletBal, threeboxprofile});
+
+            });
+            });
+            });
+        }));
             
             Promise.all(promises).then((values) => {
 
@@ -886,12 +947,20 @@ exports.simpleindex = (req, res) => {
                 var totalbal = 0;
                 var totalethbal = 0;
                 var totalaribal = 0;
+                var threebox;
+                //var boxspace;
 
                 totalethbal = ethereumarray[0].ethbal;
                 totalaribal = ethereumarray[0].aribal;
+                threebox = ethereumarray[0].boxprofile;
+                //boxspace = ethereumarray[0].boxspace;
+
+                //console.log(boxspace);
 
                 Storage.set('totaleth', totalethbal);
                 Storage.set('totalaribal', totalaribal);
+                Storage.set('threebox', threebox);
+                //Storage.set('boxspace', boxspace);
 
                 scripthasharray.forEach(function (item, index) {
                     totalbal += item.balance;
@@ -1044,6 +1113,7 @@ exports.simpleindex = (req, res) => {
             var totalbal1 = Storage.get('totalbal');
             var totalethbal1 = Storage.get('totaleth');
             var totalaribal1 = Storage.get('totalaribal');
+            var threebox = Storage.get('threebox');
             var qrcode1 = Storage.get('qrcode');
             var ethqrcode1 = Storage.get('ethqrcode');
             var scripthasharray1 = Storage.get('accountarray');
@@ -1074,6 +1144,7 @@ exports.simpleindex = (req, res) => {
                 totalbal: totalbal1,
                 totalethbal: totalethbal1,
                 totalaribal: totalaribal1,
+                threebox: threebox,
                 mainaddy: mainaddy,
                 usdbalance: usdbalance,
                 ethbalance: ethbal,

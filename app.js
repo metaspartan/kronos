@@ -477,16 +477,18 @@ app.get('/simplesetup', authController.getsimple);
 app.post('/simplesetup', Limiter, authController.simple);
 app.get('/dashsimple', auth, sDashController.simpleindex);
 
-app.get('/createtx', Limiter, sTXController.getsend);
+app.get('/createtx', auth, Limiter, sTXController.getsend);
 app.post('/simplesend', Limiter, sTXController.postcreate);
 
-app.get('/sendeth', Limiter, sTXController.getethsend);
+app.get('/sendeth', auth, Limiter, sTXController.getethsend);
 app.post('/ethsend', Limiter, sTXController.postethsend);
 
-app.get('/sendari', Limiter, sTXController.getarisend);
+app.get('/sendari', auth, Limiter, sTXController.getarisend);
 app.post('/arisend', Limiter, sTXController.postarisend);
 
 app.get('/sseed', auth, authseed, sTXController.getSimpleSeed);
+
+app.get('/chat', auth, sTXController.getchat);
 
 //Advanced Mode
 app.get('/setup', authController.getsetup);

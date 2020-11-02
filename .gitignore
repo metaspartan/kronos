@@ -17,6 +17,8 @@ data
 out
 package-lock.json
 .env
+ipfs
+orbitdb
 
 # Dependency directory
 node_modules
