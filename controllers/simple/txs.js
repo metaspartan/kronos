@@ -118,13 +118,13 @@ exports.getethsend = (req, res) => {
     var totalethbal = Storage.get('totaleth');
     var totalbal = Storage.get('totalbal');
     var totalaribal = Storage.get('totalaribal');
-    var threebox = Storage.get('threebox');
+    var ethaddress = Storage.get('ethaddy');
 
     res.render('simple/getethsend', {
         totalethbal: totalethbal,
         totalbal: totalbal,
         totalaribal: totalaribal,
-        threebox: threebox
+        ethaddress: ethaddress
     });
 
 };
@@ -140,13 +140,13 @@ exports.getarisend = (req, res) => {
     var totalethbal = Storage.get('totaleth');
     var totalbal = Storage.get('totalbal');
     var totalaribal = Storage.get('totalaribal');
-    var threebox = Storage.get('threebox');
+    var ethaddress = Storage.get('ethaddy');
 
     res.render('simple/getarisend', {
         totalethbal: totalethbal,
         totalbal: totalbal,
         totalaribal: totalaribal,
-        threebox: threebox
+        ethaddress: ethaddress
     });
 
 };
@@ -163,7 +163,7 @@ exports.getsend = (req, res) => {
     let totalbal = Storage.get('totalbal');
     let totalaribal = Storage.get('totalaribal');
     let utxos = Storage.get('dutxo');
-    let threebox = Storage.get('threebox');
+    var ethaddress = Storage.get('ethaddy');
     res.locals.utxos = utxos;
 
     res.render('simple/getsend', {
@@ -171,7 +171,7 @@ exports.getsend = (req, res) => {
         totalethbal: totalethbal,
         totalbal: totalbal,
         totalaribal: totalaribal,
-        threebox: threebox
+        ethaddress: ethaddress
     });
 
 };
@@ -188,14 +188,12 @@ exports.getchat = (req, res) => {
     var totalethbal = Storage.get('totaleth');
     var totalbal = Storage.get('totalbal');
     var totalaribal = Storage.get('totalaribal');
-    var threebox = Storage.get('threebox');
     var ethaddress = Storage.get('ethaddy');
 
     res.render('simple/chat', {
         totalethbal: totalethbal,
         totalbal: totalbal,
         totalaribal: totalaribal,
-        threebox: threebox,
         ethaddress: ethaddress
     });
 

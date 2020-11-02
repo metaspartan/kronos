@@ -21,7 +21,6 @@
     "download.metamask.prod": "mkdir -p /dist/src/extensions && rm -rf /dist/src/extensions/* && cd /dist/src/extensions && ced nkbihfbeogaeaoehlefnkodbefgpgknn && mv nkbihfbeogaeaoehlefnkodbefgpgknn metamask"
   },
   "dependencies": {
-    "3box": "^1.22.2",
     "@metamask/detect-provider": "^1.1.0",
     "app-root-path": "^3.0.0",
     "bip32d": "git://github.com/carsenk/bip32d.git",

@@ -1,6 +1,8 @@
 span#lanip(data-value=lanip)
+span#ethaccount(data-value=ethaddress)
 //- script(src="/socket.io/socket.io.js")
 script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js")
+script(src='https://unpkg.com/3box/dist/3box.min.js')
 script.
   var lanip = document.getElementById("lanip").getAttribute("data-value");
   var socket = io('//'+ lanip +':3300');
@@ -15,6 +17,41 @@ script.
         x.style.display = "none";
       }
     }
+    var ethaddy = document.getElementById("ethaccount").getAttribute("data-value");
+    Box.getProfile(ethaddy).then(profile => {
+      console.log(profile);
+      var profileimage;
+
+      if (typeof profile.image == 'undefined') {
+          profileimage = profile.image;
+          console.log(profileimage);
+          var boximage = '';
+          if (typeof profileimage == 'undefined') {
+              boximage = '../img/avatar.png'; //IPFS Default Avatar Hash
+          } else {
+              profileimage = profile.image[0].contentUrl['/'];
+              boximage = 'https://cloudflare-ipfs.com/ipfs/' + profileimage;
+          }
+          console.log(boximage);
+
+          $("#threebox").html('<img src="'+boximage+'" border="0" class="res threebox"/>');
+
+      } else {
+          profileimage = profile.image[0].contentUrl['/'];
+          console.log(profileimage);
+          var boximage = '';
+          if (typeof profileimage == 'undefined') {
+              boximage = '../img/avatar.png'; //IPFS Default Avatar Hash
+          } else {
+              profileimage = profile.image[0].contentUrl['/'];
+              boximage = 'https://cloudflare-ipfs.com/ipfs/' + profileimage;
+          }
+          console.log(boximage);
+
+          $("#threebox").html('<img src="'+boximage+'" border="0" class="res threebox"/>');
+      }
+
+    });
   //- socket.on('notifications', function (data) {
   //-     console.log('GOT NOTIFY', data);
   //-     if (data.notifydb != '') {
@@ -164,4 +201,4 @@ script.
                   |   Logout
           li
             a(href='http://'+lanip+':3000/chat', onclick="javascript:event.target.port=3000")
-                img.res.threebox(src=''+threebox+'')
+                #threebox

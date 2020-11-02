@@ -42,7 +42,6 @@ const PromiseLoadingSpinner = require('promise-loading-spinner');
 const main = require('progressbar.js');
 const ethers = require('ethers');
 const keytar = require('keytar-extra');
-const ThreeBox = require('3box');
 
 
 var currentOS = os.platform(); 
@@ -873,45 +872,45 @@ exports.simpleindex = (req, res) => {
             return aritxarray;
         }
 
-        const BoxProfile = async () => {
-            const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Wallet from our Kronos seed        
-            let ethwalletp = ethwallet.connect(provider); //Set wallet provider
+        // const BoxProfile = async () => {
+        //     const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Wallet from our Kronos seed        
+        //     let ethwalletp = ethwallet.connect(provider); //Set wallet provider
 
-            //3Box Profile
-            const profile = await ThreeBox.getProfile(ethwalletp.address);
-            var profileimage;
+        //     //3Box Profile
+        //     const profile = await ThreeBox.getProfile(ethwalletp.address);
+        //     var profileimage;
 
-            //console.log(profileimage);
+        //     //console.log(profileimage);
 
-            if (typeof profile.image == 'undefined') {
-                profileimage = profile.image;
-                console.log(profileimage);
-                var boximage = '';
-                if (typeof profileimage == 'undefined') {
-                    boximage = '../img/avatar.png'; //IPFS Default Avatar Hash
-                } else {
-                    profileimage = profile.image[0].contentUrl['/'];
-                    boximage = 'https://cloudflare-ipfs.com/ipfs/' + profileimage;
-                }
-                //console.log(boximage);
+        //     if (typeof profile.image == 'undefined') {
+        //         profileimage = profile.image;
+        //         console.log(profileimage);
+        //         var boximage = '';
+        //         if (typeof profileimage == 'undefined') {
+        //             boximage = '../img/avatar.png'; //IPFS Default Avatar Hash
+        //         } else {
+        //             profileimage = profile.image[0].contentUrl['/'];
+        //             boximage = 'https://cloudflare-ipfs.com/ipfs/' + profileimage;
+        //         }
+        //         //console.log(boximage);
 
-                return boximage;
+        //         return boximage;
 
-            } else {
-                profileimage = profile.image[0].contentUrl['/'];
-                console.log(profileimage);
-                var boximage = '';
-                if (typeof profileimage == 'undefined') {
-                    boximage = '../img/avatar.png'; //IPFS Default Avatar Hash
-                } else {
-                    profileimage = profile.image[0].contentUrl['/'];
-                    boximage = 'https://cloudflare-ipfs.com/ipfs/' + profileimage;
-                }
-                //console.log(boximage);
+        //     } else {
+        //         profileimage = profile.image[0].contentUrl['/'];
+        //         console.log(profileimage);
+        //         var boximage = '';
+        //         if (typeof profileimage == 'undefined') {
+        //             boximage = '../img/avatar.png'; //IPFS Default Avatar Hash
+        //         } else {
+        //             profileimage = profile.image[0].contentUrl['/'];
+        //             boximage = 'https://cloudflare-ipfs.com/ipfs/' + profileimage;
+        //         }
+        //         //console.log(boximage);
 
-                return boximage;
-            }
-        }
+        //         return boximage;
+        //     }
+        // }
 
         // const SetupBoxSpace = async () => {
         //     const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Wallet from our Kronos seed        
@@ -931,12 +930,12 @@ exports.simpleindex = (req, res) => {
         promises.push(new Promise((res, rej) => {
             ethWalletBal().then(ethWalletBal => {
             ariWalletBal().then(ariWalletBal => {
-            BoxProfile().then(threeboxprofile => {
+            // BoxProfile().then(threeboxprofile => {
 
-                ethereumarray.push({ethbal: ethWalletBal, aribal: ariWalletBal, boxprofile: threeboxprofile});
-                res({ethWalletBal, ariWalletBal, threeboxprofile});
+                ethereumarray.push({ethbal: ethWalletBal, aribal: ariWalletBal});
+                res({ethWalletBal, ariWalletBal});
 
-            });
+            // });
             });
             });
         }));
@@ -947,19 +946,19 @@ exports.simpleindex = (req, res) => {
                 var totalbal = 0;
                 var totalethbal = 0;
                 var totalaribal = 0;
-                var threebox;
+                // var threebox;
                 //var boxspace;
 
                 totalethbal = ethereumarray[0].ethbal;
                 totalaribal = ethereumarray[0].aribal;
-                threebox = ethereumarray[0].boxprofile;
+                // threebox = ethereumarray[0].boxprofile;
                 //boxspace = ethereumarray[0].boxspace;
 
                 //console.log(boxspace);
 
                 Storage.set('totaleth', totalethbal);
                 Storage.set('totalaribal', totalaribal);
-                Storage.set('threebox', threebox);
+                // Storage.set('threebox', threebox);
                 //Storage.set('boxspace', boxspace);
 
                 scripthasharray.forEach(function (item, index) {
@@ -1113,7 +1112,7 @@ exports.simpleindex = (req, res) => {
             var totalbal1 = Storage.get('totalbal');
             var totalethbal1 = Storage.get('totaleth');
             var totalaribal1 = Storage.get('totalaribal');
-            var threebox = Storage.get('threebox');
+            // var threebox = Storage.get('threebox');
             var qrcode1 = Storage.get('qrcode');
             var ethqrcode1 = Storage.get('ethqrcode');
             var scripthasharray1 = Storage.get('accountarray');
@@ -1144,8 +1143,8 @@ exports.simpleindex = (req, res) => {
                 totalbal: totalbal1,
                 totalethbal: totalethbal1,
                 totalaribal: totalaribal1,
-                threebox: threebox,
                 mainaddy: mainaddy,
+                ethaddress: ethaddress,
                 usdbalance: usdbalance,
                 ethbalance: ethbal,
                 aribalance: aribal,
