@@ -142,6 +142,8 @@ exports.simpleindex = (req, res) => {
         alchemy: 'W5yjuu3Ade1lsIn3Od8rTqJsYiFJszVY'
     });
 
+    let provider2 = new ethers.providers.CloudflareProvider();
+
     var decryptedmnemonic = decrypt(seedphrasedb);
     mnemonic = decryptedmnemonic;
     const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
@@ -164,14 +166,18 @@ exports.simpleindex = (req, res) => {
         // connections with the same ID
         res.io.removeAllListeners('connection'); 
         }
-        provider.on('block', (blockNumber) => {
+        provider2.on('block', (blockNumber) => {
             let ethblock = blockNumber;
-
-            provider.getBlock(blockNumber).then((block) => {
-                let blockhash = block.hash;
-                //console.log(blockhash);
-                socket.emit("newblocketh", {ethblock: ethblock, ethhash: blockhash});
-            });
+            try {
+                provider2.getBlock(blockNumber).then((block) => {
+                    let blockhash = block.hash;
+                    //console.log(blockhash);
+                    socket.emit("newblocketh", {ethblock: ethblock, ethhash: blockhash});
+                });
+            }
+            catch(e) {
+                console.log('Catch an error: ', e)
+            }
         });
         // ariContract.on(ethwalletp.address, (balance) => {
         //     console.log('New ARI Balance: ' + balance);
@@ -757,11 +763,11 @@ exports.simpleindex = (req, res) => {
             //     console.log("Current ETH block number: " + blockNumber);
             // });
     
-            let ethwalletp = ethwallet.connect(provider); //Set wallet provider
+            let ethwalletp = ethwallet.connect(provider2); //Set wallet provider
 
             //Storage.set('ethaddy', ethwalletp.address);
 
-            let ethbalance = await provider.getBalance(ethwalletp.address);
+            let ethbalance = await provider2.getBalance(ethwalletp.address);
 
             let ethbalformatted = ethers.utils.formatEther(ethbalance); //ethers.utils.formatUnits(ethbalance, 18);
 
@@ -781,7 +787,7 @@ exports.simpleindex = (req, res) => {
             //     console.log("Current ETH block number: " + blockNumber);
             // });
     
-            let ethwalletp = ethwallet.connect(provider); //Set wallet provider
+            let ethwalletp = ethwallet.connect(provider2); //Set wallet provider
 
             //let ethbalance = await provider.getBalance(ethwalletp.address);
     
@@ -803,7 +809,7 @@ exports.simpleindex = (req, res) => {
             ];
     
             // The Contract object
-            const ariContract = new ethers.Contract(ariAddress, ariAbi, provider);
+            const ariContract = new ethers.Contract(ariAddress, ariAbi, provider2);
     
             // // // Get the ERC-20 token name
             // ariContract.name().then((result) => {
