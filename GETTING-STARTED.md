@@ -30,6 +30,8 @@ RUN KRONOS HEADLESS MODE (Raspberry Pi, etc.):
 -----------------
 Install NodeJS v12.16.3 via NVM or Installer from https://nodejs.org
 ```
+sudo apt install libsecret-1-dev
+
 git clone https://github.com/carsenk/kronos.git
 
 cd kronos
@@ -66,7 +68,7 @@ git clone https://github.com/carsenk/kronos.git
 
 cd kronos
 
-npm install -g electron electron-forge electron-rebuild node-gyp
+npm install -g electron electron-forge electron-rebuild node-gyp windows-build-tools
 
 npm install
 
@@ -97,7 +99,7 @@ git clone https://github.com/carsenk/kronos.git
 
 cd kronos
 
-npm install -g electron electron-forge electron-rebuild node-gyp
+npm install -g electron electron-forge electron-rebuild node-gyp windows-build-tools
 
 npm install
 
