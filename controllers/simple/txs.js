@@ -189,12 +189,14 @@ exports.getchat = (req, res) => {
     var totalbal = Storage.get('totalbal');
     var totalaribal = Storage.get('totalaribal');
     var ethaddress = Storage.get('ethaddy');
+    var mainaddress = Storage.get('mainaddress');
 
     res.render('simple/chat', {
         totalethbal: totalethbal,
         totalbal: totalbal,
         totalaribal: totalaribal,
-        ethaddress: ethaddress
+        ethaddress: ethaddress,
+        mainaddress: mainaddress
     });
 
 };

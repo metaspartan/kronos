@@ -4,26 +4,45 @@ block content
   .container(style='margin-top:30px;')
     #peersCount
     #ethaccount(data-value=ethaddress)
+    #daccount(data-value=mainaddress)
     div(style='background-color:#111;border-radius:15px;padding:30px;width:100%;margin-bottom:15px;text-align:center;')
       #loader Connecting...Please wait...  
         span#connectdot
-    #messagehodler(style='background-color:#111;border-radius:15px;padding:30px;width:100%;height:550px;overflow-y: scroll;margin-bottom:15px;')
-      #messages
+    #messagewrapper(style='overflow: auto;display: flex;flex-direction: column-reverse;background-color:#111;border-radius:15px;padding:30px;width:100%;height:550px;overflow-y: scroll;margin-bottom:15px;')
+      #messagehodler(style='')
+        #messages
     .input-group
-      input.blackinputchat#message.form-control(type='text' placeholder='Type a message...', data-value=ethaddress)
+      input.blackinputchat#message.form-control(type='text', placeholder='Type a message...', data-value=ethaddress, data-emoji-input="unicode")
+      span.input-group-addon#emoji-trigger(style='background-color:#222;color:#999;border-color: #444;border-left: none;outline:none;cursor:pointer;')
+        i.far.fa-smile-beam
       span#send.input-group-addon(style='background-color:#222;color:#999;border-color: #444;border-top-right-radius:15px;border-bottom-right-radius:15px;outline:none;')
         i.far.fa-paper-plane
     script(src='https://chr15m.github.io/bugout/bugout.min.js')
     script(src='https://unpkg.com/3box/dist/3box.min.js')
+    script(type="module"). 
+      import { EmojiButton } from 'https://unpkg.com/@joeattardi/emoji-button@4.1.0/dist/index.js';
+
+      const picker = new EmojiButton({
+                        theme: 'dark',
+                        position: 'top-start'
+                      });
+      const trigger = document.querySelector('#emoji-trigger');
+
+      trigger.addEventListener('click', () => picker.togglePicker(trigger));
+      picker.on('emoji', selection => {
+        document.getElementById("message").value += selection.emoji;
+      });
     script.
       var b = Bugout("Kronos");
       console.log(b.address() + " [ me ]");
 
-      //localStorage.debug = false;
+      localStorage.debug = "";
 
       var ethaddy = document.getElementById("ethaccount").getAttribute("data-value");
 
-      console.log(ethaddy);
+      var daddy = document.getElementById("daccount").getAttribute("data-value");
+
+      //console.log(ethaddy);
 
       const ThreeBoxProfile = async () => {
 
@@ -40,7 +59,7 @@ block content
                 profileimage = profile.image[0].contentUrl['/'];
                 boximage = 'https://cloudflare-ipfs.com/ipfs/' + profileimage;
             }
-            console.log(boximage);
+            //console.log(boximage);
 
             return boximage;
 
@@ -54,7 +73,7 @@ block content
                 profileimage = profile.image[0].contentUrl['/'];
                 boximage = 'https://cloudflare-ipfs.com/ipfs/' + profileimage;
             }
-            console.log(boximage);
+            //console.log(boximage);
 
             return boximage;
         }
@@ -85,7 +104,7 @@ block content
             if (txt == '') {
               return;
             }
-            messages.push({msg: txt, address: ethaddy, boxprofile: boxprofile});
+            messages.push({msg: txt, address: ethaddy, daddress: daddy, boxprofile: boxprofile});
             b.send(messages);
             $('#message').val('');
           }
@@ -98,7 +117,7 @@ block content
           if (txt == '') {
               return;
           }
-          messages.push({msg: txt, address: ethaddy, boxprofile: boxprofile});
+          messages.push({msg: txt, address: ethaddy, daddress: daddy, boxprofile: boxprofile});
           b.send(messages);
           $('#message').val('');
         };
@@ -109,23 +128,15 @@ block content
         console.log(address + " [ seen ]");
         $('#loader').html("Kronos Chat Peer ID: " + b.address() + " <span class='dot'></span> • CONNECTED <span id='connectdot'></div>");
         b.on("connections", function(connection) { 
-          console.log(connection + " [ connections ]");
+          //console.log(connection + " [ connections ]");
           $('#connectdot').html(' • '+connection + ' connection(s)');
         });
       });
 
       b.on("message", function(address, message) {
-        console.log("RECEIVED MESSAGE:" + address + ": " + message);
-        $('#messages').append("<div style='font-size:13px;color:#999;margin-top:10px !important; background-color:#22222296;border-radius:15px;padding:10px;' class='row'><div class='col-md-1'><img src="+message[0].boxprofile+" border='0' style='display:inline-block;height:40px;width:40px;border-radius:9999px;object-fit:cover;margin-right: 15px;margin-top: 5px;'/></div><div class='col-md-11' style='display:inline-block;vertical-align:middle;'><span style='margin-top:15px;'>Peer: "+address+"<br/>From: "+message[0].address+"</span><br/><span style='font-size:16px;color:#FFF;'>"+message[0].msg+"</span></div></div>");
+        //console.log("RECEIVED MESSAGE:" + address + ": " + message);
+        $('#messages').append("<div style='font-size:9px;color:#999;margin-top:10px !important; background-color:#22222296;border-radius:15px;padding:10px;' class='row'><div class='col-md-1'><img src="+message[0].boxprofile+" border='0' style='display:inline-block;height:40px;width:40px;border-radius:9999px;object-fit:cover;margin-right: 15px;'/></div><div class='col-md-11' style='display:inline-block;vertical-align:middle;margin-top:3px;'><span style='margin-top:15px;'>From • "+message[0].address+" • "+message[0].daddress+"</span><br/><span style='font-size:16px;color:#FFF;'>"+message[0].msg+"</span></div></div>");
       });
 
       b.on("connections", console.log.bind(console, "Connections:"));
       b.on("seen", console.log.bind(console, "Seen:"));
-
-      //- var objDiv = document.getElementById("messagehodler");
-      //- objDiv.scrollTop = objDiv.scrollHeight;
-
-      window.setInterval(function() {
-        var elem = document.getElementById('messagehodler');
-        elem.scrollTop = elem.scrollHeight;
-      }, 300);
