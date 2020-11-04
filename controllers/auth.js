@@ -505,7 +505,7 @@ exports.simple = (request, response) => {
 	}
 };
 
-//GET SIMPLE MODE
+//GET Core MODE
 exports.getsimple = (req, res) => {
 
 	var mnemonic;
@@ -514,7 +514,7 @@ exports.getsimple = (req, res) => {
 	mnemonic = bip39.generateMnemonic(256);
 
 	res.render('simple', {
-        title: 'Simple Mode Setup', seedphrase: mnemonic
+        title: 'Core Mode Setup', seedphrase: mnemonic
     });
 
 };

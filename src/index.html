@@ -90,16 +90,18 @@
 
     <script>
       window.$ = window.jQuery = require("../node_modules/jquery/dist/jquery.min.js");
-
-      const customTitlebar = require('custom-electron-titlebar');
  
-      new customTitlebar.Titlebar({
-          backgroundColor: customTitlebar.Color.fromHex('#333'),
-          unfocusEffect: true
-          //icon: '../public/img/caesarsmall.png'
-      });
+      if (process.platform !== 'darwin') {
+        const customTitlebar = require('custom-electron-titlebar');
+        new customTitlebar.Titlebar({
+            backgroundColor: customTitlebar.Color.fromHex('#333'),
+            unfocusEffect: true,
+            titleHorizontalAlignment: 'center'
+            //icon: '../public/img/caesarsmall.png'
+        });
+      }
 
-      $('body').on('click', 'a.external', (event) => {
+      $('body').on('click', 'a', (event) => {
         event.preventDefault();
         let link = event.target.href;
         require("electron").shell.openExternal(link);
@@ -108,6 +110,8 @@
       //Check what OS you are running for the Node spawn
       const os = require('os');
       const nodeloc = os.platform() === 'win32' ? '.\\node_modules\\node\\bin\\node.exe' : './node_modules/node/bin/node';
+
+      const {claimDocumentFocus} = require('./document-focus');
 
       const { ipcRenderer } = require("electron"),
         ip = require("ip"),
@@ -140,6 +144,14 @@
         // would be much better especially if we had database connections or other
         // resources we were using that needed to be cleaned up.
         node.kill("SIGINT");
+      });
+
+      ipcRenderer.on('claim-document-focus', claimDocumentFocus);
+
+      addEventListener('DOMContentLoaded', function() {
+        if (document.querySelector('[autofocus]')) {
+          ipcRenderer.sendToHost('autofocus')
+        }
       });
 
     //   key("f1", () => {

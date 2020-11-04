@@ -2,7 +2,7 @@
 **************************************
 **************************************
 **************************************
-* Kronos Simple Mode Dashboard Controller
+* Kronos Core Mode Dashboard Controller
 * Copyright (c) 2020 Carsen Klock
 **************************************
 **************************************
@@ -578,7 +578,7 @@ exports.simpleindex = (req, res) => {
 
             const scripthasha = async () => {
                 // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-                const electrum = new ElectrumCluster('Kronos Simple Mode Balances', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+                const electrum = new ElectrumCluster('Kronos Core Mode Balances', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
                 
                 // Add some servers to the cluster.
                 electrum.addServer(delectrumxhost1);
@@ -613,7 +613,7 @@ exports.simpleindex = (req, res) => {
 
             const scripthashb = async () => {
                 // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-                const electrum = new ElectrumCluster('Kronos Simple Mode Unconfirmed Balances', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+                const electrum = new ElectrumCluster('Kronos Core Mode Unconfirmed Balances', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
                 
                 // Add some servers to the cluster.
                 electrum.addServer(delectrumxhost1);
@@ -649,7 +649,7 @@ exports.simpleindex = (req, res) => {
             //Grab Full Transaction History from D ElectrumX
             const txhistoryfull = async () => {
                 // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-                const electrum = new ElectrumCluster('Kronos Simple Mode TX History', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+                const electrum = new ElectrumCluster('Kronos Core Mode TX History', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
                 
                 // Add some servers to the cluster.
                 electrum.addServer(delectrumxhost1);
@@ -694,7 +694,7 @@ exports.simpleindex = (req, res) => {
             //Grab UTXO Transaction History from D ElectrumX
             const utxohistory = async () => {
                 // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-                const electrum = new ElectrumCluster('Kronos Simple Mode UTXO History', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+                const electrum = new ElectrumCluster('Kronos Core Mode UTXO History', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
                 
                 // Add some servers to the cluster.
                 electrum.addServer(delectrumxhost1);
@@ -1143,7 +1143,7 @@ exports.simpleindex = (req, res) => {
 
             //Render the page with the dynamic variables
             res.render('simple/dashboard', {
-                title: 'Simple Mode Dashboard',
+                title: 'Core Mode Dashboard',
                 qrcode: qrcode1,
                 ethqrcode: ethqrcode1,
                 totalbal: totalbal1,

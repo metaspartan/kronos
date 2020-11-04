@@ -2,7 +2,7 @@
 **************************************
 **************************************
 **************************************
-* Kronos Simple Mode D Transaction Controller
+* Kronos Core Mode D Transaction Controller
 * Copyright (c) 2020 Carsen Klock
 **************************************
 **************************************
@@ -311,7 +311,7 @@ exports.postcreate = (req, res) => {
         
         const broadcastTX = async () => {
             // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-            const electrum = new ElectrumCluster('Kronos Simple Mode Balances', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+            const electrum = new ElectrumCluster('Kronos Core Mode Balances', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
             
             // Add some servers to the cluster.
             electrum.addServer(delectrumxhost1);

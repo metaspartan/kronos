@@ -62,11 +62,11 @@ Recommended Devices and OS
 * macOS 10.11 or greater
 * Linux (Any modern distro, Ubuntu preferred)
 * 4GB RAM recommended for Advanced Mode with Denarius running
-* 2GB RAM recommended for Simple Mode without Denarius running
+* 2GB RAM recommended for Core Mode without Denarius running
 
 Screenshots
 -----------------
-![simplemode](https://user-images.githubusercontent.com/10162347/97545811-26fd0300-1991-11eb-8423-8d82f6e5ba74.png)
+![coremode](https://user-images.githubusercontent.com/10162347/97545811-26fd0300-1991-11eb-8423-8d82f6e5ba74.png)
 
 ![ss](https://user-images.githubusercontent.com/10162347/85916042-00c02e80-b80a-11ea-859f-7f82d17353c9.png)
 
@@ -78,8 +78,8 @@ Screenshots
 Features
 --------
 
-- Send and Receive ETH and ARI in Simple Mode
-- Simple Mode and Advanced Mode
+- Send and Receive ETH and ARI in Core Mode
+- Core Mode and Advanced Mode
 - Send and Receive D
 - Wallet Addresses
 - Address Balances Powered by Scripthash and ElectrumX (denarius.pro)
@@ -113,9 +113,9 @@ Changes
 -------------
 As of v1.5.0 Beta of Kronos it is now built with Electron for Windows, macOS, and Linux as an AIO app to use alongside a Denarius node.
 
-As of v1.5.5 Beta of Kronos it now features multi modes "Simple" which only relays on ElectrumX SPV Servers and a more "Advanced" mode where you can configure the RPC details to your Denarius node.
+As of v1.5.5 Beta of Kronos it now features multi modes "Core" which only relays on ElectrumX SPV Servers and a more "Pro" mode where you can configure the RPC details to your Denarius node.
 
-As of v1.6.0 Beta of Kronos it now features ETH and ARI support fully, you can send and receive ARI or ETH in Simple Mode in Kronos
+As of v1.6.0 Beta of Kronos it now features ETH and ARI support fully, you can send and receive ARI or ETH in Core Mode in Kronos
 
 As of v1.6.3 Beta of Kronos it now features using OS built keychain security for storing randomly generated secret keys for use with Kronos encryption.
 

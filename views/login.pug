@@ -119,13 +119,13 @@ html(dir="ltr", lang="en-US")
 		.container(style='margin-top:20px !important;margin:0;padding:0;', align='center')
 			form(action="/login" method="post")
 				.form-content
-					input(type="text" id="PPU1" name="PPU1" placeholder="username")
+					input(type="text" id="PPU1" name="PPU1" placeholder="username" autofocus)
 					input(type="password" id="PPP1" name="PPP1" placeholder="password")
 					br
 					input.button(style='background-color: #444;', type="submit" value="Login") 
 				br
 				span(style='color:#777;')
-					| Version: v1.6.7-Beta
+					| Version: v1.6.8-Beta
 		script(src='/js/lib/jquery-3.1.1.min.js')
 		script(src='//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/js/toastr.min.js')
 		script(src='//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/js/all.min.js')

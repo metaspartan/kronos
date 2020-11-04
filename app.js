@@ -472,7 +472,7 @@ app.get('/autht', auth, Limiter, authController.autht);
 app.get('/authk', auth, Limiter, authController.authk);
 app.get('/logout', authController.logout);
 
-//Simple Mode
+//Core Mode
 app.get('/simplesetup', authController.getsimple);
 app.post('/simplesetup', Limiter, authController.simple);
 app.get('/dashsimple', auth, sDashController.simpleindex);

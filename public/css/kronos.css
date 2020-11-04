@@ -102,6 +102,29 @@ body {
     float: left;
   }
 
+  .online-icon {
+    display: none !important;
+  }
+
+  #alias {
+    width:100% !important;
+    left: 0 !important;
+  }
+
+  #connectdot {
+
+  }
+
+  #messagewrapper {
+    width: 100% !important;
+    height: 500px !important;
+  }
+
+  #chatinput {
+    width: 100% !important;
+  }
+
+
   .hashm {
     font-size: 11px !important;
   }
@@ -378,7 +401,7 @@ small {font-size:2.2rem;color:#eee;}
 }
 
 .emoji-picker__wrapper {
-  z-index: 999 !important;
+  z-index: 1111 !important;
 }
 .emoji-picker__emojis {
   height: 264px !important;
@@ -394,8 +417,6 @@ small {font-size:2.2rem;color:#eee;}
   background-image: linear-gradient(90deg, #71c954, #33841a);
 }
 .online-icon {
-  position:absolute;
-  left:50%;
   text-align:center;
   margin:-30px 0 0 -30px;
   border-radius:100px;
@@ -409,9 +430,9 @@ small {font-size:2.2rem;color:#eee;}
   position:absolute;
   width:40px;
   height:40px;
-  z-index:-25;
-  left:50%;
+  z-index:6;
   top:50%;
+  right:10%;
   opacity:0;
   margin:-20px 0 0 -20px;
   border-radius:100px;

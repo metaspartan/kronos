@@ -1,6 +1,6 @@
 {
   "name": "Kronos",
-  "version": "1.6.7-Beta",
+  "version": "1.6.8-Beta",
   "description": "A Dashboard Interface and Wallet for Denarius (D), Ethereum (ETH), and Denarii (ARI) in NodeJS and Electron",
   "repository": {
     "type": "git",
@@ -157,7 +157,12 @@
         {
           "name": "@electron-forge/publisher-github",
           "config": {
-            "prerelease": false
+            "prerelease": false,
+            "repo": "carsenk/kronos",
+            "repository": {
+              "owner": "carsenk",
+              "name": "kronos"
+            }
           }
         }
       ],
