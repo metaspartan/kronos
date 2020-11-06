@@ -87,6 +87,15 @@ if (currentOS === 'linux') {
     }
 }
 
+const changeEndianness = (string) => {
+    const result = [];
+    let len = string.length - 2;
+    while (len >= 0) {
+    result.push(string.substr(len, 2));
+    len -= 2;
+    }
+    return result.join('');
+}
 
 //Get information
 //Get information
@@ -118,6 +127,7 @@ exports.simpleindex = (req, res) => {
     let socket_id3 = [];
     let socket_id4 = [];
     let socket_id5 = [];
+    let socket_id6 = [];
     let socket_id7 = [];
     let socket_id33 = [];
     let socket_id34 = [];
@@ -475,8 +485,73 @@ exports.simpleindex = (req, res) => {
 
         // Get the p2pkh base58 public address of the keypair
         const p2pkhaddy0 = denarius.payments.p2pkh({ pubkey: addressKeypair0.publicKey, network }).address;
+
+        const p2pkaddy = denarius.payments.p2pkh({ pubkey: addressKeypair0.publicKey, network }).pubkey.toString('hex');
         
         Storage.set('mainaddress', p2pkhaddy0);
+
+        const bytes = bs58.decode(p2pkhaddy0);
+        const byteshex = bytes.toString('hex');
+        const remove00 = byteshex.substring(2);
+        const removechecksum = remove00.substring(0, remove00.length-8);
+        const HASH160 = "76A914" + removechecksum.toUpperCase() + "88AC";
+        const BUFFHASH160 = Buffer.from(HASH160, "hex");
+        const shaaddress = sha256(BUFFHASH160);
+
+        const xpubtopub = p2pkaddy;
+        const HASH1601 =  "21" + xpubtopub + "ac"; // 21 + COMPRESSED PUBKEY + OP_CHECKSIG = P2PK
+        const BUFFHASH1601 = Buffer.from(HASH1601, "hex");
+        const shaaddress1 = sha256(BUFFHASH1601);
+
+        const scripthash = changeEndianness(shaaddress);
+        const scripthashp2pk = changeEndianness(shaaddress1);
+
+        res.io.on('connection', function (socket) {
+            socket_id6.push(socket.id);
+            if (socket_id6[0] === socket.id) {
+            res.io.removeAllListeners('connection'); 
+            }
+            const dWalletBal = async () => {
+                // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+                const electrum = new ElectrumCluster('Kronos Core Mode D Balance', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+                
+                // Add some servers to the cluster.
+                electrum.addServer(delectrumxhost1);
+                electrum.addServer(delectrumxhost2);
+                electrum.addServer(delectrumxhost3);
+                electrum.addServer(delectrumxhost4);
+                
+                // Wait for enough connections to be available.
+                await electrum.ready();
+                
+                // Request the balance of the requested Scripthash D address
+
+                const balancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthash);
+
+                const p2pkbalancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthashp2pk);
+
+                const balanceformatted = balancescripthash.confirmed;
+
+                const p2pkbalanceformatted = p2pkbalancescripthash.confirmed;
+
+                const balancefinal = balanceformatted / 100000000;
+
+                const p2pkbalancefinal = p2pkbalanceformatted / 100000000;
+
+                const addedbalance = balancefinal + p2pkbalancefinal;
+
+                const addedbalance2 = balanceformatted + p2pkbalanceformatted;
+
+                //await electrum.disconnect();
+                await electrum.shutdown();
+                Storage.set('totalbal', addedbalance);
+                socket.emit("newdbal", {dbal: addedbalance});
+            }
+            dWalletBal();
+            setInterval(function(){ 
+                dWalletBal();
+            }, 15000);
+        });
 
         // A for loop for how many addresses we want from the derivation path of the seed phrase
         for (let i = 0; i < addresscount; i++) { //20

@@ -23,6 +23,7 @@ const exec = require('child_process').exec;
 const shell = require('shelljs');
 const sleep = require('system-sleep');
 const denarius = require('denariusjs');
+const dbitcoin = require('bitcoinjs-d-lib');
 const CryptoJS = require("crypto-js");
 const bip39 = require("bip39");
 const bip32 = require("bip32d");
@@ -164,6 +165,7 @@ exports.getsend = (req, res) => {
     let totalaribal = Storage.get('totalaribal');
     let utxos = Storage.get('dutxo');
     var ethaddress = Storage.get('ethaddy');
+    var mainaddress = Storage.get('mainaddress');
     res.locals.utxos = utxos;
 
     res.render('simple/getsend', {
@@ -171,7 +173,8 @@ exports.getsend = (req, res) => {
         totalethbal: totalethbal,
         totalbal: totalbal,
         totalaribal: totalaribal,
-        ethaddress: ethaddress
+        ethaddress: ethaddress,
+        mainaddress: mainaddress
     });
 
 };
@@ -217,15 +220,22 @@ exports.postcreate = (req, res) => {
 
     //Converted Available Amount from UTXO
     var csamnt = samnt / 100000000; // / 1e8
-    var convertedamount = amount * 1e8;
+    var convertedamount = parseInt(amount * 1e8);
+    var outp = csamnt - amount - fee;
+    var outputamount = parseInt(outp * 1e8); // 0.6669 - 0.0001 = 0.6668 - 0.6669 = -0.0001
 
-    var totalbal = Storage.get('totalbal');
+    console.log(outputamount);
 
-    var valid = WAValidator.validate(`${sendtoaddress}`, 'DNR'); //Need to update to D still
+    if (outputamount < 0 || outputamount == 0) {
+        outputamount = '';
+        req.toastr.error('Withdrawal change amount cannot be a negative amount, you must send some D to your change address!', 'Balance Error!', { positionClass: 'toast-bottom-right' });
+        return res.redirect('/createtx');
+    }
+
+    var valid = WAValidator.validate(`${sendtoaddress}`, 'DNR');
 
     if (parseFloat(amount) - fee > csamnt) {
-        req.toastr.error('Withdrawal amount exceeds your select D balance for the selected UTXO!', 'Balance Error!', { positionClass: 'toast-bottom-right' });
-        //req.flash('errors', { msg: 'Withdrawal amount exceeds your D balance'});
+        req.toastr.error('Withdrawal amount + network fees exceeds your select D balance for the selected UTXO!', 'Balance Error!', { positionClass: 'toast-bottom-right' });
         return res.redirect('/createtx');
 
     } else {
@@ -245,23 +255,9 @@ exports.postcreate = (req, res) => {
             wif: 0x9e
         };
 
-        //CREATE A NEW TRANSACTION FROM THE SELECTED UTXO
-        var tx = new denarius.TransactionBuilder(network);
-
-        const data = Buffer.from('KRONOS', 'utf8'); //OP_RETURN DATA TO SEND
-        //const dataScript = denarius.payments.embed({ data: [data] });
-
         console.log(convertedamount);
         console.log(sutxo);
         console.log(sendtoaddress);
-
-        // Add the input (who is paying) of the form [previous transaction hash, index of the output to use]
-        tx.addInput(`${sutxo}`, parseInt(sindex));
-
-        // Add the output (who to pay to) of the form [payee's address, amount in satoshis]
-        tx.addOutput(`${sendtoaddress}`, convertedamount); //15000 need to take amount * 100000000
-
-        //tx.addOutput(dataScript.output, 0); // OP_RETURN always with 0 value unless you want to burn coins
 
         // Initialize a private key using WIF
 
@@ -294,24 +290,35 @@ exports.postcreate = (req, res) => {
 
         const privkey = addressKeypair0.toWIF();
 
-        //console.log(privkey);
+        // Get the p2pkh base58 public address of the keypair
+        const p2pkhaddy0 = denarius.payments.p2pkh({ pubkey: addressKeypair0.publicKey, network }).address;
 
-        var key = denarius.ECPair.fromWIF(privkey, network); //QTVf9dEh3Jj8SthFDvACsCoBjtzo4dLS3EfEe1F7Mu7aJ26K2oHD
+        var key2 = dbitcoin.ECPair.fromWIF(privkey);
 
-        //console.log(key.pub.getAddress().toString());
+        //CREATE A RAW TRANSACTION AND SIGN IT FOR DENARIUS!
+        var txb = new dbitcoin.TransactionBuilder(dbitcoin.networks.denarius);
+
+        txb.addInput(sutxo, parseInt(sindex));
+
+        //Add Raw TX Outputs (One for the actual TX and one for the change address of remaining funds) 15000 need to take amount * 100000000
+        txb.addOutput(sendtoaddress, convertedamount, dbitcoin.networks.denarius);
+        txb.addOutput(p2pkhaddy0, outputamount, dbitcoin.networks.denarius);
 
         //SIGN THE TRANSACTION
         // Sign the first input with the new key
-        tx.sign(0, key);
+        txb.sign(dbitcoin.networks.denarius, 0, key2);
 
         // Print transaction serialized as hex
-        console.log(tx.build().toHex());
+        console.log('D Raw Transaction Built and Broadcast: ' + txb.build().toHex());
 
         // => 020000000110fd2be85bba0e8a7a694158fa27819f898def003d2f63b668d9d19084b76820000000006b48304502210097897de69a0bd7a30c50a4b343b7471d1c9cd56aee613cf5abf52d62db1acf6202203866a719620273a4e550c30068fb297133bceee82c58f5f4501b55e6164292b30121022f0c09e8f639ae355c462d7a641897bd9022ae39b28e6ec621cea0a4bf35d66cffffffff0140420f000000000001d600000000
         
+        let promises = [];
+        let broadcastarray = [];
+
         const broadcastTX = async () => {
             // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-            const electrum = new ElectrumCluster('Kronos Core Mode Balances', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+            const electrum = new ElectrumCluster('Kronos Core Mode Transaction', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
             
             // Add some servers to the cluster.
             electrum.addServer(delectrumxhost1);
@@ -324,9 +331,9 @@ exports.postcreate = (req, res) => {
             
             // Request the balance of the requested Scripthash D address
 
-            const broadcast = await electrum.request('blockchain.transaction.broadcast', tx.build().toHex());
+            const broadcast = await electrum.request('blockchain.transaction.broadcast', txb.build().toHex());
             
-            console.log(broadcast);
+            //console.log(broadcast);
 
             //await electrum.disconnect();
             await electrum.shutdown();
@@ -334,11 +341,34 @@ exports.postcreate = (req, res) => {
             return broadcast;
         };
 
-        broadcastTX();
+        //var broadcasted = broadcastTX();
 
-        req.toastr.success(`D was sent successfully!`, 'Success!', { positionClass: 'toast-bottom-right' });
-        req.flash('success', { msg: `Your <strong>D</strong> was sent successfully!` });
-        return res.redirect('/createtx');
+        promises.push(new Promise((res, rej) => {
+            broadcastTX().then(broadcastedTX => {
+                broadcastarray.push({tx: broadcastedTX});
+                res({broadcastedTX});
+            });
+        }));
+            
+        Promise.all(promises).then((values) => {
+            var broadcasted = broadcastarray[0].tx;
+            console.log(broadcastarray[0].tx);
+
+            if (!broadcasted.message) {
+                req.toastr.success(`Your ${amount} D was sent successfully! TXID: ${broadcasted}`, 'Success!', { positionClass: 'toast-bottom-right' });
+                req.flash('success', { msg: `Your <strong>${amount} D</strong> was sent successfully! TXID: <a href='https://chainz.cryptoid.info/d/tx.dws?${broadcasted}' target='_blank'>${broadcasted}</a>` });
+                return res.redirect('/createtx');
+            } else {
+                req.toastr.error(`Error sending D! Broadcast Error: ${broadcasted.message}`, 'Error!', { positionClass: 'toast-bottom-right' });
+                //req.flash('errors', { msg: `Error sending D! Broadcast - Error: Something went wrong, please go to your dashboard and refresh.` });
+                return res.redirect('/createtx');
+            }
+
+        });
+
+        // req.toastr.success(`D was sent successfully! ${broadcasted}`, 'Success!', { positionClass: 'toast-bottom-right' });
+        // req.flash('success', { msg: `Your <strong>D</strong> was sent successfully! Please wait 10 confirms for it show up! TXID: ${broadcasted}` });
+        // return res.redirect('/createtx');
 
 
     } else {
@@ -566,7 +596,7 @@ exports.getSimpleSeed = (req, res) => {
         };
   
         // A for loop for how many addresses we want from the derivation path of the seed phrase
-        for (let i = 0; i < 21; i++) { //20
+        for (let i = 0; i < 1; i++) { //1 (21 = 20 addresses)
   
           //Get 10 Addresses from the derived mnemonic
           const addressPath = `m/44'/116'/0'/0/${i}`;

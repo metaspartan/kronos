@@ -30,20 +30,20 @@ block content
       $('#temp').html(data3.temp);
     });
     socket.on('usdinfo', function (data) {
-      $('#totalbal').html(data.dbalance);
+      //$('#totalbal').html(data.dbalance);
       $('#usdbalance').html(data.usdbalance);
       $('#currentprice').html(data.currentprice);
     });
-    socket.on('ethinfo', function (data) {
-      $('#totalethbal').html(data.ethbalance);
-      $('#ethusdbalance').html(data.ethusdbalance);
-      $('#currentethprice').html(data.currentprice);
-    });
-    socket.on('ariinfo', function (data) {
-      $('#totalaribal').html(data.aribalance);
-      $('#ariusdbalance').html(data.ariusdbalance);
-      $('#currentariprice').html(data.currentprice);
-    });
+    //- socket.on('ethinfo', function (data) {
+    //-   $('#totalethbal').html(data.ethbalance);
+    //-   $('#ethusdbalance').html(data.ethusdbalance);
+    //-   $('#currentethprice').html(data.currentprice);
+    //- });
+    //- socket.on('ariinfo', function (data) {
+    //-   $('#totalaribal').html(data.aribalance);
+    //-   $('#ariusdbalance').html(data.ariusdbalance);
+    //-   $('#currentariprice').html(data.currentprice);
+    //- });
     let progcpu = [];
     progcpu.push(0);
     socket.on('cpuload', function (data1) {
@@ -170,7 +170,42 @@ block content
         $('#ariusdbalance').html(updatedusd.toFixed(3));
         document.querySelectorAll(".format").forEach((e) => {
           let txt = e.innerHTML.split(".")
-          e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
+          if (typeof txt[1] != 'undefined') {
+            e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
+          }
+        });
+      }
+    });
+    socket.on('newdbal', function (data28) {
+      if (!data28.dbal[0] && !data28.error) {
+        var bal = data28.dbal;
+        if (bal != 'undefined') {
+          bal = bal.toFixed(8);
+        }
+        $('#totalbal').html(bal);
+        $('#htotalbal').html(bal + '<img class="res" src="../img/denarius.png" alt="D" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">D</span>');
+        var updateddusd = bal * $('#currentprice').text();
+        $('#usdbalance').html(updateddusd.toFixed(3));
+        document.querySelectorAll(".format").forEach((e) => {
+          let txt = e.innerHTML.split(".")
+          if (typeof txt[1] != 'undefined') {
+            e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
+          }
+        });
+      } else {
+        var bal = data28.dbal[0];
+        if (bal != 'undefined') {
+          bal = bal.toFixed(8);
+        }
+        $('#totalbal').html(bal);
+        $('#htotalbal').html(bal + '<img class="res" src="../img/denarius.png" alt="D" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">D</span>');
+        var updateddusd = bal * $('#currentprice').text();
+        $('#usdbalance').html(updateddusd.toFixed(3));
+        document.querySelectorAll(".format").forEach((e) => {
+          let txt = e.innerHTML.split(".")
+          if (typeof txt[1] != 'undefined') {
+            e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
+          }
         });
       }
     });
@@ -273,30 +308,29 @@ block content
               i.fas.fa-history  
               |  Denarius Transaction History
         if (typeof balancearray != 'undefined')
-          if (typeof balancearray[0].txs[0].tx_hash != 'undefined')
-            .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;') 
-              table.sortable#fst
-                thead
-                  tr
-                    th Block Height
-                    th TXID
-                tbody
-                  each bal in balancearray
-                    each tx_hash in bal.txs
-                      each p2pkhtx in tx_hash.p2pkhtxs
-                        tr
-                          td(align='center') 
-                            a.txid(href='#'+p2pkhtx.height, target='_blank') #{p2pkhtx.height}
-                          td(align='center') 
-                            a.txid(href='#'+p2pkhtx.tx_hash, target='_blank') #{p2pkhtx.tx_hash}
-                      each p2pktx in tx_hash.p2pktxs
-                        tr
-                          td(align='center') 
-                            a.txid(href='#'+p2pktx.height, target='_blank') #{p2pktx.height}
-                          td(align='center')
-                            a.txid(href='#'+p2pktx.tx_hash, target='_blank') #{p2pktx.tx_hash}
-          else
-            h1(style='color:#666;', align='center') No Transactions Available
+          .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;') 
+            table.sortable#fst
+              thead
+                tr
+                  th Block Height
+                  th TXID
+              tbody
+                each bal in balancearray
+                  each tx_hash in bal.txs
+                    each p2pkhtx in tx_hash.p2pkhtxs
+                      tr
+                        td(align='center') 
+                          a.txid(href='#'+p2pkhtx.height, target='_blank') #{p2pkhtx.height}
+                        td(align='center') 
+                          a.txid(href='#'+p2pkhtx.tx_hash, target='_blank') #{p2pkhtx.tx_hash}
+                    each p2pktx in tx_hash.p2pktxs
+                      tr
+                        td(align='center') 
+                          a.txid(href='#'+p2pktx.height, target='_blank') #{p2pktx.height}
+                        td(align='center')
+                          a.txid(href='#'+p2pktx.tx_hash, target='_blank') #{p2pktx.tx_hash}
+        else
+          h1(style='color:#666;', align='center') No Transactions Available
       .row(class='rowclass', style='padding-right: 20px !important;').animate__animated.animate__fadeIn#tab3
         h3(style='font-size:48px;color: #393939;margin-top:0px;', align='center') 
               i.fas.fa-history  
