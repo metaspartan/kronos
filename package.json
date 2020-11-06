@@ -1,6 +1,6 @@
 {
   "name": "Kronos",
-  "version": "1.6.9-Beta",
+  "version": "1.7.0-Beta",
   "description": "A Dashboard Interface and Wallet for Denarius (D), Ethereum (ETH), and Denarii (ARI) in NodeJS and Electron",
   "repository": {
     "type": "git",
@@ -14,6 +14,11 @@
     "kronos": "electron-forge start",
     "headless": "node -r esm ./bin/kronos",
     "compile": "npm install && ./compiler.sh",
+    "startapp": "electron .",
+    "buildwin": "electron-builder build --win --publish never",
+    "deploywin": "electron-builder build --win --publish always",
+    "buildmacwin": "electron-builder build --mac --win --publish never",
+    "deploymacwin": "electron-builder build --mac --win --publish always",
     "test": "mocha --reporter spec",
     "package": "electron-forge package",
     "build": "electron-forge make",
@@ -27,6 +32,7 @@
     "bip32d": "git://github.com/carsenk/bip32d.git",
     "bip39": "^3.0.2",
     "bitcoin": "git://github.com/carsenk/node-bitcoin.git",
+    "bitcoinjs-d-lib": "git://github.com/carsenk/bitcoinjs-lib-pos.git",
     "bluebird": "^3.7.2",
     "body-parser": "^1.19.0",
     "bs58": "^4.0.1",
@@ -40,13 +46,12 @@
     "custom-electron-titlebar": "^3.2.4",
     "dat-swarm-defaults": "^1.0.2",
     "denariusjs": "git://github.com/carsenk/denariusjs-lib.git",
-    "bitcoinjs-d-lib": "git://github.com/carsenk/bitcoinjs-lib-pos.git",
     "discovery-swarm": "^6.1.0",
     "dotenv": "^8.2.0",
     "electron-compile": "6.4.4",
     "electron-extensions": "^7.0.0-beta.3",
     "electron-open-link-in-browser": "^1.0.2",
-    "electron-squirrel-startup": "^1.0.0",
+    "electron-updater": "^4.3.5",
     "electrum-cash": "^1.0.1",
     "errorhandler": "^1.5.1",
     "esm": "^3.2.25",
@@ -95,36 +100,39 @@
     "toastr": "^2.1.4",
     "tribus-hashjs": "^1.0.3",
     "unirest": "^0.6.0",
-    "update-electron-app": "^1.5.0",
     "validator": "^13.1.1",
     "wallet-address-validator": "^0.2.4",
     "wallet-address-validatord": "git://github.com/carsenk/wallet-address-validator.git"
   },
   "devDependencies": {
-    "chrome-ext-downloader": "^1.0.3",
     "@electron-forge/cli": "^6.0.0-beta.53",
     "@electron-forge/maker-deb": "^6.0.0-beta.53",
     "@electron-forge/maker-rpm": "^6.0.0-beta.53",
     "@electron-forge/maker-squirrel": "^6.0.0-beta.53",
     "@electron-forge/maker-zip": "^6.0.0-beta.53",
+    "bufferutil": "^4.0.2",
     "chai": "^4.2.0",
+    "chrome-ext-downloader": "^1.0.3",
     "electron": "^10.1.2",
+    "electron-builder": "^19.56.2",
     "electron-prebuilt-compile": "8.2.0",
-    "electron-builder": "^19.52.1",
     "electron-rebuild": "^2.0.3",
-    "mocha": "^8.0.1"
+    "mocha": "^8.0.1",
+    "utf-8-validate": "^5.0.3"
   },
   "build": {
     "appId": "kronos",
     "productName": "Kronos",
     "muonVersion": "4.7.1",
     "files": [
-      "dist/**/*",
-      "node_modules/**/*"
+      "dist/src/**/*",
+      "node_modules/**/*",
+      "src/**/*",
+      "package.json"
     ],
     "asar": true,
     "asarUnpack": [
-      "dist/extensions/"
+      "dist/src/**/*"
     ],
     "directories": {
       "buildResources": "app/dist/assets/icons",
@@ -137,23 +145,23 @@
         "deb",
         "AppImage"
       ],
-      "icon": "public/img/caesarsmall.icns",
+      "icon": "public/img/klogo.ico",
       "category": "Office"
     },
     "mac": {
       "category": "public.app-category.finance",
       "target": "tar.gz",
-      "icon": "public/img/caesarsmall.icns"
+      "icon": "public/img/kronosicon.icns"
     },
     "win": {
       "target": "nsis",
-      "icon": "public/img/caesarsmall.icns"
+      "icon": "public/img/klogo.ico"
     }
   },
   "config": {
     "forge": {
       "packagerConfig": {
-        "icon": "public/img/caesarsmall.icns"
+        "icon": "public/img/klogo.ico"
       },
       "publishers": [
         {

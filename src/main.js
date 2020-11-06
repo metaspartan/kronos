@@ -8,9 +8,11 @@ const fs = require('fs');
 const randomstring = require("randomstring");
 const Storage = require('json-storage-fs');
 
-const { shell, session, Menu, ipcMain } = require('electron');
+const { shell, session, Menu, ipcMain, autoUpdater } = require('electron');
 
-require('update-electron-app')();
+//const { autoUpdater } = require('electron-updater');
+
+//require('update-electron-app')();
 
 const extensions = require('./extensions');
 
@@ -65,6 +67,10 @@ function createWindow() {
 
   // Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
+  mainWindow.once('ready-to-show', () => {
+    autoUpdater.checkForUpdatesAndNotify();
+  });
+
   //mainWindow.webContents.openDevTools();
   mainWindow.on("close", () => {
     mainWindow.webContents.send("stop-server");
@@ -72,16 +78,12 @@ function createWindow() {
   mainWindow.on("closed", () => {
     mainWindow = null;
   });
-  mainWindow.webContents.on('new-window', function(e, url) {
-    e.preventDefault();
-    electron.shell.openExternal(url);
-  });
+  // mainWindow.webContents.on('new-window', function(e, url) {
+  //   e.preventDefault();
+  //   electron.shell.openExternal(url);
+  // });
 
-  ipcMain.on('open-link', (evt, link) => {
-    shell.openExternal(link);
-  });
-
-  mainWindow.webContents.session.clearCache();
+  //mainWindow.webContents.session.clearCache();
 }
 
 app.on("ready", createWindow);
@@ -100,4 +102,23 @@ app.on("activate", function() {
   if (mainWindow === null) {
     createWindow();
   }
+});
+
+ipcMain.on('open-link', (evt, link) => {
+  shell.openExternal(link);
+});
+
+ipcMain.on('app_version', (event) => {
+  event.sender.send('app_version', { version: app.getVersion() });
+});
+
+autoUpdater.on('update-available', () => {
+  mainWindow.webContents.send('update_available');
+});
+autoUpdater.on('update-downloaded', () => {
+  mainWindow.webContents.send('update_downloaded');
+});
+
+ipcMain.on('restart_app', () => {
+  autoUpdater.quitAndInstall();
 });

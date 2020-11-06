@@ -75,16 +75,40 @@
 
       .menubar {
         display: none !important;
-      } 
+      }
+
+      #notification {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        width: 250px;
+        padding: 20px;
+        border-radius: 5px;
+        background-color: #111;
+        color: #fff;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+      }
+      .hidden {
+        display: none;
+      }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css">
   </head>
   <body>
+    <div id="notification" class="hidden">
+      <p id="message"></p>
+      <button id="close-button" onClick="closeNotification()">
+        Close
+      </button>
+      <button id="restart-button" onClick="restartApp()" class="hidden">
+        Restart
+      </button>
+    </div>
     <div id="loading" align="center">
       <div style="top:40%;text-align:center;position:absolute;margin:0 auto;width:100%;"><img src="../public/img/kload.gif" border="0" /></div>
     </div>
     <div id="serverLog"></div>
-    <div style="position:absolute;z-index:9999999;bottom:0px;right:0px;"><button onclick="togglelog()" class="togglebtn"><i class="fas fa-server"></i> <span id="togglebtn">Logs [+]</span></button></div>
+    <div style="position:absolute;z-index:9999999;bottom:0px;right:0px;"><button onclick="togglelog()" class="togglebtn"><i class="fas fa-server"></i> <span id="togglebtn">Logs [+] <span id="version"></span></span></button></div>
     <!-- <iframe id="expressApp" class="expressApp" frameborder="0"></iframe> -->
     <webview id="expressApp" class="expressApp"></webview>
 
@@ -137,6 +161,37 @@
         $expressApp = $("#expressApp"),
         $togglebutton = $("#togglebtn"),
         $loading = $("#loading");
+
+      const version = document.getElementById('version');
+      ipcRenderer.send('app_version');
+
+      ipcRenderer.on('app_version', (event, arg) => {
+        ipcRenderer.removeAllListeners('app_version');
+        version.innerText = 'Kronos Version ' + arg.version;
+      });
+
+      const notification = document.getElementById('notification');
+      const message = document.getElementById('message');
+      const restartButton = document.getElementById('restart-button');
+      ipcRenderer.on('update_available', () => {
+        ipcRenderer.removeAllListeners('update_available');
+        message.innerText = 'A new Kronos update is available. Downloading now...';
+        notification.classList.remove('hidden');
+      });
+      ipcRenderer.on('update_downloaded', () => {
+        ipcRenderer.removeAllListeners('update_downloaded');
+        message.innerText = 'Kronos Update Downloaded. It will be installed on restart. Restart now?';
+        restartButton.classList.remove('hidden');
+        notification.classList.remove('hidden');
+      });
+
+
+      function closeNotification() {
+        notification.classList.add('hidden');
+      }
+      function restartApp() {
+        ipcRenderer.send('restart_app');
+      }
 
       ipcRenderer.on("stop-server", (event, data) => {
         // This is okay for now but there is a better solution. We can use IPC to
