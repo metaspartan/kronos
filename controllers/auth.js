@@ -38,12 +38,10 @@ const bs58 = require('bs58');
 const randomstring = require("randomstring");
 const Storage = require('json-storage-fs');
 
-const keytar = require('keytar-extra');
-
 var currentOS = os.platform(); 
 
 if (currentOS === 'linux') {
-    let SECRET_KEY = process.env.LINUX_KEY;
+    let SECRET_KEY = process.env.KEY;
 
     function shahash(key) {
         key = CryptoJS.SHA256(key, SECRET_KEY);
@@ -63,7 +61,7 @@ if (currentOS === 'linux') {
     }
 
 } else {
-    let SECRET_KEY = keytar.getPasswordSync('Kronos', 'localkey'); //process.env.SECRET_KEY
+    let SECRET_KEY = process.env.KEY; //keytar.getPasswordSync('Kronos', 'localkey');
 
     function shahash(key) {
         key = CryptoJS.SHA256(key, SECRET_KEY);

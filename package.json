@@ -1,6 +1,6 @@
 {
   "name": "Kronos",
-  "version": "1.7.0-Beta",
+  "version": "1.7.1-Beta",
   "description": "A Dashboard Interface and Wallet for Denarius (D), Ethereum (ETH), and Denarii (ARI) in NodeJS and Electron",
   "repository": {
     "type": "git",
@@ -11,10 +11,9 @@
   "main": "src/main.js",
   "scripts": {
     "startmuon": "node setup.js",
-    "kronos": "electron-forge start",
+    "postinstall": "electron-builder install-app-deps",
+    "kronos": "electron .",
     "headless": "node -r esm ./bin/kronos",
-    "compile": "npm install && ./compiler.sh",
-    "startapp": "electron .",
     "buildwin": "electron-builder build --win --publish never",
     "deploywin": "electron-builder build --win --publish always",
     "buildmacwin": "electron-builder build --mac --win --publish never",
@@ -22,7 +21,7 @@
     "test": "mocha --reporter spec",
     "package": "electron-forge package",
     "build": "electron-forge make",
-    "re-build": "./node_modules/.bin/electron-rebuild",
+    "re-build": "electron-rebuild",
     "download.metamask.dev": "cd extensions && ced nkbihfbeogaeaoehlefnkodbefgpgknn && mv nkbihfbeogaeaoehlefnkodbefgpgknn metamask",
     "download.metamask.prod": "mkdir -p /dist/src/extensions && rm -rf /dist/src/extensions/* && cd /dist/src/extensions && ced nkbihfbeogaeaoehlefnkodbefgpgknn && mv nkbihfbeogaeaoehlefnkodbefgpgknn metamask"
   },
@@ -71,7 +70,6 @@
     "jquery": "^3.5.1",
     "json-storage-fs": "^1.1.0",
     "keymaster": "^1.6.2",
-    "keytar-extra": "^4.12.0",
     "level": "^6.0.1",
     "lob": "^6.1.0",
     "lodash": "^4.17.15",
@@ -123,23 +121,58 @@
   "build": {
     "appId": "kronos",
     "productName": "Kronos",
-    "muonVersion": "4.7.1",
     "files": [
       "dist/src/**/*",
       "node_modules/**/*",
+      "node_modules/node-pty-prebuilt-multiarch/**/*",
+      "node_modules/node-pty-prebuilt-multiarch/build/Release/**/*",
+      "app.js",
+      "db.js",
+      "notifies.txt",
+      "restartnode.sh",
+      "installkronos.sh",
+      "start-electron.js",
+      "compiler.sh",
+      "views/**/*",
+      "controllers/**/*",
+      "public/css/kronos.css",
+      "public/css/main.css",
+      "public/css/loading-bar.min.css",
+      "public/css/lib/bootstrap-toggle.min.css",
+      "public/fonts/*",
+      "public/img/*",
+      "public/js/**/*",
+      "public/js/*",
+      "public/favicon.ico",
+      "src/**/*",
+      "bin/kronos",
+      "package.json"
+    ],
+    "asar": false,
+    "asarUnpack": [
+      "dist/src/**/*",
+      "node_modules/**/*",
+      "app.js",
+      "db.js",
+      "compiler.sh",
+      "views/**/*",
+      "public/css/kronos.css",
+      "public/css/main.css",
+      "public/css/loading-bar.min.css",
+      "public/fonts/*",
+      "public/img/*",
+      "public/js/**/*",
       "src/**/*",
       "package.json"
     ],
-    "asar": true,
-    "asarUnpack": [
-      "dist/src/**/*"
-    ],
     "directories": {
-      "buildResources": "app/dist/assets/icons",
+      "buildResources": "",
       "output": "dist",
       "app": ""
     },
     "nodeGypRebuild": false,
+    "npmRebuild": true,
+    "buildDependenciesFromSource": true,
     "linux": {
       "target": [
         "deb",

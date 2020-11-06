@@ -36,49 +36,47 @@ var sendJSONResponse = function (res, status, content) {
     res.json(content);
 };
 
-const keytar = require('keytar-extra');
-
 var currentOS = os.platform(); 
 
 if (currentOS === 'linux') {
-    let SECRET_KEY = process.env.LINUX_KEY;
+  let SECRET_KEY = process.env.KEY;
 
-    function shahash(key) {
-        key = CryptoJS.SHA256(key, SECRET_KEY);
-        return key.toString();
-    }
+  function shahash(key) {
+      key = CryptoJS.SHA256(key, SECRET_KEY);
+      return key.toString();
+  }
 
-    function encrypt(data) {
-        data = CryptoJS.AES.encrypt(data, SECRET_KEY);
-        data = data.toString();
-        return data;
-    }
+  function encrypt(data) {
+      data = CryptoJS.AES.encrypt(data, SECRET_KEY);
+      data = data.toString();
+      return data;
+  }
 
-    function decrypt(data) {
-        data = CryptoJS.AES.decrypt(data, SECRET_KEY);
-        data = data.toString(CryptoJS.enc.Utf8);
-        return data;
-    }
+  function decrypt(data) {
+      data = CryptoJS.AES.decrypt(data, SECRET_KEY);
+      data = data.toString(CryptoJS.enc.Utf8);
+      return data;
+  }
 
 } else {
-    let SECRET_KEY = keytar.getPasswordSync('Kronos', 'localkey'); //process.env.SECRET_KEY
+  let SECRET_KEY = process.env.KEY; //keytar.getPasswordSync('Kronos', 'localkey');
 
-    function shahash(key) {
-        key = CryptoJS.SHA256(key, SECRET_KEY);
-        return key.toString();
-    }
+  function shahash(key) {
+      key = CryptoJS.SHA256(key, SECRET_KEY);
+      return key.toString();
+  }
 
-    function encrypt(data) {
-        data = CryptoJS.AES.encrypt(data, SECRET_KEY);
-        data = data.toString();
-        return data;
-    }
+  function encrypt(data) {
+      data = CryptoJS.AES.encrypt(data, SECRET_KEY);
+      data = data.toString();
+      return data;
+  }
 
-    function decrypt(data) {
-        data = CryptoJS.AES.decrypt(data, SECRET_KEY);
-        data = data.toString(CryptoJS.enc.Utf8);
-        return data;
-    }
+  function decrypt(data) {
+      data = CryptoJS.AES.decrypt(data, SECRET_KEY);
+      data = data.toString(CryptoJS.enc.Utf8);
+      return data;
+  }
 }
 
 if (typeof Storage.get('rpchost') == 'undefined') {

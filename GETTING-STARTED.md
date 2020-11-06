@@ -40,22 +40,6 @@ npm install -g electron electron-forge electron-rebuild node-gyp
 
 npm install
 
-cd node_modules/node-pty-prebuilt-multiarch
-
-node-gyp configure
-
-node-gyp build
-
-cd ../..
-
-cd node_modules/keytar-extra
-
-node-gyp configure
-
-node-gyp build
-
-cd ../..
-
 nohup npm run headless &
 ```
 
@@ -72,23 +56,7 @@ npm install -g electron electron-forge electron-rebuild node-gyp windows-build-t
 
 npm install
 
-cd node_modules/node-pty-prebuilt-multiarch
-
-node-gyp configure
-
-node-gyp build
-
-cd ../..
-
-cd node_modules/keytar-extra
-
-node-gyp configure
-
-node-gyp build
-
-cd ../..
-
-electron-forge start or electron .
+electron .
 ```
 
 BUILDING THE KRONOS ELECTRON APP (If you want to build your own binaries):
@@ -99,25 +67,9 @@ git clone https://github.com/carsenk/kronos.git
 
 cd kronos
 
-npm install -g electron electron-forge electron-rebuild node-gyp windows-build-tools
+npm install -g electron electron-forge electron-rebuild electron-builder node-gyp windows-build-tools
 
 npm install
 
-cd node_modules/node-pty-prebuilt-multiarch
-
-node-gyp configure
-
-node-gyp build
-
-cd ../..
-
-cd node_modules/keytar-extra
-
-node-gyp configure
-
-node-gyp build
-
-cd ../..
-
-electron-forge make
+yarn run buildwin
 ```

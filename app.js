@@ -58,7 +58,6 @@ const gritty = require('gritty');
 const rateLimit = require("express-rate-limit");
 const randomstring = require("randomstring");
 const Storage = require('json-storage-fs');
-const keytar = require('keytar-extra');
 
 
 const crypto = require('crypto')
@@ -198,22 +197,29 @@ var currentOS = os.platform();
 if (currentOS === 'linux') {
   const randosecret = randomstring.generate(42);
   const randosess = randomstring.generate(42);
-  let linkey = files.readFileSync('.env', 'utf-8');
+  //let linkey = files.readFileSync('.env', 'utf-8');
   
-  if (linkey == '') {
-    fs.writeFileSync('.env', `LINUX_KEY=${randosecret}\nSESS_KEY=${randosess}`);
+  if (!fs.existsSync('.env')) {
+    fs.writeFileSync('.env', `KEY=${randosecret}\nSESS_KEY=${randosess}`);
   }
 
 } else {
+  // const randosecret = randomstring.generate(42);
+  // const randosess = randomstring.generate(42);
+  // let keytary = keytar.getPasswordSync('Kronos', 'localkey');
+
+  // // console.log('Keytar: ' + keytary);
+
+  // if (keytary == null) {
+  //   keytar.setPasswordSync('Kronos', 'localkey', randosecret);
+  //   keytar.setPasswordSync('Kronos', 'localses', randosess);
+  // }
   const randosecret = randomstring.generate(42);
   const randosess = randomstring.generate(42);
-  let keytary = keytar.getPasswordSync('Kronos', 'localkey');
-
-  // console.log('Keytar: ' + keytary);
-
-  if (keytary == null) {
-    keytar.setPasswordSync('Kronos', 'localkey', randosecret);
-    keytar.setPasswordSync('Kronos', 'localses', randosess);
+  //let linkey = files.readFileSync('.env', 'utf-8');
+  
+  if (!fs.existsSync('.env')) {
+    fs.writeFileSync('.env', `KEY=${randosecret}\nSESS_KEY=${randosess}`);
   }
 }
 
@@ -367,7 +373,7 @@ if (currentOS === 'linux') {
   io.use(sharedsession(sess));
 } else {
 
-  const SESSION_SECRET = keytar.getPasswordSync('Kronos', 'localses'); //process.env.SESSION_SECRET
+  const SESSION_SECRET = process.env.SESS_KEY; //process.env.SESSION_SECRET
 
   const sess = session({
     secret: SESSION_SECRET,

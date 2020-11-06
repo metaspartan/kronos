@@ -78,10 +78,10 @@ function createWindow() {
   mainWindow.on("closed", () => {
     mainWindow = null;
   });
-  // mainWindow.webContents.on('new-window', function(e, url) {
-  //   e.preventDefault();
-  //   electron.shell.openExternal(url);
-  // });
+  mainWindow.webContents.on('new-window', function(e, url) {
+    e.preventDefault();
+    electron.shell.openExternal(url);
+  });
 
   //mainWindow.webContents.session.clearCache();
 }

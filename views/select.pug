@@ -122,29 +122,20 @@ html(dir="ltr", lang="en-US")
 		.start(style='background-color:#333;border-radius:15px;width:95%;padding:30px;margin: 0 auto;margin-top: 45px; ')
 			h1(style='font-family: "Lato", sans-serif; font-size:34px; font-weight:100;') SELECT YOUR MODE
 			.row(style='background-color:#333; margin:0 auto; width:100%;' align='center')
-				.col-md-4
+				.col-md-6
 					.modes(style='padding:30px;background-color:#222;border-radius:15px;')
 						p
 							i.ra.ra-level-two.fa-5x(style='color:#777;')
-						span(style='color:#999;font-family: "Roboto", sans-serif;font-weight:300;') Start Kronos in "Core Mode", A standalone mode of Kronos that runs Kronos by itself. For those that are new to cryptocurrency!
+						span(style='color:#999;font-family: "Roboto", sans-serif;font-weight:300;') Start Kronos in "Core Mode", A standalone mode of Kronos that runs Kronos by itself. For those that are new to cryptocurrency! Generates a seed phrase for use with Denarius (D), Denarii (ARI), and Ethereum (ETH) wallets.
 						p
 							br
 							a.btn.button(href='/simplesetup', style='background-color: #444;border-radius:15px;color:#eee;width:100%;') Core Mode
 						.span(style='background-color:#00ad00;width:30%;padding:5px;border-radius:15px;color:#FFF;') Beginner
-				.col-md-4
-					.modes(style='padding:30px;background-color:#222;border-radius:15px;opacity:0.3;')
-						p
-							i.ra.ra-level-two-advanced.fa-5x(style='color:#777;')
-						span(style='color:#999;font-family: "Roboto", sans-serif;font-weight:300;') Start Kronos in "Hybrid Mode", A standalone mode of Kronos that runs Kronos with denariusd inside, doing all the configuration of advanced mode for you.
-						p
-							br
-							a.btn.button(style='background-color: #444;border-radius:15px;color:#eee;' disabled) Hybrid Mode
-						.span(style='background-color:#c1a400;width:50%;padding:5px;border-radius:15px;color:#FFF;') Intermediate
-				.col-md-4
+				.col-md-6
 					.modes(style='padding:30px;background-color:#222;border-radius:15px;')
 						p
 							i.ra.ra-level-three-advanced.fa-5x(style='color:#777;')
-						span(style='color:#999;font-family: "Roboto", sans-serif;font-weight:300;') Start Kronos in "Advanced Mode", An advanced mode of Kronos that runs Kronos and provides the ability to configure a RPC connection to Denarius.
+						span(style='color:#999;font-family: "Roboto", sans-serif;font-weight:300;') Start Kronos in "Advanced Mode", An advanced mode of Kronos that runs Kronos and provides the ability to configure a RPC connection to Denarius. Kronos only supports Denarius (D) in this mode.
 						p
 							br
 							a.btn.button(href='/setup', style='background-color: #444;border-radius:15px;color:#eee;') Advanced Mode
