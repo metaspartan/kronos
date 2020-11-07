@@ -308,27 +308,33 @@ block content
               i.fas.fa-history  
               |  Denarius Transaction History
         if (typeof balancearray != 'undefined')
-          .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;') 
-            table.sortable#fst
-              thead
-                tr
-                  th Block Height
-                  th TXID
-              tbody
-                each bal in balancearray
-                  each tx_hash in bal.txs
-                    each p2pkhtx in tx_hash.p2pkhtxs
-                      tr
-                        td(align='center') 
-                          a.txid(href='#'+p2pkhtx.height, target='_blank') #{p2pkhtx.height}
-                        td(align='center') 
-                          a.txid(href='#'+p2pkhtx.tx_hash, target='_blank') #{p2pkhtx.tx_hash}
-                    each p2pktx in tx_hash.p2pktxs
-                      tr
-                        td(align='center') 
-                          a.txid(href='#'+p2pktx.height, target='_blank') #{p2pktx.height}
-                        td(align='center')
-                          a.txid(href='#'+p2pktx.tx_hash, target='_blank') #{p2pktx.tx_hash}
+          if (typeof balancearray[0].txs != 'undefined')
+            if (typeof balancearray[0].txs[0].tx_hash != 'undefined')
+              .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;') 
+                table.sortable#fst
+                  thead
+                    tr
+                      th Block Height
+                      th TXID
+                  tbody
+                    each bal in balancearray
+                      each tx_hash in bal.txs
+                        each p2pkhtx in tx_hash.p2pkhtxs
+                          tr
+                            td(align='center') 
+                              a.txid(href='#'+p2pkhtx.height, target='_blank') #{p2pkhtx.height}
+                            td(align='center') 
+                              a.txid(href='#'+p2pkhtx.tx_hash, target='_blank') #{p2pkhtx.tx_hash}
+                        each p2pktx in tx_hash.p2pktxs
+                          tr
+                            td(align='center') 
+                              a.txid(href='#'+p2pktx.height, target='_blank') #{p2pktx.height}
+                            td(align='center')
+                              a.txid(href='#'+p2pktx.tx_hash, target='_blank') #{p2pktx.tx_hash}
+            else
+              h1(style='color:#666;', align='center') No Transactions Available
+          else
+            h1(style='color:#666;', align='center') No Transactions Available
         else
           h1(style='color:#666;', align='center') No Transactions Available
       .row(class='rowclass', style='padding-right: 20px !important;').animate__animated.animate__fadeIn#tab3

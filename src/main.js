@@ -116,9 +116,9 @@ app.on("activate", function() {
   }
 });
 
-autoUpdater.logger = log;
-autoUpdater.logger.transports.file.level = 'info';
-log.info('Kronos starting...');
+// autoUpdater.logger = log;
+// autoUpdater.logger.transports.file.level = 'info';
+// log.info('Kronos starting...');
 
 // if (fs.existsSync(path.resolve(path.dirname(process.execPath), '..', 'Kronos.exe'))) {
 //   setInterval(() => {
