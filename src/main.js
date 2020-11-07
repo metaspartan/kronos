@@ -8,11 +8,22 @@ const fs = require('fs');
 const randomstring = require("randomstring");
 const Storage = require('json-storage-fs');
 
-const { shell, session, Menu, ipcMain, autoUpdater } = require('electron');
+const { shell, session, Menu, protocol, ipcMain } = require('electron');
+const log = require('electron-log');
+// const updater = require("electron-updater");
+// const autoUpdater = updater.autoUpdater;
 
-//const { autoUpdater } = require('electron-updater');
+// require('update-electron-app')();
 
-//require('update-electron-app')();
+// const version = app.getVersion();
+
+// const server = 'https://update.electronjs.org';
+// const feed = `${server}/OWNER/REPO/${process.platform}-${process.arch}/${app.getVersion()}`;
+
+// autoUpdater.setFeedURL(feed);
+// //https://github.com/carsenk/kronos/releases/download/v1.7.2-Beta/Kronos-Setup-1.7.2-Beta.exe
+
+// autoUpdater.setFeedURL({ urlF });
 
 const extensions = require('./extensions');
 
@@ -68,7 +79,8 @@ function createWindow() {
   // Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
   mainWindow.once('ready-to-show', () => {
-    autoUpdater.checkForUpdatesAndNotify();
+    //autoUpdaterA.checkForUpdatesAndNotify();
+    //autoUpdater.checkForUpdatesAndNotify();
   });
 
   //mainWindow.webContents.openDevTools();
@@ -104,6 +116,22 @@ app.on("activate", function() {
   }
 });
 
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
+log.info('Kronos starting...');
+
+// if (fs.existsSync(path.resolve(path.dirname(process.execPath), '..', 'Kronos.exe'))) {
+//   setInterval(() => {
+//     autoUpdater.checkForUpdates();
+//   }, 60000);
+// } else {
+//   log.info('Started Kronos via Electron instead of exe, Disabling Auto-Updates...');
+// }
+
+
+// autoUpdater.checkForUpdates();
+
+
 ipcMain.on('open-link', (evt, link) => {
   shell.openExternal(link);
 });
@@ -112,12 +140,26 @@ ipcMain.on('app_version', (event) => {
   event.sender.send('app_version', { version: app.getVersion() });
 });
 
-autoUpdater.on('update-available', () => {
-  mainWindow.webContents.send('update_available');
-});
-autoUpdater.on('update-downloaded', () => {
-  mainWindow.webContents.send('update_downloaded');
-});
+// autoUpdater.on('update-available', () => {
+//   mainWindow.webContents.send('update_available');
+// });
+// autoUpdater.on('update-downloaded', () => {
+//   mainWindow.webContents.send('update_downloaded');
+// });
+
+// autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
+//   const dialogOpts = {
+//     type: 'info',
+//     buttons: ['Restart', 'Later'],
+//     title: 'Application Update',
+//     message: process.platform === 'win32' ? releaseNotes : releaseName,
+//     detail: 'A new version of Kronos has been downloaded. Restart the application to apply the updates.'
+//   };
+
+//   dialog.showMessageBox(dialogOpts).then((returnValue) => {
+//     if (returnValue.response === 0) autoUpdater.quitAndInstall();
+//   });
+// });
 
 ipcMain.on('restart_app', () => {
   autoUpdater.quitAndInstall();
