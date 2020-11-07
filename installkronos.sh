@@ -153,29 +153,17 @@ lsof /var/lib/dpkg/lock >/dev/null 2>&1
 
 sudo apt-get update -y && sudo apt-get upgrade -y
 
-sudo apt-get install -y git unzip build-essential libssl-dev autogen automake curl wget jq snap snapd pwgen libsecret-1-dev
+sudo apt-get install -y git unzip build-essential libssl-dev autogen automake curl wget jq snap snapd pwgen
 
 sudo apt-get remove -y nodejs npm
 
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+
+sudo apt-get install -y nodejs
+
 printf "${GREEN}Dependancies Installed Successfully!${NC}\n"
 
-printf "${GREEN}Installing NVM and Node Version 12.x!${NC}\n"
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-#if [ ! -d ~/.nvm ]; then
-wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
-source ~/.nvm/nvm.sh
-source ~/.profile
-source ~/.bashrc
-nvm install v12.16.3
-nvm use v12.16.3
-npm install -g npm node-gyp electron electron-forge electron-rebuild
-#fi
-
-printf "${GREEN}Successfully Installed NVM and Node Version 12.x!${NC}\n"
+printf "${GREEN}Successfully Installed Node Version 12.x from NodeSource!${NC}\n"
 
 printf "${GREEN}Snap installing Denarius...${NC}\n"
 
@@ -237,16 +225,6 @@ echo "Installing Kronos Node Modules..."
 npm install
 
 cd node_modules/node-pty-prebuilt-multiarch
-
-node-gyp configure
-
-node-gyp build
-
-cd ..
-
-cd ..
-
-cd node_modules/keytar-extra
 
 node-gyp configure
 
@@ -392,29 +370,17 @@ lsof /var/lib/dpkg/lock >/dev/null 2>&1
 
 sudo apt-get update -y && sudo apt-get upgrade -y
 
-sudo apt-get install -y git unzip build-essential libssl-dev autogen automake curl wget jq snap snapd pwgen libsecret-1-dev
+sudo apt-get install -y git unzip build-essential libssl-dev autogen automake curl wget jq snap snapd pwgen
 
 sudo apt-get remove -y nodejs npm
 
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+
+sudo apt-get install -y nodejs
+
 printf "${GREEN}Dependancies Installed Successfully!${NC}\n"
 
-printf "${GREEN}Installing NVM and Node Version 12.x!${NC}\n"
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-#if [ ! -d ~/.nvm ]; then
-wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
-source ~/.nvm/nvm.sh
-source ~/.profile
-source ~/.bashrc
-nvm install v12.16.3
-nvm use v12.16.3
-npm install -g npm node-gyp electron electron-forge electron-rebuild
-#fi
-
-printf "${GREEN}Successfully Installed NVM and Node Version 12.x!${NC}\n"
+printf "${GREEN}Successfully Installed Node Version 12.x from NodeSource!${NC}\n"
 
 printf "${GREEN}Snap installing Denarius...${NC}\n"
 
@@ -516,16 +482,6 @@ cd ..
 
 cd ..
 
-cd node_modules/keytar-extra
-
-node-gyp configure
-
-node-gyp build
-
-cd ..
-
-cd ..
-
 echo "Successfully Installed Kronos Node Modules"
 
 echo "Updating Enviroment..."
@@ -558,16 +514,10 @@ printf "|_/    \/|/   \__/(_______)|/    )_)(_______)\_______)\n"
 printf "Updating to Kronos Version ${VERSION}\n\n"
 
 echo "Ensuring you have NVM and v12 NodeJS/NPM"
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 
-wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
-source ~/.nvm/nvm.sh
-source ~/.profile
-source ~/.bashrc
-nvm install v12.16.3
-nvm use v12.16.3
+sudo apt-get install -y nodejs
+
 npm install -g npm node-gyp electron electron-forge electron-rebuild
 
 if [ ! -f ~/snap/denarius/common/.denarius/walletnotify.sh ]; then
@@ -582,33 +532,9 @@ fi
 
 cd kronos
 
-sudo rm -rf node_modules
-
-sudo rm -rf package-lock.json
-
-sudo rm -rf package.json
-
-mv kronosleveldb ~/kronosleveldb
-
-mv data ~/data
-
-mv .env ~/.env
-
 git checkout .
 
 git pull
-
-sudo rm -rf .env
-
-sudo rm -rf .senv
-
-sudo rm -rf .sen
-
-mv ~/kronosleveldb kronosleveldb
-
-mv ~/data data
-
-mv ~/.env .env
 
 NODEPID=$(pidof node)
 
@@ -621,16 +547,6 @@ npm install
 npm update
 
 cd node_modules/node-pty-prebuilt-multiarch
-
-node-gyp configure
-
-node-gyp build
-
-cd ..
-
-cd ..
-
-cd node_modules/keytar-extra
 
 node-gyp configure
 

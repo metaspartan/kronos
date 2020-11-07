@@ -28,10 +28,31 @@ You can choose an option 1-3 from the installer script above to either install K
 
 RUN KRONOS HEADLESS MODE (Raspberry Pi, etc.):
 -----------------
-Install NodeJS v12.16.3 via NVM or Installer from https://nodejs.org
-```
-sudo apt install libsecret-1-dev
+Install NodeJS v12.16.3 via NodeSource or Installer from https://nodejs.org
 
+```
+# Using Ubuntu
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# Using Debian, as root
+curl -sL https://deb.nodesource.com/setup_12.x | bash -
+apt-get install -y nodejs
+```
+Run `sudo apt-get install -y nodejs` to install Node.js 12.x and npm
+
+You may also need development tools to build native addons:
+`sudo apt-get install gcc g++ make`
+
+To install the Yarn package manager, run:
+```
+     curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+     echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+     sudo apt-get update && sudo apt-get install yarn
+```
+
+Install and Run Kronos
+```
 git clone https://github.com/carsenk/kronos.git
 
 cd kronos
@@ -39,6 +60,14 @@ cd kronos
 npm install -g electron electron-forge electron-rebuild node-gyp
 
 npm install
+
+cd node_modules/node-pty-prebuilt-multiarch
+
+node-gyp configure
+
+node-gyp build
+
+cd ../..
 
 nohup npm run headless &
 ```
@@ -52,11 +81,19 @@ git clone https://github.com/carsenk/kronos.git
 
 cd kronos
 
-npm install -g electron electron-forge electron-rebuild node-gyp windows-build-tools
+npm install -g electron electron-forge electron-rebuild electron-builder node-gyp windows-build-tools
 
 npm install
 
-electron .
+cd node_modules/node-pty-prebuilt-multiarch
+
+node-gyp configure
+
+node-gyp build
+
+cd ../..
+
+electron-forge start or electron .
 ```
 
 BUILDING THE KRONOS ELECTRON APP (If you want to build your own binaries):
@@ -71,5 +108,13 @@ npm install -g electron electron-forge electron-rebuild electron-builder node-gy
 
 npm install
 
-yarn run buildwin
+cd node_modules/node-pty-prebuilt-multiarch
+
+node-gyp configure
+
+node-gyp build
+
+cd ../..
+
+electron-forge make
 ```
