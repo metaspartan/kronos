@@ -6,9 +6,13 @@ const level = require('level');
 
 function getUserHome() {
     // From process.env 
-    return process.env[(process.platform == 'win32') ? 'APPDATA' : 'HOME']; 
-}
+    if (process.platform == 'win32') {
+      return process.env.APPDATA+'\\Kronos\\DATA\\'; 
+    } else {
+      return process.env.HOME+'/Kronos/DATA/'; 
+    }
+} 
 
-const database = level(getUserHome()+`\\Kronos\\DATA\\kronosleveldb`);
+const database = level(getUserHome()+'kronosleveldb');
 
 module.exports = database;
