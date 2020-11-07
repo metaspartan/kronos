@@ -198,9 +198,15 @@ if (currentOS === 'linux') {
   const randosecret = randomstring.generate(42);
   const randosess = randomstring.generate(42);
   //let linkey = files.readFileSync('.env', 'utf-8');
+  //console.log(`Kronos Data Directory: ` + getUserHome()+`\\Kronos\\DATA`); 
+
+  function getUserHome() {
+      // From process.env 
+      return process.env[(process.platform == 'win32') ? 'APPDATA' : 'HOME']; 
+  }
   
-  if (!fs.existsSync('.env')) {
-    fs.writeFileSync('.env', `KEY=${randosecret}\nSESS_KEY=${randosess}`);
+  if (!fs.existsSync(getUserHome()+`\\Kronos\\DATA\\.env`)) {
+    fs.writeFileSync(getUserHome()+`\\Kronos\\DATA\\.env`, `KEY=${randosecret}\nSESS_KEY=${randosess}`);
   }
 
 } else {
@@ -216,10 +222,16 @@ if (currentOS === 'linux') {
   // }
   const randosecret = randomstring.generate(42);
   const randosess = randomstring.generate(42);
-  //let linkey = files.readFileSync('.env', 'utf-8');
+
+  //console.log(`Kronos Data Directory: ` + getUserHome()+`\\Kronos\\DATA`); 
+
+  function getUserHome() {
+      // From process.env 
+      return process.env[(process.platform == 'win32') ? 'APPDATA' : 'HOME']; 
+  }
   
-  if (!fs.existsSync('.env')) {
-    fs.writeFileSync('.env', `KEY=${randosecret}\nSESS_KEY=${randosess}`);
+  if (!fs.existsSync(getUserHome()+`\\Kronos\\DATA\\.env`)) {
+    fs.writeFileSync(getUserHome()+`\\Kronos\\DATA\\.env`, `KEY=${randosecret}\nSESS_KEY=${randosess}`);
   }
 }
 
@@ -231,7 +243,7 @@ console.log(`Kronos running on your LAN: ${ip.address()} on platform ${currentOS
  */
 //dotenv.load({ path: '.env' });
 
-dotenv.config({ path: '.env' });
+dotenv.config({ path: getUserHome()+`\\Kronos\\DATA\\.env` });
 
 // var privateKey  = fs.readFileSync('./ssl/kronos.key', 'utf8');
 // var certificate = fs.readFileSync('./ssl/kronos.crt', 'utf8');

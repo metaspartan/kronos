@@ -21,7 +21,6 @@ const cpuu = require('cputilization');
 const toastr = require('express-toastr');
 const exec = require('child_process').exec;
 const shell = require('shelljs');
-const sleep = require('system-sleep');
 const denarius = require('denariusjs');
 const dbitcoin = require('bitcoinjs-d-lib');
 const CryptoJS = require("crypto-js");

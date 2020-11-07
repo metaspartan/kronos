@@ -1,6 +1,6 @@
 {
   "name": "Kronos",
-  "version": "1.7.3-Beta",
+  "version": "1.7.3.1-Beta",
   "description": "A Dashboard Interface and Wallet for Denarius (D), Ethereum (ETH), and Denarii (ARI) in NodeJS and Electron",
   "repository": {
     "type": "git",
@@ -35,7 +35,6 @@
     "bluebird": "^3.7.2",
     "body-parser": "^1.19.0",
     "bs58": "^4.0.1",
-    "cheerio": "^1.0.0-rc.3",
     "compression": "^1.7.4",
     "connect-flash": "^0.1.1",
     "cpu-stats": "^1.0.0",
@@ -68,7 +67,7 @@
     "hotkeys-js": "^3.8.1",
     "ip": "^1.1.5",
     "jquery": "^3.5.1",
-    "json-storage-fs": "^1.1.0",
+    "json-storage-fs": "git://github.com/carsenk/json-storage-fs.git",
     "keymaster": "^1.6.2",
     "level": "^6.0.1",
     "lob": "^6.1.0",
@@ -92,13 +91,11 @@
     "split": "^1.0.1",
     "sprintf-js": "^1.1.2",
     "strip": "^3.0.0",
-    "system-sleep": "^1.3.6",
     "systeminformation": "^4.26.5",
     "thirty-two": "^1.0.2",
     "toastr": "^2.1.4",
     "tribus-hashjs": "^1.0.3",
     "unirest": "^0.6.0",
-    "update-electron-app": "^2.0.1",
     "validator": "^13.1.1",
     "wallet-address-validator": "^0.2.4",
     "wallet-address-validatord": "git://github.com/carsenk/wallet-address-validator.git"
@@ -185,8 +182,8 @@
     },
     "mac": {
       "category": "public.app-category.finance",
-      "target": "tar.gz",
-      "icon": "public/img/kronosicon.icns"
+      "target": "pkg",
+      "icon": "public/img/klogo.png"
     },
     "win": {
       "target": "nsis",
