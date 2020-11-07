@@ -19,42 +19,7 @@ This was built for the Raspberry Pi in mind and one with at least 2GB of RAM. 4G
 
 Running the Kronos headless installer script below installs denarius via snap install and then modifies your .env in Kronos and denarius.conf to a random rpcuser and rpcpass, Kronos will then be running on your LAN (192.168.x.x:3000) on port 3000.
 
-[GET STARTED USING KRONOS](https://github.com/carsenk/kronos/blob/master/GETTING-STARTED.md)
-
-Run the app version of Kronos
------------------
-```bash
-npm install -g node-gyp electron electron-forge electron-rebuild
-git clone https://github.com/carsenk/kronos.git
-cd kronos
-npm install
-cd node_modules/node-pty-prebuilt-multiarch
-node-gyp configure
-node-gyp build
-cd ..
-cd ..
-cd node_modules/keytar-extra
-node-gyp configure
-node-gyp build
-cd ..
-cd ..
-electron-forge start
-```
-
-Install Headless Kronos with Denarius Now!
------------------
-
-Simply run the single command below in your Terminal or via SSH, then choose one of the options if you want to Install Kronos with or without Denarius chaindata or if you want to just update!:
-
-```bash
-wget -qO- https://raw.githubusercontent.com/carsenk/kronos/master/installkronos.sh | bash
-```
-or
-```bash
-curl -o- https://raw.githubusercontent.com/carsenk/kronos/master/installkronos.sh | bash
-```
-
-You can choose an option 1-3 from the installer script above to either install Kronos, install Kronos with Denarius chaindata, or Update Kronos!
+# [GET STARTED USING KRONOS](https://github.com/carsenk/kronos/blob/master/GETTING-STARTED.md)
 
 Recommended Devices and OS
 -----------------
@@ -78,7 +43,7 @@ Screenshots
 Features
 --------
 
-- Send and Receive ETH and ARI in Core Mode
+- Send and Receive D and ETH and ARI in Core Mode
 - Core Mode and Advanced Mode
 - Send and Receive D
 - Wallet Addresses
@@ -118,6 +83,8 @@ As of v1.5.5 Beta of Kronos it now features multi modes "Core" which only relays
 As of v1.6.0 Beta of Kronos it now features ETH and ARI support fully, you can send and receive ARI or ETH in Core Mode in Kronos
 
 As of v1.6.3 Beta of Kronos it now features using OS built keychain security for storing randomly generated secret keys for use with Kronos encryption.
+
+As of v1.7.5 Beta of Kronos it now has binaries built and auto updating for the binaries along with a dedicated data directory for Kronos data.
 
 Prerequisites
 -------------
