@@ -53,9 +53,13 @@ To install the Yarn package manager, run:
 
 Install and Run Kronos
 ```
+sudo mkdir -p ~/Kronos/DATA/storage
+
 git clone https://github.com/carsenk/kronos.git
 
 cd kronos
+
+sudo su
 
 npm install -g electron electron-forge electron-rebuild node-gyp
 
