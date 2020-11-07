@@ -1,6 +1,6 @@
 {
   "name": "Kronos",
-  "version": "1.7.4-Beta",
+  "version": "1.7.5-Beta",
   "description": "A Dashboard Interface and Wallet for Denarius (D), Ethereum (ETH), and Denarii (ARI) in NodeJS and Electron",
   "repository": {
     "type": "git",
@@ -11,13 +11,13 @@
   "main": "src/main.js",
   "scripts": {
     "startmuon": "node setup.js",
-    "postinstall": "electron-builder install-app-deps",
+    "postinstall": "electron-builder install-app-deps && cd node_modules/node-pty-prebuilt-multiarch && node-gyp rebuild",
     "kronos": "electron .",
     "headless": "node -r esm ./bin/kronos",
     "buildwin": "electron-builder build --win --publish never",
     "deploywin": "electron-builder build --win --publish always",
-    "buildmacwin": "electron-builder build --mac --win --publish never",
-    "deploymacwin": "electron-builder build --mac --win --publish always",
+    "buildmac": "electron-builder build --mac --publish never",
+    "deploymac": "electron-builder build --mac --publish always",
     "test": "mocha --reporter spec",
     "package": "electron-forge package",
     "build": "electron-forge make",
@@ -50,6 +50,7 @@
     "electron-extensions": "^7.0.0-beta.3",
     "electron-log": "^4.3.0",
     "electron-open-link-in-browser": "^1.0.2",
+    "electron-updater": "^4.3.5",
     "electrum-cash": "^1.0.1",
     "errorhandler": "^1.5.1",
     "esm": "^3.2.25",

@@ -28,14 +28,16 @@ You can choose an option 1-3 from the installer script above to either install K
 
 RUN KRONOS HEADLESS MODE (Raspberry Pi, etc.):
 -----------------
-Install NodeJS v12.16.3 via NodeSource or Installer from https://nodejs.org
+Install NodeJS v12.x via NodeSource or Installer from https://nodejs.org
 
 ```
 # Using Ubuntu
+sudo apt install -y curl
 curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
 # Using Debian, as root
+apt install -y curl
 curl -sL https://deb.nodesource.com/setup_12.x | bash -
 apt-get install -y nodejs
 ```
@@ -53,7 +55,11 @@ To install the Yarn package manager, run:
 
 Install and Run Kronos
 ```
+sudo apt install build-essential gcc g++ make
+
 sudo mkdir -p ~/Kronos/DATA/storage
+
+sudo mkdir -p ~/Kronos/DATA/kronosleveldb
 
 git clone https://github.com/carsenk/kronos.git
 
@@ -97,7 +103,7 @@ node-gyp build
 
 cd ../..
 
-electron-forge start or electron .
+npm run kronos
 ```
 
 BUILDING THE KRONOS ELECTRON APP (If you want to build your own binaries):
@@ -120,5 +126,5 @@ node-gyp build
 
 cd ../..
 
-electron-forge make
+npm run buildwin
 ```

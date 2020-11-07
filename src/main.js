@@ -10,8 +10,8 @@ const Storage = require('json-storage-fs');
 
 const { shell, session, Menu, protocol, ipcMain } = require('electron');
 const log = require('electron-log');
-// const updater = require("electron-updater");
-// const autoUpdater = updater.autoUpdater;
+const updater = require("electron-updater");
+const autoUpdater = updater.autoUpdater;
 
 // require('update-electron-app')();
 
@@ -79,8 +79,7 @@ function createWindow() {
   // Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
   mainWindow.once('ready-to-show', () => {
-    //autoUpdaterA.checkForUpdatesAndNotify();
-    //autoUpdater.checkForUpdatesAndNotify();
+    autoUpdater.checkForUpdatesAndNotify();
   });
 
   //mainWindow.webContents.openDevTools();
@@ -116,11 +115,11 @@ app.on("activate", function() {
   }
 });
 
-// autoUpdater.logger = log;
-// autoUpdater.logger.transports.file.level = 'info';
-// log.info('Kronos starting...');
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
+log.info('Kronos starting...');
 
-// if (fs.existsSync(path.resolve(path.dirname(process.execPath), '..', 'Kronos.exe'))) {
+// if (fs.existsSync(path.resolve(path.dirname(process.execPath), '..', 'update.exe'))) {
 //   setInterval(() => {
 //     autoUpdater.checkForUpdates();
 //   }, 60000);
@@ -129,7 +128,7 @@ app.on("activate", function() {
 // }
 
 
-// autoUpdater.checkForUpdates();
+//autoUpdater.checkForUpdates();
 
 
 ipcMain.on('open-link', (evt, link) => {
@@ -140,12 +139,14 @@ ipcMain.on('app_version', (event) => {
   event.sender.send('app_version', { version: app.getVersion() });
 });
 
-// autoUpdater.on('update-available', () => {
-//   mainWindow.webContents.send('update_available');
-// });
-// autoUpdater.on('update-downloaded', () => {
-//   mainWindow.webContents.send('update_downloaded');
-// });
+autoUpdater.on('update-available', () => {
+  mainWindow.webContents.send('update_available');
+  log.info('Kronos Update is available!');
+});
+autoUpdater.on('update-downloaded', () => {
+  mainWindow.webContents.send('update_downloaded');
+  log.info('Kronos Update was downloaded!');
+});
 
 // autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
 //   const dialogOpts = {

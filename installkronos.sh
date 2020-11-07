@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION='v1.7.4-Beta'
+VERSION='v1.7.5-Beta'
 
 TEMP=/tmp/answer$$
 whiptail --title "Kronos ${VERSION} for Denarius"  --menu  "Installer for Kronos Secondary Layer :" 20 0 0 1 "Install Kronos w/ Denarius Config" 2 "Install Kronos w/ Denarius Config & Chaindata" 3 "Update & Upgrade Kronos ${VERSION}" 2>$TEMP
@@ -163,6 +163,8 @@ sudo apt-get install -y nodejs
 
 sudo mkdir -p ~/Kronos/DATA/storage
 
+sudo mkdir -p ~/Kronos/DATA/kronosleveldb
+
 printf "${GREEN}Dependancies Installed Successfully!${NC}\n"
 
 printf "${GREEN}Successfully Installed Node Version 12.x from NodeSource!${NC}\n"
@@ -223,6 +225,8 @@ git clone https://github.com/carsenk/kronos
 cd kronos
 
 echo "Installing Kronos Node Modules..."
+
+sudo su
 
 npm install
 
@@ -382,6 +386,8 @@ sudo apt-get install -y
 
 sudo mkdir -p ~/Kronos/DATA/storage
 
+sudo mkdir -p ~/Kronos/DATA/kronosleveldb
+
 printf "${GREEN}Dependancies Installed Successfully!${NC}\n"
 
 printf "${GREEN}Successfully Installed Node Version 12.x from NodeSource!${NC}\n"
@@ -474,6 +480,8 @@ cd kronos
 
 echo "Installing Kronos Node Modules..."
 
+sudo su
+
 npm install
 
 cd node_modules/node-pty-prebuilt-multiarch
@@ -545,6 +553,8 @@ NODEPID=$(pidof node)
 echo "Killing PID of Kronos for update ${NODEPID}"
 
 sudo kill -9 ${NODEPID}
+
+sudo su
 
 npm install
 

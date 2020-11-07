@@ -197,12 +197,12 @@
       const restartButton = document.getElementById('restart-button');
       ipcRenderer.on('update_available', () => {
         ipcRenderer.removeAllListeners('update_available');
-        message.innerText = 'A new Kronos update is available. Downloading now...';
+        message.innerText = 'A new Kronos update is available! Downloading it now...';
         notification.classList.remove('hidden');
       });
       ipcRenderer.on('update_downloaded', () => {
         ipcRenderer.removeAllListeners('update_downloaded');
-        message.innerText = 'Kronos Update Downloaded. It will be installed on restart. Restart now?';
+        message.innerText = 'Kronos update was downloaded. It will be installed on restart. Restart now?';
         restartButton.classList.remove('hidden');
         notification.classList.remove('hidden');
       });
