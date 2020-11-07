@@ -9,6 +9,10 @@ const randomstring = require("randomstring");
 const Storage = require('json-storage-fs');
 
 const { shell, session, Menu, protocol, ipcMain } = require('electron');
+
+app.setAppUserModelId("com.carsenk.kronos");
+app.setAsDefaultProtocolClient('Kronos');
+
 const log = require('electron-log');
 const updater = require("electron-updater");
 const autoUpdater = updater.autoUpdater;
@@ -129,6 +133,8 @@ log.info('Kronos starting...');
 
 
 //autoUpdater.checkForUpdates();
+autoUpdater.checkForUpdatesAndNotify();
+log.info('Kronos checking for updates...');
 
 
 ipcMain.on('open-link', (evt, link) => {
