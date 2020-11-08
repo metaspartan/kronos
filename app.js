@@ -194,20 +194,26 @@ const readline = require('readline')
 // })()
 var currentOS = os.platform();
 
+function getUserHome() {
+  // From process.env 
+  if (process.platform == 'win32') {
+    return process.env.APPDATA+'\\Kronos\\DATA\\'; 
+  } else {
+    return process.env.HOME+'/Kronos/DATA/'; 
+  }
+}
+
+var dir = getUserHome();
+
+if (!fs.existsSync(dir)){
+    fs.mkdirSync(dir);
+}
+
 if (currentOS === 'linux') {
   const randosecret = randomstring.generate(42);
   const randosess = randomstring.generate(42);
   //let linkey = files.readFileSync('.env', 'utf-8');
   //console.log(`Kronos Data Directory: ` + getUserHome()+`\\Kronos\\DATA`); 
-
-  function getUserHome() {
-    // From process.env 
-    if (process.platform == 'win32') {
-      return process.env.APPDATA+'\\Kronos\\DATA\\'; 
-    } else {
-      return process.env.HOME+'/Kronos/DATA/'; 
-    }
-  } 
   
   if (!fs.existsSync(getUserHome()+'.env')) {
     fs.writeFileSync(getUserHome()+'.env', `KEY=${randosecret}\nSESS_KEY=${randosess}`);
@@ -228,15 +234,6 @@ if (currentOS === 'linux') {
   const randosess = randomstring.generate(42);
 
   //console.log(`Kronos Data Directory: ` + getUserHome()+`\\Kronos\\DATA`); 
-
-  function getUserHome() {
-    // From process.env 
-    if (process.platform == 'win32') {
-      return process.env.APPDATA+'\\Kronos\\DATA\\'; 
-    } else {
-      return process.env.HOME+'/Kronos/DATA/'; 
-    }
-  } 
   
   if (!fs.existsSync(getUserHome()+`.env`)) {
     fs.writeFileSync(getUserHome()+`.env`, `KEY=${randosecret}\nSESS_KEY=${randosess}`);
