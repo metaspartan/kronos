@@ -180,7 +180,7 @@ block content
       if (!data28.dbal[0] && !data28.error) {
         var bal = data28.dbal;
         if (bal != 'undefined') {
-          bal = bal.toFixed(8);
+          bal = parseFloat(bal.toFixed(8));
         }
         $('#totalbal').html(bal);
         $('#htotalbal').html(bal + '<img class="res" src="../img/denarius.png" alt="D" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">D</span>');
@@ -195,7 +195,7 @@ block content
       } else {
         var bal = data28.dbal[0];
         if (bal != 'undefined') {
-          bal = bal.toFixed(8);
+          bal = parseFloat(bal.toFixed(8));
         }
         $('#totalbal').html(bal);
         $('#htotalbal').html(bal + '<img class="res" src="../img/denarius.png" alt="D" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">D</span>');
@@ -283,14 +283,14 @@ block content
                   a(href='#' + mainaddy)
                     img(src='' + qrcode, style='border-radius:10px;')
             .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:5vh;', align='center') Denarius Address
-              p(style='background-color:#111;border-radius:15px;padding:10px;width:85%;margin:0 auto;margin-top:10px;') #{mainaddy}
+              p.addressdash(style='background-color:#111;border-radius:15px;padding:10px;width:85%;margin:0 auto;margin-top:10px;') #{mainaddy}
           .col-md-6
             if (typeof qrcode != 'undefined')
               .qrcode(align='center')
                   a(href='#' + ethaddy)
                     img(src='' + ethqrcode, style='border-radius:10px;')
             .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:5vh;', align='center') ETH & ARI Address
-              p(style='background-color:#111;border-radius:15px;padding:10px;width:85%;margin:0 auto;margin-top:10px;') #{ethaddy}
+              p.addressdash(style='background-color:#111;border-radius:15px;padding:10px;width:85%;margin:0 auto;margin-top:10px;') #{ethaddy}
       .wrapper
         nav.tabs
           .selector
@@ -320,15 +320,15 @@ block content
                     each tx_hash in bal.txs
                       each p2pkhtx in tx_hash.p2pkhtxs
                         tr
-                          td(align='center') 
+                          td(align='center', data-label='Block Height') 
                             a.txid(href='https://chainz.cryptoid.info/d/tx.dws?'+p2pkhtx.height, target='_blank') #{p2pkhtx.height}
-                          td(align='center') 
+                          td(align='center', data-label='TXID') 
                             a.txid(href='https://chainz.cryptoid.info/d/tx.dws?'+p2pkhtx.tx_hash, target='_blank') #{p2pkhtx.tx_hash}
                       each p2pktx in tx_hash.p2pktxs
                         tr
-                          td(align='center') 
+                          td(align='center', data-label='Block Height') 
                             a.txid(href='https://chainz.cryptoid.info/d/tx.dws?'+p2pktx.height, target='_blank') #{p2pktx.height}
-                          td(align='center')
+                          td(align='center', data-label='TXID')
                             a.txid(href='https://chainz.cryptoid.info/d/tx.dws?'+p2pktx.tx_hash, target='_blank') #{p2pktx.tx_hash}
           else
             h1(style='color:#666;', align='center') No Transactions Available
