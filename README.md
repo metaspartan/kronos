@@ -86,6 +86,8 @@ As of v1.6.3 Beta of Kronos it now features using OS built keychain security for
 
 As of v1.7.5 Beta of Kronos it now has binaries built and auto updating for the binaries along with a dedicated data directory for Kronos data.
 
+As of v1.7.7 Beta of Kronos it now has decentralized encrypted chat between both Core and Advanced Modes. Importing of seed phrases in Core Mode is now available!
+
 Prerequisites
 -------------
 

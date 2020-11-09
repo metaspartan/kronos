@@ -99,6 +99,10 @@ script.
             a(href='http://'+lanip+':3000/fs', onclick="javascript:event.target.port=3000") 
               i.fas.fa-th   
               |   FS
+          li(class=(title == 'Chat') ? 'active' : undefined)
+            a(href='http://'+lanip+':3000/advchat', onclick="javascript:event.target.port=3000") 
+              i.fas.fa-comment-dots   
+              |   Chat
           li(class=(title == 'Peers') ? 'active' : undefined)
             a(href='http://'+lanip+':3000/peers', onclick="javascript:event.target.port=3000") 
               i.fas.fa-network-wired    

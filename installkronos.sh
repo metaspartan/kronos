@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION='v1.7.6-Beta'
+VERSION='v1.7.7-Beta'
 
 TEMP=/tmp/answer$$
 whiptail --title "Kronos ${VERSION} for Denarius"  --menu  "Installer for Kronos Secondary Layer :" 20 0 0 1 "Install Kronos w/ Denarius Config" 2 "Install Kronos w/ Denarius Config & Chaindata" 3 "Update & Upgrade Kronos ${VERSION}" 2>$TEMP
@@ -161,9 +161,9 @@ curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 
 sudo apt-get install -y nodejs
 
-sudo mkdir -p ~/Kronos/DATA/storage
+mkdir -p ~/Kronos/DATA/storage
 
-sudo mkdir -p ~/Kronos/DATA/kronosleveldb
+mkdir -p ~/Kronos/DATA/kronosleveldb
 
 printf "${GREEN}Dependancies Installed Successfully!${NC}\n"
 
@@ -384,9 +384,9 @@ curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 
 sudo apt-get install -y 
 
-sudo mkdir -p ~/Kronos/DATA/storage
+mkdir -p ~/Kronos/DATA/storage
 
-sudo mkdir -p ~/Kronos/DATA/kronosleveldb
+mkdir -p ~/Kronos/DATA/kronosleveldb
 
 printf "${GREEN}Dependancies Installed Successfully!${NC}\n"
 

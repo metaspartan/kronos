@@ -537,6 +537,8 @@ app.post('/reboot', auth, kronosController.reboot);
 app.post('/privkey', auth, kronosController.privkey);
 app.post('/walletnotify', TXLimiter, kronosController.notification);
 
+app.get('/advchat', auth, kronosController.getchat);
+
 //Tools Controller
 app.get('/ddebug', auth, toolsController.getDebugLog);
 app.get('/settings', auth, Limiter, toolsController.getSettings);
