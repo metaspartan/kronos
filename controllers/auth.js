@@ -36,6 +36,7 @@ const ElectrumCluster = require('electrum-cash').Cluster;
 const bs58 = require('bs58');
 const randomstring = require("randomstring");
 const Storage = require('json-storage-fs');
+const ethers = require('ethers');
 
 var currentOS = os.platform(); 
 
@@ -498,6 +499,69 @@ exports.simple = (request, response) => {
 	} else {
 		request.toastr.error('Please select a seed phrase!', 'Error!', { positionClass: 'toast-bottom-right' });
 		response.redirect('/login');
+		response.end();
+	}
+};
+
+//GET IMPORT SEED
+exports.getimport = (req, res) => {
+	//utils.HDNode.isValidMnemonic("action glow era all liquid critic achieve lawsuit era anger loud slight"); // returns true
+
+	// Generate Seed Phrase and pass it to our rendered view
+	mnemonic = bip39.generateMnemonic(256);
+
+	res.render('import', {
+        title: 'Core Mode Import', genseed: mnemonic
+    });
+}
+
+//POST IMPORT SEED
+exports.importseed = (request, response) => {
+	var seedphrase = request.body.SEEDPHRASE;
+	
+	if (seedphrase && request.body) {
+
+			if (ethers.utils.isValidMnemonic(seedphrase)) {
+
+				//Import the new seedphrase and erase the previous no matter what if valid.
+				db.get('seedphrase', function (err, value) {
+					if (err) {
+
+						var encryptedseed = encrypt(seedphrase);
+
+						// Put the encrypted passworded seedphrase in the DB
+						db.put('seedphrase', encryptedseed, function (err) {
+							if (err) return console.log('Ooops!', err) // some kind of I/O error if so
+							console.log('Encrypted Seed Phrase to DB');
+						});
+						Storage.set('seed', encryptedseed);
+
+					} else {
+						var encryptedseed = encrypt(seedphrase);
+
+						// Put the encrypted passworded seedphrase in the DB
+						db.put('seedphrase', encryptedseed, function (err) {
+							if (err) return console.log('Ooops!', err) // some kind of I/O error if so
+							console.log('Encrypted Seed Phrase to DB');
+						});
+
+						Storage.set('seed', encryptedseed);
+					}
+				});
+
+				request.toastr.success('Kronos Seed Import Successful!', 'Success!', { positionClass: 'toast-bottom-right' });
+				response.redirect('/login');
+				response.end();	
+	
+			} else {
+				request.toastr.error('Invalid seed phrase! Try something else!', 'Error!', { positionClass: 'toast-bottom-right' });
+				response.redirect('/import');
+				response.end();
+			}
+	
+	} else {
+		request.toastr.error('Please enter a seed phrase!', 'Error!', { positionClass: 'toast-bottom-right' });
+		response.redirect('/import');
 		response.end();
 	}
 };

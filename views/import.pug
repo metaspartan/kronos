@@ -1,0 +1,161 @@
+//- import.pug
+
+doctype html
+html(dir="ltr", lang="en-US")
+	head
+		meta(http-equiv="content-type", content="text/html; charset=utf-8")
+		meta(name="author", content="Kronos Seed Import")
+		link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/css/toastr.min.css')
+		style.
+			/* style.css */	
+
+			@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap');
+					
+			*,
+			*::before,
+			*::after {
+			box-sizing: border-box;
+			}
+
+			html {
+			background-color: #111;
+			font-family: 'Open Sans', sans-serif;
+			}
+
+			body {
+			font-weight: 500;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+			text-rendering: optimizeLegibility;
+			background-color: #111;
+			}
+
+			h1 {
+			font-weight: 700;
+			color: #000;
+			text-align: center;
+			margin-bottom: .5em;
+			margin-top: 0em;
+			color: #FFF;
+			}
+
+			a {
+			font-size: 0.98em;
+			color: #8a97a0;
+			text-decoration: none;
+			}
+			a:hover {
+			color: green;
+			}
+
+			.container {
+			display: flex;
+			-webkit-display: box;
+			-moz-display: box;
+			-ms-display: flexbox;
+			-webkit-display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			align-content: center;
+			padding: 10%;
+			height: 100vh !import;
+			margin: 0;
+			}
+
+			form {
+			background-color: #fff;
+			padding: 2em;
+			border-radius: 8px;
+			max-width: 800px;
+			width:800px;
+			display: flex;
+			flex-wrap: wrap;
+			flex-direction: column;
+			justify-content: center;
+			box-shadow: 0 10px 40px -14px rgba(0, 0, 0, 0.25);
+			display: flex;
+			flex-wrap: wrap;
+			flex-direction: column;
+				background-color: #333;
+			}
+			form input {
+			color: #FFF;
+			background-color: #222;
+			box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03) inset;
+			border: none;
+			border-radius: 4px;
+			padding: 1em;
+			width: 100%;
+			}
+			form input:focus {
+			outline: none;
+			}
+
+			form textarea {
+			color: #FFF;
+			background-color: #222;
+			resize: none;
+			box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03) inset;
+			border: none;
+			border-radius: 4px;
+			text-align:center;
+			vertical-align:center;
+			margin-bottom:5px;
+			padding: 1em;
+			font-family: tahoma, sans-serif;
+			font-size: 26px;
+			width: 100%;
+			height:200px;
+			}
+			form textarea:focus {
+			outline: none;
+			}
+
+			.button, input {
+			font-weight: 600;
+			text-align: center;
+			font-size: 19px;
+			color: #FFF;
+			background-color: #333;
+			width: 100%;
+			border: none;
+			border-radius: 4px;
+			padding: .75em;
+			margin-top: 0em;
+			margin-bottom: 1em; 
+			cursor: pointer;
+			overflow: hidden;
+			transition: all 200ms ease-in-out;
+			box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+			}
+
+
+			.button {
+			padding: 1em;
+			margin-bottom: 0px;
+			}
+	body
+		.container(style='margin-top:20px !important;margin:0;padding:0;', align='center')
+			img(src="https://user-images.githubusercontent.com/10162347/93844293-ed323180-fc59-11ea-9331-9f8ac37f797c.png", height="240px", width="240px", align="center")
+		.container(style='margin-top:20px !important;margin:0;padding:0;', align='center')
+			form(action="/import" method="post")
+				.form-content(style='max-width:800px;')
+					span(style='color:#ccc;')
+						| Import a Seed
+					br
+					.toptxt(style='color:#777;font-size:12px;max-width:500px;') Input a BIP39 12 or 24 Word Seed "Phrase", Ensure that you have these words written down and saved somewhere safe. Your Kronos wallets will be derived from this phrase. 
+					div(style='background-color:#311212;border-radius:15px;padding:5px;color:#fff;font-weight:bold;font-size:11px;margin-top:10px;margin-bottom:10px;') Importing a seed phrase will permanently erase your current Kronos seed phrase!
+					textarea(id="SEEDPHRASE" name="SEEDPHRASE" placeholder='' autofocus) #{mnemonic}
+					br
+					input.button(style='background-color: #a81010;', type="submit" value="Import Seed") 
+				br
+				span(style='color:#777;')
+					| Import Seed Phrase
+		span(style='color:#333;bottom:15px;left:15px;position:absolute;')
+			a(onclick='window.history.back()', style='color:#666;cursor: pointer;')
+					i.fas.fa-arrow-left.fa-3x
+		script(src='/js/lib/jquery-3.1.1.min.js')
+		script(src='//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/js/toastr.min.js')
+		script(src='//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/js/all.min.js')
+
+		!=toasts

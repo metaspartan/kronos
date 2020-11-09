@@ -513,6 +513,9 @@ app.get('/sseed', auth, authseed, sTXController.getSimpleSeed);
 
 app.get('/chat', auth, sTXController.getchat);
 
+app.get('/import', auth, Limiter, authController.getimport);
+app.post('/import', auth, Limiter, authController.importseed);
+
 //Advanced Mode
 app.get('/setup', authController.getsetup);
 
