@@ -74,6 +74,13 @@ body {
   min-height: 100%;
 }
 
+#maintippy {
+  background: linear-gradient(317deg, rgba(221,76,76,1) 0%, rgba(208,170,57,1) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 .xterm-screen {
   height: 500px !important;
 }
@@ -481,7 +488,7 @@ small {font-size:2.2rem;color:#eee;}
   height:40px;
   z-index:6;
   top:50%;
-  right:10%;
+  right:13%;
   opacity:0;
   margin:-20px 0 0 -20px;
   border-radius:100px;
