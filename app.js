@@ -50,14 +50,13 @@ const ip = require('ip');
 const shell = require('shelljs');
 const fs = require('fs');
 const os = require('os');
-const dbr = require('./db.js');
 const appRoot = require('app-root-path');
 const files = require('fs');
-const db = dbr.db;
 const gritty = require('gritty');
 const rateLimit = require("express-rate-limit");
 const randomstring = require("randomstring");
 const Storage = require('json-storage-fs');
+const mkdirp = require('mkdirp');
 
 
 const crypto = require('crypto')
@@ -197,17 +196,32 @@ var currentOS = os.platform();
 function getUserHome() {
   // From process.env 
   if (process.platform == 'win32') {
+    if (!mkdirp.sync(process.env.APPDATA+'\\Kronos\\DATA\\')) {
+      mkdirp.sync(process.env.APPDATA+'\\Kronos\\DATA\\kronosleveldb\\');
+      return process.env.APPDATA+'\\Kronos\\DATA\\'; 
+    }
     return process.env.APPDATA+'\\Kronos\\DATA\\'; 
   } else {
+    if (!mkdirp.sync(process.env.HOME+'/Kronos/DATA/')) {
+      mkdirp.sync(process.env.HOME+'/Kronos/DATA/kronosleveldb/');
+      return process.env.HOME+'/Kronos/DATA/'; 
+    }
     return process.env.HOME+'/Kronos/DATA/'; 
   }
 }
 
 var dir = getUserHome();
 
-if (!fs.existsSync(dir)){
-    fs.mkdirSync(dir);
-}
+// if (!mkdirp.sync(dir)){
+//     //fs.mkdirSync(dir);
+//     if (process.platform == 'win32') {
+//       mkdirp.sync(dir);
+//       mkdirp.sync(process.env.APPDATA+'\\Kronos\\DATA\\kronosleveldb');
+//     } else {
+//       mkdirp.sync(dir);
+//       mkdirp.sync(process.env.HOME+'/Kronos/DATA/kronosleveldb/');
+//     }
+// }
 
 if (currentOS === 'linux') {
   const randosecret = randomstring.generate(42);

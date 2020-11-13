@@ -17,6 +17,7 @@
     "buildwin": "electron-builder build --win --publish never",
     "deploywin": "electron-builder build --win --publish always",
     "buildmac": "electron-builder build --mac --publish never",
+    "postbuildmac": "cp -Rf node_modules/node-pty-prebuilt-multiarch/. dist/mac/Kronos.app/Contents/Resources/app/node_modules/node-pty-prebuilt-multiarch",
     "deploymac": "electron-builder build --mac --publish always",
     "test": "mocha --reporter spec",
     "package": "electron-forge package",
@@ -74,6 +75,7 @@
     "lob": "^6.1.0",
     "lodash": "^4.17.15",
     "lusca": "^1.6.1",
+    "mkdirp": "^1.0.4",
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
     "node": "12.16.3",
@@ -110,8 +112,8 @@
     "bufferutil": "^4.0.2",
     "chai": "^4.2.0",
     "chrome-ext-downloader": "^1.0.3",
-    "electron": "^10.1.2",
-    "electron-builder": "^19.56.2",
+    "electron": "^10.1.5",
+    "electron-builder": "^22.9.1",
     "electron-builder-squirrel-windows": "*",
     "electron-prebuilt-compile": "8.2.0",
     "electron-rebuild": "^2.0.3",
@@ -184,7 +186,7 @@
     },
     "mac": {
       "category": "public.app-category.finance",
-      "target": "pkg",
+      "target": "dmg",
       "icon": "public/img/klogo.png"
     },
     "win": {
