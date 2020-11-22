@@ -1,6 +1,6 @@
 {
   "name": "Kronos",
-  "version": "1.7.9-Beta",
+  "version": "1.8.0-Beta",
   "description": "A Dashboard Interface and Wallet for Denarius (D), Ethereum (ETH), and Denarii (ARI) built with NodeJS and Electron",
   "repository": {
     "type": "git",
@@ -104,15 +104,15 @@
     "wallet-address-validatord": "git://github.com/carsenk/wallet-address-validator.git"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^6.0.0-beta.53",
-    "@electron-forge/maker-deb": "^6.0.0-beta.53",
-    "@electron-forge/maker-rpm": "^6.0.0-beta.53",
-    "@electron-forge/maker-squirrel": "^6.0.0-beta.53",
-    "@electron-forge/maker-zip": "^6.0.0-beta.53",
+    "@electron-forge/cli": "^6.0.0-beta.54",
+    "@electron-forge/maker-deb": "^6.0.0-beta.54",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.54",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.54",
+    "@electron-forge/maker-zip": "^6.0.0-beta.54",
     "bufferutil": "^4.0.2",
     "chai": "^4.2.0",
     "chrome-ext-downloader": "^1.0.3",
-    "electron": "^10.1.5",
+    "electron": "^11.0.2",
     "electron-builder": "^22.9.1",
     "electron-builder-squirrel-windows": "*",
     "electron-prebuilt-compile": "8.2.0",

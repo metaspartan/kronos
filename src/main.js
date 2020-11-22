@@ -8,7 +8,7 @@ const fs = require('fs');
 const randomstring = require("randomstring");
 const Storage = require('json-storage-fs');
 
-const { shell, session, Menu, protocol, ipcMain } = require('electron');
+const { shell, session, Menu, protocol, nativeTheme, ipcMain } = require('electron');
 
 app.setAppUserModelId("com.carsenk.kronos");
 app.setAsDefaultProtocolClient('Kronos');
@@ -64,6 +64,8 @@ function createWindow() {
 
   let indexPath;
   indexPath = path.join(`brave/${__dirname}`, 'index.html');
+
+  nativeTheme.themeSource = 'dark';
 
   // mainWindow.loadURL(url.format({
   //   pathname: indexPath,
@@ -133,7 +135,7 @@ log.info('Kronos starting...');
 
 
 //autoUpdater.checkForUpdates();
-autoUpdater.checkForUpdatesAndNotify();
+// autoUpdater.checkForUpdatesAndNotify();
 log.info('Kronos checking for updates...');
 
 

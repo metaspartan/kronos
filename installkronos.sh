@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION='v1.7.9-Beta'
+VERSION='v1.8.0-Beta'
 
 TEMP=/tmp/answer$$
 whiptail --title "Kronos ${VERSION} for Denarius"  --menu  "Installer for Kronos Secondary Layer :" 20 0 0 1 "Install Kronos w/ Denarius Config" 2 "Install Kronos w/ Denarius Config & Chaindata" 3 "Update & Upgrade Kronos ${VERSION}" 2>$TEMP
@@ -243,15 +243,6 @@ cd ..
 echo "Successfully Installed Kronos Node Modules"
 
 echo "Updating Enviroment..."
-
-#Update enviroment file
-sed -i "s/.*DUSER=.*/DUSER="${PWUD1}"/" .env
-
-sed -i "s/.*DPASS=.*/DPASS="${PWPD2}"/" .env
-
-#sed -i "s/.*SECRET_KEY=.*/SECRET_KEY="${PWPD3}"/" .env
-
-echo "Successfully injected generated Denarius RPC username and password"
 
 nohup npm run headless &
 
@@ -497,15 +488,6 @@ cd ..
 echo "Successfully Installed Kronos Node Modules"
 
 echo "Updating Enviroment..."
-
-#Update enviroment file
-sed -i "s/.*DUSER=.*/DUSER="${PWUD1}"/" .env
-
-sed -i "s/.*DPASS=.*/DPASS="${PWPD2}"/" .env
-
-#sed -i "s/.*SECRET_KEY=.*/SECRET_KEY="${PWPD3}"/" .env
-
-echo "Successfully injected generated Denarius username and password"
 
 nohup npm run headless &
 

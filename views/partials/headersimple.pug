@@ -3,6 +3,8 @@ span#ethaccount(data-value=ethaddress)
 //- script(src="/socket.io/socket.io.js")
 script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js")
 script(src='https://unpkg.com/3box/dist/3box.min.js')
+script(src='../js/snowflakepopup.js')
+script(src='../js/snowflake.js')
 script.
   var lanip = document.getElementById("lanip").getAttribute("data-value");
   var socket = io('//'+ lanip +':3300');
@@ -139,24 +141,24 @@ script.
               span(style='color:#888;') D
           li
             a(href='http://'+lanip+':3000/createtx', style='border-right:1px #444 solid;padding-left:0px !important;')
-              div(style='background-color:#4f4f4f;border-radius:15px;padding-right:15px;padding-left:15px;font-size:12px;color:#fff;')
-                |   SEND
+              div(style='background-color:#4f4f4f;border-radius:15px;padding-right:8px;padding-left:8px;font-size:12px;color:#fff;')
+                i.fas.fa-arrow-right
           li
             a(href='http://'+lanip+':3000/sendeth', style='font-size:14px;color:#FFF;')#htotalethbal #{totalethbal || 0} 
               img.res(src='../img/eth.png', alt='ETH', border='0', style='height:24px !important;width: 24px !important;margin:-15px 0px -12px !important;')
               span(style='color:#888;') ETH
           li
             a(href='http://'+lanip+':3000/sendeth', style='border-right:1px #444 solid;padding-left:0px !important;')
-              div(style='background-color:#3f3b54;border-radius:15px;padding-right:15px;padding-left:15px;font-size:12px;color:#fff;')
-                |   SEND
+              div(style='background-color:#3f3b54;border-radius:15px;padding-right:8px;padding-left:8px;font-size:12px;color:#fff;')
+                i.fas.fa-arrow-right
           li
             a(href='http://'+lanip+':3000/sendari', style='font-size:14px;color:#FFF;')#htotalaribal #{totalaribal || 0} 
               img.res(src='../img/ari.png', alt='ARI', border='0', style='height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;')
               span(style='color:#888;') ARI
           li
             a(href='http://'+lanip+':3000/sendari', style='padding-left:0px !important;')
-              div(style='background-color:#3d1f56;border-radius:15px;padding-right:15px;padding-left:15px;font-size:12px;color:#fff;')
-                |   SEND
+              div(style='background-color:#3d1f56;border-radius:15px;padding-right:8px;padding-left:8px;font-size:12px;color:#fff;')
+                i.fas.fa-arrow-right
           //- if (staketoggle == 'Staking')
           //-   li.animate__animated.animate__pulse.animate__infinite
           //-     a(style='padding-top:18px !important;')
