@@ -270,7 +270,7 @@ exports.postcreate = (req, res) => {
         mnemonic = decryptedmnemonic;
 
         //Convert our mnemonic seed phrase to BIP39 Seed Buffer 
-        const seed = bip39.mnemonicToSeedSync(mnemonic, ps);
+        const seed = bip39.mnemonicToSeedSync(mnemonic); //No pass to keep Coniomi styled seed
         
         // BIP32 From BIP39 Seed
         const root = bip32.fromSeed(seed);

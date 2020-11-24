@@ -452,7 +452,7 @@ exports.simpleindex = (req, res) => {
 
 
         //Convert our mnemonic seed phrase to BIP39 Seed Buffer 
-        const seed = bip39.mnemonicToSeedSync(mnemonic, ps);
+        const seed = bip39.mnemonicToSeedSync(mnemonic); //No pass included to keep Coinomi styled seed
         
         // BIP32 From BIP39 Seed
         const root = bip32.fromSeed(seed);
