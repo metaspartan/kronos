@@ -527,8 +527,13 @@ app.get('/sseed', auth, authseed, sTXController.getSimpleSeed);
 
 app.get('/chat', auth, sTXController.getchat);
 
+//Import Seed
 app.get('/import', auth, Limiter, authController.getimport);
 app.post('/import', auth, Limiter, authController.importseed);
+
+//Sweep key
+app.get('/sweep', auth, Limiter, authController.getsweep);
+app.post('/sweep', auth, Limiter, authController.sweepkey);
 
 //Advanced Mode
 app.get('/setup', authController.getsetup);

@@ -2561,7 +2561,7 @@ exports.getSeed = (req, res) => {
       }
 
       //Convert our mnemonic seed phrase to BIP39 Seed Buffer 
-      const seed = bip39.mnemonicToSeedSync(mnemonic, ps);
+      const seed = bip39.mnemonicToSeedSync(mnemonic);
       
       // BIP32 From BIP39 Seed
       const root = bip32.fromSeed(seed);
