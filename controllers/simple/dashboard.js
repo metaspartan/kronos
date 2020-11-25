@@ -755,7 +755,7 @@ exports.simpleindex = (req, res) => {
 
                 const txs = gethistory1.concat(gethistory2);
 
-                console.log('Transactions', txs);
+                //console.log('Transactions', txs);
 
                 //await electrum.disconnect();
                 await electrum.shutdown();
