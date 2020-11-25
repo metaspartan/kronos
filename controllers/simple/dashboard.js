@@ -113,6 +113,7 @@ exports.simpleindex = (req, res) => {
     let scripthasharray = [];
     let ethereumarray = [];
     let promises = [];
+    let promises2 = [];
   
     //ElectrumX Hosts for Denarius
     const delectrumxhost1 = 'electrumx1.denarius.pro';
@@ -147,7 +148,8 @@ exports.simpleindex = (req, res) => {
             projectId: 'f95db0ef78244281a226aad15788b4ae',
             projectSecret: '6a2d027562de4857a1536774d6e65667',
         },
-        alchemy: 'W5yjuu3Ade1lsIn3Od8rTqJsYiFJszVY'
+        alchemy: 'W5yjuu3Ade1lsIn3Od8rTqJsYiFJszVY',
+        cloudflare: ''
     });
 
     let provider2 = new ethers.providers.CloudflareProvider();
@@ -174,19 +176,25 @@ exports.simpleindex = (req, res) => {
         // connections with the same ID
         res.io.removeAllListeners('connection'); 
         }
-        provider2.on('block', (blockNumber) => {
-            let ethblock = blockNumber;
-            try {
-                provider2.getBlock(blockNumber).then((block) => {
-                    let blockhash = block.hash;
-                    //console.log(blockhash);
-                    socket.emit("newblocketh", {ethblock: ethblock, ethhash: blockhash});
-                });
-            }
-            catch(e) {
-                console.log('Catch an error: ', e)
-            }
-        });
+        try {
+            provider2.on('block', (blockNumber) => {
+                let ethblock = blockNumber;
+                try {
+                    provider2.getBlock(blockNumber).then((block) => {
+                        let blockhash = block.hash;
+                        //console.log(blockhash);
+                        socket.emit("newblocketh", {ethblock: ethblock, ethhash: blockhash});
+                    }).catch((e) => {
+                        console.log(e);
+                    });
+                }
+                catch(e) {
+                    console.log('Catch an error: ', e)
+                }
+            });
+        } catch(e) {
+            console.log(e);
+        }
         // ariContract.on(ethwalletp.address, (balance) => {
         //     console.log('New ARI Balance: ' + balance);
         //     socket.emit("newaribal", {aribal: balance});
@@ -202,7 +210,7 @@ exports.simpleindex = (req, res) => {
         const ethWalletBal = async () => {
             let ethbalance = await provider.getBalance(ethwalletp.address);
             let ethbalformatted = ethers.utils.formatEther(ethbalance); //ethers.utils.formatUnits(ethbalance, 18);
-            Storage.set('totalethbal', JSON.parse(ethbalformatted));
+            Storage.set('totalethbal', JSON.parse(ethbalformatted).toString());
             socket.emit("newethbal", {ethbal: JSON.parse(ethbalformatted)});
         }
         ethWalletBal();
@@ -219,7 +227,7 @@ exports.simpleindex = (req, res) => {
         const ariWalletBal = async () => {
             let aribalance = await ariContract.balanceOf(ethwalletp.address);
             let aribalformatted = ethers.utils.formatUnits(aribalance, 8);
-            Storage.set('totalaribal', JSON.parse(aribalformatted));
+            Storage.set('totalaribal', JSON.parse(aribalformatted).toString());
             socket.emit("newaribal", {aribal: parseFloat(aribalformatted)});
         }
         ariWalletBal();
@@ -518,32 +526,36 @@ exports.simpleindex = (req, res) => {
                 electrum.addServer(delectrumxhost2);
                 electrum.addServer(delectrumxhost3);
                 electrum.addServer(delectrumxhost4);
-                
-                // Wait for enough connections to be available.
-                await electrum.ready();
-                
-                // Request the balance of the requested Scripthash D address
+                try {
+                    // Wait for enough connections to be available.
+                    await electrum.ready();
+                    
+                    // Request the balance of the requested Scripthash D address
 
-                const balancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthash);
+                    const balancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthash);
 
-                const p2pkbalancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthashp2pk);
+                    const p2pkbalancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthashp2pk);
 
-                const balanceformatted = balancescripthash.confirmed;
+                    const balanceformatted = balancescripthash.confirmed;
 
-                const p2pkbalanceformatted = p2pkbalancescripthash.confirmed;
+                    const p2pkbalanceformatted = p2pkbalancescripthash.confirmed;
 
-                const balancefinal = balanceformatted / 100000000;
+                    const balancefinal = balanceformatted / 100000000;
 
-                const p2pkbalancefinal = p2pkbalanceformatted / 100000000;
+                    const p2pkbalancefinal = p2pkbalanceformatted / 100000000;
 
-                const addedbalance = balancefinal + p2pkbalancefinal;
+                    const addedbalance = balancefinal + p2pkbalancefinal;
 
-                const addedbalance2 = balanceformatted + p2pkbalanceformatted;
+                    const addedbalance2 = balanceformatted + p2pkbalanceformatted;
 
-                //await electrum.disconnect();
-                await electrum.shutdown();
-                Storage.set('totalbal', addedbalance);
-                socket.emit("newdbal", {dbal: addedbalance});
+                    //await electrum.disconnect();
+                    await electrum.shutdown();
+                    Storage.set('totalbal', addedbalance);
+                    socket.emit("newdbal", {dbal: addedbalance});
+
+                } catch (e) {
+                    console.log(e);
+                }
             }
             dWalletBal();
             setInterval(function(){ 
@@ -730,38 +742,33 @@ exports.simpleindex = (req, res) => {
                 electrum.addServer(delectrumxhost3);
                 electrum.addServer(delectrumxhost4);
                 
+                try {
                 // Wait for enough connections to be available.
                 await electrum.ready();
                 
                 // Request the balance of the requested Scripthash D address
 
-                const txs = [];
-
+                //const txs = [];
                 const gethistory1 = await electrum.request('blockchain.scripthash.get_history', scripthash);
 
                 const gethistory2 = await electrum.request('blockchain.scripthash.get_history', scripthashp2pk);
 
-                //console.log(gethistory1);
-                //console.log(gethistory2);
+                const txs = gethistory1.concat(gethistory2);
 
-                // const history1formatted = gethistory1[0].tx_hash;
-
-                // const histoy2formatted = gethistory2[0].tx_hash;
-
-                // const history1height = gethistory1[0].height;
-
-                // const histoy2height = gethistory2[0].height;
-
-                const fullhistory = txs.push({p2pkhtxs: gethistory1, p2pktxs: gethistory2, });
-
-                //const p2pkbalancefinal = p2pkbalanceformatted / 100000000;
-
-                //const addedbalance = balancefinal + p2pkbalancefinal;
+                console.log('Transactions', txs);
 
                 //await electrum.disconnect();
                 await electrum.shutdown();
 
                 return txs;
+                } catch (e) {
+                    console.log('TX Error', e);
+                }
+
+                //await electrum.disconnect();
+                // await electrum.shutdown();
+
+                // return txs;
             }
 
             //Grab UTXO Transaction History from D ElectrumX
@@ -774,39 +781,27 @@ exports.simpleindex = (req, res) => {
                 electrum.addServer(delectrumxhost2);
                 electrum.addServer(delectrumxhost3);
                 electrum.addServer(delectrumxhost4);
-                
+                try {
                 // Wait for enough connections to be available.
                 await electrum.ready();
                 
                 // Request the balance of the requested Scripthash D address
 
-                const utxos = [];
+                //const utxos = [];
 
                 const getuhistory1 = await electrum.request('blockchain.scripthash.listunspent', scripthash);
 
                 const getuhistory2 = await electrum.request('blockchain.scripthash.listunspent', scripthashp2pk);
 
-                //console.log(getuhistory1);
-                //console.log(getuhistory2);
-
-                // const history1formatted = gethistory1[0].tx_hash;
-
-                // const histoy2formatted = gethistory2[0].tx_hash;
-
-                // const history1height = gethistory1[0].height;
-
-                // const histoy2height = gethistory2[0].height;
-
-                const fullutxohistory = utxos.push({p2pkhutxos: getuhistory1, p2pkutxos: getuhistory2, });
-
-                //const p2pkbalancefinal = p2pkbalanceformatted / 100000000;
-
-                //const addedbalance = balancefinal + p2pkbalancefinal;
+                const utxos = getuhistory1.concat(getuhistory2);
 
                 //await electrum.disconnect();
                 await electrum.shutdown();
 
                 return utxos;
+                } catch (e) {
+                    console.log('UTXO Error', e);
+                }
             }
 
             promises.push(new Promise((res, rej) => {
@@ -904,52 +899,52 @@ exports.simpleindex = (req, res) => {
             return parseFloat(aribalformatted);
         }
 
-        const ethWalletTX = async () => {
-            const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
+        // const ethWalletTX = async () => {
+        //     const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
     
-            let ethwalletp = ethwallet.connect(provider); //Set wallet provider
+        //     let ethwalletp = ethwallet.connect(provider); //Set wallet provider
 
-            let etherscanProvider = new ethers.providers.EtherscanProvider(ethnetworktype);
+        //     let etherscanProvider = new ethers.providers.EtherscanProvider(ethnetworktype);
 
-            let transactionhistory = await etherscanProvider.getHistory(ethwalletp.address);
-            let ethtxarray = [];
+        //     let transactionhistory = await etherscanProvider.getHistory(ethwalletp.address);
+        //     let ethtxarray = [];
 
-            transactionhistory.forEach((tx) => {
-                ethtxarray.push(tx);
-            });
+        //     transactionhistory.forEach((tx) => {
+        //         ethtxarray.push(tx);
+        //     });
 
-            return ethtxarray;
-        }
+        //     return ethtxarray;
+        // }
 
-        const ariWalletTX = async () => {
-            const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
+        // const ariWalletTX = async () => {
+        //     const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
     
-            let ethwalletp = ethwallet.connect(provider); //Set wallet provider
+        //     let ethwalletp = ethwallet.connect(provider); //Set wallet provider
 
-            let etherscanProvider = new ethers.providers.EtherscanProvider(ethnetworktype);
+        //     let etherscanProvider = new ethers.providers.EtherscanProvider(ethnetworktype);
 
-            const ariAddress = "0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670"; // 0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670 Denarii (ARI)
-            const ariAbi = [
-            // Some details about the token
-            "function name() view returns (string)",
-            "function symbol() view returns (string)",
-            "function balanceOf(address) view returns (uint)",
-            "function transfer(address to, uint amount)",
-            "event Transfer(address indexed from, address indexed to, uint amount)"
-            ];
-            const ariContract = new ethers.Contract(ariAddress, ariAbi, ethwalletp);
+        //     const ariAddress = "0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670"; // 0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670 Denarii (ARI)
+        //     const ariAbi = [
+        //     // Some details about the token
+        //     "function name() view returns (string)",
+        //     "function symbol() view returns (string)",
+        //     "function balanceOf(address) view returns (uint)",
+        //     "function transfer(address to, uint amount)",
+        //     "event Transfer(address indexed from, address indexed to, uint amount)"
+        //     ];
+        //     const ariContract = new ethers.Contract(ariAddress, ariAbi, ethwalletp);
 
-            let transactionhistory = await etherscanProvider.tokenTx(ethwalletp.address); //WIP Alpha
-            //http://api.etherscan.io/api?module=account&action=tokentx&address=0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670&startblock=0&endblock=999999999&sort=asc&apikey=JMBXKNZRZYDD439WT95P2JYI72827M4HHR
+        //     let transactionhistory = await etherscanProvider.tokenTx(ethwalletp.address); //WIP Alpha
+        //     //http://api.etherscan.io/api?module=account&action=tokentx&address=0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670&startblock=0&endblock=999999999&sort=asc&apikey=JMBXKNZRZYDD439WT95P2JYI72827M4HHR
 
-            let aritxarray = [];
+        //     let aritxarray = [];
 
-            transactionhistory.forEach((tx) => {
-                aritxarray.push(tx);
-            });
+        //     transactionhistory.forEach((tx) => {
+        //         aritxarray.push(tx);
+        //     });
 
-            return aritxarray;
-        }
+        //     return aritxarray;
+        // }
 
         // const BoxProfile = async () => {
         //     const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Wallet from our Kronos seed        
@@ -1006,7 +1001,7 @@ exports.simpleindex = (req, res) => {
         //     return thebox;
         // }
 
-        promises.push(new Promise((res, rej) => {
+        promises2.push(new Promise((res, rej) => {
             ethWalletBal().then(ethWalletBal => {
             ariWalletBal().then(ariWalletBal => {
             // BoxProfile().then(threeboxprofile => {
@@ -1018,229 +1013,239 @@ exports.simpleindex = (req, res) => {
             });
             });
         }));
-            
+
+        res.render('simple/loading', (err, html) => {
+            res.write(html + '\n');
             Promise.all(promises).then((values) => {
 
-                // Get Total Balances of all derived addresses
-                var totalbal = 0;
-                var totalethbal = 0;
-                var totalaribal = 0;
-                // var threebox;
-                //var boxspace;
-
-                totalethbal = ethereumarray[0].ethbal;
-                totalaribal = ethereumarray[0].aribal;
-                // threebox = ethereumarray[0].boxprofile;
-                //boxspace = ethereumarray[0].boxspace;
-
-                //console.log(boxspace);
-
-                Storage.set('totaleth', totalethbal);
-                Storage.set('totalaribal', totalaribal);
                 // Storage.set('threebox', threebox);
                 //Storage.set('boxspace', boxspace);
 
+                var totalbal = 0;
                 scripthasharray.forEach(function (item, index) {
                     totalbal += item.balance;
-                });
-                
-                Storage.set('totalbal', totalbal);
+                });                
+                Storage.set('totalbal', totalbal.toString());
                 Storage.set('accountarray', scripthasharray);
-                let denariusutxos = scripthasharray[0].utxos[0].p2pkhutxos;
+                let denariusutxos = scripthasharray[0].utxos;
+                let denariustxs = scripthasharray[0].txs;
                 Storage.set('dutxo', denariusutxos);
 
                 // Get Total Unconfirmed Balances of all derived addresses
-                var totalunbal = 0;
+                var totalunbal;
                 scripthasharray.forEach(function (itemun, index) {
                     totalunbal += itemun.unconfirmedbal;
                 });
 
-                Storage.set('unconf', totalunbal);
+                Storage.set('unconf', totalunbal.toString());
 
-                //Start Sockets for USD and Balance Info
-                let socket_id9 = [];
-                //Emit to our Socket.io Server for USD Balance Information
-                res.io.on('connection', function (socket) {
-                    socket_id9.push(socket.id);
-                    //console.log(socket.id);
-                    if (socket_id9[0] === socket.id) {
-                      // remove the connection listener for any subsequent 
-                      // connections with the same ID
-                      res.io.removeAllListeners('connection'); 
-                    }
-                    //Get Current D/BTC and D/USD price from CoinGecko
-                    unirest.get("https://api.coingecko.com/api/v3/coins/denarius?tickers=true&market_data=true&community_data=false&developer_data=true")
-                    .headers({'Accept': 'application/json'})
-                    .end(function (result) {
-                        if (!result.error) {
-                            var totalbal = Storage.get('totalbal');
-                            var usdbalance = result.body['market_data']['current_price']['usd'] * totalbal; //* balance;
-                            var currentprice = result.body['market_data']['current_price']['usd'];
+                Promise.all(promises2).then((values) => {
 
-                            var usdformatted = usdbalance.toFixed(3);
-        
-                            socket.emit("usdinfo", {dbalance: totalbal, usdbalance: usdformatted, currentprice: currentprice});
+                    // Get Total Balances of all derived addresses
+                    var totalethbal = 0;
+                    var totalaribal = 0;
+                    // var threebox;
+                    //var boxspace;
 
-                            Storage.set('usdbal', usdformatted);
-                            Storage.set('currentprice', currentprice);
-                        } else { 
-                            console.log("Error occured on price refresh before interval", result.error);
-                            var usdbalance = '~';
-                            var currentprice = '~';
+                    totalethbal = ethereumarray[0].ethbal;
+                    totalaribal = ethereumarray[0].aribal;
+                    // threebox = ethereumarray[0].boxprofile;
+                    //boxspace = ethereumarray[0].boxspace;
 
-                            Storage.set('usdbal', '~');
-                            Storage.set('currentprice', '~');
+                    //console.log(boxspace);
 
+                    Storage.set('totaleth', totalethbal.toString());
+                    Storage.set('totalaribal', totalaribal.toString());
+
+                    //Start Sockets for USD and Balance Info
+                    let socket_id9 = [];
+                    //Emit to our Socket.io Server for USD Balance Information
+                    res.io.on('connection', function (socket) {
+                        socket_id9.push(socket.id);
+                        //console.log(socket.id);
+                        if (socket_id9[0] === socket.id) {
+                        // remove the connection listener for any subsequent 
+                        // connections with the same ID
+                        res.io.removeAllListeners('connection'); 
                         }
-                    });
-                    //Get Current ETH/USD price from CoinGecko
-                    unirest.get("https://api.coingecko.com/api/v3/coins/ethereum?tickers=true&market_data=true&community_data=false&developer_data=true")
-                    .headers({'Accept': 'application/json'})
-                    .end(function (result) {
-                        if (!result.error) {
-                            var totaleth = Storage.get('totaleth');
-                            var ethusdbalance = result.body['market_data']['current_price']['usd'] * totaleth; //* balance;
-                            var currentethprice = result.body['market_data']['current_price']['usd'];
+                        //Get Current D/BTC and D/USD price from CoinGecko
+                        unirest.get("https://api.coingecko.com/api/v3/coins/denarius?tickers=true&market_data=true&community_data=false&developer_data=true")
+                        .headers({'Accept': 'application/json'})
+                        .end(function (result) {
+                            if (!result.error) {
+                                var totalbals = Storage.get('totalbal');
+                                var usdbalance = result.body['market_data']['current_price']['usd'] * totalbals; //* balance;
+                                var currentprice = result.body['market_data']['current_price']['usd'];
 
-                            var ethformatted = ethusdbalance.toFixed(3);
+                                var usdformatted = usdbalance.toFixed(3);
+            
+                                socket.emit("usdinfo", {dbalance: totalbals, usdbalance: usdformatted, currentprice: currentprice});
 
-                            socket.emit("ethinfo", {ethbalance: totaleth, ethusdbalance: ethformatted, currentprice: currentethprice});
-                            
-                            Storage.set('ethbal', ethformatted);
-                            Storage.set('currentethprice', currentethprice);
-                        } else { 
-                            console.log("Error occured on price refresh before interval", result.error);
-                            var ethusdbalance = '~';
-                            var currentethprice = '~';
+                                Storage.set('usdbal', usdformatted.toString());
+                                Storage.set('currentprice', currentprice.toString());
+                            } else { 
+                                console.log("Error occured on price refresh before interval", result.error);
+                                var usdbalance = '~';
+                                var currentprice = '~';
 
-                            Storage.set('ethbal', '~');
-                            Storage.set('currentethprice', '~');
-                        }
-                    });
-                    //Get Current ARI/USD price from 0x Uniswap
-                    unirest.get("https://api.0x.org/swap/v1/quote?sellAmount=10000000&buyToken=USDC&sellToken=0x8a8b5318d3a59fa6d1d0a83a1b0506f2796b5670")
-                    .headers({'Accept': 'application/json'})
-                    .end(function (result) {
-                        if (!result.error) {
-                            var totalari = Storage.get('totalaribal');
-                            var ariusdbalance = result.body['price'] * totalari; //* balance;
-                            var currentariprice = result.body['price'];
+                                Storage.set('usdbal', '~');
+                                Storage.set('currentprice', '~');
 
-                            var ariformatted = ariusdbalance.toFixed(3);
+                            }
+                        });
+                        //Get Current ETH/USD price from CoinGecko
+                        unirest.get("https://api.coingecko.com/api/v3/coins/ethereum?tickers=true&market_data=true&community_data=false&developer_data=true")
+                        .headers({'Accept': 'application/json'})
+                        .end(function (result) {
+                            if (!result.error) {
+                                var totaleth = Storage.get('totaleth');
+                                var ethusdbalance = result.body['market_data']['current_price']['usd'] * totaleth; //* balance;
+                                var currentethprice = result.body['market_data']['current_price']['usd'];
 
-                            socket.emit("ariinfo", {aribalance: totalari, ariusdbalance: ariformatted, currentprice: currentariprice});
-                            
-                            Storage.set('aribal', ariformatted);
-                            Storage.set('currentariprice', currentariprice);
+                                var ethformatted = ethusdbalance.toFixed(3);
 
-                        } else { 
-                            console.log("Error occured on price refresh before interval", result.error);
-                            var ariusdbalance = '~';
-                            var currentariprice = '~';
+                                socket.emit("ethinfo", {ethbalance: totaleth, ethusdbalance: ethformatted, currentprice: currentethprice});
+                                
+                                Storage.set('ethbal', ethformatted.toString());
+                                Storage.set('currentethprice', currentethprice.toString());
+                            } else { 
+                                console.log("Error occured on price refresh before interval", result.error);
+                                var ethusdbalance = '~';
+                                var currentethprice = '~';
 
-                            Storage.set('aribal', '~');
-                            Storage.set('currentariprice', '~');
-                        }
-                    });
-                    var ethaddress = Storage.get('ethaddy');
-                    //Get Current ERC20 TX History - ethersjs not patched yet
-                    unirest.get("http://api.etherscan.io/api?module=account&action=tokentx&address="+ethaddress+"&startblock=0&endblock=999999999&sort=asc&apikey=JMBXKNZRZYDD439WT95P2JYI72827M4HHR")
-                    .headers({'Accept': 'application/json'})
-                    .end(function (result) {
-                        if (!result.error) {
-                            //var totalari = Storage.get('totalaribal');
-                            var erctxs = result.body.result; //* balance;
-                            
-                            Storage.set('erctxs', erctxs);
-                            //Storage.set('currentariprice', currentariprice);
+                                Storage.set('ethbal', '~');
+                                Storage.set('currentethprice', '~');
+                            }
+                        });
+                        //Get Current ARI/USD price from 0x Uniswap
+                        unirest.get("https://api.0x.org/swap/v1/quote?sellAmount=10000000&buyToken=USDC&sellToken=0x8a8b5318d3a59fa6d1d0a83a1b0506f2796b5670")
+                        .headers({'Accept': 'application/json'})
+                        .end(function (result) {
+                            if (!result.error) {
+                                var totalari = Storage.get('totalaribal');
+                                var ariusdbalance = result.body['price'] * totalari; //* balance;
+                                var currentariprice = result.body['price'];
 
-                        } else { 
-                            console.log("Error occured on fetching etherscan tx history", result.error);
-                            //var ariusdbalance = '~';
-                            //var currentariprice = '~';
+                                var ariformatted = ariusdbalance.toFixed(3);
 
-                            //Storage.set('aribal', '~');
-                            //Storage.set('currentariprice', '~');
-                        }
-                    });
-                    //Get Current ETH TX History - ethersjs
-                    unirest.get("http://api.etherscan.io/api?module=account&action=txlist&address="+ethaddress+"&startblock=0&endblock=999999999&sort=asc&apikey=JMBXKNZRZYDD439WT95P2JYI72827M4HHR")
-                    .headers({'Accept': 'application/json'})
-                    .end(function (result) {
-                        if (!result.error) {
-                            //var totalari = Storage.get('totalaribal');
-                            var ethtxs = result.body.result; //* balance;
-                            
-                            Storage.set('ethtxs', ethtxs);
-                            //Storage.set('currentariprice', currentariprice);
+                                socket.emit("ariinfo", {aribalance: totalari, ariusdbalance: ariformatted, currentprice: currentariprice});
+                                
+                                Storage.set('aribal', ariformatted.toString());
+                                Storage.set('currentariprice', currentariprice.toString());
 
-                        } else { 
-                            console.log("Error occured on fetching etherscan tx history", result.error);
-                            //var ariusdbalance = '~';
-                            //var currentariprice = '~';
+                            } else { 
+                                console.log("Error occured on price refresh before interval", result.error);
+                                var ariusdbalance = '~';
+                                var currentariprice = '~';
 
-                            //Storage.set('aribal', '~');
-                            //Storage.set('currentariprice', '~');
-                        }
+                                Storage.set('aribal', '~');
+                                Storage.set('currentariprice', '~');
+                            }
+                        });
+                        var ethaddress = Storage.get('ethaddy');
+                        //Get Current ERC20 TX History - ethersjs not patched yet
+                        unirest.get("http://api.etherscan.io/api?module=account&action=tokentx&address="+ethaddress+"&startblock=0&endblock=999999999&sort=asc&apikey=D2Y3BZ6RNGDC3ZIGZQV3E36WVQHMXW6E8I")
+                        .headers({'Accept': 'application/json'})
+                        .end(function (result) {
+                            if (!result.error) {
+                                //var totalari = Storage.get('totalaribal');
+                                var erctxs = result.body.result; //* balance;
+
+                                Storage.set('erctxs', erctxs.toString());
+                                //Storage.set('currentariprice', currentariprice);
+
+                            } else { 
+                                console.log("Error occured on fetching etherscan tx history", result.error);
+                                //var ariusdbalance = '~';
+                                //var currentariprice = '~';
+
+                                //Storage.set('aribal', '~');
+                                //Storage.set('currentariprice', '~');
+                            }
+                        });
+                        //Get Current ETH TX History - ethersjs
+                        unirest.get("http://api.etherscan.io/api?module=account&action=txlist&address="+ethaddress+"&startblock=0&endblock=999999999&sort=asc&apikey=YTQADVIX59Q81I873Q6ND8WVFYYQGJ7HZJ")
+                        .headers({'Accept': 'application/json'})
+                        .end(function (result) {
+                            if (!result.error) {
+                                //var totalari = Storage.get('totalaribal');
+                                var ethtxs = result.body.result; //* balance;
+                                
+                                Storage.set('ethtxs', ethtxs.toString());
+                                //Storage.set('currentariprice', currentariprice);
+
+                            } else { 
+                                console.log("Error occured on fetching etherscan tx history", result.error);
+                                //var ariusdbalance = '~';
+                                //var currentariprice = '~';
+
+                                //Storage.set('aribal', '~');
+                                //Storage.set('currentariprice', '~');
+                            }
+                        });
                     });
                 });
 
+                //var totalbal1 = Storage.get('totalbal');
+                var totalethbal1 = Storage.get('totaleth');
+                var totalaribal1 = Storage.get('totalaribal');
+                // var threebox = Storage.get('threebox');
+                var qrcode1 = Storage.get('qrcode');
+                var ethqrcode1 = Storage.get('ethqrcode');
+                var scripthasharray1 = Storage.get('accountarray');
+                var ethaddress = Storage.get('ethaddy');
+                var usdbalance = Storage.get('usdbal');
+                var currentprice = Storage.get('currentprice');
+                var ethbal = Storage.get('ethbal');
+                var aribal = Storage.get('aribal');
+                var currentethprice = Storage.get('currentethprice');
+                var currentariprice = Storage.get('currentariprice');
+                var unbalance = Storage.get('unconf');
+                var newblock = Storage.get('newblock');
+                var osname = Storage.get('osname');
+                var arch = Storage.get('arch');
+                var kernel = Storage.get('kernel');
+                var platform = Storage.get('platform');
+                var hostname = Storage.get('hostname');
+                var release = Storage.get('release');
+                var erctxs = Storage.get('erctxs');
+                var ethtxs = Storage.get('ethtxs');
+
+
+                //Render the page with the dynamic variables
+                res.render('simple/dashboard', {
+                    title: 'Core Mode Dashboard',
+                    qrcode: qrcode1,
+                    ethqrcode: ethqrcode1,
+                    totalbal: totalbal,
+                    totalethbal: totalethbal1,
+                    totalaribal: totalaribal1,
+                    mainaddy: mainaddy,
+                    ethaddress: ethaddress,
+                    usdbalance: usdbalance,
+                    ethbalance: ethbal,
+                    aribalance: aribal,
+                    currentprice: currentprice,
+                    currentethprice: currentethprice,
+                    currentariprice: currentariprice,
+                    newblock: newblock,
+                    unbalance: unbalance,
+                    balancearray: scripthasharray,
+                    dtxs: denariustxs,
+                    utxos: denariusutxos,
+                    erctxs: erctxs,
+                    ethtxs: ethtxs,
+                    ethaddy: ethaddress,
+                    osname: osname,
+                    arch: arch,
+                    kernel: kernel,
+                    platform: platform,
+                    hostname: hostname,
+                    release: release
+                }, (err, html) => {
+                    res.end(html + '\n');
+                });
             });
-                
-
-            var totalbal1 = Storage.get('totalbal');
-            var totalethbal1 = Storage.get('totaleth');
-            var totalaribal1 = Storage.get('totalaribal');
-            // var threebox = Storage.get('threebox');
-            var qrcode1 = Storage.get('qrcode');
-            var ethqrcode1 = Storage.get('ethqrcode');
-            var scripthasharray1 = Storage.get('accountarray');
-            var ethaddress = Storage.get('ethaddy');
-            var usdbalance = Storage.get('usdbal');
-            var currentprice = Storage.get('currentprice');
-            var ethbal = Storage.get('ethbal');
-            var aribal = Storage.get('aribal');
-            var currentethprice = Storage.get('currentethprice');
-            var currentariprice = Storage.get('currentariprice');
-            var unbalance = Storage.get('unconf');
-            var newblock = Storage.get('newblock');
-            var osname = Storage.get('osname');
-            var arch = Storage.get('arch');
-            var kernel = Storage.get('kernel');
-            var platform = Storage.get('platform');
-            var hostname = Storage.get('hostname');
-            var release = Storage.get('release');
-            var erctxs = Storage.get('erctxs');
-            var ethtxs = Storage.get('ethtxs');
-
-
-            //Render the page with the dynamic variables
-            res.render('simple/dashboard', {
-                title: 'Core Mode Dashboard',
-                qrcode: qrcode1,
-                ethqrcode: ethqrcode1,
-                totalbal: totalbal1,
-                totalethbal: totalethbal1,
-                totalaribal: totalaribal1,
-                mainaddy: mainaddy,
-                ethaddress: ethaddress,
-                usdbalance: usdbalance,
-                ethbalance: ethbal,
-                aribalance: aribal,
-                currentprice: currentprice,
-                currentethprice: currentethprice,
-                currentariprice: currentariprice,
-                newblock: newblock,
-                unbalance: unbalance,
-                balancearray: scripthasharray1,
-                erctxs: erctxs,
-                ethtxs: ethtxs,
-                ethaddy: ethaddress,
-                osname: osname,
-                arch: arch,
-                kernel: kernel,
-                platform: platform,
-                hostname: hostname,
-                release: release
-            });
-    };
+        });
+};
+    

@@ -3,8 +3,6 @@ span#ethaccount(data-value=ethaddress)
 //- script(src="/socket.io/socket.io.js")
 script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js")
 script(src='https://unpkg.com/3box/dist/3box.min.js')
-script(src='../js/snowflakepopup.js')
-script(src='../js/snowflake.js')
 script.
   var lanip = document.getElementById("lanip").getAttribute("data-value");
   var socket = io('//'+ lanip +':3300');
@@ -21,12 +19,12 @@ script.
     }
     var ethaddy = document.getElementById("ethaccount").getAttribute("data-value");
     Box.getProfile(ethaddy).then(profile => {
-      console.log(profile);
+      //console.log(profile);
       var profileimage;
 
       if (typeof profile.image == 'undefined') {
           profileimage = profile.image;
-          console.log(profileimage);
+          //console.log(profileimage);
           var boximage = '';
           if (typeof profileimage == 'undefined') {
               boximage = '../img/avatar.png'; //IPFS Default Avatar Hash
@@ -34,7 +32,7 @@ script.
               profileimage = profile.image[0].contentUrl['/'];
               boximage = 'https://cloudflare-ipfs.com/ipfs/' + profileimage;
           }
-          console.log(boximage);
+          //console.log(boximage);
 
           $("#threebox").html('<img src="'+boximage+'" border="0" class="res threebox"/>');
           $("#threebox").val(boximage);
@@ -42,7 +40,7 @@ script.
 
       } else {
           profileimage = profile.image[0].contentUrl['/'];
-          console.log(profileimage);
+          //console.log(profileimage);
           var boximage = '';
           if (typeof profileimage == 'undefined') {
               boximage = '../img/avatar.png'; //IPFS Default Avatar Hash
@@ -50,7 +48,7 @@ script.
               profileimage = profile.image[0].contentUrl['/'];
               boximage = 'https://cloudflare-ipfs.com/ipfs/' + profileimage;
           }
-          console.log(boximage);
+          //console.log(boximage);
 
           $("#threebox").html('<img src="'+boximage+'" border="0" class="res threebox"/>');
           $("#threebox").val(boximage);
@@ -191,6 +189,10 @@ script.
                 a(href='http://'+lanip+':3000/sseed', onclick="javascript:event.target.port=3000")
                   i.fas.fa-mask     
                   |   View Seed
+              li
+                a(href='http://'+lanip+':3000/sweep', onclick="javascript:event.target.port=3000")
+                  i.fas.fa-arrow-circle-down
+                  |   Sweep Private Key
               li
                 a(href='http://'+lanip+':3000/import', onclick="javascript:event.target.port=3000")
                   i.fas.fa-arrow-circle-down

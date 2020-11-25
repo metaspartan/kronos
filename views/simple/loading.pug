@@ -1,0 +1,72 @@
+//- loading.pug
+doctype html
+html(dir="ltr", lang="en-US")
+	head
+		style.
+			@import url('https://fonts.googleapis.com/css?family=Lato:100,200,400|Quicksand:300|Roboto:100,300|Open Sans:100,300|Poppins:100,200,400|Heebo:100,200,400|Ubuntu:100,300|Muli:100,300');
+			body {
+				background-color: #000;
+				color: #fff;
+			}
+			.dashloader {
+				text-align:center;
+				vertical-align:middle;
+				margin: 0 auto;
+				width:500px;
+				margin-top:20vh;
+				font-family: 'Lato', sans-serif;
+			}
+			.one {
+				opacity: 0;
+				-webkit-animation: dot 1.3s infinite;
+				-webkit-animation-delay: 0.0s;
+				animation: dot 1.3s infinite;
+				animation-delay: 0.0s;
+			}
+
+			.two {
+				opacity: 0;
+				-webkit-animation: dot 1.3s infinite;
+				-webkit-animation-delay: 0.2s;
+				animation: dot 1.3s infinite;
+				animation-delay: 0.2s;
+			}
+
+			.three {
+				opacity: 0;
+				-webkit-animation: dot 1.3s infinite;
+				-webkit-animation-delay: 0.3s;
+				animation: dot 1.3s infinite;
+				animation-delay: 0.3s;
+			}
+
+			@-webkit-keyframes dot {
+				0% {
+					opacity: 0;
+				}
+				50% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+
+			@keyframes dot {
+				0% {
+					opacity: 0;
+				}
+				50% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+	body
+		.dashloader
+			img(src='../img/kloadb.gif')
+			h1 Loading...Please wait
+				span.one .
+				span.two .
+				span.three .

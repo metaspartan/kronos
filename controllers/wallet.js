@@ -1694,7 +1694,7 @@ exports.withdraw = (req, res, next) => {
     var valid = WAValidator.validate(`${sendtoaddress}`, 'DNR'); //Need to update to D still
 
     if (parseFloat(amount) - fee > balance) {
-        req.toastr.error('Withdrawal amount exceeds your D balance!', 'Balance Error!', { positionClass: 'toast-bottom-right' });
+        req.toastr.error('Withdrawal amount exceeds your D balance!', 'Balance Error!', { positionClass: 'toast-bottom-left' });
         //req.flash('errors', { msg: 'Withdrawal amount exceeds your D balance'});
         return res.redirect('/withdraw');
 
@@ -1704,7 +1704,7 @@ exports.withdraw = (req, res, next) => {
 
         client.sendToAddress(`${sendtoaddress}`, parseFloat(`${amount}`), function (error, sendFromtx, resHeaders) {
             if (error) {
-                req.toastr.error('Insufficient Funds or Invalid Amount!', 'Invalid!', { positionClass: 'toast-bottom-right' });
+                req.toastr.error('Insufficient Funds or Invalid Amount!', 'Invalid!', { positionClass: 'toast-bottom-left' });
                 //req.flash('errors', { msg: 'Insufficient Funds or Invalid Amount!' });
                 return res.redirect('/withdraw');
 
@@ -1713,14 +1713,14 @@ exports.withdraw = (req, res, next) => {
                 var sendtx = sendFromtx;
                 var vamount = parseFloat(`${amount}`);
 
-                req.toastr.success(`${vamount} D was sent successfully!`, 'Success!', { positionClass: 'toast-bottom-right' });
+                req.toastr.success(`${vamount} D was sent successfully!`, 'Success!', { positionClass: 'toast-bottom-left' });
                 req.flash('success', { msg: `Your <strong>${vamount} D</strong> was sent successfully! TX ID: <a href="https://coinexplorer.net/D/transaction/${sendtx}" target="_blank">${sendtx}</a>` });
                 return res.redirect('/withdraw');
             }
         });
 
     } else {
-        req.toastr.error('You entered an invalid Denarius (D) Address!', 'Invalid Address!', { positionClass: 'toast-bottom-right' });
+        req.toastr.error('You entered an invalid Denarius (D) Address!', 'Invalid Address!', { positionClass: 'toast-bottom-left' });
         //req.flash('errors', { msg: 'You entered an invalid Denarius (D) Address!' });
         return res.redirect('/withdraw');
     }
@@ -1878,7 +1878,7 @@ exports.startfs = (req, res, next) => {
       //if (error) return console.log(error);
 
       if (error) {
-        req.toastr.error(`Something went wrong trying to start the FS ${alias} - ${error}`, 'Error!', { positionClass: 'toast-bottom-right' });
+        req.toastr.error(`Something went wrong trying to start the FS ${alias} - ${error}`, 'Error!', { positionClass: 'toast-bottom-left' });
         return res.redirect('/fs');
       } else {
 
@@ -1890,7 +1890,7 @@ exports.startfs = (req, res, next) => {
         }
 
         req.flash('success', { msg: `Ran start-alias on FS <strong>${alias}</strong> and it ${resultfinal}` });
-        req.toastr.success(`Ran start-alias on FS ${alias} and it ${resultfinal}`, 'Ran start-alias on FS', { positionClass: 'toast-bottom-right' });
+        req.toastr.success(`Ran start-alias on FS ${alias} and it ${resultfinal}`, 'Ran start-alias on FS', { positionClass: 'toast-bottom-left' });
         return res.redirect('/fs');
 
       }
@@ -2224,7 +2224,7 @@ exports.sendRaw = (req, res, next) => {
 
       client.sendRawTransaction(`${rawtx}`, function (error, tx, resHeaders) {
           if (error) {
-              req.toastr.error('Insufficient Funds, Invalid Amount, or Transaction already exists!', 'Invalid!', { positionClass: 'toast-bottom-right' });
+              req.toastr.error('Insufficient Funds, Invalid Amount, or Transaction already exists!', 'Invalid!', { positionClass: 'toast-bottom-left' });
               //req.flash('errors', { msg: 'Insufficient Funds or Invalid Amount!' });
               return res.redirect('/rawtx');
 
@@ -2232,7 +2232,7 @@ exports.sendRaw = (req, res, next) => {
 
               var sendtx = tx;
 
-              req.toastr.success(`Raw Transaction was sent successfully!`, 'Success!', { positionClass: 'toast-bottom-right' });
+              req.toastr.success(`Raw Transaction was sent successfully!`, 'Success!', { positionClass: 'toast-bottom-left' });
               req.flash('success', { msg: `Your raw transaction was sent successfully! TX ID: <a href="https://coinexplorer.net/D/transaction/${sendtx}" target="_blank">${sendtx}</a>` });
               return res.redirect('/rawtx');
           }
@@ -2266,13 +2266,13 @@ exports.importPriv = (req, res, next) => {
 
       client.importPrivKey(`${privkey}`, 'imported', false, function (error, success, resHeaders) {
           if (error) {
-              req.toastr.error('Invalid Private Key or Wrong Format!', 'Invalid!', { positionClass: 'toast-bottom-right' });
+              req.toastr.error('Invalid Private Key or Wrong Format!', 'Invalid!', { positionClass: 'toast-bottom-left' });
               //req.flash('errors', { msg: 'Insufficient Funds or Invalid Amount!' });
               return res.redirect('/import');
 
           } else {
 
-              req.toastr.success(`Imported private key successfully!`, 'Success!', { positionClass: 'toast-bottom-right' });
+              req.toastr.success(`Imported private key successfully!`, 'Success!', { positionClass: 'toast-bottom-left' });
               return res.redirect('/import');
           }
       });
@@ -2311,7 +2311,7 @@ exports.signMsg = (req, res, next) => {
 
       client.signMessage(`${sendtoaddress}`, `${msg}`, function (error, signedmsghex, resHeaders) {
           if (error) {
-              req.toastr.error('You dont own this address or an error occured!', 'Error!', { positionClass: 'toast-bottom-right' });
+              req.toastr.error('You dont own this address or an error occured!', 'Error!', { positionClass: 'toast-bottom-left' });
               //req.flash('errors', { msg: 'Insufficient Funds or Invalid Amount!' });
               return res.redirect('/sign');
 
@@ -2319,14 +2319,14 @@ exports.signMsg = (req, res, next) => {
 
               var signed = signedmsghex;
 
-              req.toastr.success(`Signed message successfully`, 'Success!', { positionClass: 'toast-bottom-right' });
+              req.toastr.success(`Signed message successfully`, 'Success!', { positionClass: 'toast-bottom-left' });
               req.flash('success', { msg: `Your signed message <strong>${msg}</strong> is: <strong>${signed}</strong> signed with the address: <strong>${sendtoaddress}</strong>` });
               return res.redirect('/sign');
           }
       });
 
   } else {
-      req.toastr.error('You entered an invalid Denarius (D) Address!', 'Invalid Address!', { positionClass: 'toast-bottom-right' });
+      req.toastr.error('You entered an invalid Denarius (D) Address!', 'Invalid Address!', { positionClass: 'toast-bottom-left' });
       //req.flash('errors', { msg: 'You entered an invalid Denarius (D) Address!' });
       return res.redirect('/sign');
   }
@@ -2368,7 +2368,7 @@ exports.verifyMsg = (req, res, next) => {
 
       client.verifyMessage(`${sendtoaddress}`, `${signature}`, `${msg}`, function (error, signedmsghex, resHeaders) {
           if (error) {
-              req.toastr.error('You dont own this address or an error occured!', 'Error!', { positionClass: 'toast-bottom-right' });
+              req.toastr.error('You dont own this address or an error occured!', 'Error!', { positionClass: 'toast-bottom-left' });
               //req.flash('errors', { msg: 'Insufficient Funds or Invalid Amount!' });
               return res.redirect('/verify');
 
@@ -2378,19 +2378,19 @@ exports.verifyMsg = (req, res, next) => {
 
               if (signed == true) {
 
-                req.toastr.success(`Message is valid!`, 'Success!', { positionClass: 'toast-bottom-right' });
+                req.toastr.success(`Message is valid!`, 'Success!', { positionClass: 'toast-bottom-left' });
                 req.flash('success', { msg: `Your message <strong>${msg}</strong> with signature: <strong>${signature}</strong> and the address: <strong>${sendtoaddress}</strong> is valid!` });
                 return res.redirect('/verify');
 
               } else if (signed == false) {
-                req.toastr.error('Message unable to be validated!', 'Message not verified!', { positionClass: 'toast-bottom-right' });
+                req.toastr.error('Message unable to be validated!', 'Message not verified!', { positionClass: 'toast-bottom-left' });
                 return res.redirect('/verify');
               }
           }
       });
 
   } else {
-      req.toastr.error('You entered an invalid Denarius (D) Address!', 'Invalid Address!', { positionClass: 'toast-bottom-right' });
+      req.toastr.error('You entered an invalid Denarius (D) Address!', 'Invalid Address!', { positionClass: 'toast-bottom-left' });
       //req.flash('errors', { msg: 'You entered an invalid Denarius (D) Address!' });
       return res.redirect('/verify');
   }
@@ -2424,13 +2424,13 @@ exports.backupWallet = (req, res, next) => {
 
       client.backupWallet(`${location}`, function (error, success, resHeaders) {
           if (error) {
-              req.toastr.error('Invalid Location or Permission issue!', 'Error!', { positionClass: 'toast-bottom-right' });
+              req.toastr.error('Invalid Location or Permission issue!', 'Error!', { positionClass: 'toast-bottom-left' });
               //req.flash('errors', { msg: 'Insufficient Funds or Invalid Amount!' });
               return res.redirect('/backup');
 
           } else {
               req.flash('success', { msg: `Your wallet was backed up successfully to <strong>${location}</strong>` });
-              req.toastr.success(`Backup completed successfully!`, 'Success!', { positionClass: 'toast-bottom-right' });
+              req.toastr.success(`Backup completed successfully!`, 'Success!', { positionClass: 'toast-bottom-left' });
               return res.redirect('/backup');
           }
       });

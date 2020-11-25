@@ -21,7 +21,9 @@ const toastr = require('express-toastr');
 const exec = require('child_process').exec;
 const shell = require('shelljs');
 const denarius = require('denariusjs');
+const dbitcoin = require('bitcoinjs-d-lib');
 const CryptoJS = require("crypto-js");
+const sha256 = require('sha256');
 const bip39 = require("bip39");
 const bip32 = require("bip32d");
 const files = require('fs');
@@ -97,6 +99,22 @@ const client = new bitcoin.Client({
 	pass: decrypt(Storage.get('rpcpass')),
 	timeout: 30000
 });
+
+//ElectrumX Hosts for Denarius
+const delectrumxhost1 = 'electrumx1.denarius.pro';
+const delectrumxhost2 = 'electrumx2.denarius.pro';
+const delectrumxhost3 = 'electrumx3.denarius.pro';
+const delectrumxhost4 = 'electrumx4.denarius.pro';
+
+const changeEndianness = (string) => {
+    const result = [];
+    let len = string.length - 2;
+    while (len >= 0) {
+    result.push(string.substr(len, 2));
+    len -= 2;
+    }
+    return result.join('');
+}
 
 /**
  * GET /login
@@ -255,7 +273,7 @@ exports.setup = (request, response) => {
 
 		newclient.getBalance(function(err, balance, resHeaders) {
 			if (err) {
-				// request.toastr.error('Connection to Denarius Failed, Retry configuration', 'Error!', { positionClass: 'toast-bottom-right' });
+				// request.toastr.error('Connection to Denarius Failed, Retry configuration', 'Error!', { positionClass: 'toast-bottom-left' });
 				// response.redirect('/login');
 				// response.end();
 				console.log('Denarius Connection Error, Check your configuration...');
@@ -318,7 +336,7 @@ exports.setup = (request, response) => {
 
 						//console.log(envfile.stringify(parsedFile));
 
-						request.toastr.success('Kronos Advanced Denarius Configuration Successful', 'Success!', { positionClass: 'toast-bottom-right' });
+						request.toastr.success('Kronos Advanced Denarius Configuration Successful', 'Success!', { positionClass: 'toast-bottom-left' });
 						response.render('create', {title: 'Kronos Login Creation'});
 						response.end();
 			
@@ -331,10 +349,10 @@ exports.setup = (request, response) => {
 				});			
 	
 			} else {
-				// request.toastr.error('Error!', 'Error!', { positionClass: 'toast-bottom-right' });
+				// request.toastr.error('Error!', 'Error!', { positionClass: 'toast-bottom-left' });
 				// response.redirect('/login');
 				// response.end();
-				request.toastr.error('Connection to Denarius Failed, Retry your configuration!', 'Error!', { positionClass: 'toast-bottom-right' });
+				request.toastr.error('Connection to Denarius Failed, Retry your configuration!', 'Error!', { positionClass: 'toast-bottom-left' });
 				response.redirect('/login');
 				response.end();
 			}
@@ -344,7 +362,7 @@ exports.setup = (request, response) => {
 	
 	} else {
 		//response.send('Please enter Username and Password!');
-		request.toastr.error('Please enter your Denarius RPC User, Pass, Host, and Port!', 'Error!', { positionClass: 'toast-bottom-right' });
+		request.toastr.error('Please enter your Denarius RPC User, Pass, Host, and Port!', 'Error!', { positionClass: 'toast-bottom-left' });
 		response.redirect('/login');
 		response.end();
 	}
@@ -423,7 +441,7 @@ exports.create = (request, response) => {
 					// //Stored User/Pass to DB successfully now setup the session
 					request.session.loggedin = false; //Make them sign in again after setup
 					request.session.username = username;
-					request.toastr.success('Created Kronos User, Setup Successful, Please login!', 'Success!', { positionClass: 'toast-bottom-right' });
+					request.toastr.success('Created Kronos User, Setup Successful, Please login!', 'Success!', { positionClass: 'toast-bottom-left' });
 					response.redirect('/login');
 					response.end();
 		
@@ -436,7 +454,7 @@ exports.create = (request, response) => {
 			});			
 
 		} else {
-			request.toastr.error('Passwords do not match!', 'Error!', { positionClass: 'toast-bottom-right' });
+			request.toastr.error('Passwords do not match!', 'Error!', { positionClass: 'toast-bottom-left' });
 			response.redirect('/login');
 			response.end();
 		}
@@ -445,7 +463,7 @@ exports.create = (request, response) => {
 	
 	} else {
 		//response.send('Please enter Username and Password!');
-		request.toastr.error('Please enter Username and Password!', 'Error!', { positionClass: 'toast-bottom-right' });
+		request.toastr.error('Please enter Username and Password!', 'Error!', { positionClass: 'toast-bottom-left' });
 		response.redirect('/login');
 		response.end();
 	}
@@ -486,18 +504,18 @@ exports.simple = (request, response) => {
 
 						//console.log(envfile.stringify(parsedFile));
 
-						request.toastr.success('Kronos Simple Configuration Successful', 'Success!', { positionClass: 'toast-bottom-right' });
+						request.toastr.success('Kronos Simple Configuration Successful', 'Success!', { positionClass: 'toast-bottom-left' });
 						response.render('create', {title: 'Kronos Login Creation'});
 						response.end();	
 	
 			} else {
-				request.toastr.error('Failed!', 'Error!', { positionClass: 'toast-bottom-right' });
+				request.toastr.error('Failed!', 'Error!', { positionClass: 'toast-bottom-left' });
 				response.redirect('/login');
 				response.end();
 			}
 	
 	} else {
-		request.toastr.error('Please select a seed phrase!', 'Error!', { positionClass: 'toast-bottom-right' });
+		request.toastr.error('Please select a seed phrase!', 'Error!', { positionClass: 'toast-bottom-left' });
 		response.redirect('/login');
 		response.end();
 	}
@@ -549,18 +567,18 @@ exports.importseed = (request, response) => {
 					}
 				});
 
-				request.toastr.success('Kronos Seed Import Successful!', 'Success!', { positionClass: 'toast-bottom-right' });
+				request.toastr.success('Kronos Seed Import Successful!', 'Success!', { positionClass: 'toast-bottom-left' });
 				response.redirect('/login');
 				response.end();	
 	
 			} else {
-				request.toastr.error('Invalid seed phrase! Try something else!', 'Error!', { positionClass: 'toast-bottom-right' });
+				request.toastr.error('Invalid seed phrase! Try something else!', 'Error!', { positionClass: 'toast-bottom-left' });
 				response.redirect('/import');
 				response.end();
 			}
 	
 	} else {
-		request.toastr.error('Please enter a seed phrase!', 'Error!', { positionClass: 'toast-bottom-right' });
+		request.toastr.error('Please enter a seed phrase!', 'Error!', { positionClass: 'toast-bottom-left' });
 		response.redirect('/import');
 		response.end();
 	}
@@ -598,7 +616,7 @@ exports.logout = (req, res) => {
 	req.session.loggedin = false;
 	req.session.loggedin2 = false;
 	req.session.username = '';
-	req.toastr.error('Logged Out of Kronos', 'Logged Out!', { positionClass: 'toast-bottom-right' });
+	req.toastr.error('Logged Out of Kronos', 'Logged Out!', { positionClass: 'toast-bottom-left' });
 	res.redirect('/login');
 };
 
@@ -616,7 +634,7 @@ exports.postlogin = (request, response) => {
 			if (err) {
 			  // If username does not exist in levelDB then go to page to create one
 			  //response.render('create', {title: 'Create Kronos Login'});
-			  //request.toastr.error('Username does not exist!', 'Error!', { positionClass: 'toast-bottom-right' });
+			  //request.toastr.error('Username does not exist!', 'Error!', { positionClass: 'toast-bottom-left' });
 			} else {
 				//If it does exist
 				var decrypteduser = decrypt(value);
@@ -624,7 +642,7 @@ exports.postlogin = (request, response) => {
 				db.get('password', function (err, value) {
 					if (err) {
 						// If password does not exist in levelDB then go to page to create one
-						//request.toastr.error('Password does not exist!', 'Error!', { positionClass: 'toast-bottom-right' });
+						//request.toastr.error('Password does not exist!', 'Error!', { positionClass: 'toast-bottom-left' });
 					  } else {
 
 						//If it does exist
@@ -633,7 +651,7 @@ exports.postlogin = (request, response) => {
 						if (request.body && (username == decrypteduser) && (password == decryptedpass)) {
 							request.session.loggedin = true;
 							request.session.username = username;
-							request.toastr.success('Logged into Kronos', 'Success!', { positionClass: 'toast-bottom-right' });
+							request.toastr.success('Logged into Kronos', 'Success!', { positionClass: 'toast-bottom-left' });
 
 							if (Storage.get('mode') == 'simple') {
 								//Storage.set('mode', 'simple');
@@ -646,7 +664,7 @@ exports.postlogin = (request, response) => {
 						} else {
 							//response.send('Incorrect Username and/or Password!');
 							//request.flash('success', { msg: 'TEST' });
-							request.toastr.error('Incorrect Username and/or Password!', 'Error!', { positionClass: 'toast-bottom-right' });
+							request.toastr.error('Incorrect Username and/or Password!', 'Error!', { positionClass: 'toast-bottom-left' });
 							response.redirect('/login');
 							response.end();
 						}
@@ -661,7 +679,7 @@ exports.postlogin = (request, response) => {
 	
 	} else {
 		//response.send('Please enter Username and Password!');
-		request.toastr.error('Please enter a Username and Password!', 'Error!', { positionClass: 'toast-bottom-right' });
+		request.toastr.error('Please enter a Username and Password!', 'Error!', { positionClass: 'toast-bottom-left' });
 		response.redirect('/login');
 		response.end();
 	}
@@ -681,7 +699,7 @@ exports.postAuth = (request, response) => {
 			if (err) {
 			  // If username does not exist in levelDB then go to page to create one
 			  //response.render('create', {title: 'Create Kronos Login'});
-			  //request.toastr.error('Username does not exist!', 'Error!', { positionClass: 'toast-bottom-right' });
+			  //request.toastr.error('Username does not exist!', 'Error!', { positionClass: 'toast-bottom-left' });
 			} else {
 				//If it does exist
 				var decrypteduser = decrypt(value);
@@ -689,7 +707,7 @@ exports.postAuth = (request, response) => {
 				db.get('password', function (err, value) {
 					if (err) {
 						// If password does not exist in levelDB then go to page to create one
-						//request.toastr.error('Password does not exist!', 'Error!', { positionClass: 'toast-bottom-right' });
+						//request.toastr.error('Password does not exist!', 'Error!', { positionClass: 'toast-bottom-left' });
 					  } else {
 
 						//If it does exist
@@ -699,13 +717,13 @@ exports.postAuth = (request, response) => {
 							request.session.loggedin = true;
 							request.session.loggedin2 = true;
 							request.session.username = username;
-							request.toastr.success('Authed Kronos', 'Success!', { positionClass: 'toast-bottom-right' });
+							request.toastr.success('Authed Kronos', 'Success!', { positionClass: 'toast-bottom-left' });
 							response.redirect('/sseed');
 							response.end();
 						} else {
 							//response.send('Incorrect Username and/or Password!');
 							//request.flash('success', { msg: 'TEST' });
-							request.toastr.error('Incorrect Username and/or Password!', 'Error!', { positionClass: 'toast-bottom-right' });
+							request.toastr.error('Incorrect Username and/or Password!', 'Error!', { positionClass: 'toast-bottom-left' });
 							response.redirect('/auth');
 							response.end();
 						}
@@ -720,7 +738,7 @@ exports.postAuth = (request, response) => {
 	
 	} else {
 		//response.send('Please enter Username and Password!');
-		request.toastr.error('Please enter a Username and Password!', 'Error!', { positionClass: 'toast-bottom-right' });
+		request.toastr.error('Please enter a Username and Password!', 'Error!', { positionClass: 'toast-bottom-left' });
 		response.redirect('/auth');
 		response.end();
 	}
@@ -745,7 +763,7 @@ exports.postAutht = (request, response) => {
 			if (err) {
 			  // If username does not exist in levelDB then go to page to create one
 			  //response.render('create', {title: 'Create Kronos Login'});
-			  //request.toastr.error('Username does not exist!', 'Error!', { positionClass: 'toast-bottom-right' });
+			  //request.toastr.error('Username does not exist!', 'Error!', { positionClass: 'toast-bottom-left' });
 			} else {
 				//If it does exist
 				var decrypteduser = decrypt(value);
@@ -753,7 +771,7 @@ exports.postAutht = (request, response) => {
 				db.get('password', function (err, value) {
 					if (err) {
 						// If password does not exist in levelDB then go to page to create one
-						//request.toastr.error('Password does not exist!', 'Error!', { positionClass: 'toast-bottom-right' });
+						//request.toastr.error('Password does not exist!', 'Error!', { positionClass: 'toast-bottom-left' });
 					  } else {
 
 						//If it does exist
@@ -763,13 +781,13 @@ exports.postAutht = (request, response) => {
 							request.session.loggedin = true;
 							request.session.loggedin3 = true;
 							request.session.username = username;
-							request.toastr.success('Authed Kronos', 'Success!', { positionClass: 'toast-bottom-right' });
+							request.toastr.success('Authed Kronos', 'Success!', { positionClass: 'toast-bottom-left' });
 							response.redirect('http://'+ip.address()+':3300/terminal');
 							response.end();
 						} else {
 							//response.send('Incorrect Username and/or Password!');
 							//request.flash('success', { msg: 'TEST' });
-							request.toastr.error('Incorrect Username and/or Password!', 'Error!', { positionClass: 'toast-bottom-right' });
+							request.toastr.error('Incorrect Username and/or Password!', 'Error!', { positionClass: 'toast-bottom-left' });
 							response.redirect('http://'+ip.address()+':3000/autht');
 							response.end();
 						}
@@ -784,7 +802,7 @@ exports.postAutht = (request, response) => {
 	
 	} else {
 		//response.send('Please enter Username and Password!');
-		request.toastr.error('Please enter a Username and Password!', 'Error!', { positionClass: 'toast-bottom-right' });
+		request.toastr.error('Please enter a Username and Password!', 'Error!', { positionClass: 'toast-bottom-left' });
 		response.redirect('http://'+ip.address()+':3000/autht');
 		response.end();
 	}
@@ -809,7 +827,7 @@ exports.postAuthk = (request, response) => {
 			if (err) {
 			  // If username does not exist in levelDB then go to page to create one
 			  //response.render('create', {title: 'Create Kronos Login'});
-			  //request.toastr.error('Username does not exist!', 'Error!', { positionClass: 'toast-bottom-right' });
+			  //request.toastr.error('Username does not exist!', 'Error!', { positionClass: 'toast-bottom-left' });
 			} else {
 				//If it does exist
 				var decrypteduser = decrypt(value);
@@ -817,7 +835,7 @@ exports.postAuthk = (request, response) => {
 				db.get('password', function (err, value) {
 					if (err) {
 						// If password does not exist in levelDB then go to page to create one
-						//request.toastr.error('Password does not exist!', 'Error!', { positionClass: 'toast-bottom-right' });
+						//request.toastr.error('Password does not exist!', 'Error!', { positionClass: 'toast-bottom-left' });
 					  } else {
 
 						//If it does exist
@@ -827,13 +845,13 @@ exports.postAuthk = (request, response) => {
 							request.session.loggedin = true;
 							request.session.loggedin4 = true;
 							request.session.username = username;
-							request.toastr.success('Authed Kronos', 'Success!', { positionClass: 'toast-bottom-right' });
+							request.toastr.success('Authed Kronos', 'Success!', { positionClass: 'toast-bottom-left' });
 							response.redirect('http://'+ip.address()+':3300/termpop');
 							response.end();
 						} else {
 							//response.send('Incorrect Username and/or Password!');
 							//request.flash('success', { msg: 'TEST' });
-							request.toastr.error('Incorrect Username and/or Password!', 'Error!', { positionClass: 'toast-bottom-right' });
+							request.toastr.error('Incorrect Username and/or Password!', 'Error!', { positionClass: 'toast-bottom-left' });
 							response.redirect('http://'+ip.address()+':3000/authk');
 							response.end();
 						}
@@ -848,7 +866,7 @@ exports.postAuthk = (request, response) => {
 	
 	} else {
 		//response.send('Please enter Username and Password!');
-		request.toastr.error('Please enter a Username and Password!', 'Error!', { positionClass: 'toast-bottom-right' });
+		request.toastr.error('Please enter a Username and Password!', 'Error!', { positionClass: 'toast-bottom-left' });
 		response.redirect('http://'+ip.address()+':3000/authk');
 		response.end();
 	}
@@ -857,62 +875,221 @@ exports.postAuthk = (request, response) => {
 
 //GET Sweeping privkey
 exports.getsweep = (req, res) => {
-	//utils.HDNode.isValidMnemonic("action glow era all liquid critic achieve lawsuit era anger loud slight"); // returns true
+	const ip = require('ip');
+    const ipaddy = ip.address();
+  
+    res.locals.lanip = ipaddy;
 
-	// Generate Seed Phrase and pass it to our rendered view
-	//mnemonic = bip39.generateMnemonic(256);
+    var totalethbal = Storage.get('totaleth');
+    var totalbal = Storage.get('totalbal');
+    var totalaribal = Storage.get('totalaribal');
+    var ethaddress = Storage.get('ethaddy');
 
-	res.render('import', {
-        title: 'Core Mode Sweep Private Key'
+	res.render('simple/sweep', {
+        title: 'Kronos Core Mode Sweep Private Key',
+        totalethbal: totalethbal,
+        totalbal: totalbal,
+        totalaribal: totalaribal,
+        ethaddress: ethaddress
     });
 }
 
 //POST Sweeping privkey
 exports.sweepkey = (request, response) => {
-	var seedphrase = request.body.SEEDPHRASE;
+	const privkey = request.body.PRIVATEKEY;
 	
-	if (seedphrase && request.body) {
+	if (privkey && request.body) {
 
-			if (ethers.utils.isValidMnemonic(seedphrase)) {
+			let verified;
+			try {
+				dbitcoin.ECPair.fromWIF(privkey);
+				verified = true;
+			} catch(e) {
+				verified = false;
+			}
 
-				//Import the new seedphrase and erase the previous no matter what if valid.
-				db.get('seedphrase', function (err, value) {
-					if (err) {
+			if (verified) {
+				//Check if privkey is valid and if it is do the following and attempt an import
 
-						var encryptedseed = encrypt(seedphrase);
+				// Denarius Network Params Object
+				const network = {
+					messagePrefix: '\x19Denarius Signed Message:\n',
+					bech32: 'd',
+					bip32: {
+						public: 0x0488b21e,
+						private: 0x0488ade4
+					},
+					pubKeyHash: 0x1e,
+					scriptHash: 0x5a,
+					wif: 0x9e
+				};
+		
+				// Get our current address to send funds to
+				const mainaddress = Storage.get('mainaddress');
+		
+				// Load up the privkey we are importing
+				const key = dbitcoin.ECPair.fromWIF(privkey);
+				const pubKey = key.getPublicKeyBuffer();
+				const pubKey2 = key.publicKey;
+				//console.log('PUBKEY: ', pubKey);
+				const pubKeyHash = dbitcoin.crypto.hash160(pubKey);
+				const importaddress = denarius.payments.p2pkh({ pubkey: pubKey, network }).address;
+				const importp2pkaddress = denarius.payments.p2pkh({ pubkey: pubKey, network }).pubkey.toString('hex');
 
-						// Put the encrypted passworded seedphrase in the DB
-						db.put('seedphrase', encryptedseed, function (err) {
-							if (err) return console.log('Ooops!', err) // some kind of I/O error if so
-							console.log('Encrypted Seed Phrase to DB');
-						});
-						Storage.set('seed', encryptedseed);
+				//Convert P2PKH Address to Scripthash for ElectrumX Balance Fetching
+				const bytes = bs58.decode(importaddress);
+				const byteshex = bytes.toString('hex');
+				const remove00 = byteshex.substring(2);
+				const removechecksum = remove00.substring(0, remove00.length-8);
+				const HASH160 = "76A914" + removechecksum.toUpperCase() + "88AC";
+				const BUFFHASH160 = Buffer.from(HASH160, "hex");
+				const shaaddress = sha256(BUFFHASH160);
 
-					} else {
-						var encryptedseed = encrypt(seedphrase);
+				const xpubtopub = importp2pkaddress;
+				const HASH1601 =  "21" + xpubtopub + "ac"; // 21 + COMPRESSED PUBKEY + OP_CHECKSIG = P2PK
+				//console.log(HASH1601);
+				const BUFFHASH1601 = Buffer.from(HASH1601, "hex");
+				const shaaddress1 = sha256(BUFFHASH1601);
 
-						// Put the encrypted passworded seedphrase in the DB
-						db.put('seedphrase', encryptedseed, function (err) {
-							if (err) return console.log('Ooops!', err) // some kind of I/O error if so
-							console.log('Encrypted Seed Phrase to DB');
-						});
+				const scripthash = changeEndianness(shaaddress);
+				const scripthashp2pk = changeEndianness(shaaddress1);
 
-						Storage.set('seed', encryptedseed);
+				let promises2 = [];
+				let utxoarray = [];
+				//Grab UTXO Transaction History from D ElectrumX
+				const utxohistory = async () => {
+					// Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+					const electrum = new ElectrumCluster('Kronos Core Mode UTXO History', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+					
+					// Add some servers to the cluster.
+					electrum.addServer(delectrumxhost1);
+					electrum.addServer(delectrumxhost2);
+					electrum.addServer(delectrumxhost3);
+					electrum.addServer(delectrumxhost4);
+					
+					// Wait for enough connections to be available.
+					await electrum.ready();
+					
+					// Request the balance of the requested Scripthash D address
+
+					//const utxos = [];
+
+					const getuhistory1 = await electrum.request('blockchain.scripthash.listunspent', scripthash);
+
+					const getuhistory2 = await electrum.request('blockchain.scripthash.listunspent', scripthashp2pk);
+
+					//utxos.push({p2pkhutxos: getuhistory1, p2pkutxos: getuhistory2});
+					const utxos = getuhistory1.concat(getuhistory2);
+
+					await electrum.shutdown();
+
+					return utxos;
+				}
+
+				promises2.push(new Promise((res, rej) => {
+					utxohistory().then(utxohistory => {
+						utxoarray.push({utxos: utxohistory});
+						res({utxohistory});
+					});
+				}));
+					
+				Promise.all(promises2).then((values) => {
+					var utxos = utxoarray[0].utxos;
+					console.log(utxoarray[0].utxos);
+
+					var numutxo = utxos.length;
+
+					console.log('UTXO Count: ', numutxo);
+
+					//CREATE A RAW TRANSACTION AND SIGN IT FOR DENARIUS!
+					var txb = new dbitcoin.TransactionBuilder(dbitcoin.networks.denarius);
+
+					var totalVal = 0;
+					for(i=0; i<numutxo; i++) {  
+						totalVal += utxos[i].value;
+						txb.addInput(utxos[i].tx_hash, parseInt(utxos[i].tx_pos));
 					}
-				});
+					//calc fee and add output address
+					var denariifees = numutxo * 10000;
+					var amountToSend = totalVal - denariifees;
 
-				request.toastr.success('Kronos Seed Import Successful!', 'Success!', { positionClass: 'toast-bottom-right' });
-				response.redirect('/login');
-				response.end();	
+					//Add Raw TX Output to Sweep Privkey to and send funds
+					txb.addOutput(mainaddress, amountToSend, dbitcoin.networks.denarius);
+					//txb.addOutput(mainaddress, denariifees, dbitcoin.networks.denarius); //needs secondary output of the fees?
+					
+					//Sign each of our privkey utxo inputs
+					for(i=0; i<numutxo; i++){  
+						txb.sign(dbitcoin.networks.denarius, i, key);
+					}
+			
+					// Print transaction serialized as hex
+					console.log('Denarius Raw Transaction Built and Broadcasting: ' + txb.build().toHex());
+			
+					// => 020000000110fd2be85bba0e8a7a694158fa27819f898def003d2f63b668d9d19084b76820000000006b48304502210097897de69a0bd7a30c50a4b343b7471d1c9cd56aee613cf5abf52d62db1acf6202203866a719620273a4e550c30068fb297133bceee82c58f5f4501b55e6164292b30121022f0c09e8f639ae355c462d7a641897bd9022ae39b28e6ec621cea0a4bf35d66cffffffff0140420f000000000001d600000000
+					
+					let promises = [];
+					let broadcastarray = [];
+			
+					const broadcastTX = async () => {
+						// Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+						const electrum = new ElectrumCluster('Kronos Core Mode Transaction', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+						
+						// Add some servers to the cluster.
+						electrum.addServer(delectrumxhost1);
+						electrum.addServer(delectrumxhost2);
+						electrum.addServer(delectrumxhost3);
+						electrum.addServer(delectrumxhost4);
+						
+						// Wait for enough connections to be available.
+						await electrum.ready();
+						
+						// Request the balance of the requested Scripthash D address
+			
+						const broadcast = await electrum.request('blockchain.transaction.broadcast', txb.build().toHex());
+						
+						//console.log(broadcast);
+			
+						//await electrum.disconnect();
+						await electrum.shutdown();
+			
+						return broadcast;
+					};
+			
+					//var broadcasted = broadcastTX();
+			
+					promises.push(new Promise((res, rej) => {
+						broadcastTX().then(broadcastedTX => {
+							broadcastarray.push({tx: broadcastedTX});
+							res({broadcastedTX});
+						});
+					}));
+						
+					Promise.all(promises).then((values) => {
+						var broadcasted = broadcastarray[0].tx;
+						console.log(broadcastarray[0].tx);
+			
+						if (!broadcasted.message) {
+							request.toastr.success(`Your ${amountToSend / 1e8} D was imported successfully! TXID: ${broadcasted}`, 'Sweep Success!', { positionClass: 'toast-bottom-left' });
+							request.flash('success', { msg: `Sweep Complete! Your <strong>${amountToSend / 1e8} D</strong> was imported successfully via your private key! TXID: <a href='https://chainz.cryptoid.info/d/tx.dws?${broadcasted}' target='_blank'>${broadcasted}</a>` });
+							return response.redirect('/sweep');
+						} else {
+							request.toastr.error(`Error importing D! Broadcast Error: ${broadcasted.message}`, 'Error!', { positionClass: 'toast-bottom-left' });
+							//req.flash('errors', { msg: `Error sending D! Broadcast - Error: Something went wrong, please go to your dashboard and refresh.` });
+							return response.redirect('/sweep');
+						}
+			
+					});	
+		
+				});
 	
 			} else {
-				request.toastr.error('Invalid seed phrase! Try something else!', 'Error!', { positionClass: 'toast-bottom-right' });
+				request.toastr.error('Invalid private key! Try again, double check!', 'Error!', { positionClass: 'toast-bottom-left' });
 				response.redirect('/sweep');
 				response.end();
 			}
 	
 	} else {
-		request.toastr.error('Please enter a seed phrase!', 'Error!', { positionClass: 'toast-bottom-right' });
+		request.toastr.error('Please enter a private key!', 'Error!', { positionClass: 'toast-bottom-left' });
 		response.redirect('/sweep');
 		response.end();
 	}

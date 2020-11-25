@@ -1,0 +1,27 @@
+extends ../layoutsimple
+
+block content
+  script.
+    function confirmed() {
+      $('.importkey').show();
+      $('#sendimportbtn').hide();
+      $('#sendimport').submit();
+    }
+  .container
+    h1(align='center', style='font-size:73px;font-weight:100;margin-top:12px !important;') Sweep Private Key
+    p
+      .titlesmall(align='center', style='color:#888;padding:15px;width:700px;margin:0 auto;') Import a private key into Kronos Wallet, in WIF format. Starts with Q for Denarius addresses. This will scan the private key for any UTXOs/balances and then send the funds to your main Kronos address.
+    div.rowclass(style='font-weight:400;font-size:14px;padding:30px;background-color:#222;margin:5px;margin-top:0;border-radius:15px;', align='center')
+      p
+        .importkey(align='center', style='color: green;') Kronos is attempting to sweep the private key...Please wait...
+      p
+        form.form-horizontal(action='/sweep', method='POST', id='sendimport')
+          input(type='hidden', name='_csrf', value=_csrf)
+          .form-group
+            label.col-sm-3.control-label(for='privkey') Private Key (WIF)
+            .col-sm-7
+              input.form-control.blackinput3(type='text', name='PRIVATEKEY', id='PRIVATEKEY', placeholder='QUhaQ7i3LV2jvwZzESm49HxkAa5vLSazBBsGr8DHTEwTdrERGWGX')
+          .form-group
+            .col-sm-12
+              button.kbtn.grey(type='button', id='sendimportbtn', onclick='confirmed()')
+                |  Import Private Key

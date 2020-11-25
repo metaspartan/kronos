@@ -110,11 +110,11 @@ exports.unlock = (req, res, next) => {
 
 	if (error) {
 		//req.flash('errors', { msg: 'Incorrect password!'});
-		req.toastr.error('Wallet Unlock Error', 'Incorrect Password!', { positionClass: 'toast-bottom-right' });
+		req.toastr.error('Wallet Unlock Error', 'Incorrect Password!', { positionClass: 'toast-bottom-left' });
 		return res.redirect('/');
 	} else {
 		//req.flash('success', { msg: `Wallet Unlocked!` });
-		req.toastr.success('Success!', 'Wallet Unlocked', { positionClass: 'toast-bottom-right' });
+		req.toastr.success('Success!', 'Wallet Unlocked', { positionClass: 'toast-bottom-left' });
 		return res.redirect('/');
 	}
 
@@ -132,11 +132,11 @@ exports.unlockstaking = (req, res, next) => {
   
 	  if (error) {
 		  //req.flash('errors', { msg: 'Incorrect password!'});
-		  req.toastr.error('Wallet Unlock Error', 'Incorrect Password!', { positionClass: 'toast-bottom-right' });
+		  req.toastr.error('Wallet Unlock Error', 'Incorrect Password!', { positionClass: 'toast-bottom-left' });
 		  return res.redirect('/');
 	  } else {
 		  //req.flash('success', { msg: `Wallet Unlocked!` });
-		  req.toastr.success('Success!', 'Wallet Unlocked for Staking Only', { positionClass: 'toast-bottom-right' });
+		  req.toastr.success('Success!', 'Wallet Unlocked for Staking Only', { positionClass: 'toast-bottom-left' });
 		  return res.redirect('/');
 	  }
   
@@ -154,11 +154,11 @@ exports.lock = (req, res, next) => {
   
 	  if (error) {
 		  //req.flash('errors', { msg: 'Incorrect password!'});
-		  req.toastr.error('Wallet Lock Error', 'Error!', { positionClass: 'toast-bottom-right' });
+		  req.toastr.error('Wallet Lock Error', 'Error!', { positionClass: 'toast-bottom-left' });
 		  return res.redirect('/');
 	  } else {
 		  //req.flash('success', { msg: `Wallet Unlocked!` });
-		  req.toastr.success('Success!', 'Wallet Locked', { positionClass: 'toast-bottom-right' });
+		  req.toastr.success('Success!', 'Wallet Locked', { positionClass: 'toast-bottom-left' });
 		  return res.redirect('/');
 	  }
   
@@ -177,7 +177,7 @@ exports.lock = (req, res, next) => {
 	if (password == password2) {
 		var passworded = password;
 	} else {
-		req.toastr.error('Passwords do not match', 'Passphrase Error!', { positionClass: 'toast-bottom-right' });
+		req.toastr.error('Passwords do not match', 'Passphrase Error!', { positionClass: 'toast-bottom-left' });
 		return res.redirect('/');
 	}
   
@@ -185,10 +185,10 @@ exports.lock = (req, res, next) => {
 	  //if (error) return console.log(error);
   
 	  if (error) {
-		  req.toastr.error('Wallet Encryption Error', 'Encryption Error!', { positionClass: 'toast-bottom-right' });
+		  req.toastr.error('Wallet Encryption Error', 'Encryption Error!', { positionClass: 'toast-bottom-left' });
 		  return res.redirect('/');
 	  } else {
-		  req.toastr.success('Success!', 'Wallet Encrypted', { positionClass: 'toast-bottom-right' });
+		  req.toastr.success('Success!', 'Wallet Encrypted', { positionClass: 'toast-bottom-left' });
 		  return res.redirect('/');
 	  }
   
@@ -202,17 +202,17 @@ exports.lock = (req, res, next) => {
 	shell.exec(`bash restartnode.sh`, function(err){
 		if(err){
 		  console.log(err);
-		  req.toastr.error('Something went wrong!', 'Reboot Error!', { positionClass: 'toast-bottom-right' });
+		  req.toastr.error('Something went wrong!', 'Reboot Error!', { positionClass: 'toast-bottom-left' });
 		  process.exit(0);
 		  //return res.redirect('/');
 		}
 	});
 
-	//req.toastr.success('Success!', 'Stopping Denarius...Please wait', { positionClass: 'toast-bottom-right' });
+	//req.toastr.success('Success!', 'Stopping Denarius...Please wait', { positionClass: 'toast-bottom-left' });
 
 	//sleep(120000); // sleep for 120 seconds
 
-	//req.toastr.success('Success!', 'Starting Denarius...Please wait', { positionClass: 'toast-bottom-right' });
+	//req.toastr.success('Success!', 'Starting Denarius...Please wait', { positionClass: 'toast-bottom-left' });
 
 	//sleep(120000); // sleep for 120 seconds
 
@@ -236,13 +236,13 @@ exports.lock = (req, res, next) => {
 		
 			if (error) {
 				//req.flash('errors', { msg: 'Incorrect password!'});
-				req.toastr.error('Your wallet is locked or you do not own that address!', 'Error!', { positionClass: 'toast-bottom-right' });
+				req.toastr.error('Your wallet is locked or you do not own that address!', 'Error!', { positionClass: 'toast-bottom-left' });
 				return res.redirect('/addresses');
 
 			} else {
 
 				req.flash('success', { msg: `Your private key is <strong>${unlocked}</strong> for address ${addi}` });
-				req.toastr.success(`Successfully obtained the private key! ${unlocked}`, 'Success!', { positionClass: 'toast-bottom-right' });
+				req.toastr.success(`Successfully obtained the private key! ${unlocked}`, 'Success!', { positionClass: 'toast-bottom-left' });
 				return res.redirect('/addresses');
 
 			}
@@ -251,7 +251,7 @@ exports.lock = (req, res, next) => {
 
 	} else {
 
-        req.toastr.error('You entered an invalid Denarius (D) Address!', 'Invalid Address!', { positionClass: 'toast-bottom-right' });
+        req.toastr.error('You entered an invalid Denarius (D) Address!', 'Invalid Address!', { positionClass: 'toast-bottom-left' });
         //req.flash('errors', { msg: 'You entered an invalid Denarius (D) Address!' });
 		return res.redirect('/addresses');
 		

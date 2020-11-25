@@ -828,7 +828,7 @@ exports.search = (req, res, next) => {
     //console.log("State of Block Test ", regexpBlockNum.test(searchreq))
     return res.redirect('/block/'+searchreq);
   } else {
-    req.toastr.error('Invalid Block #, Address, or Transaction Hash', 'Error!', { positionClass: 'toast-bottom-right' });
+    req.toastr.error('Invalid Block #, Address, or Transaction Hash', 'Error!', { positionClass: 'toast-bottom-left' });
     return res.redirect('/')
   }
 

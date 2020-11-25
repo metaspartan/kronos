@@ -100,7 +100,8 @@ function createWindow() {
     electron.shell.openExternal(url);
   });
 
-  //mainWindow.webContents.session.clearCache();
+  //Possibly maybe removed for releases
+  mainWindow.webContents.session.clearCache();
 }
 
 app.on("ready", createWindow);

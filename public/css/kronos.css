@@ -1372,6 +1372,94 @@ input:checked+.slider2:before {
 display:none;
 }
 
+/* start da css for da buttons */
+.kbtn {
+  border-radius: 5px;
+  padding: 15px 25px;
+  font-size: 21px;
+  text-decoration: none;
+  margin: 20px;
+  color: #fff;
+  position: relative;
+  display: inline-block;
+  border: none;
+}
+
+.kbtn:focus {
+  outline: none;
+  border: none;
+}
+
+.kbtn:active {
+  transform: translate(0px, 5px);
+  -webkit-transform: translate(0px, 5px);
+  box-shadow: 0px 0px 0px 0px;
+  border: none;
+}
+
+.grey {
+  background-color: #444;
+  box-shadow: 0px 5px 0px 0px rgb(53, 53, 53);
+}
+
+.grey:hover {
+  background-color: #414141;
+}
+
+.blue {
+  background-color: #55acee;
+  box-shadow: 0px 5px 0px 0px #3C93D5;
+}
+
+.blue:hover {
+  background-color: #6FC6FF;
+}
+
+.green {
+  background-color: #2ecc71;
+  box-shadow: 0px 5px 0px 0px #15B358;
+}
+
+.green:hover {
+  background-color: #48E68B;
+}
+
+.red {
+  background-color: #e74c3c;
+  box-shadow: 0px 5px 0px 0px #CE3323;
+}
+
+.red:hover {
+  background-color: #FF6656;
+}
+
+.purple {
+  background-color: #9b59b6;
+  box-shadow: 0px 5px 0px 0px #82409D;
+}
+
+.purple:hover {
+  background-color: #B573D0;
+}
+
+.orange {
+  background-color: #bb6419;
+  box-shadow: 0px 5px 0px 0px #9c4d07;
+}
+
+.orange:hover {
+  background-color: #da7a26;
+}
+
+.yellow {
+  background-color: #f1c40f;
+  box-shadow: 0px 5px 0px 0px #D8AB00;
+}
+
+.yellow:hover {
+  background-color: #FFDE29;
+}
+
 /* Snowflake Tor CSS */
 #active {
   margin: 20px 0;

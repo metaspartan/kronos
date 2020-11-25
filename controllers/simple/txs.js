@@ -217,8 +217,8 @@ exports.postcreate = (req, res) => {
     var samnt = sortedsplit[2];
 
     //Converted Available Amount from UTXO
-    var csamnt = samnt / 100000000; // / 1e8
-    var convertedamount = parseInt(amount * 1e8);
+    var csamnt = samnt / 100000000; // / 1e8 10
+    var convertedamount = parseInt(amount * 1e8); //6
     var outp = csamnt - amount - fee;
     var outputamount = parseInt(outp * 1e8); // 0.6669 - 0.0001 = 0.6668 - 0.6669 = -0.0001
 
@@ -226,14 +226,14 @@ exports.postcreate = (req, res) => {
 
     if (outputamount < 0 || outputamount == 0) {
         outputamount = '';
-        req.toastr.error('Withdrawal change amount cannot be a negative amount, you must send some D to your change address!', 'Balance Error!', { positionClass: 'toast-bottom-right' });
+        req.toastr.error('Withdrawal change amount cannot be a negative amount, you must send some D to your change address!', 'Balance Error!', { positionClass: 'toast-bottom-left' });
         return res.redirect('/createtx');
     }
 
     var valid = WAValidator.validate(`${sendtoaddress}`, 'DNR');
 
     if (parseFloat(amount) - fee > csamnt) {
-        req.toastr.error('Withdrawal amount + network fees exceeds your select D balance for the selected UTXO!', 'Balance Error!', { positionClass: 'toast-bottom-right' });
+        req.toastr.error('Withdrawal amount + network fees exceeds your select D balance for the selected UTXO!', 'Balance Error!', { positionClass: 'toast-bottom-left' });
         return res.redirect('/createtx');
 
     } else {
@@ -353,24 +353,24 @@ exports.postcreate = (req, res) => {
             console.log(broadcastarray[0].tx);
 
             if (!broadcasted.message) {
-                req.toastr.success(`Your ${amount} D was sent successfully! TXID: ${broadcasted}`, 'Success!', { positionClass: 'toast-bottom-right' });
+                req.toastr.success(`Your ${amount} D was sent successfully! TXID: ${broadcasted}`, 'Success!', { positionClass: 'toast-bottom-left' });
                 req.flash('success', { msg: `Your <strong>${amount} D</strong> was sent successfully! TXID: <a href='https://chainz.cryptoid.info/d/tx.dws?${broadcasted}' target='_blank'>${broadcasted}</a>` });
                 return res.redirect('/createtx');
             } else {
-                req.toastr.error(`Error sending D! Broadcast Error: ${broadcasted.message}`, 'Error!', { positionClass: 'toast-bottom-right' });
+                req.toastr.error(`Error sending D! Broadcast Error: ${broadcasted.message}`, 'Error!', { positionClass: 'toast-bottom-left' });
                 //req.flash('errors', { msg: `Error sending D! Broadcast - Error: Something went wrong, please go to your dashboard and refresh.` });
                 return res.redirect('/createtx');
             }
 
         });
 
-        // req.toastr.success(`D was sent successfully! ${broadcasted}`, 'Success!', { positionClass: 'toast-bottom-right' });
+        // req.toastr.success(`D was sent successfully! ${broadcasted}`, 'Success!', { positionClass: 'toast-bottom-left' });
         // req.flash('success', { msg: `Your <strong>D</strong> was sent successfully! Please wait 10 confirms for it show up! TXID: ${broadcasted}` });
         // return res.redirect('/createtx');
 
 
     } else {
-        req.toastr.error('You entered an invalid Denarius (D) Address!', 'Invalid Address!', { positionClass: 'toast-bottom-right' });
+        req.toastr.error('You entered an invalid Denarius (D) Address!', 'Invalid Address!', { positionClass: 'toast-bottom-left' });
         //req.flash('errors', { msg: 'You entered an invalid Denarius (D) Address!' });
         return res.redirect('/createtx');
     }
@@ -401,7 +401,7 @@ exports.postethsend = (req, res) => {
     console.log(gasfee);
 
     if (parseFloat(amount) + parseFloat(gasfee) > parseFloat(totalethbal)) {
-        req.toastr.error(`Withdrawal amount (`+amount+` ETH) and gas fee (`+gasfee+` ETH) exceeds your ETH balance!`, 'Balance Error!', { positionClass: 'toast-bottom-right' });
+        req.toastr.error(`Withdrawal amount (`+amount+` ETH) and gas fee (`+gasfee+` ETH) exceeds your ETH balance!`, 'Balance Error!', { positionClass: 'toast-bottom-left' });
         return res.redirect('/sendeth');
 
     } else {
@@ -426,7 +426,7 @@ exports.postethsend = (req, res) => {
             
             ethwalletp.sendTransaction(transaction).then(function (hash) {
                 //console.log('Sent ETH Success: ' + JSON.stringify(hash));
-                req.toastr.success(`${amount} ETH was sent successfully! ${hash.hash}`, 'Success!', { positionClass: 'toast-bottom-right' });
+                req.toastr.success(`${amount} ETH was sent successfully! ${hash.hash}`, 'Success!', { positionClass: 'toast-bottom-left' });
                 req.flash('success', { msg: `Your <strong>${amount} ETH</strong> was sent successfully! <a href="https://etherscan.io/tx/${hash.hash}" target="_blank">${hash.hash}</a>` });
                 Storage.set('totaleth', totalcalcbale);
                 return res.redirect('/sendeth');
@@ -434,7 +434,7 @@ exports.postethsend = (req, res) => {
         });
 
     } else {
-        req.toastr.error('You entered an invalid Ethereum (ETH) Address!', 'Invalid Address!', { positionClass: 'toast-bottom-right' });
+        req.toastr.error('You entered an invalid Ethereum (ETH) Address!', 'Invalid Address!', { positionClass: 'toast-bottom-left' });
         //req.flash('errors', { msg: 'You entered an invalid Ethereum (ETH) Address!' });
         return res.redirect('/sendeth');
     }
@@ -467,12 +467,12 @@ exports.postarisend = (req, res) => {
 
     if (parseFloat(gasfee) > parseFloat(totalethbal)) {
 
-        req.toastr.error(`Gas fee (`+gasfee+` ETH) exceeds your ETH balance!`, 'Gas Balance Error!', { positionClass: 'toast-bottom-right' });
+        req.toastr.error(`Gas fee (`+gasfee+` ETH) exceeds your ETH balance!`, 'Gas Balance Error!', { positionClass: 'toast-bottom-left' });
         return res.redirect('/sendari');
 
     } else if (parseFloat(amount) > parseFloat(totalaribal)) {
 
-        req.toastr.error(`Withdrawal amount (`+amount+` ARI) exceeds your ARI balance!`, 'Balance Error!', { positionClass: 'toast-bottom-right' });
+        req.toastr.error(`Withdrawal amount (`+amount+` ARI) exceeds your ARI balance!`, 'Balance Error!', { positionClass: 'toast-bottom-left' });
         return res.redirect('/sendari');
 
     } else {
@@ -516,7 +516,7 @@ exports.postarisend = (req, res) => {
             console.log(values);
             console.log(txarray);
 
-            req.toastr.success(`${amount} ARI was sent successfully! ${txarray[0].aritx.hash}`, 'Success!', { positionClass: 'toast-bottom-right' });
+            req.toastr.success(`${amount} ARI was sent successfully! ${txarray[0].aritx.hash}`, 'Success!', { positionClass: 'toast-bottom-left' });
             req.flash('success', { msg: `Your <strong>${amount} ARI</strong> was sent successfully! (${gasfee} ETH gas fee) <a href="https://etherscan.io/tx/${txarray[0].aritx.hash}" target="_blank"><strong>${txarray[0].aritx.hash}</strong></a>` });
             Storage.set('totalaribal', totalcalcbal);
             Storage.set('totaleth', totalcalcgas);
@@ -525,7 +525,7 @@ exports.postarisend = (req, res) => {
         });
 
     } else {
-        req.toastr.error('You entered an invalid Denarii (ARI) Address!', 'Invalid Address!', { positionClass: 'toast-bottom-right' });
+        req.toastr.error('You entered an invalid Denarii (ARI) Address!', 'Invalid Address!', { positionClass: 'toast-bottom-left' });
         //req.flash('errors', { msg: 'You entered an invalid Ethereum (ETH) Address!' });
         return res.redirect('/sendari');
     }
