@@ -70,3 +70,10 @@ html(dir="ltr", lang="en-US")
 				span.one .
 				span.two .
 				span.three .
+			h4#loadertxt
+	script.
+		(function newFact() {
+			var facts = ['Such wow, much Kronos', 'Calculating Humans', 'Breaking chains and taking memes', 'Nothing, nothing, then something', '...as if you had any other choice', 'Do you prefer chicken, stake, or tofu?', 'Go ahead -- hold your breath', 'A few bits tried to escape, but we caught them', '...while monopolies try to take over the world', 'At least you are not on hold'];
+			var randomFact = Math.floor(Math.random() * facts.length);
+			document.getElementById('loadertxt').innerHTML = facts[randomFact];
+		})();
