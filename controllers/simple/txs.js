@@ -161,30 +161,107 @@ exports.getsend = (req, res) => {
     let totalethbal = Storage.get('totaleth');
     let totalbal = Storage.get('totalbal');
     let totalaribal = Storage.get('totalaribal');
-    let utxos = Storage.get('dutxo');
+    //let utxos = Storage.get('dutxo');
     var ethaddress = Storage.get('ethaddy');
     var mainaddress = Storage.get('mainaddress');
-    res.locals.utxos = utxos;
+    var p2pkaddress = Storage.get('p2pkaddress');
+    //res.locals.utxos = utxos;
 
-    var numutxo = utxos.length;
-    var utxocount = Number(numutxo);
+    //Convert P2PKH Address to Scripthash for ElectrumX Balance Fetching
+    const bytes = bs58.decode(mainaddress);
+    const byteshex = bytes.toString('hex');
+    const remove00 = byteshex.substring(2);
+    const removechecksum = remove00.substring(0, remove00.length-8);
+    const HASH160 = "76A914" + removechecksum.toUpperCase() + "88AC";
+    const BUFFHASH160 = Buffer.from(HASH160, "hex");
+    const shaaddress = sha256(BUFFHASH160);
 
-    var totalVal = 0;
-    for(i=0; i<numutxo; i++) {  
-        totalVal += utxos[i].value;
+    //Convert P2PK Address to Scripthash for ElectrumX Balance Fetching
+    const xpubtopub = p2pkaddress;
+    const HASH1601 =  "21" + xpubtopub + "ac"; // 21 + COMPRESSED PUBKEY + OP_CHECKSIG = P2PK
+    //console.log(HASH1601);
+    const BUFFHASH1601 = Buffer.from(HASH1601, "hex");
+    const shaaddress1 = sha256(BUFFHASH1601);
+
+    const changeEndianness = (string) => {
+            const result = [];
+            let len = string.length - 2;
+            while (len >= 0) {
+            result.push(string.substr(len, 2));
+            len -= 2;
+            }
+            return result.join('');
     }
 
-    res.render('simple/getsend', {
-        utxos: utxos,
-        utxocount: utxocount,
-        totalsendable: totalVal,
-        totalethbal: totalethbal,
-        totalbal: totalbal,
-        totalaribal: totalaribal,
-        ethaddress: ethaddress,
-        mainaddress: mainaddress
-    });
+    const scripthash = changeEndianness(shaaddress);
+    const scripthashp2pk = changeEndianness(shaaddress1);
 
+    //Grab UTXO Transaction History from D ElectrumX
+    const utxohistory = async () => {
+        // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+        const electrum = new ElectrumCluster('Kronos Core Mode UTXO History', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+        
+        // Add some servers to the cluster.
+        electrum.addServer(delectrumxhost1);
+        electrum.addServer(delectrumxhost2);
+        electrum.addServer(delectrumxhost3);
+        electrum.addServer(delectrumxhost4);
+        try {
+        // Wait for enough connections to be available.
+        await electrum.ready();
+        
+        // Request the balance of the requested Scripthash D address
+        const getuhistory1 = await electrum.request('blockchain.scripthash.listunspent', scripthash);
+
+        const getuhistory2 = await electrum.request('blockchain.scripthash.listunspent', scripthashp2pk);
+
+        const utxos = getuhistory1.concat(getuhistory2);
+
+        await electrum.shutdown();
+
+        return utxos;
+
+        } catch (e) {
+            console.log('UTXO Error', e);
+        }
+    }
+
+    let promises = [];
+    let sendarray = [];
+    promises.push(new Promise((res, rej) => {
+        utxohistory().then(UTXOHistory => {
+            sendarray.push({utxos: UTXOHistory});
+            res({UTXOHistory});
+        });
+    }));
+
+    res.render('simple/loading', (err, html) => {
+        res.write(html + '\n');
+        Promise.all(promises).then((values) => {
+            var utxos = sendarray[0].utxos;
+
+            var numutxo = utxos.length;
+            var utxocount = Number(numutxo);
+        
+            var totalVal = 0;
+            for(i=0; i<numutxo; i++) {  
+                totalVal += utxos[i].value;
+            }
+        
+            res.render('simple/getsend', {
+                utxos: utxos,
+                utxocount: utxocount,
+                totalsendable: totalVal,
+                totalethbal: totalethbal,
+                totalbal: totalbal,
+                totalaribal: totalaribal,
+                ethaddress: ethaddress,
+                mainaddress: mainaddress
+            }, (err, html) => {
+                res.end(html + '\n');
+            });
+        });
+    });
 };
 
 
@@ -215,7 +292,7 @@ exports.getchat = (req, res) => {
 //POST the UTXO selected and create and sign raw transaction for sending
 exports.postcreate = (req, res) => {
     var selectedutxo = req.body.UTXO;
-    var fee = 0.0001;
+    var fee = 0.00001;
     var sendtoaddress = req.body.sendaddress;
     var amount = req.body.amount;
 
@@ -389,34 +466,37 @@ exports.postcreate = (req, res) => {
 
 //POST the UTXO inputs automatically and create and sign a raw Denarius transaction for sending
 exports.postauto = (req, res) => {
-    //WIP STILL - Coming soon(tm)
-    var fee = 0.0001;
-    var sendtoaddress = req.body.sendaddress;
-    var amount = req.body.amount;
+    var fee = 0.00001;
+    var sendtoaddress = req.body.sendaddressauto;
+    var amount = req.body.amountauto;
 
     //Get our UTXO data from storage
     let utxos = Storage.get('dutxo');
     var numutxo = utxos.length;
     console.log('UTXO Count: ', numutxo);
 
-    //Converted Available Amount from UTXO
-    var csamnt = samnt / 100000000; // / 1e8 10
-    var convertedamount = parseInt(amount * 1e8); //6
-    var outp = csamnt - amount - fee;
-    var outputamount = parseInt(outp * 1e8); // 0.6669 - 0.0001 = 0.6668 - 0.6669 = -0.0001
+    var convertedamount = parseInt(amount * 1e8); //3
 
-    //console.log(outputamount);
+    var totaluVal = 0;
+    for(i=0; i<numutxo; i++) {  
+        totaluVal += utxos[i].value;
+        //txb.addInput(utxos[i].tx_hash, parseInt(utxos[i].tx_pos));
+    }
+    //calc fee and add output address
+    var thefees = numutxo * 10000;
+    var amountTo = totaluVal - thefees; // 100 D total inputs - 30 D converted amount - 70 D to be sent back to change address
+    var changeTotal = amountTo - convertedamount; // 70 D
 
-    if (outputamount < 0 || outputamount == 0) {
-        outputamount = '';
+    if (changeTotal < 0 || changeTotal == 0) {
+        changeTotal = '';
         req.toastr.error('Withdrawal change amount cannot be a negative amount, you must send some D to your change address!', 'Balance Error!', { positionClass: 'toast-bottom-left' });
         return res.redirect('/createtx');
     }
 
     var valid = WAValidator.validate(`${sendtoaddress}`, 'DNR');
 
-    if (parseFloat(amount) - fee > csamnt) {
-        req.toastr.error('Withdrawal amount + network fees exceeds your select D balance for the selected UTXO!', 'Balance Error!', { positionClass: 'toast-bottom-left' });
+    if (parseFloat(amount) - fee > amountTo) {
+        req.toastr.error('Withdrawal amount + network fees exceeds your D balance!', 'Balance Error!', { positionClass: 'toast-bottom-left' });
         return res.redirect('/createtx');
 
     } else {

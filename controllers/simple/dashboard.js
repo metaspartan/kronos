@@ -495,6 +495,7 @@ exports.simpleindex = (req, res) => {
         const p2pkaddy = denarius.payments.p2pkh({ pubkey: addressKeypair0.publicKey, network }).pubkey.toString('hex');
         
         Storage.set('mainaddress', p2pkhaddy0);
+        Storage.set('p2pkaddress', p2pkaddy);
 
         const bytes = bs58.decode(p2pkhaddy0);
         const byteshex = bytes.toString('hex');
