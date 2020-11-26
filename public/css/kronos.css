@@ -1576,3 +1576,13 @@ input:checked + .slider:before {
   -ms-transform: translateX(13px);
   transform: translateX(13px);
 }
+
+.nav-justified {
+  width: 60% !important;
+}
+
+.nav-pills li.active>a, .nav-pills li>a:hover {
+  border-color: #a86800 !important;
+  color: #ffffff !important;
+  background-color: #0e0e0e !important;
+}

@@ -516,6 +516,7 @@ app.get('/dashsimple', auth, sDashController.simpleindex);
 
 app.get('/createtx', auth, Limiter, sTXController.getsend);
 app.post('/simplesend', Limiter, sTXController.postcreate);
+app.post('/autosend', Limiter, sTXController.postauto);
 
 app.get('/sendeth', auth, Limiter, sTXController.getethsend);
 app.post('/ethsend', Limiter, sTXController.postethsend);
