@@ -11,13 +11,13 @@
   "main": "src/main.js",
   "scripts": {
     "startmuon": "node setup.js",
-    "postinstall": "electron-builder install-app-deps && cd node_modules/node-pty-prebuilt-multiarch && node-gyp rebuild",
+    "postinstall": "electron-builder install-app-deps && cd node_modules/node-pty-prebuilt-multiarch && sudo node-gyp rebuild",
     "kronos": "electron .",
     "headless": "node -r esm ./bin/kronos",
     "buildwin": "electron-builder build --win --publish never",
     "deploywin": "electron-builder build --win --publish always",
     "buildmac": "electron-builder build --mac --publish never",
-    "postbuildmac": "cp -Rf node_modules/node-pty-prebuilt-multiarch/. dist/mac/Kronos.app/Contents/Resources/app/node_modules/node-pty-prebuilt-multiarch",
+    "postbuildmac": "sudo cp -Rf node_modules/node-pty-prebuilt-multiarch/. dist/mac/Kronos.app/Contents/Resources/app/node_modules/node-pty-prebuilt-multiarch",
     "deploymac": "electron-builder build --mac --publish always",
     "test": "mocha --reporter spec",
     "package": "electron-forge package",
@@ -186,7 +186,7 @@
     },
     "mac": {
       "category": "public.app-category.finance",
-      "target": "dmg",
+      "target": "zip",
       "icon": "public/img/klogo.png"
     },
     "win": {

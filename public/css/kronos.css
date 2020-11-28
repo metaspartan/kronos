@@ -800,6 +800,10 @@ small {font-size:2.2rem;color:#eee;}
   z-index: 999999 !important;
 }
 
+.toast-bottom-left {
+  bottom: 38px !important;
+}
+
 .reboot {
   cursor: not-allowed;
   pointer-events: none;
