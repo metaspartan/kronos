@@ -129,6 +129,9 @@ block content
     socket.on('newethbal', function (data69) {
       if (!data69.ethbal[0] && !data69.error) {
         var bal = data69.ethbal;
+        if (bal != 'undefined') {
+          bal = parseFloat(bal.toFixed(6));
+        }
         $('#totalethbal').html(bal);
         $('#htotalethbal').html(bal + '<img class="res" src="../img/eth.png" alt="ETH" border="0" style="height:24px !important;width: 24px !important;margin:-15px 0px -12px !important;" /><span style="color:#888;">ETH</span>');
         var updatedethusd = bal * $('#currentethprice').text();
@@ -141,6 +144,9 @@ block content
         });
       } else {
         var bal = data69.ethbal[0];
+        if (bal != 'undefined') {
+          bal = parseFloat(bal.toFixed(6));
+        }
         $('#totalethbal').html(bal); 
         $('#htotalethbal').html(bal + '<img class="res" src="../img/eth.png" alt="ETH" border="0" style="height:24px !important;width: 24px !important;margin:-15px 0px -12px !important;" /><span style="color:#888;">ETH</span>');
         var updatedethusd = bal * $('#currentethprice').text();
@@ -156,6 +162,9 @@ block content
     socket.on('newaribal', function (data22) {
       if (!data22.aribal[0] && !data22.error) {
         var bal = data22.aribal;
+        if (bal != 'undefined') {
+          bal = parseFloat(bal.toFixed(4));
+        }
         $('#totalaribal').html(bal);
         $('#htotalaribal').html(bal + '<img class="res" src="../img/ari.png" alt="ARI" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">ARI</span>');
         var updatedusd = bal * $('#currentariprice').text();
@@ -168,6 +177,9 @@ block content
         });
       } else {
         var bal = data22.aribal[0];
+        if (bal != 'undefined') {
+          bal = parseFloat(bal.toFixed(4));
+        }
         $('#totalaribal').html(bal);
         $('#htotalaribal').html(bal + '<img class="res" src="../img/ari.png" alt="ARI" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">ARI</span>');
         var updatedusd = bal * $('#currentariprice').text();
