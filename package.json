@@ -1,6 +1,6 @@
 {
   "name": "Kronos",
-  "version": "1.8.2-Beta",
+  "version": "1.8.3-Beta",
   "description": "A Dashboard Interface and Wallet for Denarius (D), Ethereum (ETH), and Denarii (ARI) built with NodeJS and Electron",
   "repository": {
     "type": "git",
@@ -11,14 +11,15 @@
   "main": "src/main.js",
   "scripts": {
     "startmuon": "node setup.js",
-    "postinstall": "electron-builder install-app-deps && cd node_modules/node-pty-prebuilt-multiarch && sudo node-gyp rebuild",
+    "postinstall": "electron-builder install-app-deps",
     "kronos": "electron .",
     "headless": "node -r esm ./bin/kronos",
     "buildwin": "electron-builder build --win --publish never",
     "deploywin": "electron-builder build --win --publish always",
     "buildmac": "electron-builder build --mac --publish never",
-    "postbuildmac": "sudo cp -Rf node_modules/node-pty-prebuilt-multiarch/. dist/mac/Kronos.app/Contents/Resources/app/node_modules/node-pty-prebuilt-multiarch",
     "deploymac": "electron-builder build --mac --publish always",
+    "buildboth": "electron-builder build --win --mac --publish never",
+    "deployboth": "electron-builder build --win --mac --publish always",
     "test": "mocha --reporter spec",
     "package": "electron-forge package",
     "build": "electron-forge make",
@@ -65,7 +66,6 @@
     "express-toastr": "^2.0.2",
     "fs": "0.0.1-security",
     "get-port": "^5.1.1",
-    "gritty": "git://github.com/carsenk/gritty.git",
     "hotkeys-js": "^3.8.1",
     "ip": "^1.1.5",
     "jquery": "^3.5.1",
@@ -126,8 +126,6 @@
     "files": [
       "dist/src/**/*",
       "node_modules/**/*",
-      "node_modules/node-pty-prebuilt-multiarch/**/*",
-      "node_modules/node-pty-prebuilt-multiarch/build/Release/**/*",
       "app.js",
       "db.js",
       "notifies.txt",
@@ -186,7 +184,7 @@
     },
     "mac": {
       "category": "public.app-category.finance",
-      "target": "zip",
+      "target": "dmg",
       "icon": "public/img/klogo.png"
     },
     "win": {

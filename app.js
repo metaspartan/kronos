@@ -52,7 +52,7 @@ const fs = require('fs');
 const os = require('os');
 const appRoot = require('app-root-path');
 const files = require('fs');
-const gritty = require('gritty');
+//const gritty = require('gritty');
 const rateLimit = require("express-rate-limit");
 const randomstring = require("randomstring");
 const Storage = require('json-storage-fs');
@@ -435,7 +435,7 @@ app.use(function (req, res, next)
     next()
 });
 
-app.use(gritty()); //Gritty...
+//app.use(gritty()); //Gritty...
 
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
 
@@ -483,10 +483,10 @@ var authtermpop = function(req,res,next){
   }
 };
 
-//Damn Terminal Sockets running on port 3300
-gritty.listen(io, {
-  prefix: '/gritty',
-});
+//Gritty Terminal Sockets running on port 3300
+// gritty.listen(io, {
+//   prefix: '/gritty',
+// });
  
 const Limiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
