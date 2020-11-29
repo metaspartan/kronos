@@ -49,7 +49,7 @@ Features
 - Wallet Addresses
 - Address Balances Powered by Scripthash and ElectrumX (denarius.pro)
 - View all transactions
-- Stake your Denarius
+- Stake your Denarius in Advanced Mode
 - Block Explorer for Addresses, Blocks, and Transactions
 - Realtime Denarius Block Height on Dashboard
 - Realtime CPU and Memory Usage Gauges
@@ -63,7 +63,6 @@ Features
 - Generate FS Key
 - KeepKey Client (View Denarius Address and Balance and TX History) (No TX Signing Yet)
 - Easy to install
-- Full Terminal inside of Kronos for managing your device
 - Auto Updates for Denarius via Snap
 - Easy installer to install Kronos
 - Mobile Ready Responsive Design
