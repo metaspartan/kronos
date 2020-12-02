@@ -756,12 +756,29 @@ exports.simpleindex = (req, res) => {
 
                 const txs = gethistory1.concat(gethistory2);
 
+                const txscount = txs.length;
+
+                const fulltx = [];
+
+                for(i=0; i<txscount; i++) {
+                    if (typeof txs[i].tx_hash != 'undefined') {
+                        var transactionID = txs[i].tx_hash;
+                        var transactionBlock = txs[i].height;
+                        const transactionHex = await electrum.request('blockchain.transaction.get', transactionID, true);
+                        //transactionHex.push(transactionBlock);
+                        //console.log(transactionHex);
+                        fulltx.push({transactionBlock, transactionHex});
+                    }
+                }
+
+                //console.log('Full TX History: ', fulltx);
+
                 //console.log('Transactions', txs);
 
                 //await electrum.disconnect();
                 await electrum.shutdown();
 
-                return txs;
+                return fulltx; //txs //fulltx
                 } catch (e) {
                     console.log('TX Error', e);
                 }
@@ -1026,11 +1043,15 @@ exports.simpleindex = (req, res) => {
                 scripthasharray.forEach(function (item, index) {
                     totalbal += item.balance;
                 });                
-                Storage.set('totalbal', totalbal.toString());
+                Storage.set('totalbal', totalbal);
                 Storage.set('accountarray', scripthasharray);
                 let denariusutxos = scripthasharray[0].utxos;
-                let denariustxs = scripthasharray[0].txs;
-                Storage.set('dutxo', denariusutxos);
+                let denariustxs = scripthasharray[3].txs;
+                //scripthasharray = scripthasharray.filter(item => item);
+                //console.log(scripthasharray)
+                //console.log('----- ', scripthasharray[3].txs);
+                //console.log(denariustxs);
+                //Storage.set('dutxo', denariusutxos);
 
                 // Get Total Unconfirmed Balances of all derived addresses
                 var totalunbal;
@@ -1152,7 +1173,7 @@ exports.simpleindex = (req, res) => {
                                 //var totalari = Storage.get('totalaribal');
                                 var erctxs = result.body.result; //* balance;
 
-                                Storage.set('erctxs', erctxs.toString());
+                                Storage.set('erctxs', erctxs);
                                 //Storage.set('currentariprice', currentariprice);
 
                             } else { 
@@ -1172,7 +1193,7 @@ exports.simpleindex = (req, res) => {
                                 //var totalari = Storage.get('totalaribal');
                                 var ethtxs = result.body.result; //* balance;
                                 
-                                Storage.set('ethtxs', ethtxs.toString());
+                                Storage.set('ethtxs', ethtxs);
                                 //Storage.set('currentariprice', currentariprice);
 
                             } else { 

@@ -103,21 +103,30 @@ block content
         h3(style='font-size:48px;color: #393939;margin-top:0px;', align='center') 
               i.fas.fa-history  
               |  Denarius Transaction History
+        //- each val in dtxs.length ? dtxs : ['There are no values']
+        //-   li= val
         if (typeof dtxs != 'undefined')
           if (typeof dtxs[0] != 'undefined')
             .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;') 
-              table.sortable#fst
-                thead
-                  tr
-                    th Block Height
-                    th TXID
-                tbody
-                  each tx in dtxs
+              .tablewrapper
+                table.sortable#fst
+                  thead
                     tr
-                      td(align='center', data-label='Block Height') 
-                        a.txid(href='https://chainz.cryptoid.info/d/tx.dws?'+tx.height, target='_blank') #{tx.height}
-                      td(align='center', data-label='TXID') 
-                        a.txid(href='https://chainz.cryptoid.info/d/tx.dws?'+tx.tx_hash, target='_blank') #{tx.tx_hash}
+                      th Block Height
+                      th.sorttable_nosort Time (GMT)
+                      th Confirmations
+                      th TXID
+                  tbody
+                    each tx in dtxs
+                      tr
+                        td(align='center', data-label='D Block Height') 
+                          a.txid(href='https://chainz.cryptoid.info/d/tx.dws?'+tx.transactionBlock, target='_blank') #{tx.transactionBlock}
+                        td(align='center', data-label='Timestamp') 
+                          .date= new Date(tx.transactionHex.time*1000).toUTCString().replace('GMT','')
+                        td(align='center', data-label='Confirmations') 
+                          | #{tx.transactionHex.confirmations}
+                        td(align='center', data-label='TXID') 
+                          a.txid(href='https://chainz.cryptoid.info/d/tx.dws?'+tx.transactionHex.txid, target='_blank') #{tx.transactionHex.txid}
           else
             h1(style='color:#666;', align='center') No Transactions Available
         else
@@ -129,24 +138,25 @@ block content
         if (typeof erctxs != 'undefined')
           if (typeof erctxs[0] != 'undefined')
             .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;')
-              table.sortable#fst
-                thead
-                  tr
-                    th Block Height
-                    th.sorttable_nosort Time (GMT)
-                    th Confirmations
-                    th TXID
-                tbody
-                  each tx in erctxs
+              .tablewrapper
+                table.sortable#fst
+                  thead
                     tr
-                      td(align='center') !{tx.blockNumber}
-                      td(align='center') 
-                        if (typeof tx.timeStamp != 'undefined')
-                          .date= new Date(tx.timeStamp*1000).toUTCString().replace('GMT','')
-                      td(align='center') 
-                        .label.label-success(style='background: none;') !{tx.confirmations}
-                      td(align='center') 
-                        a.txid(href=`https://etherscan.io/tx/${tx.hash}`, target='_blank') !{tx.hash}
+                      th Block Height
+                      th.sorttable_nosort Time (GMT)
+                      th Confirmations
+                      th TXID
+                  tbody
+                    each tx in erctxs
+                      tr
+                        td(align='center', data-label='ARI Block Height') !{tx.blockNumber}
+                        td(align='center', data-label='Timestamp') 
+                          if (typeof tx.timeStamp != 'undefined')
+                            .date= new Date(tx.timeStamp*1000).toUTCString().replace('GMT','')
+                        td(align='center', data-label='Confirmations') 
+                          .label.label-success(style='background: none;') !{tx.confirmations}
+                        td(align='center', data-label='TXID') 
+                          a.txid(href=`https://etherscan.io/tx/${tx.hash}`, target='_blank') !{tx.hash}
           else
             h1(style='color:#666;', align='center') No ARI Transactions Available
       .row(class='rowclass', style='padding-right: 20px !important;').animate__animated.animate__fadeIn#tab2
@@ -156,24 +166,25 @@ block content
         if (typeof ethtxs != 'undefined')
           if (typeof ethtxs[0] != 'undefined')
             .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;')
-              table.sortable#fst
-                thead
-                  tr
-                    th Block Height
-                    th.sorttable_nosort Time (GMT)
-                    th Confirmations
-                    th TXID
-                tbody
-                  each tx in ethtxs
+              .tablewrapper
+                table.sortable#fst
+                  thead
                     tr
-                      td(align='center') !{tx.blockNumber}
-                      td(align='center') 
-                        if (typeof tx.timeStamp != 'undefined')
-                          .date= new Date(tx.timeStamp*1000).toUTCString().replace('GMT','')
-                      td(align='center') 
-                        .label.label-success(style='background: none;') !{tx.confirmations}
-                      td(align='center') 
-                        a.txid(href=`https://etherscan.io/tx/${tx.hash}`, target='_blank') !{tx.hash}
+                      th Block Height
+                      th.sorttable_nosort Time (GMT)
+                      th Confirmations
+                      th TXID
+                  tbody
+                    each tx in ethtxs
+                      tr
+                        td(align='center', data-label='ETH Block Height') !{tx.blockNumber}
+                        td(align='center', data-label='Timestamp') 
+                          if (typeof tx.timeStamp != 'undefined')
+                            .date= new Date(tx.timeStamp*1000).toUTCString().replace('GMT','')
+                        td(align='center', data-label='Confirmations') 
+                          .label.label-success(style='background: none;') !{tx.confirmations}
+                        td(align='center', data-label='TXID') 
+                          a.txid(href=`https://etherscan.io/tx/${tx.hash}`, target='_blank') !{tx.hash}
           else
             h1(style='color:#666;', align='center') No ETH Transactions Available
       //- .divider(style='background-color:#2b2b2b !important;height:2px;width:60%;margin:0 auto;', align='center')

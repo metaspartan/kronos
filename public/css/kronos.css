@@ -1004,15 +1004,24 @@ a.send {
   border-radius: 15px;
 }
 
+.tablewrapper {
+  overflow:hidden;
+  border-radius:15px;
+}
+
 #fst {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   border-collapse: collapse;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
   width: 100%;
   margin: 0 auto;
 }
 
+#fst tbody tr:last-of-type {
+  border-bottom: 2px solid #111;
+}
+
 #fst td, #fst th {
-  border: 1px solid #444;
   padding: 8px;
 }
 
@@ -1021,10 +1030,10 @@ a.send {
 #fst tr:hover {background-color: #444;}
 
 #fst th {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  text-align: left;
-  background-color: rgb(43, 40, 35);
+  padding-top: 15px;
+  padding-bottom: 15px;
+  text-align: center;
+  background-color:#46494b;
   color: white;
 }
 
