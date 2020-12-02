@@ -1,230 +1,10 @@
 extends ../layoutsimple
 
 block content
-  script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js') 
-  script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js')
-  script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js")
   style.
     .dashloader {
       display: none;
     }
-  script.
-    socket.on('cpuspeed', function (data99) {
-      // console.log(data);
-      $('#avg').html(data99.avg);
-    });
-    socket.on('newblock', function (data) {
-      //console.log('SOCKET GOT NEW BLOCK', data);
-      if (!data.block[0] && !data.error) {
-        var height = data.block.height;
-        var hexhash = data.block.hex.toString();
-        //$('#blockheight').html(height);
-        $('#blockhash').html('<a href="https://chainz.cryptoid.info/d/block.dws?'+height+'" style="color:#444;font-size:9px;font-weight:400;" target="_blank">D BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
-        $('#link').html('<span class="blockcount"><a href="https://chainz.cryptoid.info/d/block.dws?'+height+'" target="_blank">'+height+'</a></span>'); 
-      } else {
-        var height = data.block[0].height;
-        var hexhash = data.block[0].hex.toString();
-        //$('#blockheight').html(height);
-        $('#blockhash').html('<a href="https://chainz.cryptoid.info/d/block.dws?'+height+'" style="color:#444;font-size:9px;font-weight:400;" target="_blank">D BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
-        $('#link').html('<span class="blockcount"><a href="https://chainz.cryptoid.info/d/block.dws?'+height+'" target="_blank">'+height+'</a>'); 
-      }
-    });
-    socket.on('temp', function (data3) {
-      // console.log(data);
-      $('#temp').html(data3.temp);
-    });
-    //- socket.on('usdinfo', function (data) {
-    //-   $('#totalbal').html(data.dbalance);
-    //-   $('#usdbalance').html(data.usdbalance);
-    //-   $('#currentprice').html(data.currentprice);
-    //- });
-    //- socket.on('ethinfo', function (data) {
-    //-   $('#totalethbal').html(data.ethbalance);
-    //-   $('#ethusdbalance').html(data.ethusdbalance);
-    //-   $('#currentethprice').html(data.currentprice);
-    //- });
-    //- socket.on('ariinfo', function (data) {
-    //-   $('#totalaribal').html(data.aribalance);
-    //-   $('#ariusdbalance').html(data.ariusdbalance);
-    //-   $('#currentariprice').html(data.currentprice);
-    //- });
-    let progcpu = [];
-    progcpu.push(0);
-    socket.on('cpuload', function (data1) {
-      ldbar1 = new ldBar("#cpuy", {
-                    "stroke-width": 8,
-                    "preset": "circle",
-                    "pattern-size": "32",
-                    "stroke": "../img/maze.svg",
-                    "stroke-linecap": "round"
-                    });
-      ldbar1.set(data1.cpu.toFixed(2) * 100, true);
-
-      var progresscpu2 = data1.cpu.toFixed(2) * 100;
-      var progresscpu = progresscpu2.toFixed(2);
-
-      progcpu.push(progresscpu);
-
-      $('.cpumini').sparkline(progcpu, {
-                type: 'line',
-                width: '93%',
-                height: '20px',
-                disableTooltips: 'true',
-                highlightLineColor: '#ffff00',
-                highlightSpotColor: '#ffff00',
-                disableInteraction: 'true',
-                spotColor: '#ffff00',
-                lineColor: '#ffff00',
-                fillColor: '#303030'});
-
-      $('#avgload').html(progresscpu);
-
-    });
-    let progarray = [];
-    progarray.push(0);
-    socket.on('memory', function (data2) {   
-      ldbar = new ldBar("#rammy", {
-                    "stroke-width": 8,
-                    "preset": "circle",
-                    "pattern-size": "32",
-                    "stroke": "../img/maze.svg",
-                    "stroke-linecap": "round"
-                    });
-      ldbar.set(data2.mempp.toFixed(2) * 100, true);
-
-      var progressmem2 = data2.mempp.toFixed(2) * 100;
-      var progressmem = progressmem2.toFixed(2);
-
-      progarray.push(progressmem);
-
-      $('.memini').sparkline(progarray, {
-                type: 'line',
-                width: '93%',
-                height: '20px',
-                lineColor: '#ffff00',
-                highlightLineColor: '#ffff00',
-                highlightSpotColor: '#ffff00',
-                disableInteraction: 'true',
-                spotColor: '#ffff00',
-                fillColor: '#303030'});
-      $('#memu').html(data2.memu);
-      $('#memt').html(data2.memt);
-      $('#memf').html(data2.memf);
-    });
-    socket.on('newblocketh', function (data9) {
-      if (!data9.ethblock[0] && !data9.error) {
-        var height = data9.ethblock;
-        var hexhash = data9.ethhash;
-        //$('#blockheight').html(height);
-        $('#ethblockhash').html('<a href="https://etherscan.io/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;" target="_blank">ETH BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
-        $('#ethlink').html('<span class="blockcount"><a href="https://etherscan.io/block/'+height+'" target="_blank">'+height+'</a></span>'); 
-      } else {
-        var height = data9.ethblock[0];
-        var hexhash = data9.ethhash[0];
-        //$('#blockheight').html(height);
-        $('#ethblockhash').html('<a href="https://etherscan.io/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;" target="_blank">ETH BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
-        $('#ethlink').html('<span class="blockcount"><a href="https://etherscan.io/block/'+height+'" target="_blank">'+height+'</a>'); 
-      }
-    });
-    socket.on('newethbal', function (data69) {
-      if (!data69.ethbal[0] && !data69.error) {
-        var bal = data69.ethbal;
-        if (bal != 'undefined') {
-          bal = parseFloat(bal.toFixed(6));
-        }
-        $('#totalethbal').html(bal);
-        $('#htotalethbal').html(bal + '<img class="res" src="../img/eth.png" alt="ETH" border="0" style="height:24px !important;width: 24px !important;margin:-15px 0px -12px !important;" /><span style="color:#888;">ETH</span>');
-        var updatedethusd = bal * $('#currentethprice').text();
-        $('#ethusdbalance').html(updatedethusd.toFixed(3));
-        document.querySelectorAll(".format").forEach((e) => {
-          let txt = e.innerHTML.split(".")
-          if (typeof txt[1] != 'undefined') {
-            e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
-          }
-        });
-      } else {
-        var bal = data69.ethbal[0];
-        if (bal != 'undefined') {
-          bal = parseFloat(bal.toFixed(6));
-        }
-        $('#totalethbal').html(bal); 
-        $('#htotalethbal').html(bal + '<img class="res" src="../img/eth.png" alt="ETH" border="0" style="height:24px !important;width: 24px !important;margin:-15px 0px -12px !important;" /><span style="color:#888;">ETH</span>');
-        var updatedethusd = bal * $('#currentethprice').text();
-        $('#ethusdbalance').html(updatedethusd.toFixed(3));
-        document.querySelectorAll(".format").forEach((e) => {
-          let txt = e.innerHTML.split(".")
-          if (typeof txt[1] != 'undefined') {
-            e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
-          }
-        });
-      }
-    });
-    socket.on('newaribal', function (data22) {
-      if (!data22.aribal[0] && !data22.error) {
-        var bal = data22.aribal;
-        if (bal != 'undefined') {
-          bal = parseFloat(bal.toFixed(4));
-        }
-        $('#totalaribal').html(bal);
-        $('#htotalaribal').html(bal + '<img class="res" src="../img/ari.png" alt="ARI" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">ARI</span>');
-        var updatedusd = bal * $('#currentariprice').text();
-        $('#ariusdbalance').html(updatedusd.toFixed(3));
-        document.querySelectorAll(".format").forEach((e) => {
-          let txt = e.innerHTML.split(".")
-          if (typeof txt[1] != 'undefined') {
-            e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
-          }
-        });
-      } else {
-        var bal = data22.aribal[0];
-        if (bal != 'undefined') {
-          bal = parseFloat(bal.toFixed(4));
-        }
-        $('#totalaribal').html(bal);
-        $('#htotalaribal').html(bal + '<img class="res" src="../img/ari.png" alt="ARI" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">ARI</span>');
-        var updatedusd = bal * $('#currentariprice').text();
-        $('#ariusdbalance').html(updatedusd.toFixed(3));
-        document.querySelectorAll(".format").forEach((e) => {
-          let txt = e.innerHTML.split(".")
-          if (typeof txt[1] != 'undefined') {
-            e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
-          }
-        });
-      }
-    });
-    socket.on('newdbal', function (data28) {
-      if (!data28.dbal[0] && !data28.error) {
-        var bal = data28.dbal;
-        if (bal != 'undefined') {
-          bal = parseFloat(bal.toFixed(8));
-        }
-        $('#totalbal').html(bal);
-        $('#htotalbal').html(bal + '<img class="res" src="../img/denarius.png" alt="D" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">D</span>');
-        var updateddusd = bal * $('#currentprice').text();
-        $('#usdbalance').html(updateddusd.toFixed(3));
-        document.querySelectorAll(".format").forEach((e) => {
-          let txt = e.innerHTML.split(".")
-          if (typeof txt[1] != 'undefined') {
-            e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
-          }
-        });
-      } else {
-        var bal = data28.dbal[0];
-        if (bal != 'undefined') {
-          bal = parseFloat(bal.toFixed(8));
-        }
-        $('#totalbal').html(bal);
-        $('#htotalbal').html(bal + '<img class="res" src="../img/denarius.png" alt="D" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">D</span>');
-        var updateddusd = bal * $('#currentprice').text();
-        $('#usdbalance').html(updateddusd.toFixed(3));
-        document.querySelectorAll(".format").forEach((e) => {
-          let txt = e.innerHTML.split(".")
-          if (typeof txt[1] != 'undefined') {
-            e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
-          }
-        });
-      }
-    });
   .maincontent(style='border: none !important;')
     .container(style='width:90%')
       //- .div(style='margin-top:25px;')
@@ -459,6 +239,226 @@ block content
             .col-sm-6(align='center')              
               #cpuy.label-center(style='width:250px;height:250px;')
               span(style='color:#777;') CPU Usage
+    script(src='../js/lib/jquery-3.1.1.min.js') 
+    script(src='../js/jquery.sparkline.min.js')
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js")
+    script.
+      socket.on('cpuspeed', function (data99) {
+        // console.log(data);
+        $('#avg').html(data99.avg);
+      });
+      socket.on('newblock', function (data) {
+        //console.log('SOCKET GOT NEW BLOCK', data);
+        if (!data.block[0] && !data.error) {
+          var height = data.block.height;
+          var hexhash = data.block.hex.toString();
+          //$('#blockheight').html(height);
+          $('#blockhash').html('<a href="https://chainz.cryptoid.info/d/block.dws?'+height+'" style="color:#444;font-size:9px;font-weight:400;" target="_blank">D BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
+          $('#link').html('<span class="blockcount"><a href="https://chainz.cryptoid.info/d/block.dws?'+height+'" target="_blank">'+height+'</a></span>'); 
+        } else {
+          var height = data.block[0].height;
+          var hexhash = data.block[0].hex.toString();
+          //$('#blockheight').html(height);
+          $('#blockhash').html('<a href="https://chainz.cryptoid.info/d/block.dws?'+height+'" style="color:#444;font-size:9px;font-weight:400;" target="_blank">D BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
+          $('#link').html('<span class="blockcount"><a href="https://chainz.cryptoid.info/d/block.dws?'+height+'" target="_blank">'+height+'</a>'); 
+        }
+      });
+      socket.on('temp', function (data3) {
+        // console.log(data);
+        $('#temp').html(data3.temp);
+      });
+      //- socket.on('usdinfo', function (data) {
+      //-   $('#totalbal').html(data.dbalance);
+      //-   $('#usdbalance').html(data.usdbalance);
+      //-   $('#currentprice').html(data.currentprice);
+      //- });
+      //- socket.on('ethinfo', function (data) {
+      //-   $('#totalethbal').html(data.ethbalance);
+      //-   $('#ethusdbalance').html(data.ethusdbalance);
+      //-   $('#currentethprice').html(data.currentprice);
+      //- });
+      //- socket.on('ariinfo', function (data) {
+      //-   $('#totalaribal').html(data.aribalance);
+      //-   $('#ariusdbalance').html(data.ariusdbalance);
+      //-   $('#currentariprice').html(data.currentprice);
+      //- });
+      let progcpu = [];
+      progcpu.push(0);
+      socket.on('cpuload', function (data1) {
+        ldbar1 = new ldBar("#cpuy", {
+                      "stroke-width": 8,
+                      "preset": "circle",
+                      "pattern-size": "32",
+                      "stroke": "../img/maze.svg",
+                      "stroke-linecap": "round"
+                      });
+        ldbar1.set(data1.cpu.toFixed(2) * 100, true);
+
+        var progresscpu2 = data1.cpu.toFixed(2) * 100;
+        var progresscpu = progresscpu2.toFixed(2);
+
+        progcpu.push(progresscpu);
+
+        $('.cpumini').sparkline(progcpu, {
+                  type: 'line',
+                  width: '93%',
+                  height: '20px',
+                  disableTooltips: 'true',
+                  highlightLineColor: '#ffff00',
+                  highlightSpotColor: '#ffff00',
+                  disableInteraction: 'true',
+                  spotColor: '#ffff00',
+                  lineColor: '#ffff00',
+                  fillColor: '#303030'});
+
+        $('#avgload').html(progresscpu);
+
+      });
+      let progarray = [];
+      progarray.push(0);
+      socket.on('memory', function (data2) {   
+        ldbar = new ldBar("#rammy", {
+                      "stroke-width": 8,
+                      "preset": "circle",
+                      "pattern-size": "32",
+                      "stroke": "../img/maze.svg",
+                      "stroke-linecap": "round"
+                      });
+        ldbar.set(data2.mempp.toFixed(2) * 100, true);
+
+        var progressmem2 = data2.mempp.toFixed(2) * 100;
+        var progressmem = progressmem2.toFixed(2);
+
+        progarray.push(progressmem);
+
+        $('.memini').sparkline(progarray, {
+                  type: 'line',
+                  width: '93%',
+                  height: '20px',
+                  lineColor: '#ffff00',
+                  highlightLineColor: '#ffff00',
+                  highlightSpotColor: '#ffff00',
+                  disableInteraction: 'true',
+                  spotColor: '#ffff00',
+                  fillColor: '#303030'});
+        $('#memu').html(data2.memu);
+        $('#memt').html(data2.memt);
+        $('#memf').html(data2.memf);
+      });
+      socket.on('newblocketh', function (data9) {
+        if (!data9.ethblock[0] && !data9.error) {
+          var height = data9.ethblock;
+          var hexhash = data9.ethhash;
+          //$('#blockheight').html(height);
+          $('#ethblockhash').html('<a href="https://etherscan.io/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;" target="_blank">ETH BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
+          $('#ethlink').html('<span class="blockcount"><a href="https://etherscan.io/block/'+height+'" target="_blank">'+height+'</a></span>'); 
+        } else {
+          var height = data9.ethblock[0];
+          var hexhash = data9.ethhash[0];
+          //$('#blockheight').html(height);
+          $('#ethblockhash').html('<a href="https://etherscan.io/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;" target="_blank">ETH BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
+          $('#ethlink').html('<span class="blockcount"><a href="https://etherscan.io/block/'+height+'" target="_blank">'+height+'</a>'); 
+        }
+      });
+      socket.on('newethbal', function (data69) {
+        if (!data69.ethbal[0] && !data69.error) {
+          var bal = data69.ethbal;
+          //- if (bal != 'undefined') {
+          //-   bal = parseFloat(bal.toFixed(6));
+          //- }
+          $('#totalethbal').html(bal);
+          $('#htotalethbal').html(bal + '<img class="res" src="../img/eth.png" alt="ETH" border="0" style="height:24px !important;width: 24px !important;margin:-15px 0px -12px !important;" /><span style="color:#888;">ETH</span>');
+          var updatedethusd = bal * $('#currentethprice').text();
+          $('#ethusdbalance').html(updatedethusd.toFixed(3));
+          document.querySelectorAll(".format").forEach((e) => {
+            let txt = e.innerHTML.split(".")
+            if (typeof txt[1] != 'undefined') {
+              e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
+            }
+          });
+        } else {
+          var bal = data69.ethbal[0];
+          //- if (bal != 'undefined') {
+          //-   bal = parseFloat(bal.toFixed(6));
+          //- }
+          $('#totalethbal').html(bal); 
+          $('#htotalethbal').html(bal + '<img class="res" src="../img/eth.png" alt="ETH" border="0" style="height:24px !important;width: 24px !important;margin:-15px 0px -12px !important;" /><span style="color:#888;">ETH</span>');
+          var updatedethusd = bal * $('#currentethprice').text();
+          $('#ethusdbalance').html(updatedethusd.toFixed(3));
+          document.querySelectorAll(".format").forEach((e) => {
+            let txt = e.innerHTML.split(".")
+            if (typeof txt[1] != 'undefined') {
+              e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
+            }
+          });
+        }
+      });
+      socket.on('newaribal', function (data22) {
+        if (!data22.aribal[0] && !data22.error) {
+          var bal = data22.aribal;
+          //- if (bal != 'undefined') {
+          //-   bal = parseFloat(bal.toFixed(4));
+          //- }
+          $('#totalaribal').html(bal);
+          $('#htotalaribal').html(bal + '<img class="res" src="../img/ari.png" alt="ARI" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">ARI</span>');
+          var updatedusd = bal * $('#currentariprice').text();
+          $('#ariusdbalance').html(updatedusd.toFixed(3));
+          document.querySelectorAll(".format").forEach((e) => {
+            let txt = e.innerHTML.split(".")
+            if (typeof txt[1] != 'undefined') {
+              e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
+            }
+          });
+        } else {
+          var bal = data22.aribal[0];
+          //- if (bal != 'undefined') {
+          //-   bal = parseFloat(bal.toFixed(4));
+          //- }
+          $('#totalaribal').html(bal);
+          $('#htotalaribal').html(bal + '<img class="res" src="../img/ari.png" alt="ARI" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">ARI</span>');
+          var updatedusd = bal * $('#currentariprice').text();
+          $('#ariusdbalance').html(updatedusd.toFixed(3));
+          document.querySelectorAll(".format").forEach((e) => {
+            let txt = e.innerHTML.split(".")
+            if (typeof txt[1] != 'undefined') {
+              e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
+            }
+          });
+        }
+      });
+      socket.on('newdbal', function (data28) {
+        if (!data28.dbal[0] && !data28.error) {
+          var bal = data28.dbal;
+          //- if (bal != 'undefined') {
+          //-   bal = parseFloat(bal.toFixed(8));
+          //- }
+          $('#totalbal').html(bal);
+          $('#htotalbal').html(bal + '<img class="res" src="../img/denarius.png" alt="D" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">D</span>');
+          var updateddusd = bal * $('#currentprice').text();
+          $('#usdbalance').html(updateddusd.toFixed(3));
+          document.querySelectorAll(".format").forEach((e) => {
+            let txt = e.innerHTML.split(".")
+            if (typeof txt[1] != 'undefined') {
+              e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
+            }
+          });
+        } else {
+          var bal = data28.dbal[0];
+          //- if (bal != 'undefined') {
+          //-   bal = parseFloat(bal.toFixed(8));
+          //- }
+          $('#totalbal').html(bal);
+          $('#htotalbal').html(bal + '<img class="res" src="../img/denarius.png" alt="D" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">D</span>');
+          var updateddusd = bal * $('#currentprice').text();
+          $('#usdbalance').html(updateddusd.toFixed(3));
+          document.querySelectorAll(".format").forEach((e) => {
+            let txt = e.innerHTML.split(".")
+            if (typeof txt[1] != 'undefined') {
+              e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
+            }
+          });
+        }
+      });
     script.
       var tabs = $('.tabs');
       var selector = $('.tabs').find('a').length;

@@ -209,9 +209,9 @@ exports.simpleindex = (req, res) => {
         }
         const ethWalletBal = async () => {
             let ethbalance = await provider.getBalance(ethwalletp.address);
-            let ethbalformatted = ethers.utils.formatUnits(ethbalance, 4);
+            let ethbalformatted = ethers.utils.formatEther(ethbalance);
             Storage.set('totalethbal', JSON.parse(ethbalformatted).toString());
-            socket.emit("newethbal", {ethbal: parseFloat(ethbalformatted)});
+            socket.emit("newethbal", {ethbal: JSON.parse(ethbalformatted)});
         }
         ethWalletBal();
         setInterval(function(){ 
@@ -226,7 +226,7 @@ exports.simpleindex = (req, res) => {
         }
         const ariWalletBal = async () => {
             let aribalance = await ariContract.balanceOf(ethwalletp.address);
-            let aribalformatted = ethers.utils.formatUnits(aribalance, 4);
+            let aribalformatted = ethers.utils.formatUnits(aribalance, 8);
             Storage.set('totalaribal', JSON.parse(aribalformatted).toString());
             socket.emit("newaribal", {aribal: parseFloat(aribalformatted)});
         }
@@ -1055,8 +1055,8 @@ exports.simpleindex = (req, res) => {
 
                     //console.log(boxspace);
 
-                    Storage.set('totaleth', totalethbal.toFixed(6).toString());
-                    Storage.set('totalaribal', totalaribal.toFixed(6).toString());
+                    Storage.set('totaleth', totalethbal.toString());
+                    Storage.set('totalaribal', totalaribal.toString());
 
                     //Start Sockets for USD and Balance Info
                     let socket_id9 = [];
