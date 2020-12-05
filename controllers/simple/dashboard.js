@@ -25,6 +25,7 @@ const bitcoinjs = require('bitcoinjs-lib');
 const CryptoJS = require("crypto-js");
 const bip39 = require("bip39");
 const bip32 = require("bip32d");
+const bip32b = require("bip32");
 const sha256 = require('sha256');
 const files = require('fs');
 const appRoot = require('app-root-path');
@@ -513,6 +514,8 @@ exports.simpleindex = (req, res) => {
         // BIP32 From BIP39 Seed
         const root = bip32.fromSeed(seed);
 
+        const rootbtc = bip32b.fromSeed(seed);
+
         // Get XPUB from BIP32
         const xpub = root.neutered().toBase58();
 
@@ -552,7 +555,7 @@ exports.simpleindex = (req, res) => {
         // Get the keypair from the address derivation path
         const addressKeypair0 = root.derivePath(addressPath0);
 
-        const btcaddressKeypair0 = root.derivePath(btcaddressPath0);
+        const btcaddressKeypair0 = rootbtc.derivePath(btcaddressPath0);
 
         // Get the p2pkh base58 public address of the keypair
         const p2pkhaddy0 = denarius.payments.p2pkh({ pubkey: addressKeypair0.publicKey, network }).address;
