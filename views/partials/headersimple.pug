@@ -86,55 +86,9 @@ script.
             a(href='http://'+lanip+':3000/chat', onclick="javascript:event.target.port=3000") 
               i.fas.fa-comment-dots   
               |   Chat
-          //- li.dropdown(class=(title == 'Wallet') ? 'active' : undefined)
-          //-   a.dropdown-toggle(href='#', data-toggle='dropdown')
-          //-     span 
-          //-     i.fa.fa-wallet  
-          //-     |   Wallet
-          //-     i.caret
-          //-   ul.dropdown-menu
-          //-     li
-          //-       a(href='http://'+lanip+':3000/transactions', onclick="javascript:event.target.port=3000") 
-          //-         i.fas.fa-exchange-alt  
-          //-         |   Transactions
-          //-     li.divider
-          //-     li
-          //-       a(href='http://'+lanip+':3000/addresses', onclick="javascript:event.target.port=3000") 
-          //-         i.fas.fa-at  
-          //-         |   Addresses
-          //-     li.divider
-          //-     li
-          //-       a(href='http://'+lanip+':3000/backup', onclick="javascript:event.target.port=3000") 
-          //-         i.fas.fa-server  
-          //-         |   Backup Wallet
-              //- li.divider(style=sendicon)
-              //- li(style=sendicon)
-              //-   a(href='http://'+lanip+':3000/import', onclick="javascript:event.target.port=3000") 
-              //-     i.fas.fa-key   
-              //-     |   Import a private key
-          //- li.dropdown(class=(title == 'Tools') ? 'active' : undefined)
-          //-   a.dropdown-toggle(href='#', data-toggle='dropdown')
-          //-     span 
-          //-     i.fas.fa-tools  
-          //-     |   Tools 
-          //-     i.caret
-            //- ul.dropdown-menu
-              //- li(style=sendicon)
-              //-   a(href='http://'+lanip+':3000/rawtx', onclick="javascript:event.target.port=3000") 
-              //-     i.far.fa-paper-plane  
-              //-     |   Send Raw Transaction
-              //- li.divider
-              //- li
-              //-   a(href='http://'+lanip+':3000/genmini', onclick="javascript:event.target.port=3000") 
-              //-     i.fas.fa-plus   
-              //-     |   Generate Minikey
-              //- li
-              //-   a(href='http://'+lanip+':3000/convertmini', onclick="javascript:event.target.port=3000") 
-              //-     i.fas.fa-sync-alt    
-              //-     |   Convert Minikey
       ul.nav.navbar-nav.centerbal
           li
-            a(href='http://'+lanip+':3000/createtx', style='font-size:14px;color:#FFF;')#htotalbal #{totalbal || 0} 
+            a(href='http://'+lanip+':3000/createtx', style='font-size:14px;color:#FFF;')
               img.res(src='../img/denarius.png', alt='D', border='0', style='height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;')
               span(style='color:#888;') D
           li
@@ -142,7 +96,15 @@ script.
               div(style='background-color:#4f4f4f;border-radius:15px;padding-right:8px;padding-left:8px;font-size:12px;color:#fff;')
                 i.fas.fa-arrow-right
           li
-            a(href='http://'+lanip+':3000/sendeth', style='font-size:14px;color:#FFF;')#htotalethbal #{totalethbal || 0} 
+            a(href='http://'+lanip+':3000/sendbtc', style='font-size:14px;color:#FFF;') 
+              img.res(src='../img/bitcoin.png', alt='BTC', border='0', style='height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;')
+              span(style='color:#888;') BTC
+          li
+            a(href='http://'+lanip+':3000/sendbtc', style='border-right:1px #444 solid;padding-left:0px !important;')
+              div(style='background-color:#514e39;border-radius:15px;padding-right:8px;padding-left:8px;font-size:12px;color:#fff;')
+                i.fas.fa-arrow-right
+          li
+            a(href='http://'+lanip+':3000/sendeth', style='font-size:14px;color:#FFF;') 
               img.res(src='../img/eth.png', alt='ETH', border='0', style='height:24px !important;width: 24px !important;margin:-15px 0px -12px !important;')
               span(style='color:#888;') ETH
           li
@@ -150,7 +112,7 @@ script.
               div(style='background-color:#3f3b54;border-radius:15px;padding-right:8px;padding-left:8px;font-size:12px;color:#fff;')
                 i.fas.fa-arrow-right
           li
-            a(href='http://'+lanip+':3000/sendari', style='font-size:14px;color:#FFF;')#htotalaribal #{totalaribal || 0} 
+            a(href='http://'+lanip+':3000/sendari', style='font-size:14px;color:#FFF;')
               img.res(src='../img/ari.png', alt='ARI', border='0', style='height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;')
               span(style='color:#888;') ARI
           li

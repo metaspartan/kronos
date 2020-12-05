@@ -11,82 +11,110 @@ block content
       //-   form.form-horizontal(action='/search', method='POST', id='explorer')
       //-     input(type='hidden', name='_csrf', value=_csrf)
       //-     input.form-control.blackinput4(type='text', align='center', name='explorersearch', id='explorersearch', placeholder='Search Kronos for Denarius Block # or Transaction Hash or D Address')
-      .row.mobilerow(style='margin-top:9px;')
-        .col-md-4(style='margin-top:35px;')
-          p(align='center')
-            span.animate__animated.animate__fadeIn#link
-            br
-            span.animate__animated.animate__fadeIn#blockhash(style='margin-bottom:10px;')
-            br
-        .col-md-4.mobilerow2(align='center')
-          h3(align='center', style='margin:35px;').animate__animated.animate__bounce
-            | Everything is 
-            span(style='color: #42B905;') Great!
-            br
-            span.mobilerow2(style='font-size:12px;color:#999;') KRONOS IS CONNECTED
-        .col-md-4(style='margin-top:35px;')
-          p(align='center')
-            span.animate__animated.animate__fadeIn#ethlink
-            br
-            span.animate__animated.animate__fadeIn#ethblockhash(style='margin-bottom:10px;')
-            br
-      .row(class='rowclass balancerow').animate__animated.animate__fadeIn
-        .col-sm-4(align='center')
-          p
-            img.res(src='../img/denarius.png', alt='D', border='0', style='height:75px !important;width: 75px !important;margin:0px 0px 0px !important;')
-          p 
-          .bal(style='font-size:2.5em;') 
-            span#totalbal.format #{totalbal || 0}
-            small(style='font-size:16px;')  D
-          p
-          .bal(style='font-size:1.6em;color:#888;') $
-            span#usdbalance #{usdbalance || 0}
-            small(style='font-size:16px;')  USD @ $
-              span#currentprice #{currentprice || 0}
-              |  ea
-        .col-sm-4(align='center')
-          p
-            img.res(src='../img/eth.png', alt='ETH', border='0', style='height:75px !important;width:75px !important;margin:0px 0px 0px !important;')
-          p 
-          .bal(style='font-size:2.5em;') 
-            span#totalethbal.format #{totalethbal || 0}
-            small(style='font-size:16px;')  ETH
-          p
-          .bal(style='font-size:1.6em;color:#888;') $
-            span#ethusdbalance #{ethbalance || 0}
-            small(style='font-size:16px;')  USD @ $
-              span#currentethprice #{currentethprice || 0}
-              |  ea
-        .col-sm-4(align='center')
-          p
-            img.res(src='../img/ari.png', alt='ARI', border='0', style='height:75px !important;width:75px !important;margin:0px 0px 0px !important;')
-          p 
-          .bal(style='font-size:2.5em;') 
-            span#totalaribal.format #{totalaribal || 0}
-            small(style='font-size:16px;')  ARI
-          p
-          .bal(style='font-size:1.6em;color:#888;') $
-            span#ariusdbalance #{aribalance || 0}
-            small(style='font-size:16px;')  USD @ $
-              span#currentariprice #{currentariprice || 0}
-              |  ea
-      .spacer(style='background-color:#222 !important;height:15px;width:60%;margin:0 auto;', align='center')
-      .row(class='rowclass').animate__animated.animate__fadeIn
-        .row
-          .col-md-6
-            if (typeof qrcode != 'undefined')
-              .qrcode(align='center')
-                  a(href='#' + mainaddy)
-                    img(src='' + qrcode, style='border-radius:10px;')
-            .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:5vh;', align='center') Denarius Address
-              p.addressdash(style='background-color:#111;border-radius:15px;padding:10px;width:85%;margin:0 auto;margin-top:10px;') #{mainaddy}
-          .col-md-6
-            if (typeof qrcode != 'undefined')
-              .qrcode(align='center')
-                  a(href='#' + ethaddy)
-                    img(src='' + ethqrcode, style='border-radius:10px;')
-            .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:5vh;', align='center') ETH & ARI Address
-              p.addressdash(style='background-color:#111;border-radius:15px;padding:10px;width:85%;margin:0 auto;margin-top:10px;') #{ethaddy}
+      .row(class='rowclass balancerow', style='margin-top:25px !important;').animate__animated.animate__fadeIn
+        .splide
+          .splide__track
+            ul.splide__list
+              li.splide__slide(style='text-align:center;margin-bottom:35px;')
+                p
+                  img.res(src='../img/denarius.png', alt='D', border='0', style='height:75px !important;width: 75px !important;margin:0px 0px 0px !important;')
+                p 
+                .bal(style='font-size:2.5em;') 
+                  span#totalbal.format #{totalbal || 0}
+                  small(style='font-size:16px;')  D
+                p
+                .bal(style='font-size:1.6em;color:#888;') $
+                  span#usdbalance #{usdbalance || 0}
+                  small(style='font-size:16px;')  USD @ $
+                    span#currentprice #{currentprice || 0}
+                    |  ea
+                p
+                  p
+                    .addressdash(style='font-size:1.3vw;font-weight:400;border-radius:15px;padding:10px;margin:0 auto;margin-top:10px;margin-bottom:10px;')
+                      span(style='background-color: #1e1e1e;padding: 8px;padding-left: 15px;padding-right: 15px;border-radius:15px;') #{mainaddy}
+                      button.clip(style='background-color: transparent;border: none;margin-left: 5px;', data-clipboard-text=mainaddy)
+                        i.fas.fa-copy
+                  if (typeof qrcode != 'undefined')
+                    .qrcode(align='center')
+                        a(href='#' + mainaddy)
+                          img(src='' + qrcode, style='border-radius:10px;')
+                  .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:10px;', align='center') DENARIUS 
+                    span#dblock
+              li.splide__slide(style='text-align:center;margin-bottom:35px;')
+                p
+                  img.res(src='../img/bitcoin.png', alt='BTC', border='0', style='height:75px !important;width: 75px !important;margin:0px 0px 0px !important;')
+                p 
+                .bal(style='font-size:2.5em;') 
+                  span#totalbtcbal.format #{totalbtcbal || 0}
+                  small(style='font-size:16px;')  BTC
+                p
+                .bal(style='font-size:1.6em;color:#888;') $
+                  span#usdbtcbalance #{usdbtcbalance || 0}
+                  small(style='font-size:16px;')  USD @ $
+                    span#currentbtcprice #{currentbtcprice || 0}
+                    |  ea
+                p
+                  p
+                    .addressdash(style='font-size:1.3vw;font-weight:400;border-radius:15px;padding:10px;margin:0 auto;margin-top:10px;margin-bottom:10px;')
+                      span(style='background-color: #1e1e1e;padding: 8px;padding-left: 15px;padding-right: 15px;border-radius:15px;') #{btcaddress}
+                      button.clip(style='background-color: transparent;border: none;margin-left: 5px;', data-clipboard-text=btcaddress)
+                        i.fas.fa-copy
+                  if (typeof qrcode != 'undefined')
+                    .qrcode(align='center')
+                        a(href='#' + btcaddress)
+                          img(src='' + btcqrcode, style='border-radius:10px;')
+                  .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:10px;', align='center') BITCOIN 
+                    span#btcblock
+              li.splide__slide(style='text-align:center;margin-bottom:35px;')
+                p
+                  img.res(src='../img/eth.png', alt='ETH', border='0', style='height:75px !important;width:75px !important;margin:0px 0px 0px !important;')
+                p 
+                .bal(style='font-size:2.5em;') 
+                  span#totalethbal.format #{totalethbal || 0}
+                  small(style='font-size:16px;')  ETH
+                p
+                .bal(style='font-size:1.6em;color:#888;') $
+                  span#ethusdbalance #{ethbalance || 0}
+                  small(style='font-size:16px;')  USD @ $
+                    span#currentethprice #{currentethprice || 0}
+                    |  ea
+                p
+                  p
+                    .addressdash(style='font-size:1.3vw;font-weight:400;border-radius:15px;padding:10px;margin:0 auto;margin-top:10px;margin-bottom:10px;')
+                      span(style='background-color: #1e1e1e;padding: 8px;padding-left: 15px;padding-right: 15px;border-radius:15px;') #{ethaddy}
+                      button.clip(style='background-color: transparent;border: none;margin-left: 5px;', data-clipboard-text=ethaddy)
+                        i.fas.fa-copy
+                  if (typeof qrcode != 'undefined')
+                    .qrcode(align='center')
+                        a(href='#' + ethaddy)
+                          img(src='' + ethqrcode, style='border-radius:10px;')
+                  .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:10px;', align='center') ETHEREUM 
+                    span#ethhblock 
+              li.splide__slide(style='text-align:center;margin-bottom:35px;')
+                p
+                  img.res(src='../img/ari.png', alt='ARI', border='0', style='height:75px !important;width:75px !important;margin:0px 0px 0px !important;')
+                p 
+                .bal(style='font-size:2.5em;') 
+                  span#totalaribal.format #{totalaribal || 0}
+                  small(style='font-size:16px;')  ARI
+                p
+                .bal(style='font-size:1.6em;color:#888;') $
+                  span#ariusdbalance #{aribalance || 0}
+                  small(style='font-size:16px;')  USD @ $
+                    span#currentariprice #{currentariprice || 0}
+                    |  ea
+                p
+                  p
+                    .addressdash(style='font-size:1.3vw;font-weight:400;border-radius:15px;padding:10px;margin:0 auto;margin-top:10px;margin-bottom:10px;')
+                      span(style='background-color: #1e1e1e;padding: 8px;padding-left: 15px;padding-right: 15px;border-radius:15px;') #{ethaddy}
+                      button.clip(style='background-color: transparent;border: none;margin-left: 5px;', data-clipboard-text=ethaddy)
+                        i.fas.fa-copy
+                  if (typeof qrcode != 'undefined')
+                    .qrcode(align='center')
+                        a(href='#' + ethaddy)
+                          img(src='' + ethqrcode, style='border-radius:10px;')
+                  .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:10px;', align='center') DENARII 
+                    span#aribblock
       .wrapper
         nav.tabs
           .selector
@@ -94,9 +122,12 @@ block content
             img.res(src='../img/denarius.png', alt='D', border='0', style='height:32px !important;width: 32px !important;margin:0px 0px 0px !important;')
             |  D Transaction History
           a.tab2(href='#')
+            img.res(src='../img/bitcoin.png', alt='BTC', border='0', style='height:32px !important;width: 32px !important;margin:0px 0px 0px !important;')
+            |  BTC Transaction History
+          a.tab3(href='#')
             img.res(src='../img/eth.png', alt='ETH', border='0', style='height:32px !important;width: 32px !important;margin:0px 0px 0px !important;')
             |  ETH Transaction History
-          a.tab3(href='#')
+          a.tab4(href='#')
             img.res(src='../img/ari.png', alt='ARI', border='0', style='height:32px !important;width: 32px !important;margin:0px 0px 0px !important;')
             |  ARI Transaction History
       .row(class='rowclass', style='padding-right: 20px !important;').animate__animated.animate__fadeIn#tab1
@@ -131,6 +162,34 @@ block content
             h1(style='color:#666;', align='center') No Transactions Available
         else
           h1(style='color:#666;', align='center') No Transactions Available
+      .row(class='rowclass', style='padding-right: 20px !important;').animate__animated.animate__fadeIn#tab4
+        h3(style='font-size:48px;color: #393939;margin-top:0px;', align='center') 
+              i.fas.fa-history  
+              |  Bitcoin Transaction History
+        if (typeof btctxs != 'undefined')
+          if (typeof btctxs[0] != 'undefined')
+            .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;')
+              .tablewrapper
+                table.sortable#fst
+                  thead
+                    tr
+                      th Block Height
+                      th.sorttable_nosort Time (GMT)
+                      th Amount
+                      th TXID
+                  tbody
+                    each tx in btctxs
+                      tr
+                        td(align='center', data-label='BTC Block Height') !{tx.block_height}
+                        td(align='center', data-label='Timestamp') 
+                          if (typeof tx.time != 'undefined')
+                            .date= new Date(tx.time*1000).toUTCString().replace('GMT','')
+                        td(align='center', data-label='Amount') 
+                          .label.label-success(style='background: none;') !{tx.result / 1e8} BTC
+                        td(align='center', data-label='TXID') 
+                          a.txid(href=`https://blockchain.info/tx/${tx.hash}`, target='_blank') !{tx.hash}
+          else
+            h1(style='color:#666;', align='center') No BTC Transactions Available
       .row(class='rowclass', style='padding-right: 20px !important;').animate__animated.animate__fadeIn#tab3
         h3(style='font-size:48px;color: #393939;margin-top:0px;', align='center') 
               i.fas.fa-history  
@@ -252,8 +311,27 @@ block content
               span(style='color:#777;') CPU Usage
     script(src='../js/lib/jquery-3.1.1.min.js') 
     script(src='../js/jquery.sparkline.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js')
+    script(src='https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js')
     script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js")
     script.
+      new Splide( '.splide', {
+        type   : 'loop',
+        arrowPath: 'm15.5 0.932-4.3 4.38 14.5 14.6-14.5 14.5 4.3 4.4 14.6-14.6 4.4-4.3-4.4-4.4-14.6-14.6z',
+      } ).mount();
+      var clipboard = new ClipboardJS('.clip');
+      clipboard.on('success', function(e) {
+          console.info('Action:', e.action);
+          console.info('Text:', e.text);
+          console.info('Trigger:', e.trigger);
+
+          e.clearSelection();
+      });
+
+      clipboard.on('error', function(e) {
+          console.error('Action:', e.action);
+          console.error('Trigger:', e.trigger);
+      });
       socket.on('cpuspeed', function (data99) {
         // console.log(data);
         $('#avg').html(data99.avg);
@@ -264,35 +342,50 @@ block content
           var height = data.block.height;
           var hexhash = data.block.hex.toString();
           //$('#blockheight').html(height);
-          $('#blockhash').html('<a href="https://chainz.cryptoid.info/d/block.dws?'+height+'" style="color:#444;font-size:9px;font-weight:400;" target="_blank">D BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
-          $('#link').html('<span class="blockcount"><a href="https://chainz.cryptoid.info/d/block.dws?'+height+'" target="_blank">'+height+'</a></span>'); 
+          //$('#blockhash').html('<a href="https://chainz.cryptoid.info/d/block.dws?'+height+'" style="color:#444;font-size:9px;font-weight:400;" target="_blank">D BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
+          //$('#dblock').html('<span class="blockcount"><a href="https://chainz.cryptoid.info/d/block.dws?'+height+'" target="_blank">'+height+'</a></span>');
+          $('#dblock').html('<a href="https://chainz.cryptoid.info/d/block.dws?'+height+'" target="_blank" style="color: rgb(93 196 41);">• '+height+'</a>'); 
         } else {
           var height = data.block[0].height;
           var hexhash = data.block[0].hex.toString();
           //$('#blockheight').html(height);
-          $('#blockhash').html('<a href="https://chainz.cryptoid.info/d/block.dws?'+height+'" style="color:#444;font-size:9px;font-weight:400;" target="_blank">D BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
-          $('#link').html('<span class="blockcount"><a href="https://chainz.cryptoid.info/d/block.dws?'+height+'" target="_blank">'+height+'</a>'); 
+          //$('#blockhash').html('<a href="https://chainz.cryptoid.info/d/block.dws?'+height+'" style="color:#444;font-size:9px;font-weight:400;" target="_blank">D BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
+          $('#dblock').html('<a href="https://chainz.cryptoid.info/d/block.dws?'+height+'" target="_blank" style="color: rgb(93 196 41);">• '+height+'</a>'); 
+        }
+      });
+      socket.on('newbtcblock', function (dataz) {
+        //console.log('SOCKET GOT NEW BLOCK', data);
+        if (!dataz.block[0] && !dataz.error) {
+          var height = dataz.block.height;
+          var hexhash = dataz.block.hex.toString();
+          $('#btcblock').html('<a href="https://chainz.cryptoid.info/btc/block.dws?'+height+'" target="_blank" style="color: rgb(93 196 41);">• '+height+'</a>'); 
+        } else {
+          var height = dataz.block[0].height;
+          var hexhash = dataz.block[0].hex.toString();
+          $('#btcblock').html('<a href="https://chainz.cryptoid.info/btc/block.dws?'+height+'" target="_blank" style="color: rgb(93 196 41);">• '+height+'</a>'); 
+        }
+      });
+      socket.on('newblocketh', function (data9) {
+        if (!data9.ethblock[0] && !data9.error) {
+          var height = data9.ethblock;
+          //var hexhash = data9.ethhash;
+          //$('#blockheight').html(height);
+          //$('#ethblockhash').html('<a href="https://etherscan.io/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;" target="_blank">ETH BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
+          $('#ethhblock').html('<a href="https://etherscan.io/block/'+height+'" target="_blank" style="color: rgb(93 196 41);">• '+height+'</a>');
+          $('#aribblock').html('<a href="https://etherscan.io/block/'+height+'" target="_blank" style="color: rgb(93 196 41);">• '+height+'</a>');
+        } else {
+          var height = data9.ethblock[0];
+          //var hexhash = data9.ethhash[0];
+          //$('#blockheight').html(height);
+          //$('#ethblockhash').html('<a href="https://etherscan.io/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;" target="_blank">ETH BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
+          $('#ethhblock').html('<a href="https://etherscan.io/block/'+height+'" target="_blank" style="color: rgb(93 196 41);">• '+height+'</a>');
+          $('#aribblock').html('<a href="https://etherscan.io/block/'+height+'" target="_blank" style="color: rgb(93 196 41);">• '+height+'</a>');
         }
       });
       socket.on('temp', function (data3) {
         // console.log(data);
         $('#temp').html(data3.temp);
       });
-      //- socket.on('usdinfo', function (data) {
-      //-   $('#totalbal').html(data.dbalance);
-      //-   $('#usdbalance').html(data.usdbalance);
-      //-   $('#currentprice').html(data.currentprice);
-      //- });
-      //- socket.on('ethinfo', function (data) {
-      //-   $('#totalethbal').html(data.ethbalance);
-      //-   $('#ethusdbalance').html(data.ethusdbalance);
-      //-   $('#currentethprice').html(data.currentprice);
-      //- });
-      //- socket.on('ariinfo', function (data) {
-      //-   $('#totalaribal').html(data.aribalance);
-      //-   $('#ariusdbalance').html(data.ariusdbalance);
-      //-   $('#currentariprice').html(data.currentprice);
-      //- });
       let progcpu = [];
       progcpu.push(0);
       socket.on('cpuload', function (data1) {
@@ -356,21 +449,6 @@ block content
         $('#memt').html(data2.memt);
         $('#memf').html(data2.memf);
       });
-      socket.on('newblocketh', function (data9) {
-        if (!data9.ethblock[0] && !data9.error) {
-          var height = data9.ethblock;
-          var hexhash = data9.ethhash;
-          //$('#blockheight').html(height);
-          $('#ethblockhash').html('<a href="https://etherscan.io/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;" target="_blank">ETH BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
-          $('#ethlink').html('<span class="blockcount"><a href="https://etherscan.io/block/'+height+'" target="_blank">'+height+'</a></span>'); 
-        } else {
-          var height = data9.ethblock[0];
-          var hexhash = data9.ethhash[0];
-          //$('#blockheight').html(height);
-          $('#ethblockhash').html('<a href="https://etherscan.io/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;" target="_blank">ETH BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
-          $('#ethlink').html('<span class="blockcount"><a href="https://etherscan.io/block/'+height+'" target="_blank">'+height+'</a>'); 
-        }
-      });
       socket.on('newethbal', function (data69) {
         if (!data69.ethbal[0] && !data69.error) {
           var bal = data69.ethbal;
@@ -378,7 +456,7 @@ block content
           //-   bal = parseFloat(bal.toFixed(6));
           //- }
           $('#totalethbal').html(bal);
-          $('#htotalethbal').html(bal + '<img class="res" src="../img/eth.png" alt="ETH" border="0" style="height:24px !important;width: 24px !important;margin:-15px 0px -12px !important;" /><span style="color:#888;">ETH</span>');
+          //$('#htotalethbal').html(bal + '<img class="res" src="../img/eth.png" alt="ETH" border="0" style="height:24px !important;width: 24px !important;margin:-15px 0px -12px !important;" /><span style="color:#888;">ETH</span>');
           var updatedethusd = bal * $('#currentethprice').text();
           $('#ethusdbalance').html(updatedethusd.toFixed(3));
           document.querySelectorAll(".format").forEach((e) => {
@@ -393,7 +471,7 @@ block content
           //-   bal = parseFloat(bal.toFixed(6));
           //- }
           $('#totalethbal').html(bal); 
-          $('#htotalethbal').html(bal + '<img class="res" src="../img/eth.png" alt="ETH" border="0" style="height:24px !important;width: 24px !important;margin:-15px 0px -12px !important;" /><span style="color:#888;">ETH</span>');
+          //$('#htotalethbal').html(bal + '<img class="res" src="../img/eth.png" alt="ETH" border="0" style="height:24px !important;width: 24px !important;margin:-15px 0px -12px !important;" /><span style="color:#888;">ETH</span>');
           var updatedethusd = bal * $('#currentethprice').text();
           $('#ethusdbalance').html(updatedethusd.toFixed(3));
           document.querySelectorAll(".format").forEach((e) => {
@@ -411,7 +489,7 @@ block content
           //-   bal = parseFloat(bal.toFixed(4));
           //- }
           $('#totalaribal').html(bal);
-          $('#htotalaribal').html(bal + '<img class="res" src="../img/ari.png" alt="ARI" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">ARI</span>');
+          //$('#htotalaribal').html(bal + '<img class="res" src="../img/ari.png" alt="ARI" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">ARI</span>');
           var updatedusd = bal * $('#currentariprice').text();
           $('#ariusdbalance').html(updatedusd.toFixed(3));
           document.querySelectorAll(".format").forEach((e) => {
@@ -426,7 +504,7 @@ block content
           //-   bal = parseFloat(bal.toFixed(4));
           //- }
           $('#totalaribal').html(bal);
-          $('#htotalaribal').html(bal + '<img class="res" src="../img/ari.png" alt="ARI" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">ARI</span>');
+          //$('#htotalaribal').html(bal + '<img class="res" src="../img/ari.png" alt="ARI" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">ARI</span>');
           var updatedusd = bal * $('#currentariprice').text();
           $('#ariusdbalance').html(updatedusd.toFixed(3));
           document.querySelectorAll(".format").forEach((e) => {
@@ -444,7 +522,7 @@ block content
           //-   bal = parseFloat(bal.toFixed(8));
           //- }
           $('#totalbal').html(bal);
-          $('#htotalbal').html(bal + '<img class="res" src="../img/denarius.png" alt="D" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">D</span>');
+          //$('#htotalbal').html(bal + '<img class="res" src="../img/denarius.png" alt="D" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">D</span>');
           var updateddusd = bal * $('#currentprice').text();
           $('#usdbalance').html(updateddusd.toFixed(3));
           document.querySelectorAll(".format").forEach((e) => {
@@ -459,9 +537,42 @@ block content
           //-   bal = parseFloat(bal.toFixed(8));
           //- }
           $('#totalbal').html(bal);
-          $('#htotalbal').html(bal + '<img class="res" src="../img/denarius.png" alt="D" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">D</span>');
+          //$('#htotalbal').html(bal + '<img class="res" src="../img/denarius.png" alt="D" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">D</span>');
           var updateddusd = bal * $('#currentprice').text();
           $('#usdbalance').html(updateddusd.toFixed(3));
+          document.querySelectorAll(".format").forEach((e) => {
+            let txt = e.innerHTML.split(".")
+            if (typeof txt[1] != 'undefined') {
+              e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
+            }
+          });
+        }
+      });
+      socket.on('newbtcbal', function (data28) {
+        if (!data28.btcbal[0] && !data28.error) {
+          var bal = data28.btcbal;
+          //- if (bal != 'undefined') {
+          //-   bal = parseFloat(bal.toFixed(8));
+          //- }
+          $('#totalbtcbal').html(bal);
+          //$('#htotalbtcbal').html(bal + '<img class="res" src="../img/bitcoin.png" alt="BTC" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">D</span>');
+          var updateddusd = bal * $('#currentbtcprice').text();
+          $('#usdbtcbalance').html(updateddusd.toFixed(3));
+          document.querySelectorAll(".format").forEach((e) => {
+            let txt = e.innerHTML.split(".")
+            if (typeof txt[1] != 'undefined') {
+              e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
+            }
+          });
+        } else {
+          var bal = data28.btcbal[0];
+          //- if (bal != 'undefined') {
+          //-   bal = parseFloat(bal.toFixed(8));
+          //- }
+          $('#totalbtcbal').html(bal);
+          //$('#htotalbtcbal').html(bal + '<img class="res" src="../img/bitcoin.png" alt="BTC" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">D</span>');
+          var updateddusd = bal * $('#currentbtcprice').text();
+          $('#usdbtcbalance').html(updateddusd.toFixed(3));
           document.querySelectorAll(".format").forEach((e) => {
             let txt = e.innerHTML.split(".")
             if (typeof txt[1] != 'undefined') {
@@ -478,6 +589,7 @@ block content
       var activeWidth = activeItem.innerWidth();
       $('#tab2').hide();
       $('#tab3').hide();
+      $('#tab4').hide();
       $(".selector").css({
         "left": activeItem.position.left + "px", 
         "width": activeWidth + "px"
@@ -500,21 +612,33 @@ block content
       $(".tab1").on("click", function(){
         $("#tab2").addClass('hide');
         $("#tab3").addClass('hide');
+        $("#tab4").addClass('hide');
+        $('#tab2').fadeOut();
+        $('#tab3').fadeOut();
+        $("#tab4").fadeOut();
         $("#tab1").fadeIn(1000);
-        $('#tab2').fadeOut(1000);
-        $('#tab3').fadeOut(1000);
       });
 
       $(".tab2").on("click", function(){
-        $("#tab2").removeClass('hide');
+        $("#tab4").removeClass('hide');
         $("#tab1").fadeOut();
+        $("#tab2").fadeOut();
         $("#tab3").fadeOut();
-        $('#tab2').fadeIn(1000);
+        $('#tab4').fadeIn(1000);
       });
 
       $(".tab3").on("click", function(){
+        $("#tab2").removeClass('hide');
+        $("#tab1").fadeOut();
+        $("#tab3").fadeOut();
+        $("#tab4").fadeOut();
+        $('#tab2').fadeIn(1000);
+      });
+
+      $(".tab4").on("click", function(){
         $("#tab3").removeClass('hide');
         $("#tab1").fadeOut();
         $("#tab2").fadeOut();
+        $("#tab4").fadeOut();
         $('#tab3').fadeIn(1000);
       });

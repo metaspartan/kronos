@@ -30,10 +30,12 @@
   "dependencies": {
     "@metamask/detect-provider": "^1.1.0",
     "app-root-path": "^3.0.0",
+    "bip32": "^2.0.6",
     "bip32d": "git://github.com/carsenk/bip32d.git",
     "bip39": "^3.0.2",
     "bitcoin": "git://github.com/carsenk/node-bitcoin.git",
     "bitcoinjs-d-lib": "git://github.com/carsenk/bitcoinjs-lib-pos.git",
+    "bitcoinjs-lib": "^5.2.0",
     "bluebird": "^3.7.2",
     "body-parser": "^1.19.0",
     "bs58": "^4.0.1",

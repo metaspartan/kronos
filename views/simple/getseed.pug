@@ -19,7 +19,7 @@ block content
   .container2(style='margin-top:30px;width:90%;margin:0 auto;')
     h1(align='center', style='font-size:73px;font-weight:100;margin-top:42px !important;') Kronos Seed Phrase
     p
-      .titlesmall(align='center', style='width:800px;margin:0 auto;') Your Kronos seed phrase, this is your BIP39 Seed Phrase compatible with any BIP39 wallet and is what your addresses in your Kronos wallet are derived from for Denarius (D), Ethereum (ETH), and Denarii (ARI).       
+      .titlesmall(align='center', style='width:800px;margin:0 auto;') Your Kronos seed phrase, this is your BIP39 Seed Phrase compatible with any BIP39 wallet and is what your addresses in your Kronos wallet are derived from for Denarius (D), Bitcoin (BTC), Ethereum (ETH), and Denarii (ARI).       
     div.rowclass(style='font-weight:400;font-size:14px;padding:30px;background-color:#222;margin:15px;border-radius:15px;', align='center')
       h3 BIP39 Seed Phrase
       if (seedphrase)
@@ -31,7 +31,7 @@ block content
         .divider(style='background-color:#2b2b2b !important;height:2px;width:90%;margin:0 auto;', align='center')
         .row(style='padding:5px;margin:5px!important;background-color:#111;border-radius:5px;')
           .col-md-6
-            span(style='color:#aaa;') Address
+            span(style='color:#aaa;') ETH Address
             br
             span(style='color:#444;') Derviation Path
           .col-md-6(style='margin-top:8px;')
@@ -47,12 +47,29 @@ block content
         .divider(style='background-color:#2b2b2b !important;height:2px;width:90%;margin:0 auto;', align='center')
         .row(style='padding:5px;margin:5px!important;background-color:#111;border-radius:5px;')
           .col-md-6
-            span(style='color:#aaa;') Address
+            span(style='color:#aaa;') D Address
             br
             span(style='color:#444;') Derviation Path
           .col-md-6(style='margin-top:8px;')
             span.hashm(style='color:#666;') Private Key
         each seed in seedphrase[0].seedaddresses
+          .row(style='padding:5px;margin:5px!important;background-color:#111;border-radius:5px;')
+            .col-md-6
+              span(style='color:#aaa;') #{seed.address}
+              br
+              span(style='color:#444;') #{seed.path}
+            .col-md-6(style='margin-top:8px;')
+              span.hashm(style='color:#666;') #{seed.privkey}
+        h3(style='margin-top:35px;') Derived Bitcoin Addresses from your Seed
+        .divider(style='background-color:#2b2b2b !important;height:2px;width:90%;margin:0 auto;', align='center')
+        .row(style='padding:5px;margin:5px!important;background-color:#111;border-radius:5px;')
+          .col-md-6
+            span(style='color:#aaa;') BTC Address
+            br
+            span(style='color:#444;') Derviation Path
+          .col-md-6(style='margin-top:8px;')
+            span.hashm(style='color:#666;') Private Key
+        each seed in seedphrase[0].btcaddresses
           .row(style='padding:5px;margin:5px!important;background-color:#111;border-radius:5px;')
             .col-md-6
               span(style='color:#aaa;') #{seed.address}

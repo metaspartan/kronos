@@ -681,6 +681,7 @@ small {font-size:2.2rem;color:#eee;}
 .wrapper{
   text-align:center;
   margin:10px auto;
+  margin-top:0;
 }
 
 .tabs{

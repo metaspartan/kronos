@@ -23,9 +23,11 @@ const exec = require('child_process').exec;
 const shell = require('shelljs');
 const denarius = require('denariusjs');
 const dbitcoin = require('bitcoinjs-d-lib');
+const bitcoinjs = require('bitcoinjs-lib');
 const CryptoJS = require("crypto-js");
 const bip39 = require("bip39");
 const bip32 = require("bip32d");
+const bip32b = require("bip32");
 const sha256 = require('sha256');
 const files = require('fs');
 const appRoot = require('app-root-path');
@@ -820,6 +822,7 @@ exports.getSimpleSeed = (req, res) => {
     var mnemonic;
     var ps;
     let seedaddresses = [];
+    let btcaddresses = [];
     let store = [];
   
     db.get('password', function(err, value) {
@@ -848,6 +851,8 @@ exports.getSimpleSeed = (req, res) => {
         
         // BIP32 From BIP39 Seed
         const root = bip32.fromSeed(seed);
+
+        const rootbtc = bip32b.fromSeed(seed);
   
         // Denarius Network Params Object
         const network = {
@@ -860,6 +865,19 @@ exports.getSimpleSeed = (req, res) => {
             pubKeyHash: 0x1e,
             scriptHash: 0x5a,
             wif: 0x9e
+        };
+
+        // Bitcoin Network Params Object
+        const bitcoinnetwork = {
+            messagePrefix: '\x18Bitcoin Signed Message:\n',
+            bech32: 'bc',
+            bip32: {
+                public: 0x0488b21e,
+                private: 0x0488ade4
+            },
+            pubKeyHash: 0x00,
+            scriptHash: 0x05,
+            wif: 0x80
         };
   
         // A for loop for how many addresses we want from the derivation path of the seed phrase
@@ -879,8 +897,26 @@ exports.getSimpleSeed = (req, res) => {
           //New Array called seedaddresses that is filled with address and path data currently, WIP and TODO
           seedaddresses.push({ address: p2pkhaddy, privkey: privatekey, path: addressPath });
         }
+
+        // A for loop for how many addresses we want from the derivation path of the seed phrase
+        for (let i = 0; i < 1; i++) { //1 (21 = 20 addresses)
+
+            //Get 10 Addresses from the derived mnemonic
+            const btcaddressPath = `m/44'/0'/0'/0/${i}`;
+    
+            // Get the keypair from the address derivation path
+            const btcaddressKeypair = rootbtc.derivePath(btcaddressPath);
+    
+            // Get the p2pkh base58 public address of the keypair
+            const btcp2pkhaddy = bitcoinjs.payments.p2sh({ redeem: bitcoinjs.payments.p2wpkh({ pubkey: btcaddressKeypair.publicKey, bitcoinnetwork }), }).address;
+    
+            const btcprivatekey = btcaddressKeypair.toWIF();
+            
+            //New Array called seedaddresses that is filled with address and path data currently, WIP and TODO
+            btcaddresses.push({ address: btcp2pkhaddy, privkey: btcprivatekey, path: btcaddressPath });
+        }
   
-        store.push({mnemonic: mnemonic, seedaddresses: seedaddresses});
+        store.push({mnemonic: mnemonic, seedaddresses: seedaddresses, btcaddresses: btcaddresses});
   
         res.locals.seedphrase = store;
         let ethprivkey = ethwallet.privateKey;

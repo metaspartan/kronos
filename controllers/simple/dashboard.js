@@ -21,6 +21,7 @@ const toastr = require('express-toastr');
 const exec = require('child_process').exec;
 const shell = require('shelljs');
 const denarius = require('denariusjs');
+const bitcoinjs = require('bitcoinjs-lib');
 const CryptoJS = require("crypto-js");
 const bip39 = require("bip39");
 const bip32 = require("bip32d");
@@ -96,14 +97,7 @@ const changeEndianness = (string) => {
 }
 
 //Get information
-//Get information
 exports.simpleindex = (req, res) => {
-
-    // //Promises Loading Indicator
-    // const loader = new PromiseLoadingSpinner({
-    //     // options
-    //     loaderElement: '#js-page-loader',
-    // });
 
     const ip = require('ip');
     const ipaddy = ip.address();
@@ -120,6 +114,15 @@ exports.simpleindex = (req, res) => {
     const delectrumxhost2 = 'electrumx2.denarius.pro';
     const delectrumxhost3 = 'electrumx3.denarius.pro';
     const delectrumxhost4 = 'electrumx4.denarius.pro';
+
+    //ElectrumX Hosts for Bitcoin
+    const btcelectrumhost1 = 'bitcoin.lukechilds.co';
+    const btcelectrumhost2 = 'fortress.qtornado.com';
+    const btcelectrumhost3 = 'electrum.aantonop.com';
+    const btcelectrumhost4 = 'electrum.vom-stausee.de';
+    const btcelectrumhost5 = 'electrum.hsmiths.com';
+    const btcelectrumhost6 = 'electrum.hodlister.co';
+    const btcelectrumhost7 = 'electrum.blockstream.info'; //lol
     
     let socket_id = [];
     let socket_id2 = [];
@@ -130,6 +133,8 @@ exports.simpleindex = (req, res) => {
     let socket_id7 = [];
     let socket_id33 = [];
     let socket_id34 = [];
+    let socket_idbtc = [];
+    let socket_idbtcb = [];
 
     var mnemonic;
     var ps;
@@ -179,18 +184,19 @@ exports.simpleindex = (req, res) => {
         try {
             provider2.on('block', (blockNumber) => {
                 let ethblock = blockNumber;
-                try {
-                    provider2.getBlock(blockNumber).then((block) => {
-                        let blockhash = block.hash;
-                        //console.log(blockhash);
-                        socket.emit("newblocketh", {ethblock: ethblock, ethhash: blockhash});
-                    }).catch((e) => {
-                        console.log(e);
-                    });
-                }
-                catch(e) {
-                    console.log('Catch an error: ', e)
-                }
+                socket.emit("newblocketh", {ethblock: ethblock});
+                // try {
+                //     provider2.getBlock(blockNumber).then((block) => {
+                //         let blockhash = block.hash;
+                //         //console.log(blockhash);
+                //         socket.emit("newblocketh", {ethblock: ethblock, ethhash: blockhash});
+                //     }).catch((e) => {
+                //         console.log(e);
+                //     });
+                // }
+                // catch(e) {
+                //     console.log('Catch an error: ', e)
+                // }
             });
         } catch(e) {
             console.log(e);
@@ -452,6 +458,48 @@ exports.simpleindex = (req, res) => {
         latestblocks();
     });
 
+    //Get Bitcoin Blocks
+    res.io.on('connection', function (socket) {
+        socket_idbtc.push(socket.idbtc);
+        if (socket_idbtc[0] === socket.id) {
+        // remove the connection listener for any subsequent 
+        // connections with the same ID
+        res.io.removeAllListeners('connection'); 
+        }
+        const latestBTCblocks = async () => {
+            // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+            const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+            
+            // Add some servers to the cluster.
+            electrum.addServer(btcelectrumhost1);
+            electrum.addServer(btcelectrumhost2);
+            electrum.addServer(btcelectrumhost3);
+            electrum.addServer(btcelectrumhost4);
+            electrum.addServer(btcelectrumhost5);
+            electrum.addServer(btcelectrumhost6);
+            electrum.addServer(btcelectrumhost7);
+            
+            // Wait for enough connections to be available.
+            await electrum.ready();
+    
+            // Set up a callback function to handle new blocks.
+            const handleNewBlocks = function(data)
+            {
+                socket.emit("newbtcblock", {block: data});
+                //Storage.set('newblock', data);
+                //console.log("Got New Denarius Block Height");
+            }
+            //TODO: NEED TO SETUP CLUSTERING AND ALSO ERROR SANITY CHECKING IF SERVER(S) OFFLINE
+            // Set up a subscription for new block headers and handle events with our callback function.
+            await electrum.subscribe(handleNewBlocks, 'blockchain.headers.subscribe');
+
+            //await electrum.disconnect();
+    
+            //return handleNewBlocks();
+        }
+        latestBTCblocks();
+    });
+
         var decryptedpass = decrypt(passsworddb);
         ps = decryptedpass;
 
@@ -483,19 +531,54 @@ exports.simpleindex = (req, res) => {
             wif: 0x9e
         };
 
+        // Bitcoin Network Params Object
+        const bitcoinnetwork = {
+            messagePrefix: '\x18Bitcoin Signed Message:\n',
+            bech32: 'bc',
+            bip32: {
+                public: 0x0488b21e,
+                private: 0x0488ade4
+            },
+            pubKeyHash: 0x00,
+            scriptHash: 0x05,
+            wif: 0x80
+        };
+
         //Get 1 Address from the derived mnemonic
         const addressPath0 = `m/44'/116'/0'/0/0`;
 
+        const btcaddressPath0 = `m/44'/0'/0'/0/0`;
+
         // Get the keypair from the address derivation path
         const addressKeypair0 = root.derivePath(addressPath0);
+
+        const btcaddressKeypair0 = root.derivePath(btcaddressPath0);
 
         // Get the p2pkh base58 public address of the keypair
         const p2pkhaddy0 = denarius.payments.p2pkh({ pubkey: addressKeypair0.publicKey, network }).address;
 
         const p2pkaddy = denarius.payments.p2pkh({ pubkey: addressKeypair0.publicKey, network }).pubkey.toString('hex');
+
+        const btcp2pkhaddy0 = bitcoinjs.payments.p2pkh({ pubkey: btcaddressKeypair0.publicKey, bitcoinnetwork }).address; //Legacy 1
+
+        const btcp2pkaddy = bitcoinjs.payments.p2pkh({ pubkey: btcaddressKeypair0.publicKey, bitcoinnetwork }).pubkey.toString('hex');
+
+        const btcsegwitbech32 = bitcoinjs.payments.p2wpkh({ pubkey: btcaddressKeypair0.publicKey, bitcoinnetwork }).address; //Segwit Bech32 bc1
+
+        const btcsegwitp2shaddy = bitcoinjs.payments.p2sh({ redeem: bitcoinjs.payments.p2wpkh({ pubkey: btcaddressKeypair0.publicKey, bitcoinnetwork }), }).address; //Segwit P2SH 3
         
         Storage.set('mainaddress', p2pkhaddy0);
         Storage.set('p2pkaddress', p2pkaddy);
+
+        Storage.set('btcaddress', btcp2pkhaddy0); // 1
+        Storage.set('btcp2pkaddress', btcp2pkaddy);
+        Storage.set('btcbechaddy', btcsegwitbech32); // bc1
+        Storage.set('btcsegwitaddy', btcsegwitp2shaddy); // 3
+
+        console.log(btcp2pkhaddy0);
+        console.log(btcp2pkaddy);
+        console.log(btcsegwitbech32);
+        console.log(btcsegwitp2shaddy);
 
         const bytes = bs58.decode(p2pkhaddy0);
         const byteshex = bytes.toString('hex');
@@ -564,6 +647,44 @@ exports.simpleindex = (req, res) => {
             }, 15000);
         });
 
+
+        res.io.on('connection', function (socket) {
+            socket_idbtcb.push(socket.id);
+            if (socket_idbtcb[0] === socket.id) {
+            res.io.removeAllListeners('connection'); 
+            }
+            const btcWalletBal = async () => {
+                try {
+
+                    var btcaddress = Storage.get('btcsegwitaddy');
+                    //Get BTC Balance and TX History
+                    unirest.get("https://blockchain.info/rawaddr/"+btcaddress)
+                    .headers({'Accept': 'application/json'})
+                    .end(function (result) {
+                        if (!result.error) {
+                            var info = result.body; // results
+            
+                            console.log(info);
+                            
+                            var bal = info['final_balance'] / 1e8; //total BTC bal
+
+                            Storage.set('totalbtcbal', bal);
+                            socket.emit("newbtcbal", {btcbal: bal});
+            
+                        } else { 
+                            console.log("Error occured on fetching Blockchain.info Address Data", result.error);
+                        }
+                    });
+                } catch (e) {
+                    console.log(e);
+                }
+            }
+            //btcWalletBal();
+            setInterval(function(){ 
+                btcWalletBal();
+            }, 30000);
+        });
+
         // A for loop for how many addresses we want from the derivation path of the seed phrase
         for (let i = 0; i < addresscount; i++) { //20
 
@@ -592,6 +713,7 @@ exports.simpleindex = (req, res) => {
         res.locals.seedphrase = store;
 
         var mainaddy = Storage.get('mainaddress');
+        var btcaddy = Storage.get('btcsegwitaddy');
 
         //const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
         //let ethwalletp = ethwallet.connect(provider); //Set wallet provider
@@ -606,10 +728,18 @@ exports.simpleindex = (req, res) => {
 
         QRCode.toDataURL(ethwalletp.address, { color: { dark: '#000000FF', light:"#777777FF" } }, function(err, ethqrcode) {
             if (err) {
-                console.log('Error Generating QR for Main Address');
+                console.log('Error Generating QR for ETH Address');
             }
             //Store the qrcode for rendering retrieval
             Storage.set('ethqrcode', ethqrcode);
+        });
+
+        QRCode.toDataURL(btcaddy, { color: { dark: '#000000FF', light:"#777777FF" } }, function(err, btcqrcode) {
+            if (err) {
+                console.log('Error Generating QR for BTC Address');
+            }
+            //Store the qrcode for rendering retrieval
+            Storage.set('btcqrcode', btcqrcode);
         });
         Storage.set('ethaddy', ethwalletp.address);
 
@@ -1166,7 +1296,7 @@ exports.simpleindex = (req, res) => {
                         });
                         var ethaddress = Storage.get('ethaddy');
                         //Get Current ERC20 TX History - ethersjs not patched yet
-                        unirest.get("http://api.etherscan.io/api?module=account&action=tokentx&address="+ethaddress+"&startblock=0&endblock=999999999&sort=asc&apikey=D2Y3BZ6RNGDC3ZIGZQV3E36WVQHMXW6E8I")
+                        unirest.get("https://api.etherscan.io/api?module=account&action=tokentx&address="+ethaddress+"&startblock=0&endblock=999999999&sort=asc&apikey=D2Y3BZ6RNGDC3ZIGZQV3E36WVQHMXW6E8I")
                         .headers({'Accept': 'application/json'})
                         .end(function (result) {
                             if (!result.error) {
@@ -1186,7 +1316,7 @@ exports.simpleindex = (req, res) => {
                             }
                         });
                         //Get Current ETH TX History - ethersjs
-                        unirest.get("http://api.etherscan.io/api?module=account&action=txlist&address="+ethaddress+"&startblock=0&endblock=999999999&sort=asc&apikey=YTQADVIX59Q81I873Q6ND8WVFYYQGJ7HZJ")
+                        unirest.get("https://api.etherscan.io/api?module=account&action=txlist&address="+ethaddress+"&startblock=0&endblock=999999999&sort=asc&apikey=YTQADVIX59Q81I873Q6ND8WVFYYQGJ7HZJ")
                         .headers({'Accept': 'application/json'})
                         .end(function (result) {
                             if (!result.error) {
@@ -1205,23 +1335,75 @@ exports.simpleindex = (req, res) => {
                                 //Storage.set('currentariprice', '~');
                             }
                         });
+                        var btcaddress = Storage.get('btcsegwitaddy');
+                        //Get BTC Balance and TX History
+                        unirest.get("https://blockchain.info/rawaddr/"+btcaddress)
+                        .headers({'Accept': 'application/json'})
+                        .end(function (result) {
+                            if (!result.error) {
+                                var info = result.body; // results
+
+                                console.log(info);
+                                
+                                var bal = info['final_balance'] / 1e8; //total BTC bal
+
+                                var txs = info['txs']; //tx history array
+
+                                Storage.set('btctotalbal', bal);
+                                Storage.set('btctxs', txs);
+
+                            } else { 
+                                console.log("Error occured on fetching Blockchain.info Address Data", result.error);
+                            }
+                        });
+
+                        //Get Current BTC/USD price from CoinGecko
+                        unirest.get("https://api.coingecko.com/api/v3/coins/bitcoin?tickers=true&market_data=true&community_data=false&developer_data=true")
+                        .headers({'Accept': 'application/json'})
+                        .end(function (result) {
+                            if (!result.error) {
+                                var totalbtc = Storage.get('btctotalbal');
+                                var btcusdbalance = result.body['market_data']['current_price']['usd'] * totalbtc; //* balance;
+                                var currentbtcprice = result.body['market_data']['current_price']['usd'];
+
+                                var btcformatted = btcusdbalance.toFixed(3);
+
+                                socket.emit("btcinfo", {btcbalance: totalbtc, btcusdbalance: btcformatted, currentprice: currentbtcprice});
+                                
+                                Storage.set('usdbtcbal', btcformatted.toString());
+                                Storage.set('currentbtcprice', currentbtcprice.toString());
+                            } else { 
+                                console.log("Error occured on price refresh before interval for BTC price", result.error);
+                                var btcusdbalance = '~';
+                                var currentbtcprice = '~';
+
+                                Storage.set('btcbal', '~');
+                                Storage.set('currentbtcprice', '~');
+                            }
+                        });
                     });
                 });
 
                 //var totalbal1 = Storage.get('totalbal');
                 var totalethbal1 = Storage.get('totaleth');
                 var totalaribal1 = Storage.get('totalaribal');
+                var totalbtcbal = Storage.get('btctotalbal');
+                var btctxs = Storage.get('btctxs');
                 // var threebox = Storage.get('threebox');
                 var qrcode1 = Storage.get('qrcode');
                 var ethqrcode1 = Storage.get('ethqrcode');
+                var btcqrcode1 = Storage.get('btcqrcode');
                 var scripthasharray1 = Storage.get('accountarray');
                 var ethaddress = Storage.get('ethaddy');
+                var btcaddress = Storage.get('btcsegwitaddy');
                 var usdbalance = Storage.get('usdbal');
+                var usdbtcbalance = Storage.get('usdbtcbal');
                 var currentprice = Storage.get('currentprice');
                 var ethbal = Storage.get('ethbal');
                 var aribal = Storage.get('aribal');
                 var currentethprice = Storage.get('currentethprice');
                 var currentariprice = Storage.get('currentariprice');
+                var currentbtcprice = Storage.get('currentbtcprice');
                 var unbalance = Storage.get('unconf');
                 var newblock = Storage.get('newblock');
                 var osname = Storage.get('osname');
@@ -1239,17 +1421,22 @@ exports.simpleindex = (req, res) => {
                     title: 'Core Mode Dashboard',
                     qrcode: qrcode1,
                     ethqrcode: ethqrcode1,
+                    btcqrcode: btcqrcode1,
                     totalbal: totalbal,
+                    totalbtcbal: totalbtcbal,
                     totalethbal: totalethbal1,
                     totalaribal: totalaribal1,
                     mainaddy: mainaddy,
+                    btcaddress: btcaddress,
                     ethaddress: ethaddress,
                     usdbalance: usdbalance,
+                    usdbtcbalance: usdbtcbalance,
                     ethbalance: ethbal,
                     aribalance: aribal,
                     currentprice: currentprice,
                     currentethprice: currentethprice,
                     currentariprice: currentariprice,
+                    currentbtcprice: currentbtcprice,
                     newblock: newblock,
                     unbalance: unbalance,
                     balancearray: scripthasharray,
@@ -1257,6 +1444,7 @@ exports.simpleindex = (req, res) => {
                     utxos: denariusutxos,
                     erctxs: erctxs,
                     ethtxs: ethtxs,
+                    btctxs: btctxs,
                     ethaddy: ethaddress,
                     osname: osname,
                     arch: arch,
