@@ -11,9 +11,11 @@
 
 [![Build history](https://buildstats.info/travisci/chart/carsenk/kronos?branch=master)](https://travis-ci.org/carsenk/kronos?branch=master)
 
-Kronos - Wallet Dashboard Interface. This is a massive project with active development in progress and this repo will be updated in time, be warned, things can break and always always backup backup backup!
+This is a massive project with active development in progress and this repo will be updated in time, be warned, things can break and always always backup backup backup!
 
-Send and Receive D, ETH, and ARI Funds, create new addresses, view transactions, unlock/lock wallet, stake D, reboot your node, import private keys, encrypt your wallet, broadcast raw transactions, sign and verify Denarius messages, and much more!
+Kronos is a Dashboard Interface and Wallet for Denarius (D), Bitcoin (BTC), Ethereum (ETH), and Denarii (ARI) as an app written in NodeJS and Electron. The Kronos Wallet is also now available on Windows, macOS, and Linux platforms. (You can also access it on mobile from your local network).
+
+Send and Receive D, BTC, ETH, and ARI Funds, create new addresses, view transactions, unlock/lock wallet, stake D, reboot your node, import private keys, encrypt your wallet, broadcast raw transactions, sign and verify Denarius messages, and much more!
 
 This was built for the Raspberry Pi in mind and one with at least 2GB of RAM. 4GB and 8GB models are recommended! Kronos will run on any Linux distro with a minimal amount of 2GB of RAM.
 
