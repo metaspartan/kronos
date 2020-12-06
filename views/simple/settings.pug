@@ -1,0 +1,27 @@
+extends ../layoutsimple
+
+block content
+  #notify
+  .maincontent(style='border: none !important;')
+    .container(style='width:90%')
+      p(align='center')
+        h1(align='center', style='font-size:73px;font-weight:100;margin-top:42px !important;') Kronos Settings
+      .row(class='rowclass')
+        .col-md-12(align='center')
+          p Written and Designed by Carsen Klock | 
+            a(href='https://github.com/carsenk', target='_blank') Github
+          p Kronos is running on 
+            strong #{lanip}:3000 
+            | (You can go to 
+            a(href='http://'+lanip+':3000/dashsimple', onclick="javascript:event.target.port=3000", target='_blank') #{lanip}:3000/dashsimple 
+            | in a local networked browser)
+          p
+            img(src='../img/kronos.png', style='height:200px;')
+            h4(style='margin-top:0;margin-bottom:0;') Version 1.8.7-Beta
+          .row(style='margin-top:55px !important;')
+            .col-md-4
+              button.kbtn.orange(onclick="location.href='/sseed';", style='border-radius: 15px;border: none;padding: 10px;padding-left: 30px;padding-right: 30px;margin-right:15px;') VIEW YOUR SEED
+            .col-md-4
+              button.kbtn.orange(onclick="location.href='/import';", style='border-radius: 15px;border: none;padding: 10px;padding-left: 30px;padding-right: 30px;margin-right:15px;') IMPORT A SEED
+            .col-md-4
+              button.kbtn.orange(onclick="location.href='/sweep';", style='border-radius: 15px;border: none;padding: 10px;padding-left: 30px;padding-right: 30px;') SWEEP D PRIVATE KEY

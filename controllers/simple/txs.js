@@ -95,6 +95,15 @@ const delectrumxhost2 = 'electrumx2.denarius.pro';
 const delectrumxhost3 = 'electrumx3.denarius.pro';
 const delectrumxhost4 = 'electrumx4.denarius.pro';
 
+//ElectrumX Hosts for Bitcoin
+const btcelectrumhost1 = 'bitcoin.lukechilds.co';
+const btcelectrumhost2 = 'fortress.qtornado.com';
+const btcelectrumhost3 = 'electrumx.erbium.eu';
+const btcelectrumhost4 = 'electrum.acinq.co';
+const btcelectrumhost5 = 'alviss.coinjoined.com';
+const btcelectrumhost6 = 'hodlers.beer';
+const btcelectrumhost7 = 'electrum.blockstream.info'; //lol
+
 var mnemonic;
 let ethnetworktype = 'homestead'; //homestead is mainnet, ropsten for testing, choice for UI selection eventually
 let provider = ethers.getDefaultProvider(ethnetworktype, {
@@ -221,6 +230,8 @@ exports.getsend = (req, res) => {
 
         await electrum.shutdown();
 
+        Storage.set('dutxo', utxos);
+
         return utxos;
 
         } catch (e) {
@@ -259,6 +270,129 @@ exports.getsend = (req, res) => {
                 totalaribal: totalaribal,
                 ethaddress: ethaddress,
                 mainaddress: mainaddress
+            }, (err, html) => {
+                res.end(html + '\n');
+            });
+        });
+    });
+};
+
+//Get BTC UTXOs to be able to send from and render UI
+exports.getbtcsend = (req, res) => {
+
+    const ip = require('ip');
+    const ipaddy = ip.address();
+  
+    res.locals.lanip = ipaddy;
+
+    let totalethbal = Storage.get('totaleth');
+    let totalbal = Storage.get('totalbal');
+    let totalbtcbal = Storage.get('totalbtcbal');
+    let totalaribal = Storage.get('totalaribal');
+    //let utxos = Storage.get('dutxo');
+    var ethaddress = Storage.get('ethaddy');
+    var mainaddress = Storage.get('mainaddress');
+    var p2pkaddress = Storage.get('p2pkaddress');
+    var btcaddress = Storage.get('btcsegwitaddy');
+    var btcp2pkaddress = Storage.get('btcsegwitaddy');
+    //res.locals.utxos = utxos;
+
+    //Convert P2SH Address to Scripthash for ElectrumX Balance Fetching
+    const bytes = bs58.decode(btcaddress);
+    const byteshex = bytes.toString('hex');
+    const remove00 = byteshex.substring(2);
+    const removechecksum = remove00.substring(0, remove00.length-8);
+    const HASH160 = "A914" + removechecksum.toUpperCase() + "87"; //OP_HASH160 | | OP_EQUAL
+    const BUFFHASH160 = Buffer.from(HASH160, "hex");
+    const shaaddress = sha256(BUFFHASH160);
+
+    //Convert P2PK Address to Scripthash for ElectrumX Balance Fetching
+    const xpubtopub = btcp2pkaddress;
+    const HASH1601 =  "21" + xpubtopub + "ac"; // 21 + COMPRESSED PUBKEY + OP_CHECKSIG = P2PK
+    //console.log(HASH1601);
+    const BUFFHASH1601 = Buffer.from(HASH1601, "hex");
+    const shaaddress1 = sha256(BUFFHASH1601);
+
+    const changeEndianness = (string) => {
+            const result = [];
+            let len = string.length - 2;
+            while (len >= 0) {
+            result.push(string.substr(len, 2));
+            len -= 2;
+            }
+            return result.join('');
+    }
+
+    const scripthash = changeEndianness(shaaddress);
+    const scripthashp2pk = changeEndianness(shaaddress1);
+
+    //Grab UTXO Transaction History from D ElectrumX
+    const utxohistory = async () => {
+        // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+        const electrum = new ElectrumCluster('Kronos Core Mode BTC UTXO History', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+        
+        // Add some servers to the cluster.
+        electrum.addServer(btcelectrumhost1);
+        electrum.addServer(btcelectrumhost2);
+        electrum.addServer(btcelectrumhost3);
+        electrum.addServer(btcelectrumhost4);
+        electrum.addServer(btcelectrumhost5);
+        electrum.addServer(btcelectrumhost6);
+        electrum.addServer(btcelectrumhost7);
+        try {
+        // Wait for enough connections to be available.
+        await electrum.ready();
+        
+        // Request the balance of the requested Scripthash D address
+        const getuhistory1 = await electrum.request('blockchain.scripthash.listunspent', scripthash);
+
+        const getuhistory2 = await electrum.request('blockchain.scripthash.listunspent', scripthashp2pk);
+
+        const utxos = getuhistory1.concat(getuhistory2);
+
+        await electrum.shutdown();
+
+        Storage.set('btcutxo', utxos);
+
+        return utxos;
+
+        } catch (e) {
+            console.log('UTXO Error', e);
+        }
+    }
+
+    let promises = [];
+    let sendarray = [];
+    promises.push(new Promise((res, rej) => {
+        utxohistory().then(UTXOHistory => {
+            sendarray.push({utxos: UTXOHistory});
+            res({UTXOHistory});
+        });
+    }));
+
+    res.render('simple/loading', (err, html) => {
+        res.write(html + '\n');
+        Promise.all(promises).then((values) => {
+            var utxos = sendarray[0].utxos;
+
+            var numutxo = utxos.length;
+            var utxocount = Number(numutxo);
+        
+            var totalVal = 0;
+            for(i=0; i<numutxo; i++) {  
+                totalVal += utxos[i].value;
+            }
+        
+            res.render('simple/sendbtc', {
+                utxos: utxos,
+                utxocount: utxocount,
+                totalsendable: totalVal,
+                totalethbal: totalethbal,
+                totalbal: totalbal,
+                totalbtcbal: totalbtcbal,
+                totalaribal: totalaribal,
+                ethaddress: ethaddress,
+                mainaddress: btcaddress
             }, (err, html) => {
                 res.end(html + '\n');
             });
@@ -646,6 +780,428 @@ exports.postauto = (req, res) => {
         req.toastr.error('You entered an invalid Denarius (D) Address!', 'Invalid Address!', { positionClass: 'toast-bottom-left' });
         //req.flash('errors', { msg: 'You entered an invalid Denarius (D) Address!' });
         return res.redirect('/createtx');
+    }
+  }
+};
+
+//POST the BTC UTXO selected and create and sign raw transaction for sending
+exports.postbtcsend = (req, res) => {
+    var selectedutxo = req.body.UTXO;
+    var fee = 0.00001;
+    var sendtoaddress = req.body.sendaddress;
+    var amount = req.body.amount;
+
+    var sortedsplit = selectedutxo.split(',');
+
+    //Selected UTXO to create transaction from
+    var sutxo = sortedsplit[0];
+    var sindex = sortedsplit[1];
+    var samnt = sortedsplit[2];
+
+    //Converted Available Amount from UTXO
+    var csamnt = samnt / 100000000; // / 1e8 10
+    var convertedamount = parseInt(amount * 1e8); //6
+    var outp = csamnt - amount - fee;
+    var outputamount = parseInt(outp * 1e8); // 0.6669 - 0.0001 = 0.6668 - 0.6669 = -0.0001
+
+    console.log(outputamount);
+
+    if (outputamount < 0 || outputamount == 0) {
+        outputamount = '';
+        req.toastr.error('Withdrawal change amount cannot be a negative amount, you must send some BTC to your change address!', 'Balance Error!', { positionClass: 'toast-bottom-left' });
+        return res.redirect('/sendbtc');
+    }
+
+    var valid = ETHValidator.validate(`${sendtoaddress}`, 'BTC');
+
+    if (parseFloat(amount) - fee > csamnt) {
+        req.toastr.error('Withdrawal amount + network fees exceeds your select BTC balance for the selected UTXO!', 'Balance Error!', { positionClass: 'toast-bottom-left' });
+        return res.redirect('/sendbtc');
+
+    } else {
+
+    if (valid) {
+
+        // Bitcoin Network Params Object
+        const bitcoinnetwork = {
+            messagePrefix: '\x18Bitcoin Signed Message:\n',
+            bech32: 'bc',
+            bip32: {
+                public: 0x0488b21e,
+                private: 0x0488ade4
+            },
+            pubKeyHash: 0x00,
+            scriptHash: 0x05,
+            wif: 0x80
+        };
+
+        console.log(convertedamount);
+        console.log(sutxo);
+        console.log(sendtoaddress);
+
+        // Initialize a private key using WIF
+
+        //Get our password and seed to get a privkey
+        var passsworddb = Storage.get('password');
+        var seedphrasedb = Storage.get('seed');
+
+        var decryptedpass = decrypt(passsworddb);
+        ps = decryptedpass;
+
+        var decryptedmnemonic = decrypt(seedphrasedb);
+        mnemonic = decryptedmnemonic;
+
+        //Convert our mnemonic seed phrase to BIP39 Seed Buffer 
+        const seed = bip39.mnemonicToSeedSync(mnemonic); //No pass to keep Coniomi styled seed
+        
+        // BIP32 From BIP39 Seed
+        const root = bip32b.fromSeed(seed);
+
+        // Get XPUB from BIP32
+        const xpub = root.neutered().toBase58();
+
+        const addresscount = 4; // 3 Addresses Generated
+
+        //Get 1 Address from the derived mnemonic
+        const addressPath0 = `m/44'/0'/0'/0/0`;
+
+        // Get the keypair from the address derivation path
+        const addressKeypair0 = root.derivePath(addressPath0);
+
+        const privkey = addressKeypair0.toWIF();
+
+        // Get the p2sh base58 public address of the keypair
+        const btcaddy = bitcoinjs.payments.p2sh({ redeem: bitcoinjs.payments.p2wpkh({ pubkey: addressKeypair0.publicKey, network: bitcoinnetwork }), }).address; //Segwit P2SH 3
+
+        //const ecpair = bitcoinjs.ECPair.fromPublicKey(node.publicKey, { network: NETWORK });
+        const p2wpkhredeem = bitcoinjs.payments.p2wpkh({ pubkey: addressKeypair0.publicKey, network: bitcoinnetwork });
+
+        //var key2 = dbitcoin.ECPair.fromWIF(privkey);
+
+        //CREATE A RAW TRANSACTION AND SIGN IT FOR BITCOIN!
+
+        const key = bitcoinjs.ECPair.fromWIF(privkey);
+
+        const psbt = new bitcoinjs.Psbt();
+
+        const bytes = bs58.decode(btcaddy);
+        const byteshex = bytes.toString('hex');
+        const remove00 = byteshex.substring(2);
+        const removechecksum = remove00.substring(0, remove00.length-8);
+        const HASH160 = "A914" + removechecksum.toUpperCase() + "87"; //OP_HASH160 | | OP_EQUAL
+
+        psbt.addInput({hash: sutxo, index: parseInt(sindex),
+      
+            // non-segwit inputs now require passing the whole previous tx as Buffer
+            // nonWitnessUtxo: Buffer.from(
+            //   '0200000001f9f34e95b9d5c8abcd20fc5bd4a825d1517be62f0f775e5f36da944d9' +
+            //     '452e550000000006b483045022100c86e9a111afc90f64b4904bd609e9eaed80d48' +
+            //     'ca17c162b1aca0a788ac3526f002207bb79b60d4fc6526329bf18a77135dc566020' +
+            //     '9e761da46e1c2f1152ec013215801210211755115eabf846720f5cb18f248666fec' +
+            //     '631e5e1e66009ce3710ceea5b1ad13ffffffff01' +
+            //     // value in satoshis (Int64LE) = 0x015f90 = 90000
+            //     '905f010000000000' +
+            //     // scriptPubkey length
+            //     '19' +
+            //     // scriptPubkey
+            //     '76a9148bbc95d2709c71607c60ee3f097c1217482f518d88ac' +
+            //     // locktime
+            //     '00000000',
+            //   'hex',
+            // ),
+      
+            // // If this input was segwit, instead of nonWitnessUtxo, you would add
+            // // a witnessUtxo as follows. The scriptPubkey and the value only are needed.
+            witnessUtxo: {
+              script: Buffer.from(HASH160,'hex'), value: parseInt(samnt),
+            },
+
+            redeemScript: p2wpkhredeem.output
+      
+            // Not featured here:
+            //   redeemScript. A Buffer of the redeemScript for P2SH
+            //   witnessScript. A Buffer of the witnessScript for P2WSH
+          });
+        psbt.addOutput({address: sendtoaddress, value: convertedamount,  });
+        psbt.addOutput({address: btcaddy, value: outputamount,  });
+        psbt.signInput(0, key);
+        psbt.validateSignaturesOfInput(0);
+        psbt.finalizeAllInputs();
+
+        // Print transaction serialized as hex
+        console.log('BTC Raw Transaction Built and Broadcast: ' + psbt.extractTransaction().toHex());
+
+        // => 020000000110fd2be85bba0e8a7a694158fa27819f898def003d2f63b668d9d19084b76820000000006b48304502210097897de69a0bd7a30c50a4b343b7471d1c9cd56aee613cf5abf52d62db1acf6202203866a719620273a4e550c30068fb297133bceee82c58f5f4501b55e6164292b30121022f0c09e8f639ae355c462d7a641897bd9022ae39b28e6ec621cea0a4bf35d66cffffffff0140420f000000000001d600000000
+        
+        let promises = [];
+        let broadcastarray = [];
+
+        const broadcastTX = async () => {
+            // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+            const electrum = new ElectrumCluster('Kronos Core Mode Transaction', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+            
+            // Add some servers to the cluster.
+            electrum.addServer(btcelectrumhost1);
+            electrum.addServer(btcelectrumhost2);
+            electrum.addServer(btcelectrumhost3);
+            electrum.addServer(btcelectrumhost4);
+            electrum.addServer(btcelectrumhost5);
+            electrum.addServer(btcelectrumhost6);
+            electrum.addServer(btcelectrumhost7);
+            
+            // Wait for enough connections to be available.
+            await electrum.ready();
+
+            const broadcast = await electrum.request('blockchain.transaction.broadcast', psbt.extractTransaction().toHex());
+            
+            //console.log(broadcast);
+
+            //await electrum.disconnect();
+            await electrum.shutdown();
+
+            return broadcast;
+        };
+
+        //var broadcasted = broadcastTX();
+
+        promises.push(new Promise((res, rej) => {
+            broadcastTX().then(broadcastedTX => {
+                broadcastarray.push({tx: broadcastedTX});
+                res({broadcastedTX});
+            });
+        }));
+            
+        Promise.all(promises).then((values) => {
+            var broadcasted = broadcastarray[0].tx;
+            console.log(broadcastarray[0].tx);
+
+            if (!broadcasted.message) {
+                req.toastr.success(`Your ${amount} BTC was sent successfully! TXID: ${broadcasted}`, 'Success!', { positionClass: 'toast-bottom-left' });
+                req.flash('success', { msg: `Your <strong>${amount} BTC</strong> was sent successfully! TXID: <a href='https://chainz.cryptoid.info/btc/tx.dws?${broadcasted}' target='_blank'>${broadcasted}</a>` });
+                return res.redirect('/sendbtc');
+            } else {
+                req.toastr.error(`Error sending BTC! Broadcast Error: ${broadcasted.message}`, 'Error!', { positionClass: 'toast-bottom-left' });
+                //req.flash('errors', { msg: `Error sending D! Broadcast - Error: Something went wrong, please go to your dashboard and refresh.` });
+                return res.redirect('/sendbtc');
+            }
+
+        });
+
+        // req.toastr.success(`D was sent successfully! ${broadcasted}`, 'Success!', { positionClass: 'toast-bottom-left' });
+        // req.flash('success', { msg: `Your <strong>D</strong> was sent successfully! Please wait 10 confirms for it show up! TXID: ${broadcasted}` });
+        // return res.redirect('/createtx');
+
+
+    } else {
+        req.toastr.error('You entered an invalid Bitcoin (BTC) Address!', 'Invalid Address!', { positionClass: 'toast-bottom-left' });
+        //req.flash('errors', { msg: 'You entered an invalid Denarius (D) Address!' });
+        return res.redirect('/sendbtc');
+    }
+  }
+};
+
+//POST the BTC UTXO inputs automatically and create and sign a raw Bitcoin transaction for sending
+exports.postbtcauto = (req, res) => {
+    var fee = 0.00001;
+    var sendtoaddress = req.body.sendaddressauto;
+    var amount = req.body.amountauto;
+
+    //Get our UTXO data from storage
+    let utxos = Storage.get('btcutxo');
+    var numutxo = utxos.length;
+    console.log('UTXO Count: ', numutxo);
+
+    var convertedamount = parseInt(amount * 1e8); //3
+
+    var totaluVal = 0;
+    for(i=0; i<numutxo; i++) {  
+        totaluVal += utxos[i].value;
+        //txb.addInput(utxos[i].tx_hash, parseInt(utxos[i].tx_pos));
+    }
+    //calc fee and add output address
+    var thefees = numutxo * 10000;
+    var amountTo = totaluVal - thefees; // 100 D total inputs - 30 D converted amount - 70 D to be sent back to change address
+    var changeTotal = amountTo - convertedamount; // 70 D
+
+    if (changeTotal < 0 || changeTotal == 0) {
+        changeTotal = '';
+        req.toastr.error('Withdrawal change amount cannot be a negative amount, you must send some BTC to your change address!', 'Balance Error!', { positionClass: 'toast-bottom-left' });
+        return res.redirect('/sendbtc');
+    }
+
+    var valid = ETHValidator.validate(`${sendtoaddress}`, 'BTC');
+
+    if (parseFloat(amount) - fee > amountTo) {
+        req.toastr.error('Withdrawal amount + network fees exceeds your BTC balance!', 'Balance Error!', { positionClass: 'toast-bottom-left' });
+        return res.redirect('/sendbtc');
+
+    } else {
+
+    if (valid) {
+
+        // Bitcoin Network Params Object
+        const bitcoinnetwork = {
+            messagePrefix: '\x18Bitcoin Signed Message:\n',
+            bech32: 'bc',
+            bip32: {
+                public: 0x0488b21e,
+                private: 0x0488ade4
+            },
+            pubKeyHash: 0x00,
+            scriptHash: 0x05,
+            wif: 0x80
+        };
+
+        console.log(convertedamount);
+        console.log(sendtoaddress);
+
+        // Initialize a private key using WIF
+
+        //Get our password and seed to get a privkey
+        var passsworddb = Storage.get('password');
+        var seedphrasedb = Storage.get('seed');
+
+        var decryptedpass = decrypt(passsworddb);
+        ps = decryptedpass;
+
+        var decryptedmnemonic = decrypt(seedphrasedb);
+        mnemonic = decryptedmnemonic;
+
+        //Convert our mnemonic seed phrase to BIP39 Seed Buffer 
+        const seed = bip39.mnemonicToSeedSync(mnemonic); //No pass to keep Coniomi styled seed
+        
+        // BIP32 From BIP39 Seed
+        const root = bip32b.fromSeed(seed);
+
+        // Get XPUB from BIP32
+        const xpub = root.neutered().toBase58();
+
+        const addresscount = 4; // 3 Addresses Generated
+
+        //Get 1 Address from the derived mnemonic
+        const addressPath0 = `m/44'/0'/0'/0/0`;
+
+        // Get the keypair from the address derivation path
+        const addressKeypair0 = root.derivePath(addressPath0);
+
+        const privkey = addressKeypair0.toWIF();
+
+        // Get the p2sh base58 public address of the keypair
+        const btcaddy = bitcoinjs.payments.p2sh({ redeem: bitcoinjs.payments.p2wpkh({ pubkey: addressKeypair0.publicKey, network: bitcoinnetwork }), }).address; //Segwit P2SH 3
+
+        //const ecpair = bitcoinjs.ECPair.fromPublicKey(node.publicKey, { network: NETWORK });
+        const p2wpkhredeem = bitcoinjs.payments.p2wpkh({ pubkey: addressKeypair0.publicKey, network: bitcoinnetwork });
+
+        //var key2 = dbitcoin.ECPair.fromWIF(privkey);
+
+        //CREATE A RAW TRANSACTION AND SIGN IT FOR BITCOIN!
+
+        const key = bitcoinjs.ECPair.fromWIF(privkey);
+
+        const psbt = new bitcoinjs.Psbt();
+
+        const bytes = bs58.decode(btcaddy);
+        const byteshex = bytes.toString('hex');
+        const remove00 = byteshex.substring(2);
+        const removechecksum = remove00.substring(0, remove00.length-8);
+        const HASH160 = "A914" + removechecksum.toUpperCase() + "87"; //OP_HASH160 | | OP_EQUAL
+
+        var totalVal = 0;
+        for(i=0; i<numutxo; i++) {  
+            totalVal += utxos[i].value;
+            psbt.addInput({hash: utxos[i].tx_hash, index: parseInt(utxos[i].tx_pos),       
+                // // If this input was segwit, instead of nonWitnessUtxo, you would add
+                // // a witnessUtxo as follows. The scriptPubkey and the value only are needed.
+                witnessUtxo: {
+                    script: Buffer.from(HASH160,'hex'), value: parseInt(utxos[i].value),
+                },
+    
+                redeemScript: p2wpkhredeem.output
+            
+                // Not featured here:
+                //   redeemScript. A Buffer of the redeemScript for P2SH
+                //   witnessScript. A Buffer of the witnessScript for P2WSH
+                });
+        }
+        //calc fee and add output address
+        var btcfees = numutxo * 10000;
+        var amountToSend = totalVal - btcfees; // 100 BTC total inputs - 30 BTC converted amount - 70 BTC to be sent back to change address
+        var changeAmnt = amountToSend - convertedamount; // 70 BTC
+
+        psbt.addOutput({address: sendtoaddress, value: convertedamount,  });
+        psbt.addOutput({address: btcaddy, value: changeAmnt,  });
+
+        //Sign each of our privkey utxo inputs
+        for(i=0; i<numutxo; i++){  
+            psbt.signInput(i, key);
+            psbt.validateSignaturesOfInput(i);
+        }
+        //psbt.validateSignaturesOfInput(0);
+        psbt.finalizeAllInputs();
+
+        // Print transaction serialized as hex
+        console.log('BTC Raw Transaction Built and Broadcast: ' + psbt.extractTransaction().toHex());
+
+        // => 020000000110fd2be85bba0e8a7a694158fa27819f898def003d2f63b668d9d19084b76820000000006b48304502210097897de69a0bd7a30c50a4b343b7471d1c9cd56aee613cf5abf52d62db1acf6202203866a719620273a4e550c30068fb297133bceee82c58f5f4501b55e6164292b30121022f0c09e8f639ae355c462d7a641897bd9022ae39b28e6ec621cea0a4bf35d66cffffffff0140420f000000000001d600000000
+        
+        let promises = [];
+        let broadcastarray = [];
+
+        const broadcastTX = async () => {
+            // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+            const electrum = new ElectrumCluster('Kronos Core Mode BTC Transaction', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+            
+            // Add some servers to the cluster.
+            electrum.addServer(btcelectrumhost1);
+            electrum.addServer(btcelectrumhost2);
+            electrum.addServer(btcelectrumhost3);
+            electrum.addServer(btcelectrumhost4);
+            electrum.addServer(btcelectrumhost5);
+            electrum.addServer(btcelectrumhost6);
+            electrum.addServer(btcelectrumhost7);
+            
+            // Wait for enough connections to be available.
+            await electrum.ready();
+
+            const broadcast = await electrum.request('blockchain.transaction.broadcast', psbt.extractTransaction().toHex());
+            
+            //console.log(broadcast);
+
+            //await electrum.disconnect();
+            await electrum.shutdown();
+
+            return broadcast;
+        };
+
+        //var broadcasted = broadcastTX();
+
+        promises.push(new Promise((res, rej) => {
+            broadcastTX().then(broadcastedTX => {
+                broadcastarray.push({tx: broadcastedTX});
+                res({broadcastedTX});
+            });
+        }));
+            
+        Promise.all(promises).then((values) => {
+            var broadcasted = broadcastarray[0].tx;
+            console.log(broadcastarray[0].tx);
+
+            if (!broadcasted.message) {
+                req.toastr.success(`Your ${amount} BTC was sent successfully! TXID: ${broadcasted}`, 'Success!', { positionClass: 'toast-bottom-left' });
+                req.flash('success', { msg: `Your <strong>${amount} BTC</strong> was sent successfully! TXID: <a href='https://chainz.cryptoid.info/btc/tx.dws?${broadcasted}' target='_blank'>${broadcasted}</a>` });
+                return res.redirect('/sendbtc');
+            } else {
+                req.toastr.error(`Error sending BTC! Broadcast Error: ${broadcasted.message}`, 'Error!', { positionClass: 'toast-bottom-left' });
+                //req.flash('errors', { msg: `Error sending D! Broadcast - Error: Something went wrong, please go to your dashboard and refresh.` });
+                return res.redirect('/sendbtc');
+            }
+
+        });
+
+
+    } else {
+        req.toastr.error('You entered an invalid Bitcoin (BTC) Address!', 'Invalid Address!', { positionClass: 'toast-bottom-left' });
+        return res.redirect('/sendbtc');
     }
   }
 };

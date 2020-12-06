@@ -276,10 +276,12 @@ const kronosController = require('./controllers/kronos');
 const authController = require('./controllers/auth');
 const dashController = require('./controllers/dashboard');
 const sDashController = require('./controllers/simple/dashboard');
-const sTXController = require('./controllers/simple/txs.js');
+const sTXController = require('./controllers/simple/txs');
+const coreController = require('./controllers/simple/kronos');
 const toolsController = require('./controllers/tools');
 const walletController = require('./controllers/wallet');
 const explorerController = require('./controllers/explorer');
+
 
 /**
  * Create Express server.
@@ -514,9 +516,17 @@ app.get('/simplesetup', authController.getsimple);
 app.post('/simplesetup', Limiter, authController.simple);
 app.get('/dashsimple', auth, sDashController.simpleindex);
 
+app.get('/core', auth, Limiter, coreController.getcoresettings);
+
+//D Send
 app.get('/createtx', auth, Limiter, sTXController.getsend);
 app.post('/simplesend', Limiter, sTXController.postcreate);
 app.post('/autosend', Limiter, sTXController.postauto);
+
+//BTC Send
+app.get('/sendbtc', auth, Limiter, sTXController.getbtcsend);
+app.post('/btcsend', Limiter, sTXController.postbtcsend);
+app.post('/btcautosend', Limiter, sTXController.postbtcauto);
 
 app.get('/sendeth', auth, Limiter, sTXController.getethsend);
 app.post('/ethsend', Limiter, sTXController.postethsend);
@@ -536,7 +546,8 @@ app.post('/import', auth, Limiter, authController.importseed);
 app.get('/sweep', auth, Limiter, authController.getsweep);
 app.post('/sweep', auth, Limiter, authController.sweepkey);
 
-//Advanced Mode
+
+//Advanced Mode--------------------------------------------------
 app.get('/setup', authController.getsetup);
 
 //POST Auth Routes

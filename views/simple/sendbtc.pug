@@ -1,0 +1,243 @@
+extends ../layoutsimple
+
+block content
+  style.
+    .dashloader {
+      display: none;
+    }
+  script.
+    function updateDue() {
+      var amnt = parseFloat(document.getElementById("amount").value);
+      if (!amnt) { amnt = 0; }
+
+      var utxoamnt = document.getElementById("utxoption").getAttribute('data-value');
+
+      var card = document.getElementById("UTXO");
+      var utxoamntselected = card.options[card.selectedIndex].getAttribute('data-value');
+
+      var total = document.getElementById("totalwithdraw");
+      total.value = (utxoamntselected - 0.00001).toFixed(8);
+
+      var changeamount = (utxoamntselected - amnt - 0.00001).toFixed(8);
+      var change = document.getElementById("totalchange");
+      change.value = changeamount;
+
+    }
+    function updateDueAuto() {
+      var amnt = parseFloat(document.getElementById("amountauto").value);
+      if (!amnt) { amnt = 0; }
+
+      var utxoamnt = document.getElementById("utxototalval").getAttribute('data-value');
+
+      //var card = document.getElementById("UTXO");
+      //var utxoamntselected = card.options[card.selectedIndex].getAttribute('data-value');
+
+      var total = document.getElementById("totalwithdrawauto");
+      total.value = (utxoamnt - 0.00001).toFixed(8);
+
+      var changeamount = (utxoamnt - amnt - 0.00001).toFixed(8);
+      var change = document.getElementById("totalchangeauto");
+      change.value = changeamount;
+
+    }
+    function clicked() {
+      $('#addy').val($('#sendaddress').val());
+      $('#total').val($('#totalwithdraw').val());
+      $('#totalchange2').val($('#totalchange').val());
+      $('#amounttotal').val($('#amount').val());
+    }
+    function clickedauto() {
+      $('#addyauto').val($('#sendaddressauto').val());
+      $('#totalauto').val($('#totalwithdrawauto').val());
+      $('#totalchange2auto').val($('#totalchangeauto').val());
+      $('#amounttotalauto').val($('#amountauto').val());
+    }
+    function confirmed() {
+      $('#tab1').submit();
+    }
+    function confirmedauto() {
+      $('#tab2').submit();
+    }
+  #notify
+  .container(style='margin-top:30px;')
+    h1(align='center', style='font-size:73px;font-weight:100;margin-top:12px !important;') Send 
+      img.res(src='../img/bitcoin.png', alt='BTC', border='0', style='height:100px !important;width: 100px !important;margin:-25px 0px 0px !important;')
+    p
+      .titlesmall(align='center', style='color:#888;padding-left:15px;padding-right:15px;') Send Bitcoin (BTC) to any other Bitcoin segwit address from your available Unspent Transaction Output (UTXO) balances. You can select a UTXO in your wallet to send BTC from, set an address and an amount to send to. During the transaction the remaining BTC, minus the network fee, will be sent to your main address (change address).
+    br
+    div.rowclass(style='font-weight:400;font-size:14px;padding:30px;background-color:#222;margin:5px;margin-top:0;border-radius:15px;', align='center')
+      #SubmitDisplayModal.modal
+        .modal-dialog
+            .modal-content(style='color:#FFF !important;background-color:#111 !important; border-color: #444 !important;')
+                .modal-header(style='border-bottom: none !important;')
+                    button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+                    h4.modal-title Confirm Withdrawal
+                .modal-body
+                  .form-horizontal
+                    p(align='center')
+                      strong Are you sure you want to withdraw?
+                    .form-group
+                      label.col-sm-3.control-label(for='addy') Confirm Address
+                      .col-sm-8
+                        input.form-control.blackinput2(type='text', id='addy', disabled)
+                    .form-group
+                      label.col-sm-3.control-label(for='total') Send Amount
+                      .col-sm-8
+                        .input-group
+                          input.form-control.blackinput2(type='text', id='amounttotal', disabled)
+                          span.input-group-addon(style='background-color:#333;color:#FFF;border:none;') BTC
+                    .form-group
+                      label.col-sm-3.control-label(for='totalchange') Change Total
+                      .col-sm-8
+                        .input-group
+                          input.form-control.blackinput2(type='text', id='totalchange2', disabled)
+                          span.input-group-addon(style='background-color:#333;color:#FFF;border:none;') BTC
+                    .form-group
+                      label.col-sm-3.control-label(for='total') Confirm Total
+                      .col-sm-8
+                        .input-group
+                          input.form-control.blackinput2(type='text', id='total', disabled)
+                          span.input-group-addon(style='background-color:#333;color:#FFF;border:none;') BTC
+                .modal-footer(style='border-top: none !important;')
+                    button.btn.btn-success(type='submit', id='submit', onclick='confirmed()', style='background-color: #546639;border-radius: 15px;font-size: 15px !important;') Confirm and Send BTC
+                    button.btn.btn-default(type='button', data-dismiss='modal', style='background-color: #602828;border-radius: 15px;font-size: 15px !important;') Close    
+      #SubmitDisplayModal2.modal
+        .modal-dialog
+            .modal-content(style='color:#FFF !important;background-color:#111 !important; border-color: #444 !important;')
+                .modal-header(style='border-bottom: none !important;')
+                    button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+                    h4.modal-title Confirm Withdrawal
+                .modal-body
+                  .form-horizontal
+                    p(align='center')
+                      strong Are you sure you want to withdraw?
+                    .form-group
+                      label.col-sm-3.control-label(for='addyauto') Confirm Address
+                      .col-sm-8
+                        input.form-control.blackinput2(type='text', id='addyauto', disabled)
+                    .form-group
+                      label.col-sm-3.control-label(for='totalauto') Send Amount
+                      .col-sm-8
+                        .input-group
+                          input.form-control.blackinput2(type='text', id='amounttotalauto', disabled)
+                          span.input-group-addon(style='background-color:#333;color:#FFF;border:none;') BTC
+                .modal-footer(style='border-top: none !important;')
+                    button.btn.btn-success(type='submit', id='submit', onclick='confirmedauto()', style='background-color: #546639;border-radius: 15px;font-size: 15px !important;') Confirm and Send BTC
+                    button.btn.btn-default(type='button', data-dismiss='modal', style='background-color: #602828;border-radius: 15px;font-size: 15px !important;') Close      
+      // Centered Pills
+      .wrapper
+        nav.tabs(style='margin: 0;')
+          .selector
+          a.tab1.active(href='#') Manual Send
+          a.tab2(href='#') Auto Send
+      br
+      form.form-horizontal(action='/btcsend', method='POST', id='tab1')
+        input(type='hidden', name='_csrf', value=_csrf)
+        .form-group
+          label.col-sm-3.control-label(for='UTXO') UTXO Input
+          .col-sm-7
+            select.form-control.blackinput3(type='text', name='UTXO', id='UTXO')
+              if (utxos)
+                each utxo in utxos
+                  option#utxoption(value=utxo.tx_hash+','+utxo.tx_pos+','+utxo.value, data-value=`${utxo.value / 100000000}`) #{utxo.value / 100000000} BTC - #{utxo.tx_hash} - TXPOS: #{utxo.tx_pos}
+              else
+                  option(value='' disabled) No UTXOs Available
+        .form-group
+          label.col-sm-3.control-label(for='sendaddress') To BTC Wallet Address
+          .col-sm-7
+            input.form-control.blackinput3(type='text', name='sendaddress', id='sendaddress', placeholder='38jRk63FQDRUfeKqz99rkmCr47qsFUT5K2')
+        .form-group
+          label.col-sm-3.control-label(for='amount') Amount to Send
+          .col-sm-7
+            .input-group
+              input.form-control.blackinput3(type='text', name='amount', id='amount', placeholder='1',  onkeyup='updateDue()')
+              span.input-group-addon(style='background-color:#333;color:#FFF;border:none;') BTC
+        .divider(style='margin:10px;border:1px solid #333;')
+        .form-group
+          label.col-sm-3.control-label(for='total') Total Change Amount
+          .col-sm-7
+            .input-group
+              input.form-control.blackinput3(type='text', name='totalchange', id='totalchange', value='', disabled)
+              span.input-group-addon(style='background-color:#333;color:#FFF;border:none;') BTC
+        .form-group
+          label.col-sm-3.control-label(for='sendaddress')
+          .col-sm-7
+            span(style='color:#999;') Your change wallet: #{mainaddress}
+        .form-group
+          label.col-sm-3.control-label(for='amount') Network Fee
+          .col-sm-7
+            .input-group
+              input.form-control.blackinput3(type='text', name='fee', id='fee', value='-0.00001',  disabled)
+              span.input-group-addon(style='background-color:#333;color:#FFF;border:none;') Approx. BTC Fee
+        .form-group
+          label.col-sm-3.control-label(for='total') Total with fees
+          .col-sm-7
+            .input-group
+              input.form-control.blackinput3(type='text', name='total', id='totalwithdraw', value='', disabled)
+              span.input-group-addon(style='background-color:#333;color:#FFF;border:none;') Total
+        .form-group
+          .col-sm-12
+            button.kbtn.grey(type='button', id='sendDNR', onclick='clicked()', data-toggle='modal', data-target='#SubmitDisplayModal')
+              |  Send Bitcoin
+      form.form-horizontal(action='/btcautosend', method='POST', id='tab2')
+        input(type='hidden', name='_csrf', value=_csrf)
+        .form-group
+          label.col-sm-3.control-label(for='UTXO') Auto UTXO Inputs
+          .col-sm-7#utxototalval(data-value=totalsendable / 1e8)
+            if (utxos)
+              | #{utxocount} UTXOs and 
+              strong #{totalsendable / 1e8} BTC 
+              | available to spend.
+            else
+                | No UTXOs Available
+        .form-group
+          label.col-sm-3.control-label(for='sendaddressauto') To BTC Wallet Address
+          .col-sm-7
+            input.form-control.blackinput3(type='text', name='sendaddressauto', id='sendaddressauto', placeholder='38jRk63FQDRUfeKqz99rkmCr47qsFUT5K2')
+        .form-group
+          label.col-sm-3.control-label(for='amountauto') Amount to Send
+          .col-sm-7
+            .input-group
+              input.form-control.blackinput3(type='text', name='amountauto', id='amountauto', placeholder='1',  onkeyup='updateDueAuto()')
+              span.input-group-addon(style='background-color:#333;color:#FFF;border:none;') BTC
+        .form-group
+          .col-sm-12
+            button.kbtn.grey(type='button', id='sendDNR', onclick='clickedauto()', data-toggle='modal', data-target='#SubmitDisplayModal2')
+              |  Send Bitcoin
+    script.
+      var tabs = $('.tabs');
+      var selector = $('.tabs').find('a').length;
+      //var selector = $(".tabs").find(".selector");
+      var activeItem = tabs.find('.active');
+      var activeWidth = activeItem.innerWidth();
+      $('#tab2').hide();
+      $(".selector").css({
+        "left": activeItem.position.left + "px", 
+        "width": activeWidth + "px"
+      });
+
+      $(".tabs").on("click","a",function(e){
+        e.preventDefault();
+        $('.tabs a').removeClass("active");
+        $(this).addClass('active');
+        var activeWidth = $(this).innerWidth();
+        var itemPos = $(this).position();
+        //- $('.selectord').toggle();
+        //- $('.selectorari').toggle();
+        //- $('.selectoreth').toggle();
+        $(".selector").css({
+          "left":itemPos.left + "px", 
+          "width": activeWidth + "px"
+        });
+      });
+      $(".tab1").on("click", function(){
+        $("#tab2").addClass('hide');
+        $("#tab1").fadeIn(1000);
+        $('#tab2').fadeOut(1000);
+      });
+
+      $(".tab2").on("click", function(){
+        $("#tab2").removeClass('hide');
+        $("#tab1").fadeOut();
+        $('#tab2').fadeIn(1000);
+      });

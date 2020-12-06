@@ -36,7 +36,7 @@ block content
                         i.fas.fa-copy
                   if (typeof qrcode != 'undefined')
                     .qrcode(align='center')
-                        a(href='#' + mainaddy)
+                        button.clip(data-clipboard-text=mainaddy, style='background-color: transparent;border: none;')
                           img(src='' + qrcode, style='border-radius:10px;')
                   .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:10px;', align='center') DENARIUS 
                     span#dblock
@@ -61,7 +61,7 @@ block content
                         i.fas.fa-copy
                   if (typeof qrcode != 'undefined')
                     .qrcode(align='center')
-                        a(href='#' + btcaddress)
+                        button.clip(data-clipboard-text=btcaddress, style='background-color: transparent;border: none;')
                           img(src='' + btcqrcode, style='border-radius:10px;')
                   .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:10px;', align='center') BITCOIN 
                     span#btcblock
@@ -86,7 +86,7 @@ block content
                         i.fas.fa-copy
                   if (typeof qrcode != 'undefined')
                     .qrcode(align='center')
-                        a(href='#' + ethaddy)
+                        button.clip(data-clipboard-text=ethaddy, style='background-color: transparent;border: none;')
                           img(src='' + ethqrcode, style='border-radius:10px;')
                   .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:10px;', align='center') ETHEREUM 
                     span#ethhblock 
@@ -111,7 +111,7 @@ block content
                         i.fas.fa-copy
                   if (typeof qrcode != 'undefined')
                     .qrcode(align='center')
-                        a(href='#' + ethaddy)
+                        button.clip(data-clipboard-text=ethaddy, style='background-color: transparent;border: none;')
                           img(src='' + ethqrcode, style='border-radius:10px;')
                   .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:10px;', align='center') DENARII 
                     span#aribblock
@@ -143,6 +143,7 @@ block content
                 table.sortable#fst
                   thead
                     tr
+                      th Type
                       th Block Height
                       th.sorttable_nosort Time (GMT)
                       th Confirmations
@@ -150,6 +151,8 @@ block content
                   tbody
                     each tx in dtxs
                       tr
+                        td(align='center', data-label='Type') 
+                          | TX
                         td(align='center', data-label='D Block Height') 
                           a.txid(href='https://chainz.cryptoid.info/d/tx.dws?'+tx.transactionBlock, target='_blank') #{tx.transactionBlock}
                         td(align='center', data-label='Timestamp') 
@@ -159,37 +162,54 @@ block content
                         td(align='center', data-label='TXID') 
                           a.txid(href='https://chainz.cryptoid.info/d/tx.dws?'+tx.transactionHex.txid, target='_blank') #{tx.transactionHex.txid}
           else
-            h1(style='color:#666;', align='center') No Transactions Available
+            h1(style='color:#666;', align='center') No D Transactions Available
         else
-          h1(style='color:#666;', align='center') No Transactions Available
+          h1(style='color:#666;', align='center') No D Transactions Available
       .row(class='rowclass', style='padding-right: 20px !important;').animate__animated.animate__fadeIn#tab4
         h3(style='font-size:48px;color: #393939;margin-top:0px;', align='center') 
               i.fas.fa-history  
               |  Bitcoin Transaction History
         if (typeof btctxs != 'undefined')
           if (typeof btctxs[0] != 'undefined')
-            .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;')
+            .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;') 
               .tablewrapper
                 table.sortable#fst
                   thead
                     tr
+                      th Type
                       th Block Height
                       th.sorttable_nosort Time (GMT)
-                      th Amount
+                      th Confirmations
                       th TXID
                   tbody
                     each tx in btctxs
                       tr
-                        td(align='center', data-label='BTC Block Height') !{tx.block_height}
+                        td(align='center', data-label='Type') 
+                          | TX
+                        td(align='center', data-label='BTC Block Height') 
+                          a.txid(href='https://chainz.cryptoid.info/btc/tx.dws?'+tx.transactionBlock, target='_blank') #{tx.transactionBlock}
                         td(align='center', data-label='Timestamp') 
-                          if (typeof tx.time != 'undefined')
-                            .date= new Date(tx.time*1000).toUTCString().replace('GMT','')
-                        td(align='center', data-label='Amount') 
-                          .label.label-success(style='background: none;') !{tx.result / 1e8} BTC
+                          .date= new Date(tx.transactionHex.time*1000).toUTCString().replace('GMT','')
+                        td(align='center', data-label='Confirmations') 
+                          | #{tx.transactionHex.confirmations}
                         td(align='center', data-label='TXID') 
-                          a.txid(href=`https://blockchain.info/tx/${tx.hash}`, target='_blank') !{tx.hash}
+                          a.txid(href='https://chainz.cryptoid.info/btc/tx.dws?'+tx.transactionHex.txid, target='_blank') #{tx.transactionHex.txid}
+                    each tx in btcmemtxs
+                      tr
+                        td(align='center', data-label='Type') 
+                          | Mempool
+                        td(align='center', data-label='BTC Block Height') 
+                          a.txid(href='https://chainz.cryptoid.info/btc/tx.dws?'+tx.transactionBlock, target='_blank') MEM #{tx.transactionBlock}
+                        td(align='center', data-label='Timestamp') 
+                          .date= new Date(tx.transactionHex.time*1000).toUTCString().replace('GMT','')
+                        td(align='center', data-label='Confirmations') 
+                          | #{tx.transactionHex.confirmations}
+                        td(align='center', data-label='TXID') 
+                          a.txid(href='https://chainz.cryptoid.info/btc/tx.dws?'+tx.transactionHex.txid, target='_blank') #{tx.transactionHex.txid}
           else
             h1(style='color:#666;', align='center') No BTC Transactions Available
+        else
+          h1(style='color:#666;', align='center') No BTC Transactions Available
       .row(class='rowclass', style='padding-right: 20px !important;').animate__animated.animate__fadeIn#tab3
         h3(style='font-size:48px;color: #393939;margin-top:0px;', align='center') 
               i.fas.fa-history  

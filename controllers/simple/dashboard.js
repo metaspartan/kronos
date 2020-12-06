@@ -119,10 +119,10 @@ exports.simpleindex = (req, res) => {
     //ElectrumX Hosts for Bitcoin
     const btcelectrumhost1 = 'bitcoin.lukechilds.co';
     const btcelectrumhost2 = 'fortress.qtornado.com';
-    const btcelectrumhost3 = 'electrum.aantonop.com';
-    const btcelectrumhost4 = 'electrum.vom-stausee.de';
-    const btcelectrumhost5 = 'electrum.hsmiths.com';
-    const btcelectrumhost6 = 'electrum.hodlister.co';
+    const btcelectrumhost3 = 'electrumx.erbium.eu';
+    const btcelectrumhost4 = 'electrum.acinq.co';
+    const btcelectrumhost5 = 'alviss.coinjoined.com';
+    const btcelectrumhost6 = 'hodlers.beer';
     const btcelectrumhost7 = 'electrum.blockstream.info'; //lol
     
     let socket_id = [];
@@ -578,10 +578,10 @@ exports.simpleindex = (req, res) => {
         Storage.set('btcbechaddy', btcsegwitbech32); // bc1
         Storage.set('btcsegwitaddy', btcsegwitp2shaddy); // 3
 
-        console.log(btcp2pkhaddy0);
-        console.log(btcp2pkaddy);
-        console.log(btcsegwitbech32);
-        console.log(btcsegwitp2shaddy);
+        // console.log(btcp2pkhaddy0);
+        // console.log(btcp2pkaddy);
+        // console.log(btcsegwitbech32);
+        // console.log(btcsegwitp2shaddy);
 
         const bytes = bs58.decode(p2pkhaddy0);
         const byteshex = bytes.toString('hex');
@@ -598,6 +598,23 @@ exports.simpleindex = (req, res) => {
 
         const scripthash = changeEndianness(shaaddress);
         const scripthashp2pk = changeEndianness(shaaddress1);
+
+        //Bitcoin Scripthashes
+        const bbytes = bs58.decode(btcsegwitp2shaddy);
+        const bbyteshex = bbytes.toString('hex');
+        const bremove00 = bbyteshex.substring(2);
+        const bremovechecksum = bremove00.substring(0, bremove00.length-8);
+        const bHASH160 = "A914" + bremovechecksum.toUpperCase() + "87"; // OP_HASH160 and OP_EQUAL
+        const bBUFFHASH160 = Buffer.from(bHASH160, "hex");
+        const shaaddressbtc = sha256(bBUFFHASH160);
+
+        const bxpubtopub = btcp2pkaddy;
+        const bHASH1601 =  "21" + bxpubtopub + "ac"; // 21 + COMPRESSED PUBKEY + OP_CHECKSIG = P2PK
+        const bBUFFHASH1601 = Buffer.from(bHASH1601, "hex");
+        const shaaddressbtc1 = sha256(bBUFFHASH1601);
+
+        const scripthashbtc = changeEndianness(shaaddressbtc);
+        const scripthashp2pkbtc = changeEndianness(shaaddressbtc1);
 
         res.io.on('connection', function (socket) {
             socket_id6.push(socket.id);
@@ -657,35 +674,52 @@ exports.simpleindex = (req, res) => {
             res.io.removeAllListeners('connection'); 
             }
             const btcWalletBal = async () => {
+                // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+                const electrum = new ElectrumCluster('Kronos Core Mode BTC Balance', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+                
+                // Add some servers to the cluster.
+                electrum.addServer(btcelectrumhost1);
+                electrum.addServer(btcelectrumhost2);
+                electrum.addServer(btcelectrumhost3);
+                electrum.addServer(btcelectrumhost4);
+                electrum.addServer(btcelectrumhost5);
+                electrum.addServer(btcelectrumhost6);
                 try {
+                    // Wait for enough connections to be available.
+                    await electrum.ready();
+                    
+                    // Request the balance of the requested Scripthash BTC address
 
-                    var btcaddress = Storage.get('btcsegwitaddy');
-                    //Get BTC Balance and TX History
-                    unirest.get("https://blockchain.info/rawaddr/"+btcaddress)
-                    .headers({'Accept': 'application/json'})
-                    .end(function (result) {
-                        if (!result.error) {
-                            var info = result.body; // results
-            
-                            console.log(info);
-                            
-                            var bal = info['final_balance'] / 1e8; //total BTC bal
+                    const balancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthashbtc);
 
-                            Storage.set('totalbtcbal', bal);
-                            socket.emit("newbtcbal", {btcbal: bal});
-            
-                        } else { 
-                            console.log("Error occured on fetching Blockchain.info Address Data", result.error);
-                        }
-                    });
+                    const p2pkbalancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthashp2pkbtc);
+
+                    const balanceformatted = balancescripthash.confirmed;
+
+                    const p2pkbalanceformatted = p2pkbalancescripthash.confirmed;
+
+                    const balancefinal = balanceformatted / 100000000;
+
+                    const p2pkbalancefinal = p2pkbalanceformatted / 100000000;
+
+                    const addedbalance = balancefinal + p2pkbalancefinal;
+
+                    const addedbalance2 = balanceformatted + p2pkbalanceformatted;
+
+                    //await electrum.disconnect();
+                    await electrum.shutdown();
+                    //console.log('BTC TOTAL BEING SET: ', addedbalance);
+                    Storage.set('totalbtcbal', addedbalance);
+                    socket.emit("newbtcbal", {btcbal: addedbalance});
+
                 } catch (e) {
                     console.log(e);
                 }
             }
-            //btcWalletBal();
+            btcWalletBal();
             setInterval(function(){ 
                 btcWalletBal();
-            }, 30000);
+            }, 15000);
         });
 
         // A for loop for how many addresses we want from the derivation path of the seed phrase
@@ -746,9 +780,159 @@ exports.simpleindex = (req, res) => {
         });
         Storage.set('ethaddy', ethwalletp.address);
 
-        seedaddresses.forEach(function (item, index) {
+        //Grab Full Transaction History from BTC ElectrumX
+        const btctxhistoryfull = async () => {
+            // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+            const electrum = new ElectrumCluster('Kronos Core Mode BTC TX History', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+            
+            // Add some servers to the cluster.
+            electrum.addServer(btcelectrumhost1);
+            electrum.addServer(btcelectrumhost2);
+            electrum.addServer(btcelectrumhost3);
+            electrum.addServer(btcelectrumhost4);
+            electrum.addServer(btcelectrumhost5);
+            electrum.addServer(btcelectrumhost6);
+            electrum.addServer(btcelectrumhost7);
+            
+            try {
+            // Wait for enough connections to be available.
+            await electrum.ready();
+            
+            // Request the balance of the requested Scripthash D address
 
-            var daddress0 = item.address;
+            //const txs = [];
+            const gethistory1 = await electrum.request('blockchain.scripthash.get_history', scripthashbtc);
+
+            const gethistory2 = await electrum.request('blockchain.scripthash.get_history', scripthashp2pkbtc);
+
+            const txs = gethistory1.concat(gethistory2);
+
+            const txscount = txs.length;
+
+            const btcfulltx = [];
+
+            for(i=0; i<txscount; i++) {
+                if (typeof txs[i].tx_hash != 'undefined') {
+                    var transactionID = txs[i].tx_hash;
+                    var transactionBlock = txs[i].height;
+                    const transactionHex = await electrum.request('blockchain.transaction.get', transactionID, true);
+                    //transactionHex.push(transactionBlock);
+                    //console.log(transactionHex);
+                    btcfulltx.push({transactionBlock, transactionHex});
+                }
+            }
+
+            await electrum.shutdown();
+
+            return btcfulltx;
+            } catch (e) {
+                console.log('BTC TX History Error', e);
+            }
+        };
+
+        //Grab Full Transaction History from BTC ElectrumX
+        const btcmemtxhistoryfull = async () => {
+            // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+            const electrum = new ElectrumCluster('Kronos Core Mode BTC TX History', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+            
+            // Add some servers to the cluster.
+            electrum.addServer(btcelectrumhost1);
+            electrum.addServer(btcelectrumhost2);
+            electrum.addServer(btcelectrumhost3);
+            electrum.addServer(btcelectrumhost4);
+            electrum.addServer(btcelectrumhost5);
+            electrum.addServer(btcelectrumhost6);
+            electrum.addServer(btcelectrumhost7);
+            
+            try {
+            // Wait for enough connections to be available.
+            await electrum.ready();
+            
+            // Request the balance of the requested Scripthash D address
+
+            //const txs = [];
+            const gethistory1 = await electrum.request('blockchain.scripthash.get_mempool', scripthashbtc);
+
+            const gethistory2 = await electrum.request('blockchain.scripthash.get_mempool', scripthashp2pkbtc);
+
+            const txs = gethistory1.concat(gethistory2);
+
+            const txscount = txs.length;
+
+            const btcfulltx = [];
+
+            for(i=0; i<txscount; i++) {
+                if (typeof txs[i].tx_hash != 'undefined') {
+                    var transactionID = txs[i].tx_hash;
+                    var transactionBlock = txs[i].height;
+                    const transactionHex = await electrum.request('blockchain.transaction.get', transactionID, true);
+                    //transactionHex.push(transactionBlock);
+                    //console.log(transactionHex);
+                    btcfulltx.push({transactionBlock, transactionHex});
+                }
+            }
+
+            await electrum.shutdown();
+
+            return btcfulltx;
+            } catch (e) {
+                console.log('BTC TX Mempool History Error', e);
+            }
+        };
+
+        //Grab Full Transaction History from BTC ElectrumX
+        const btcutxoHistory = async () => {
+            // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+            const electrum = new ElectrumCluster('Kronos Core Mode BTC UTXO History', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+            
+            // Add some servers to the cluster.
+            electrum.addServer(btcelectrumhost1);
+            electrum.addServer(btcelectrumhost2);
+            electrum.addServer(btcelectrumhost3);
+            electrum.addServer(btcelectrumhost4);
+            electrum.addServer(btcelectrumhost5);
+            electrum.addServer(btcelectrumhost6);
+            electrum.addServer(btcelectrumhost7);
+            
+            try {
+            // Wait for enough connections to be available.
+            await electrum.ready();
+            
+            // Request the balance of the requested Scripthash D address
+
+            //const txs = [];
+            const gethistory1 = await electrum.request('blockchain.scripthash.listunspent', scripthashbtc);
+
+            const gethistory2 = await electrum.request('blockchain.scripthash.listunspent', scripthashp2pkbtc);
+
+            const utxs = gethistory1.concat(gethistory2);
+
+            const utxscount = utxs.length;
+
+            const ubtcfulltx = [];
+
+            for(i=0; i<utxscount; i++) {
+                if (typeof utxs[i].tx_hash != 'undefined') {
+                    var transactionID = utxs[i].tx_hash;
+                    var transactionBlock = utxs[i].height;
+                    const transactionHex = await electrum.request('blockchain.transaction.get', transactionID, true);
+                    //transactionHex.push(transactionBlock);
+                    //console.log(transactionHex);
+                    ubtcfulltx.push({transactionBlock, transactionHex});
+                }
+            }
+
+            await electrum.shutdown();
+
+            return ubtcfulltx;
+            } catch (e) {
+                console.log('BTC UTXO History Error', e);
+            }
+        };
+
+        //seedaddresses.forEach(function (item, index) {
+
+            //var daddress0 = item.address;
 
             //console.log(xpub);
 
@@ -759,39 +943,39 @@ exports.simpleindex = (req, res) => {
             //NEED TO GET ADDRESSES
 
             //Convert P2PKH Address to Scripthash for ElectrumX Balance Fetching
-            const bytes = bs58.decode(daddress0);
-            const byteshex = bytes.toString('hex');
-            const remove00 = byteshex.substring(2);
-            const removechecksum = remove00.substring(0, remove00.length-8);
-            const HASH160 = "76A914" + removechecksum.toUpperCase() + "88AC";
-            const BUFFHASH160 = Buffer.from(HASH160, "hex");
-            const shaaddress = sha256(BUFFHASH160);
+            // const bytes = bs58.decode(p2pkhaddy0);
+            // const byteshex = bytes.toString('hex');
+            // const remove00 = byteshex.substring(2);
+            // const removechecksum = remove00.substring(0, remove00.length-8);
+            // const HASH160 = "76A914" + removechecksum.toUpperCase() + "88AC";
+            // const BUFFHASH160 = Buffer.from(HASH160, "hex");
+            // const shaaddress = sha256(BUFFHASH160);
 
-            //Convert P2PK Address to Scripthash for ElectrumX Balance Fetching
-            //Convert XPUB to Compressed Pubkey
-            // const XPUBTOBASE = bs58.decode(xpubkk);
-            // const XPUBBYTESTOHEX = XPUBTOBASE.toString('hex');
-            // //console.log(XPUBBYTESTOHEX); // 164
-            // const xpubtopub = XPUBBYTESTOHEX.substring(90, XPUBBYTESTOHEX.length - 8); // Decoded Base58 XPub to last 33 bytes (privkey 32 bytes)
-            //console.log("IS THIS THE COMPRESSED PUBKEY?" + xpubtopub);
-            const xpubtopub = item.p2pk;
-            const HASH1601 =  "21" + xpubtopub + "ac"; // 21 + COMPRESSED PUBKEY + OP_CHECKSIG = P2PK
-            //console.log(HASH1601);
-            const BUFFHASH1601 = Buffer.from(HASH1601, "hex");
-            const shaaddress1 = sha256(BUFFHASH1601);
+            // //Convert P2PK Address to Scripthash for ElectrumX Balance Fetching
+            // //Convert XPUB to Compressed Pubkey
+            // // const XPUBTOBASE = bs58.decode(xpubkk);
+            // // const XPUBBYTESTOHEX = XPUBTOBASE.toString('hex');
+            // // //console.log(XPUBBYTESTOHEX); // 164
+            // // const xpubtopub = XPUBBYTESTOHEX.substring(90, XPUBBYTESTOHEX.length - 8); // Decoded Base58 XPub to last 33 bytes (privkey 32 bytes)
+            // //console.log("IS THIS THE COMPRESSED PUBKEY?" + xpubtopub);
+            // const xpubtopub = p2pkaddy;
+            // const HASH1601 =  "21" + xpubtopub + "ac"; // 21 + COMPRESSED PUBKEY + OP_CHECKSIG = P2PK
+            // //console.log(HASH1601);
+            // const BUFFHASH1601 = Buffer.from(HASH1601, "hex");
+            // const shaaddress1 = sha256(BUFFHASH1601);
 
-            const changeEndianness = (string) => {
-                    const result = [];
-                    let len = string.length - 2;
-                    while (len >= 0) {
-                    result.push(string.substr(len, 2));
-                    len -= 2;
-                    }
-                    return result.join('');
-            }
+            // const changeEndianness = (string) => {
+            //         const result = [];
+            //         let len = string.length - 2;
+            //         while (len >= 0) {
+            //         result.push(string.substr(len, 2));
+            //         len -= 2;
+            //         }
+            //         return result.join('');
+            // }
 
-            const scripthash = changeEndianness(shaaddress);
-            const scripthashp2pk = changeEndianness(shaaddress1);
+            //const scripthash = changeEndianness(shaaddress);
+            //const scripthashp2pk = changeEndianness(shaaddress1);
 
             //End P2PKH and P2PK Scripthash calculations for Electrum and start Electrum
 
@@ -904,22 +1088,12 @@ exports.simpleindex = (req, res) => {
                     }
                 }
 
-                //console.log('Full TX History: ', fulltx);
-
-                //console.log('Transactions', txs);
-
-                //await electrum.disconnect();
                 await electrum.shutdown();
 
                 return fulltx; //txs //fulltx
                 } catch (e) {
                     console.log('TX Error', e);
                 }
-
-                //await electrum.disconnect();
-                // await electrum.shutdown();
-
-                // return txs;
             }
 
             //Grab UTXO Transaction History from D ElectrumX
@@ -946,31 +1120,52 @@ exports.simpleindex = (req, res) => {
 
                 const utxos = getuhistory1.concat(getuhistory2);
 
+                const utxoscount = utxos.length;
+
+                const udfulltx = [];
+
+                for(i=0; i<utxoscount; i++) {
+                    if (typeof utxos[i].tx_hash != 'undefined') {
+                        var transactionID = utxos[i].tx_hash;
+                        var transactionBlock = utxos[i].height;
+                        const transactionHex = await electrum.request('blockchain.transaction.get', transactionID, true);
+                        //transactionHex.push(transactionBlock);
+                        //console.log(transactionHex);
+                        udfulltx.push({transactionBlock, transactionHex});
+                    }
+                }
+
                 //await electrum.disconnect();
                 await electrum.shutdown();
 
-                return utxos;
+                return udfulltx;
                 } catch (e) {
-                    console.log('UTXO Error', e);
+                    console.log('D UTXO History Error', e);
                 }
             }
 
             promises.push(new Promise((res, rej) => {
                     scripthasha().then(globalData => {
                     scripthashb().then(globalData2 => {
+                    btcmemtxhistoryfull().then(btcmemTXHistory => {
+                    btctxhistoryfull().then(btcTXHistory => {
+                    btcutxoHistory().then(btcutxoHistory => {
                     txhistoryfull().then(TXHistory => {
                     utxohistory().then(UTXOHistory => {
 
-                        scripthasharray.push({balance: globalData, unconfirmedbal: globalData2, txs: TXHistory, utxos: UTXOHistory});
-                        res({globalData, globalData2, TXHistory, UTXOHistory});
+                        scripthasharray.push({balance: globalData, unconfirmedbal: globalData2, txs: TXHistory, utxos: UTXOHistory, btctxs: btcTXHistory, btcmemtxs: btcmemTXHistory, btcutxos: btcutxoHistory});
+                        res({globalData, globalData2, TXHistory, UTXOHistory, btcTXHistory, btcmemTXHistory, btcutxoHistory});
 
                     });
                     });
                     });
                     });
+                    });
+                    });
+                });
             }));
 
-        });
+        //});
 
         //Grab Denarii and Ethereum Data
         const ethWalletBal = async () => {        
@@ -1179,11 +1374,14 @@ exports.simpleindex = (req, res) => {
                 Storage.set('totalbal', totalbal);
                 Storage.set('accountarray', scripthasharray);
                 let denariusutxos = scripthasharray[0].utxos;
-                let denariustxs = scripthasharray[3].txs;
+                let denariustxs = scripthasharray[0].txs;
+                let bitcointxs = scripthasharray[0].btctxs;
+                let bitcoinmem = scripthasharray[0].btcmemtxs;
+                let bitcoinutxos = scripthasharray[0].btcutxos;
                 //scripthasharray = scripthasharray.filter(item => item);
                 //console.log(scripthasharray)
-                //console.log('----- ', scripthasharray[3].txs);
-                //console.log(denariustxs);
+                //console.log('----- ', scripthasharray);
+                //.log(bitcoinmem);
                 //Storage.set('dutxo', denariusutxos);
 
                 // Get Total Unconfirmed Balances of all derived addresses
@@ -1272,6 +1470,30 @@ exports.simpleindex = (req, res) => {
                                 Storage.set('currentethprice', '~');
                             }
                         });
+                        //Get Current BTC/USD price from CoinGecko
+                        unirest.get("https://api.coingecko.com/api/v3/coins/bitcoin?tickers=true&market_data=true&community_data=false&developer_data=true")
+                        .headers({'Accept': 'application/json'})
+                        .end(function (result) {
+                            if (!result.error) {
+                                var totalbtc = Storage.get('totalbtcbal');
+                                var btcusdbalance = result.body['market_data']['current_price']['usd'] * totalbtc; //* balance;
+                                var currentbtcprice = result.body['market_data']['current_price']['usd'];
+
+                                var btcformatted = btcusdbalance.toFixed(3);
+
+                                socket.emit("btcinfo", {btcbalance: totalbtc, btcusdbalance: btcformatted, currentprice: currentbtcprice});
+                                
+                                Storage.set('usdbtcbal', btcformatted.toString());
+                                Storage.set('currentbtcprice', currentbtcprice.toString());
+                            } else { 
+                                console.log("Error occured on price refresh before interval for BTC price", result.error);
+                                var btcusdbalance = '~';
+                                var currentbtcprice = '~';
+
+                                Storage.set('usdbtcbal', '~');
+                                Storage.set('currentbtcprice', '~');
+                            }
+                        });
                         //Get Current ARI/USD price from 0x Uniswap
                         unirest.get("https://api.0x.org/swap/v1/quote?sellAmount=10000000&buyToken=USDC&sellToken=0x8a8b5318d3a59fa6d1d0a83a1b0506f2796b5670")
                         .headers({'Accept': 'application/json'})
@@ -1338,59 +1560,34 @@ exports.simpleindex = (req, res) => {
                                 //Storage.set('currentariprice', '~');
                             }
                         });
-                        var btcaddress = Storage.get('btcsegwitaddy');
-                        //Get BTC Balance and TX History
-                        unirest.get("https://blockchain.info/rawaddr/"+btcaddress)
-                        .headers({'Accept': 'application/json'})
-                        .end(function (result) {
-                            if (!result.error) {
-                                var info = result.body; // results
+                        // var btcaddress = Storage.get('btcsegwitaddy');
+                        // //Get BTC Balance and TX History
+                        // unirest.get("https://blockchain.info/rawaddr/"+btcaddress)
+                        // .headers({'Accept': 'application/json'})
+                        // .end(function (result) {
+                        //     if (!result.error) {
+                        //         var info = result.body; // results
 
-                                console.log(info);
+                        //         console.log(info);
                                 
-                                var bal = info['final_balance'] / 1e8; //total BTC bal
+                        //         //var bal = info['final_balance'] / 1e8; //total BTC bal
 
-                                var txs = info['txs']; //tx history array
+                        //         var txs = info['txs']; //tx history array
 
-                                Storage.set('btctotalbal', bal);
-                                Storage.set('btctxs', txs);
+                        //         //Storage.set('btctotalbal', bal);
+                        //         Storage.set('btctxs', txs);
 
-                            } else { 
-                                console.log("Error occured on fetching Blockchain.info Address Data", result.error);
-                            }
-                        });
-
-                        //Get Current BTC/USD price from CoinGecko
-                        unirest.get("https://api.coingecko.com/api/v3/coins/bitcoin?tickers=true&market_data=true&community_data=false&developer_data=true")
-                        .headers({'Accept': 'application/json'})
-                        .end(function (result) {
-                            if (!result.error) {
-                                var totalbtc = Storage.get('btctotalbal');
-                                var btcusdbalance = result.body['market_data']['current_price']['usd'] * totalbtc; //* balance;
-                                var currentbtcprice = result.body['market_data']['current_price']['usd'];
-
-                                var btcformatted = btcusdbalance.toFixed(3);
-
-                                socket.emit("btcinfo", {btcbalance: totalbtc, btcusdbalance: btcformatted, currentprice: currentbtcprice});
-                                
-                                Storage.set('usdbtcbal', btcformatted.toString());
-                                Storage.set('currentbtcprice', currentbtcprice.toString());
-                            } else { 
-                                console.log("Error occured on price refresh before interval for BTC price", result.error);
-                                var btcusdbalance = '~';
-                                var currentbtcprice = '~';
-
-                                Storage.set('btcbal', '~');
-                                Storage.set('currentbtcprice', '~');
-                            }
-                        });
+                        //     } else { 
+                        //         console.log("Error occured on fetching Blockchain.info Address Data", result.error);
+                        //     }
+                        // });
                     });
                 });
 
                 //var totalbal1 = Storage.get('totalbal');
                 var totalethbal1 = Storage.get('totaleth');
                 var totalaribal1 = Storage.get('totalaribal');
-                var totalbtcbal = Storage.get('btctotalbal');
+                var totalbtcbal = Storage.get('totalbtcbal');
                 var btctxs = Storage.get('btctxs');
                 // var threebox = Storage.get('threebox');
                 var qrcode1 = Storage.get('qrcode');
@@ -1447,7 +1644,9 @@ exports.simpleindex = (req, res) => {
                     utxos: denariusutxos,
                     erctxs: erctxs,
                     ethtxs: ethtxs,
-                    btctxs: btctxs,
+                    btctxs: bitcointxs,
+                    btcutxos: bitcoinutxos,
+                    btcmemtxs: bitcoinmem,
                     ethaddy: ethaddress,
                     osname: osname,
                     arch: arch,
