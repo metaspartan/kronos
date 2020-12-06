@@ -31,19 +31,20 @@ Recommended Devices and OS
 
 Screenshots
 -----------------
-![coremode](https://user-images.githubusercontent.com/10162347/97545811-26fd0300-1991-11eb-8423-8d82f6e5ba74.png)
 
-![ss](https://user-images.githubusercontent.com/10162347/85916042-00c02e80-b80a-11ea-859f-7f82d17353c9.png)
+![Kronos](https://user-images.githubusercontent.com/10162347/101270083-c94b9b80-3732-11eb-95cc-d9af53031225.png)
 
-![ss2](https://user-images.githubusercontent.com/10162347/85956259-09b41b80-b942-11ea-8b74-2ab4a7540872.gif)
+![Kronos Chat](https://user-images.githubusercontent.com/10162347/101270126-5131a580-3733-11eb-93e2-56f6f77ff9d8.png)
 
-![ss3](https://user-images.githubusercontent.com/10162347/85649248-e64a5180-b65f-11ea-9efc-91d2d03d6adc.png)
+![Kronos](https://user-images.githubusercontent.com/10162347/101270092-ee400e80-3732-11eb-97a8-36cf76db37ee.png)
 
 
 Features
 --------
 
-- Send and Receive D and ETH and ARI in Core Mode
+-----This list needs some updating soon...
+- Send and Receive D, BTC, ETH, and ARI in Core Mode (Multi Crypto Wallets)
+- Decentralized Chat - Massive WIP
 - Core Mode and Advanced Mode
 - Send and Receive D
 - Wallet Addresses
