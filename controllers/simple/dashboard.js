@@ -583,6 +583,7 @@ exports.simpleindex = (req, res) => {
         // console.log(btcsegwitbech32);
         // console.log(btcsegwitp2shaddy);
 
+        //Denarius Scripthashes
         const bytes = bs58.decode(p2pkhaddy0);
         const byteshex = bytes.toString('hex');
         const remove00 = byteshex.substring(2);

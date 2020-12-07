@@ -428,7 +428,7 @@ exports.getchat = (req, res) => {
 //POST the UTXO selected and create and sign raw transaction for sending
 exports.postcreate = (req, res) => {
     var selectedutxo = req.body.UTXO;
-    var fee = 0.00001;
+    var fee = req.body.fee; //0.00001 Default
     var sendtoaddress = req.body.sendaddress;
     var amount = req.body.amount;
 
@@ -602,7 +602,7 @@ exports.postcreate = (req, res) => {
 
 //POST the UTXO inputs automatically and create and sign a raw Denarius transaction for sending
 exports.postauto = (req, res) => {
-    var fee = 0.00001;
+    var fee = 0.00001; // 0.00001 Default Fee
     var sendtoaddress = req.body.sendaddressauto;
     var amount = req.body.amountauto;
 
@@ -619,7 +619,7 @@ exports.postauto = (req, res) => {
         //txb.addInput(utxos[i].tx_hash, parseInt(utxos[i].tx_pos));
     }
     //calc fee and add output address
-    var thefees = numutxo * 10000;
+    var thefees = numutxo * parseInt(fee * 1e8); //10000;
     var amountTo = totaluVal - thefees; // 100 D total inputs - 30 D converted amount - 70 D to be sent back to change address
     var changeTotal = amountTo - convertedamount; // 70 D
 
@@ -700,7 +700,7 @@ exports.postauto = (req, res) => {
             txb.addInput(utxos[i].tx_hash, parseInt(utxos[i].tx_pos));
         }
         //calc fee and add output address
-        var denariifees = numutxo * 10000;
+        var denariifees = numutxo * parseInt(fee * 1e8); //10000;
         var amountToSend = totalVal - denariifees; // 100 D total inputs - 30 D converted amount - 70 D to be sent back to change address
         var changeAmnt = amountToSend - convertedamount; // 70 D
 
@@ -787,7 +787,7 @@ exports.postauto = (req, res) => {
 //POST the BTC UTXO selected and create and sign raw transaction for sending
 exports.postbtcsend = (req, res) => {
     var selectedutxo = req.body.UTXO;
-    var fee = 0.00001;
+    var fee = req.body.fee;
     var sendtoaddress = req.body.sendaddress;
     var amount = req.body.amount;
 
@@ -1019,7 +1019,7 @@ exports.postbtcauto = (req, res) => {
         //txb.addInput(utxos[i].tx_hash, parseInt(utxos[i].tx_pos));
     }
     //calc fee and add output address
-    var thefees = numutxo * 10000;
+    var thefees = numutxo * parseInt(fee * 1e8); //10000;
     var amountTo = totaluVal - thefees; // 100 D total inputs - 30 D converted amount - 70 D to be sent back to change address
     var changeTotal = amountTo - convertedamount; // 70 D
 
@@ -1124,7 +1124,7 @@ exports.postbtcauto = (req, res) => {
                 });
         }
         //calc fee and add output address
-        var btcfees = numutxo * 10000;
+        var btcfees = numutxo * parseInt(fee * 1e8); //10000;
         var amountToSend = totalVal - btcfees; // 100 BTC total inputs - 30 BTC converted amount - 70 BTC to be sent back to change address
         var changeAmnt = amountToSend - convertedamount; // 70 BTC
 
@@ -1218,6 +1218,7 @@ exports.postethsend = (req, res) => {
     let totalcalcbale = totalethbal - gasandamount;
 
     var valid = ETHValidator.validate(`${sendtoaddress}`, 'ETH');
+    var ensregex = new RegExp('^[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{3}$'); //ENS Name Regex for .eth domains
 
     var seedphrasedb = Storage.get('seed');
     var decryptedmnemonic = decrypt(seedphrasedb);
@@ -1233,7 +1234,7 @@ exports.postethsend = (req, res) => {
 
     } else {
 
-    if (valid) {
+    if (valid || ensregex.test(sendtoaddress)) {
 
         var transaction = {
             gasLimit: 21000,
@@ -1282,6 +1283,7 @@ exports.postarisend = (req, res) => {
     const ariAddress = "0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670"; // 0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670 Denarii (ARI)
 
     var valid = ETHValidator.validate(`${sendtoaddress}`, 'ETH');
+    var ensregex = new RegExp('^[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{3}$'); //ENS Name Regex for .eth domains
 
     var seedphrasedb = Storage.get('seed');
     var decryptedmnemonic = decrypt(seedphrasedb);
@@ -1304,7 +1306,7 @@ exports.postarisend = (req, res) => {
 
     } else {
 
-    if (valid) {
+    if (valid || ensregex.test(sendtoaddress)) {
         const ariAbi = [
         // Some details about the token
         "function name() view returns (string)",
