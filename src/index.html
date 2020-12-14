@@ -169,6 +169,7 @@
         color: #fff;
         border: none;
         border-radius: 15px;
+        outline: none;
         padding: 20px;
       }
       #restart-button {
@@ -176,6 +177,7 @@
         color: #fff;
         border: none;
         border-radius: 15px;
+        outline: none;
         padding: 20px;
       }
     </style>
@@ -189,7 +191,7 @@
         Close
       </button>
       <button id="restart-button" onClick="restartApp()" class="hidden">
-        Restart
+        Restart Kronos
       </button>
     </div>
     <div id="loading" align="center">
@@ -197,7 +199,9 @@
     </div>
     <div id="serverLog"></div>
     <div id="snowflake"><iframe src="https://snowflake.torproject.org/embed.html" width="320" height="240" frameborder="0" scrolling="no" id="snowframe"></iframe></div>
-    <div style="position:absolute;z-index:9999999;bottom:0px;right:0px;"><button onclick="toggleflake()" class="toggleflake"><i class="fas fa-snowflake"></i></button> <button onclick="togglelog()" class="togglebtn"><i class="fas fa-server"></i> <span id="togglebtn">Logs [+] <span id="version"></span></span></button></div>
+    <div style="position:absolute;z-index:9999999;bottom:0px;right:0px;"><button onclick="toggleflake()" class="toggleflake"><i class="fas fa-snowflake"></i></button> 
+      <!-- <button onclick="togglelog()" class="togglebtn"><i class="fas fa-server"></i> <span id="togglebtn">Logs [+] <span id="version"></span></span></button> -->
+    </div>
     <!-- <iframe id="expressApp" class="expressApp" frameborder="0"></iframe> -->
     <webview id="expressApp" class="expressApp"></webview>
 
@@ -226,6 +230,8 @@
 
       //Check what OS you are running for the Node spawn
       const os = require('os');
+      const fs = require('fs');
+      const mkdirp = require('mkdirp');
       const nodeloc = os.platform() === 'win32' ? '.\\node_modules\\node\\bin\\node.exe' : './node_modules/node/bin/node';
 
       const {claimDocumentFocus} = require('./document-focus');
@@ -279,7 +285,7 @@
         ipcRenderer.removeAllListeners('update_downloaded');
         notification.classList.remove('hidden');
         restartButton.classList.remove('hidden');
-        message.innerText = 'Kronos update was downloaded. It will be installed upon restart. Restart now?';
+        message.innerText = 'A Kronos update was downloaded. It will be installed upon restart. Restart now?';
       });
 
       if (os.platform() === 'darwin') {
@@ -390,25 +396,63 @@
         );
       }
 
-      function redirectOutput(x) {
-        let lineBuffer = "";
+      // function redirectOutput(x) {
+      //   let lineBuffer = "";
 
-        x.on("data", function(data) {
-          lineBuffer += data.toString();
-          let lines = lineBuffer.split("\n");
+      //   x.on("data", function(data) {
+      //     lineBuffer += data.toString();
+      //     let lines = lineBuffer.split("\n");
 
-          _.forEach(lines, l => {
-            if (l !== "") {
-              $serverLog.append(strip(l) + "<br/>");
-            }
-          });
+      //     _.forEach(lines, l => {
+      //       if (l !== "") {
+      //         $serverLog.append(strip(l) + "<br/>");
+      //         //access.write.bind(access);
+      //       }
+      //     });
 
-          lineBuffer = lines[lines.length - 1];
-        });
+      //     lineBuffer = lines[lines.length - 1];
+      //   });
+      // }
+
+      // function getUserHome() {
+      //   if (os.platform() === 'win32') {
+      //     if (!mkdirp.sync(node.env.APPDATA+'\\Kronos\\DATA\\')) {
+      //       mkdirp.sync(node.env.APPDATA+'\\Kronos\\DATA\\kronosleveldb\\');
+      //       return node.env.APPDATA+'\\Kronos\\DATA\\'; 
+      //     }
+      //     return node.env.APPDATA+'\\Kronos\\DATA\\'; 
+      //   } else {
+      //     if (!mkdirp.sync(node.env.HOME+'/Kronos/DATA/')) {
+      //       mkdirp.sync(node.env.HOME+'/Kronos/DATA/kronosleveldb/');
+      //       return node.env.HOME+'/Kronos/DATA/'; 
+      //     }
+      //     return node.env.HOME+'/Kronos/DATA/'; 
+      //   }
+      // }
+
+      function getUserHome() {
+        // From process.env 
+        if (process.platform == 'win32') {
+          if (!mkdirp.sync(process.env.APPDATA+'\\Kronos\\DATA\\')) {
+            mkdirp.sync(process.env.APPDATA+'\\Kronos\\DATA\\kronosleveldb\\');
+            return process.env.APPDATA+'\\Kronos\\DATA\\'; 
+          }
+          return process.env.APPDATA+'\\Kronos\\DATA\\'; 
+        } else {
+          if (!mkdirp.sync(process.env.HOME+'/Kronos/DATA/')) {
+            mkdirp.sync(process.env.HOME+'/Kronos/DATA/kronosleveldb/');
+            return process.env.HOME+'/Kronos/DATA/'; 
+          }
+          return process.env.HOME+'/Kronos/DATA/'; 
+        }
       }
 
-      redirectOutput(node.stdout);
-      redirectOutput(node.stderr);
+      const kronoslog = fs.createWriteStream(getUserHome()+`kronos.log`);
+
+      node.stdout.pipe(kronoslog);
+      node.stderr.pipe(kronoslog);
+      //redirectOutput(node.stdout);
+      //redirectOutput(node.stderr);
 
       let checkServerRunning = setInterval(() => {
         request(expressAppUrl, (error, response, body) => {

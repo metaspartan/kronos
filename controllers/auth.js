@@ -521,6 +521,78 @@ exports.simple = (request, response) => {
 	}
 };
 
+//GET Change Pass
+exports.change = (req, res) => {
+
+	var username = decrypt(Storage.get('username'));
+
+	res.render('change', {
+        title: 'Core Mode Change Pass', username: username
+    });
+}
+
+
+//POST Change Kronos Password
+exports.changepass = (request, response) => {
+	var lastpass = request.body.LPP;
+	var password = request.body.PPP1;
+	var password2 = request.body.PPP2;
+	
+	if (lastpass && password) {
+
+		if (request.body && password == password2) {
+
+			db.get('password', function (err, value) {
+				if (err) {
+		
+				} else {
+					var previouspass = decrypt(value);
+
+					if (lastpass == previouspass) {
+				  
+						// If password does not exist in levelDB then go to page to create one
+						// Encrypt the user and pass for storing in the DB
+						var encryptedpass = encrypt(password);
+				
+						// Put the encrypted password in the DB
+						db.put('password', encryptedpass, function (err) {
+							if (err) console.log('Ooops!', err) // some kind of I/O error if so
+							console.log('Encrypted Password to DB');
+						});
+
+						Storage.set('password', encryptedpass);
+						
+						// //Stored User/Pass to DB successfully now setup the session
+						request.session.loggedin = false; //Make them sign in again after setup
+						//request.session.username = username;
+						request.toastr.success('Changed Kronos Password, Please login!', 'Success!', { positionClass: 'toast-bottom-left' });
+						response.redirect('/login');
+						response.end();
+
+					} else {
+						request.toastr.error('Previous password incorrect!', 'Error!', { positionClass: 'toast-bottom-left' });
+						response.redirect('/passchange');
+						response.end();
+					}
+				}
+			});			
+
+		} else {
+			request.toastr.error('Passwords do not match!', 'Error!', { positionClass: 'toast-bottom-left' });
+			response.redirect('/passchange');
+			response.end();
+		}
+		
+		//response.end();
+	
+	} else {
+		//response.send('Please enter Username and Password!');
+		request.toastr.error('Please enter a new password!', 'Error!', { positionClass: 'toast-bottom-left' });
+		response.redirect('/passchange');
+		response.end();
+	}
+};
+
 //GET IMPORT SEED
 exports.getimport = (req, res) => {
 	//utils.HDNode.isValidMnemonic("action glow era all liquid critic achieve lawsuit era anger loud slight"); // returns true

@@ -44,6 +44,7 @@ function createWindow() {
     icon: __dirname + '../public/img/caesarsmall.png',
     webPreferences: {
       nodeIntegration: true,
+      nativeWindowOpen: true,
       webSecurity: true,
       enableRemoteModule: true,
       webviewTag: true
@@ -98,6 +99,14 @@ function createWindow() {
   mainWindow.webContents.on('new-window', function(e, url) {
     e.preventDefault();
     electron.shell.openExternal(url);
+  });
+
+  let wc = mainWindow.webContents;
+  wc.on('will-navigate', function (e, url) {
+    if (url != wc.getURL()) {
+      e.preventDefault()
+      electron.shell.openExternal(url)
+    }
   });
 
   //Possibly maybe removed for releases

@@ -243,181 +243,181 @@ exports.simpleindex = (req, res) => {
         }, 15000);
     });
     
-    si.cpuCurrentspeed(function (data2) {
+    // si.cpuCurrentspeed(function (data2) {
     
-        var min = data2.min;
-        var avg = data2.avg;
-        var max = data2.max;
+    //     var min = data2.min;
+    //     var avg = data2.avg;
+    //     var max = data2.max;
     
-        //Emit to our Socket.io Server
-        res.io.on('connection', function (socket) {
-            socket_id2.push(socket.id);
-            if (socket_id2[0] === socket.id) {
-              // remove the connection listener for any subsequent 
-              // connections with the same ID
-              res.io.removeAllListeners('connection'); 
-            }
-            socket.emit("cpuspeed", {min: min, avg: avg, max: max});
-            setInterval(() => {
-                socket.emit("cpuspeed", {min: min, avg: avg, max: max});
-            }, 90000);
-        });
-    });
+    //     //Emit to our Socket.io Server
+    //     res.io.on('connection', function (socket) {
+    //         socket_id2.push(socket.id);
+    //         if (socket_id2[0] === socket.id) {
+    //           // remove the connection listener for any subsequent 
+    //           // connections with the same ID
+    //           res.io.removeAllListeners('connection'); 
+    //         }
+    //         socket.emit("cpuspeed", {min: min, avg: avg, max: max});
+    //         setInterval(() => {
+    //             socket.emit("cpuspeed", {min: min, avg: avg, max: max});
+    //         }, 90000);
+    //     });
+    // });
     
-    si.cpuTemperature(function (data3) {
-        var tempp = data3.main;
-        var temppp = tempp.toFixed(0);
+    // si.cpuTemperature(function (data3) {
+    //     var tempp = data3.main;
+    //     var temppp = tempp.toFixed(0);
     
-        if (temppp == -1) {
-            var temp = 'N/A';
-        } else {
-            var temp = temppp;
-        }
+    //     if (temppp == -1) {
+    //         var temp = 'N/A';
+    //     } else {
+    //         var temp = temppp;
+    //     }
     
-        //Emit to our Socket.io Server
-        res.io.on('connection', function (socket) {
-            socket_id3.push(socket.id);
-            if (socket_id3[0] === socket.id) {
-              // remove the connection listener for any subsequent 
-              // connections with the same ID
-              res.io.removeAllListeners('connection'); 
-            }
-            socket.emit("temp", {temp: temp, temppp: temppp});
-            setInterval(() => {
-                si.cpuTemperature(function (data3) {
-                    var tempp = data3.main;
-                    var temppp = tempp.toFixed(0);
+    //     //Emit to our Socket.io Server
+    //     res.io.on('connection', function (socket) {
+    //         socket_id3.push(socket.id);
+    //         if (socket_id3[0] === socket.id) {
+    //           // remove the connection listener for any subsequent 
+    //           // connections with the same ID
+    //           res.io.removeAllListeners('connection'); 
+    //         }
+    //         socket.emit("temp", {temp: temp, temppp: temppp});
+    //         setInterval(() => {
+    //             si.cpuTemperature(function (data3) {
+    //                 var tempp = data3.main;
+    //                 var temppp = tempp.toFixed(0);
                 
-                    if (temppp == -1) {
-                        var temp = 'N/A';
-                    } else {
-                        var temp = temppp;
-                    }
+    //                 if (temppp == -1) {
+    //                     var temp = 'N/A';
+    //                 } else {
+    //                     var temp = temppp;
+    //                 }
     
-                    socket.emit("temp", {temp: temp, temppp: temppp});
-                });
-            }, 60000);
-        });
-    });
+    //                 socket.emit("temp", {temp: temp, temppp: temppp});
+    //             });
+    //         }, 60000);
+    //     });
+    // });
     
-    si.mem(function (data1) {
+    // si.mem(function (data1) {
     
-        var bytes = 1073741824;
-        var memtt = data1.total;
-        var memuu = data1.active;
-        var memff = data1.free;
-        var mema = data1.available;
+    //     var bytes = 1073741824;
+    //     var memtt = data1.total;
+    //     var memuu = data1.active;
+    //     var memff = data1.free;
+    //     var mema = data1.available;
     
-        var memttt = memtt / bytes;
-        var memt = memttt.toFixed(2);
+    //     var memttt = memtt / bytes;
+    //     var memt = memttt.toFixed(2);
     
-        var memffff = memtt - memuu;
-        var memfff = memffff / bytes;
-        var memf = memfff.toFixed(2);
+    //     var memffff = memtt - memuu;
+    //     var memfff = memffff / bytes;
+    //     var memf = memfff.toFixed(2);
     
-        var memuuu = memuu / bytes;
-        var memu = memuuu.toFixed(2);
+    //     var memuuu = memuu / bytes;
+    //     var memu = memuuu.toFixed(2);
     
     
-        var memp = memu / memt * 100;
-        var memppp = memp / 100;
-        var mempp = memppp;
+    //     var memp = memu / memt * 100;
+    //     var memppp = memp / 100;
+    //     var mempp = memppp;
     
-        //Emit to our Socket.io Server
-        res.io.on('connection', function (socket) {
-            socket_id4.push(socket.id);
-            if (socket_id4[0] === socket.id) {
-              // remove the connection listener for any subsequent 
-              // connections with the same ID
-              res.io.removeAllListeners('connection'); 
-            }
-            socket.emit("memory", {mema: mema, memt: memt, memf: memf, memu: memu, memp: memp, mempp: mempp});
-            setInterval(() => {
-                si.mem(function (data1) {
+    //     //Emit to our Socket.io Server
+    //     res.io.on('connection', function (socket) {
+    //         socket_id4.push(socket.id);
+    //         if (socket_id4[0] === socket.id) {
+    //           // remove the connection listener for any subsequent 
+    //           // connections with the same ID
+    //           res.io.removeAllListeners('connection'); 
+    //         }
+    //         socket.emit("memory", {mema: mema, memt: memt, memf: memf, memu: memu, memp: memp, mempp: mempp});
+    //         setInterval(() => {
+    //             si.mem(function (data1) {
     
-                    var bytes = 1073741824;
-                    var memtt = data1.total;
-                    var memuu = data1.active;
-                    var memff = data1.free;
-                    var mema = data1.available;
+    //                 var bytes = 1073741824;
+    //                 var memtt = data1.total;
+    //                 var memuu = data1.active;
+    //                 var memff = data1.free;
+    //                 var mema = data1.available;
                 
-                    var memttt = memtt / bytes;
-                    var memt = memttt.toFixed(2);
+    //                 var memttt = memtt / bytes;
+    //                 var memt = memttt.toFixed(2);
                 
-                    var memffff = memtt - memuu;
-                    var memfff = memffff / bytes;
-                    var memf = memfff.toFixed(2);
+    //                 var memffff = memtt - memuu;
+    //                 var memfff = memffff / bytes;
+    //                 var memf = memfff.toFixed(2);
                 
-                    var memuuu = memuu / bytes;
-                    var memu = memuuu.toFixed(2);			
+    //                 var memuuu = memuu / bytes;
+    //                 var memu = memuuu.toFixed(2);			
                 
-                    var memp = memu / memt * 100;
-                    var memppp = memp / 100;
-                    var mempp = memppp;
+    //                 var memp = memu / memt * 100;
+    //                 var memppp = memp / 100;
+    //                 var mempp = memppp;
     
-                    socket.emit("memory", {mema: mema, memt: memt, memf: memf, memu: memu, memp: memp, mempp: mempp});
-                });
-            }, 5000);
-        });
-    });
+    //                 socket.emit("memory", {mema: mema, memt: memt, memf: memf, memu: memu, memp: memp, mempp: mempp});
+    //             });
+    //         }, 5000);
+    //     });
+    // });
     
     
-    si.osInfo().then(data4 => {
+    // si.osInfo().then(data4 => {
     
-        var osname = data4.distro;
-        var kernel = data4.kernel;
-        var platform = data4.platform;
-        var release = data4.release;
-        var hostname = data4.hostname;
-        var arch = data4.arch;
+    //     var osname = data4.distro;
+    //     var kernel = data4.kernel;
+    //     var platform = data4.platform;
+    //     var release = data4.release;
+    //     var hostname = data4.hostname;
+    //     var arch = data4.arch;
     
-        res.locals.osname = osname;
-        res.locals.kernel = kernel;
-        res.locals.platform = platform;
-        res.locals.release = release;
-        res.locals.hostname = hostname;
-        res.locals.arch = arch;
+    //     res.locals.osname = osname;
+    //     res.locals.kernel = kernel;
+    //     res.locals.platform = platform;
+    //     res.locals.release = release;
+    //     res.locals.hostname = hostname;
+    //     res.locals.arch = arch;
 
-        Storage.set('osname', osname);
-        Storage.set('kernel', kernel);
-        Storage.set('platform', platform);
-        Storage.set('release', release);
-        Storage.set('hostname', hostname);
-        Storage.set('arch', arch);
+    //     Storage.set('osname', osname);
+    //     Storage.set('kernel', kernel);
+    //     Storage.set('platform', platform);
+    //     Storage.set('release', release);
+    //     Storage.set('hostname', hostname);
+    //     Storage.set('arch', arch);
 
-    });
+    // });
     
-    si.currentLoad().then(data6 => {
+    // si.currentLoad().then(data6 => {
     
-        var avgload = data6.avgload;
-        var currentload = data6.currentload;
+    //     var avgload = data6.avgload;
+    //     var currentload = data6.currentload;
     
-        var cpu = currentload / 100;
+    //     var cpu = currentload / 100;
     
-        //Emit to our Socket.io Server
-        res.io.on('connection', function (socket) {
-            socket_id7.push(socket.id);
-            if (socket_id7[0] === socket.id) {
-              // remove the connection listener for any subsequent 
-              // connections with the same ID
-              res.io.removeAllListeners('connection'); 
-            }
-            socket.emit("cpuload", {avgload: avgload, cpu: cpu});
-            setInterval(() => {
-                si.currentLoad().then(data6 => {
+    //     //Emit to our Socket.io Server
+    //     res.io.on('connection', function (socket) {
+    //         socket_id7.push(socket.id);
+    //         if (socket_id7[0] === socket.id) {
+    //           // remove the connection listener for any subsequent 
+    //           // connections with the same ID
+    //           res.io.removeAllListeners('connection'); 
+    //         }
+    //         socket.emit("cpuload", {avgload: avgload, cpu: cpu});
+    //         setInterval(() => {
+    //             si.currentLoad().then(data6 => {
     
-                    var avgload = data6.avgload;
-                    var currentload = data6.currentload;
+    //                 var avgload = data6.avgload;
+    //                 var currentload = data6.currentload;
                 
-                    var cpu = currentload / 100;
+    //                 var cpu = currentload / 100;
     
-                    socket.emit("cpuload", {avgload: avgload, cpu: cpu});
+    //                 socket.emit("cpuload", {avgload: avgload, cpu: cpu});
     
-                });
-            }, 5000);
-        });
+    //             });
+    //         }, 5000);
+    //     });
     
-    });
+    // });
     
     //Testing out realtime Electrumx Block Header Subscribe
     //Emit to our Socket.io Server
@@ -1607,12 +1607,12 @@ exports.simpleindex = (req, res) => {
                 var currentbtcprice = Storage.get('currentbtcprice');
                 var unbalance = Storage.get('unconf');
                 var newblock = Storage.get('newblock');
-                var osname = Storage.get('osname');
-                var arch = Storage.get('arch');
-                var kernel = Storage.get('kernel');
-                var platform = Storage.get('platform');
-                var hostname = Storage.get('hostname');
-                var release = Storage.get('release');
+                // var osname = Storage.get('osname');
+                // var arch = Storage.get('arch');
+                // var kernel = Storage.get('kernel');
+                // var platform = Storage.get('platform');
+                // var hostname = Storage.get('hostname');
+                // var release = Storage.get('release');
                 var erctxs = Storage.get('erctxs');
                 var ethtxs = Storage.get('ethtxs');
 
@@ -1648,13 +1648,7 @@ exports.simpleindex = (req, res) => {
                     btctxs: bitcointxs,
                     btcutxos: bitcoinutxos,
                     btcmemtxs: bitcoinmem,
-                    ethaddy: ethaddress,
-                    osname: osname,
-                    arch: arch,
-                    kernel: kernel,
-                    platform: platform,
-                    hostname: hostname,
-                    release: release
+                    ethaddy: ethaddress
                 }, (err, html) => {
                     res.end(html + '\n');
                 });

@@ -4,7 +4,7 @@ doctype html
 html(dir="ltr", lang="en-US")
 	head
 		meta(http-equiv="content-type", content="text/html; charset=utf-8")
-		meta(name="author", content="Kronos Auth")
+		meta(name="author", content="Kronos")
 		link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/css/toastr.min.css')
 		style.
 			/* style.css */	
@@ -114,18 +114,29 @@ html(dir="ltr", lang="en-US")
 			margin-bottom: 0px;
 			}
 	body
-		.container(style='margin-top:100px !important;margin:0;padding:0;', align='center')
-			img(src="https://user-images.githubusercontent.com/10162347/93844293-ed323180-fc59-11ea-9331-9f8ac37f797c.png", height="240px", width="240px", align="center")
+		.container(style='margin-top:50px !important;margin:0;padding:0;', align='center')
+			img(src="https://user-images.githubusercontent.com/10162347/93844293-ed323180-fc59-11ea-9331-9f8ac37f797c.png", height="200px", width="200px", align="center")
 		.container(style='margin-top:20px !important;margin:0;padding:0;', align='center')
-			form(action="/login" method="post")
+			form(action="/changepass" method="post")
 				.form-content
-					input(type="text" id="PPU1" name="PPU1" placeholder="username" autofocus)
-					input(type="password" id="PPP1" name="PPP1" placeholder="password")
+					span(style='color:#ccc;')
+						| Kronos Change Password
 					br
-					input.button(style='background-color: #444;', type="submit" value="Login") 
+					span(style='color:#777;font-size:11px;')
+						| Enter in a new password you want to login to Kronos with
+					p(style='color:#fff;margin-top:3px;') Username: 
+						strong #{username}
+					input(type="password" id="LPP" name="LPP" placeholder="current password")
+					input(type="password" id="PPP1" name="PPP1" placeholder="new password")
+					input(type="password" id="PPP2" name="PPP2" placeholder="confirm new pass")
+					br
+					input.button(style='background-color: #444;', type="submit" value="Change Password") 
 				br
-				span(style='color:#777;')
-					| Version: v1.8.9-Beta
+				span(style='color:#666;')
+					| Kronos
+		span(style='color:#333;bottom:15px;left:15px;position:absolute;')
+			a(onclick='window.history.back()', style='color:#666;cursor: pointer;')
+					i.fas.fa-arrow-left.fa-3x
 		script(src='/js/lib/jquery-3.1.1.min.js')
 		script(src='//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/js/toastr.min.js')
 		script(src='//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/js/all.min.js')

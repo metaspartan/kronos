@@ -109,6 +109,10 @@ body {
     float: left;
   }
 
+  .addr {
+    font-size: 11px !important;
+  }
+
   .online-icon {
     display: none !important;
   }
@@ -1078,9 +1082,11 @@ a.send {
   padding: 8px;
 }
 
-#fst tr:nth-child(even){background-color: #333;}
+#fst tr:nth-child(even){background-color: #222;}
 
 #fst tr:hover {background-color: #444;}
+
+#fst tr {background-color: #111;}
 
 #fst th {
   padding-top: 15px;
@@ -1141,6 +1147,10 @@ a.send {
   margin-bottom: 10px !important;
 }
 
+.navmobile {
+  display: none !important;
+}
+
 @media (max-width: 800px) {
   .mainaddy {
     margin: 0;
@@ -1157,9 +1167,32 @@ a.send {
     background-repeat: repeat-x;
     background-color: #191919 !important;
   }
-  .navbar-fixed-top, .navbar-collapse {
+  /* .navbar-fixed-top, .navbar-collapse {
     max-height: 435px !important;
+  } */
+  .navsend {
+    display: none !important;
   }
+  .navmobile {
+    display: block !important;
+  }
+  .navbar-collapse {
+    text-align: right;
+  }
+  .navbar-fixed-top .navbar-collapse, .navbar-fixed-bottom .navbar-collapse {
+    max-height: 100% !important;
+  }
+  .navbar-default .navbar-collapse, .navbar-default .navbar-form {
+    border-color: #000 !important;
+  }
+}
+
+.splide__pagination {
+  bottom: 1em !important;
+}
+
+.splide__arrow {
+  top: 25px !important;
 }
 
 .txamount {

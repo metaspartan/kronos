@@ -257,6 +257,8 @@ if (currentOS === 'linux') {
 //Print in console your LAN IP
 console.log(`Kronos running on your LAN: ${ip.address()} on platform ${currentOS}`);
 
+const logpath = getUserHome()+`/kronos.log`;
+
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
  */
@@ -309,6 +311,8 @@ app.use(expressStatusMonitor());
 app.use(compression());
 
 app.use(logger('dev'));
+
+// app.use(logger({stream: logpath}));
 
 app.use(bodyParser.json());
 
@@ -510,6 +514,9 @@ app.get('/auth', auth, Limiter, authController.auth);
 app.get('/autht', auth, Limiter, authController.autht);
 app.get('/authk', auth, Limiter, authController.authk);
 app.get('/logout', authController.logout);
+
+app.get('/passchange', auth, authController.change);
+app.post('/changepass', Limiter, authController.changepass);
 
 //Core Mode
 app.get('/simplesetup', authController.getsimple);

@@ -22,6 +22,7 @@ ipfs
 orbitdb
 electron-builder.yml
 dist
+kronos.log
 
 # Dependency directory
 node_modules
