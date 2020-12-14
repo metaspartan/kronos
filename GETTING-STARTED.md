@@ -2,15 +2,17 @@
 
 KRONOS INFORMATION
 -----------------
-Kronos creates a `/data` and a `/kronosleveldb` folder directories for storing your data and local databases. Kronos data is encrypted using a randomly generated secret key upon the first launch of Kronos and securely stored in your OS's Keychain (Keychain on macOS, Credential Manager on Windows, and libsecret on Linux).
+Kronos creates a `/data` and a `/kronosleveldb` folder for storing your data and local databases. Kronos data is encrypted using a randomly generated secret key upon the first launch of Kronos.
 
-If you wish to start fresh with Kronos and get back to the selection screen, delete the `/data` and `/kronosleveldb` folders after shutting down Kronos. Then enter the keychain manager in your OS and search for `Kronos/localkey` & `Kronos/localses` remove them as well. After removing all folders and keychain data listed you can boot Kronos.
+Kronos Data Directory for Linux/macOS `~/Kronos/DATA` or Windows `C:/Users/<user>/AppData/Roaming/Kronos/DATA`
+
+If you wish to start fresh with Kronos and get back to the selection screen, delete the `/data` and `/kronosleveldb` folders after shutting down Kronos. Kronos logs are stored in the Kronos Data Directory `~/Kronos/DATA/kronos.log` or `C:/Users/<user>/AppData/Roaming/Kronos/DATA/kronos.log`
 
 Helpful Commands
 -----------------
 `nohup npm run headless &` To run Kronos in a headless mode on your LAN (typically ran from Raspberry Pi) (Outputs log to nohup.out)
 `node -r esm ./bin/kronos` Alternative command to the `npm run headless` command, no log output
-`electron-forge start` To run Kronos in app mode with Electron, also outputs LAN server (can be ran from OS of choice with GUI)
+`npm run kronos` To run Kronos in app mode with Electron, also outputs LAN server (can be ran from OS of choice with GUI)
 
 KRONOS BASH INSTALLER SCRIPT
 -----------------
@@ -71,14 +73,6 @@ npm install -g electron electron-forge electron-rebuild node-gyp
 
 npm install
 
-cd node_modules/node-pty-prebuilt-multiarch
-
-node-gyp configure
-
-node-gyp build
-
-cd ../..
-
 nohup npm run headless &
 ```
 
@@ -95,14 +89,6 @@ npm install -g electron electron-forge electron-rebuild electron-builder node-gy
 
 npm install
 
-cd node_modules/node-pty-prebuilt-multiarch
-
-node-gyp configure
-
-node-gyp build
-
-cd ../..
-
 npm run kronos
 ```
 
@@ -117,14 +103,6 @@ cd kronos
 npm install -g electron electron-forge electron-rebuild electron-builder node-gyp windows-build-tools
 
 npm install
-
-cd node_modules/node-pty-prebuilt-multiarch
-
-node-gyp configure
-
-node-gyp build
-
-cd ../..
 
 npm run buildwin
 ```
