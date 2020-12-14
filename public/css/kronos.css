@@ -1195,6 +1195,28 @@ a.send {
   top: 25px !important;
 }
 
+.slick-slide:focus {
+  outline: none !important;
+}
+
+.slick-next {
+  top: 25px !important;
+  right: 40px !important;
+  width: 50px !important;
+  height: 50px !important;
+}
+
+.slick-prev {
+  top: 25px !important;
+  left: 40px !important;
+  width: 50px !important;
+  height: 50px !important;
+}
+
+.slick-next:before, .slick-prev:before {
+  font-size: 50px !important;
+}
+
 .txamount {
     font-size: 26px;
     font-weight: bold;

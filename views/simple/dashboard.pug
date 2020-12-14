@@ -12,235 +12,233 @@ block content
       //-     input(type='hidden', name='_csrf', value=_csrf)
       //-     input.form-control.blackinput4(type='text', align='center', name='explorersearch', id='explorersearch', placeholder='Search Kronos for Denarius Block # or Transaction Hash or D Address')
       .row(class='rowclass balancerow', style='margin-top:25px !important;padding: 0px !important; padding-top:25px !important;').animate__animated.animate__fadeIn
-        .splide
-          .splide__track
-            .splide__list
-              .splide__slide(style='text-align:center;margin-bottom:35px;')
-                p
-                  img.res(src='../img/denarius.png', alt='D', border='0', style='height:75px !important;width: 75px !important;margin:0px 0px 0px !important;')
-                p 
-                .bal(style='font-size:2.5em;') 
-                  span#totalbal.format #{totalbal || 0}
-                  small(style='font-size:16px;')  D
-                p
-                .bal(style='font-size:1.6em;color:#888;') $
-                  span#usdbalance #{usdbalance || 0}
-                  small(style='font-size:16px;')  USD @ $
-                    span#currentprice #{currentprice || 0}
-                    |  ea
-                p
-                  p
-                    .addressdash(style='font-size:1.3vw;font-weight:400;border-radius:15px;padding:10px;margin:0 auto;margin-top:10px;margin-bottom:10px;')
-                      span.addr(style='background-color: #1e1e1e;padding: 8px;padding-left: 15px;padding-right: 15px;border-radius:15px;') #{mainaddy}
-                      button.clip(style='background-color: transparent;border: none;margin-left: 5px;', data-clipboard-text=mainaddy)
-                        i.fas.fa-copy
-                  if (typeof qrcode != 'undefined')
-                    .qrcode(align='center')
-                        button.clip(data-clipboard-text=mainaddy, style='background-color: transparent;border: none;')
-                          img(src='' + qrcode, style='border-radius:10px;')
-                  .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:10px;', align='center') DENARIUS 
-                    span#dblock
-                .divider(style='background-color:#111 !important;height:2px;width:80%;margin:0 auto;', align='center')
-                p
-                  if (typeof dtxs != 'undefined')
-                    if (typeof dtxs[0] != 'undefined')
-                      .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;') 
-                        .tablewrapper
-                          table.sortable#fst
-                            thead
-                              tr
-                                th Type
-                                th Block Height
-                                th.sorttable_nosort Time (GMT)
-                                th Confirmations
-                                th TXID
-                            tbody
-                              each tx in dtxs
-                                tr
-                                  td(align='center', data-label='Type') 
-                                    | TX
-                                  td(align='center', data-label='D Block Height') 
-                                    a.txid(href='https://chainz.cryptoid.info/d/tx.dws?'+tx.transactionBlock, target='_blank') #{tx.transactionBlock}
-                                  td(align='center', data-label='Timestamp') 
-                                    .date= new Date(tx.transactionHex.time*1000).toUTCString().replace('GMT','')
-                                  td(align='center', data-label='Confirmations') 
-                                    | #{tx.transactionHex.confirmations}
-                                  td(align='center', data-label='TXID') 
-                                    a.txid(href='https://chainz.cryptoid.info/d/tx.dws?'+tx.transactionHex.txid, target='_blank') #{tx.transactionHex.txid}
-                    else
-                      h1(style='color:#666;', align='center') No D Transactions Available
-                  else
-                    h1(style='color:#666;', align='center') No D Transactions Available
-              .splide__slide(style='text-align:center;margin-bottom:35px;')
-                p
-                  img.res(src='../img/bitcoin.png', alt='BTC', border='0', style='height:75px !important;width: 75px !important;margin:0px 0px 0px !important;')
-                p 
-                .bal(style='font-size:2.5em;') 
-                  span#totalbtcbal.format #{totalbtcbal || 0}
-                  small(style='font-size:16px;')  BTC
-                p
-                .bal(style='font-size:1.6em;color:#888;') $
-                  span#usdbtcbalance #{usdbtcbalance || 0}
-                  small(style='font-size:16px;')  USD @ $
-                    span#currentbtcprice #{currentbtcprice || 0}
-                    |  ea
-                p
-                  p
-                    .addressdash(style='font-size:1.3vw;font-weight:400;border-radius:15px;padding:10px;margin:0 auto;margin-top:10px;margin-bottom:10px;')
-                      span.addr(style='background-color: #1e1e1e;padding: 8px;padding-left: 15px;padding-right: 15px;border-radius:15px;') #{btcaddress}
-                      button.clip(style='background-color: transparent;border: none;margin-left: 5px;', data-clipboard-text=btcaddress)
-                        i.fas.fa-copy
-                  if (typeof qrcode != 'undefined')
-                    .qrcode(align='center')
-                        button.clip(data-clipboard-text=btcaddress, style='background-color: transparent;border: none;')
-                          img(src='' + btcqrcode, style='border-radius:10px;')
-                  .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:10px;', align='center') BITCOIN 
-                    span#btcblock
-                .divider(style='background-color:#111 !important;height:2px;width:80%;margin:0 auto;', align='center')
-                p
-                  if (typeof btctxs != 'undefined')
-                    if (typeof btctxs[0] != 'undefined')
-                      .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;') 
-                        .tablewrapper
-                          table.sortable#fst
-                            thead
-                              tr
-                                th Type
-                                th Block Height
-                                th.sorttable_nosort Time (GMT)
-                                th Confirmations
-                                th TXID
-                            tbody
-                              each tx in btctxs
-                                tr
-                                  td(align='center', data-label='Type') 
-                                    | TX
-                                  td(align='center', data-label='BTC Block Height') 
-                                    a.txid(href='https://chainz.cryptoid.info/btc/tx.dws?'+tx.transactionBlock, target='_blank') #{tx.transactionBlock}
-                                  td(align='center', data-label='Timestamp') 
-                                    .date= new Date(tx.transactionHex.time*1000).toUTCString().replace('GMT','')
-                                  td(align='center', data-label='Confirmations') 
-                                    | #{tx.transactionHex.confirmations}
-                                  td(align='center', data-label='TXID') 
-                                    a.txid(href='https://chainz.cryptoid.info/btc/tx.dws?'+tx.transactionHex.txid, target='_blank') #{tx.transactionHex.txid}
-                              each tx in btcmemtxs
-                                tr
-                                  td(align='center', data-label='Type') 
-                                    | Mempool
-                                  td(align='center', data-label='BTC Block Height') 
-                                    a.txid(href='https://chainz.cryptoid.info/btc/tx.dws?'+tx.transactionBlock, target='_blank') MEM #{tx.transactionBlock}
-                                  td(align='center', data-label='Timestamp') 
-                                    .date= new Date(tx.transactionHex.time*1000).toUTCString().replace('GMT','')
-                                  td(align='center', data-label='Confirmations') 
-                                    | #{tx.transactionHex.confirmations}
-                                  td(align='center', data-label='TXID') 
-                                    a.txid(href='https://chainz.cryptoid.info/btc/tx.dws?'+tx.transactionHex.txid, target='_blank') #{tx.transactionHex.txid}
-                    else
-                      h1(style='color:#666;', align='center') No BTC Transactions Available
-                  else
-                    h1(style='color:#666;', align='center') No BTC Transactions Available
-              .splide__slide(style='text-align:center;margin-bottom:35px;')
-                p
-                  img.res(src='../img/eth.png', alt='ETH', border='0', style='height:75px !important;width:75px !important;margin:0px 0px 0px !important;')
-                p 
-                .bal(style='font-size:2.5em;') 
-                  span#totalethbal.format #{totalethbal || 0}
-                  small(style='font-size:16px;')  ETH
-                p
-                .bal(style='font-size:1.6em;color:#888;') $
-                  span#ethusdbalance #{ethbalance || 0}
-                  small(style='font-size:16px;')  USD @ $
-                    span#currentethprice #{currentethprice || 0}
-                    |  ea
-                p
-                  p
-                    .addressdash(style='font-size:1.3vw;font-weight:400;border-radius:15px;padding:10px;margin:0 auto;margin-top:10px;margin-bottom:10px;')
-                      span.addr(style='background-color: #1e1e1e;padding: 8px;padding-left: 15px;padding-right: 15px;border-radius:15px;') #{ethaddy}
-                      button.clip(style='background-color: transparent;border: none;margin-left: 5px;', data-clipboard-text=ethaddy)
-                        i.fas.fa-copy
-                  if (typeof qrcode != 'undefined')
-                    .qrcode(align='center')
-                        button.clip(data-clipboard-text=ethaddy, style='background-color: transparent;border: none;')
-                          img(src='' + ethqrcode, style='border-radius:10px;')
-                  .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:10px;', align='center') ETHEREUM 
-                    span#ethhblock
-                .divider(style='background-color:#111 !important;height:2px;width:80%;margin:0 auto;', align='center')
-                p              
-                  if (typeof ethtxs != 'undefined')
-                    if (typeof ethtxs[0] != 'undefined')
-                      .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;')
-                        .tablewrapper
-                          table.sortable.ethtable#fst
-                            thead
-                              tr
-                                th Block Height
-                                th.sorttable_nosort Time (GMT)
-                                th Confirmations
-                                th TXID
-                            tbody
-                              each tx in ethtxs
-                                tr
-                                  td(align='center', data-label='ETH Block Height') !{tx.blockNumber}
-                                  td(align='center', data-label='Timestamp') 
-                                    if (typeof tx.timeStamp != 'undefined')
-                                      .date= new Date(tx.timeStamp*1000).toUTCString().replace('GMT','')
-                                  td(align='center', data-label='Confirmations') 
-                                    .label.label-success(style='background: none;') !{tx.confirmations}
-                                  td(align='center', data-label='TXID') 
-                                    a.txid(href=`https://etherscan.io/tx/${tx.hash}`, target='_blank') !{tx.hash}
-                    else
-                      h1(style='color:#666;', align='center') No ETH Transactions Available
-              .splide__slide(style='text-align:center;margin-bottom:35px;')
-                p
-                  img.res(src='../img/ari.png', alt='ARI', border='0', style='height:75px !important;width:75px !important;margin:0px 0px 0px !important;')
-                p 
-                .bal(style='font-size:2.5em;') 
-                  span#totalaribal.format #{totalaribal || 0}
-                  small(style='font-size:16px;')  ARI
-                p
-                .bal(style='font-size:1.6em;color:#888;') $
-                  span#ariusdbalance #{aribalance || 0}
-                  small(style='font-size:16px;')  USD @ $
-                    span#currentariprice #{currentariprice || 0}
-                    |  ea
-                p
-                  p
-                    .addressdash(style='font-size:1.3vw;font-weight:400;border-radius:15px;padding:10px;margin:0 auto;margin-top:10px;margin-bottom:10px;')
-                      span.addr(style='background-color: #1e1e1e;padding: 8px;padding-left: 15px;padding-right: 15px;border-radius:15px;') #{ethaddy}
-                      button.clip(style='background-color: transparent;border: none;margin-left: 5px;', data-clipboard-text=ethaddy)
-                        i.fas.fa-copy
-                  if (typeof qrcode != 'undefined')
-                    .qrcode(align='center')
-                        button.clip(data-clipboard-text=ethaddy, style='background-color: transparent;border: none;')
-                          img(src='' + ethqrcode, style='border-radius:10px;')
-                  .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:10px;', align='center') DENARII 
-                    span#aribblock
-                .divider(style='background-color:#111 !important;height:2px;width:80%;margin:0 auto;', align='center')
-                p
-                  if (typeof erctxs != 'undefined')
-                    if (typeof erctxs[0] != 'undefined')
-                      .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;')
-                        .tablewrapper
-                          table.sortable#fst
-                            thead
-                              tr
-                                th Block Height
-                                th.sorttable_nosort Time (GMT)
-                                th Confirmations
-                                th TXID
-                            tbody
-                              each tx in erctxs
-                                tr
-                                  td(align='center', data-label='ARI Block Height') !{tx.blockNumber}
-                                  td(align='center', data-label='Timestamp') 
-                                    if (typeof tx.timeStamp != 'undefined')
-                                      .date= new Date(tx.timeStamp*1000).toUTCString().replace('GMT','')
-                                  td(align='center', data-label='Confirmations') 
-                                    .label.label-success(style='background: none;') !{tx.confirmations}
-                                  td(align='center', data-label='TXID') 
-                                    a.txid(href=`https://etherscan.io/tx/${tx.hash}`, target='_blank') !{tx.hash}
-                    else
-                      h1(style='color:#666;', align='center') No ARI Transactions Available
+        .slickk
+          div(style='text-align:center;margin-bottom:35px;')
+            p
+              img.res(src='../img/denarius.png', alt='D', border='0', style='height:75px !important;width: 75px !important;margin:0 auto !important;')
+            p 
+            .bal(style='font-size:2.5em;') 
+              span#totalbal.format #{totalbal || 0}
+              small(style='font-size:16px;')  D
+            p
+            .bal(style='font-size:1.6em;color:#888;') $
+              span#usdbalance #{usdbalance || 0}
+              small(style='font-size:16px;')  USD @ $
+                span#currentprice #{currentprice || 0}
+                |  ea
+            p
+              p
+                .addressdash(style='font-size:1.3vw;font-weight:400;border-radius:15px;padding:10px;margin:0 auto;margin-top:10px;margin-bottom:10px;')
+                  span.addr(style='background-color: #1e1e1e;padding: 8px;padding-left: 15px;padding-right: 15px;border-radius:15px;') #{mainaddy}
+                  button.clip(style='background-color: transparent;border: none;margin-left: 5px;', data-clipboard-text=mainaddy)
+                    i.fas.fa-copy
+              if (typeof qrcode != 'undefined')
+                .qrcode(align='center')
+                    button.clip(data-clipboard-text=mainaddy, style='background-color: transparent;border: none;')
+                      img(src='' + qrcode, style='border-radius:10px;')
+              .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:10px;', align='center') DENARIUS 
+                span#dblock
+            .divider(style='background-color:#111 !important;height:2px;width:80%;margin:0 auto;', align='center')
+            p
+              if (typeof dtxs != 'undefined')
+                if (typeof dtxs[0] != 'undefined')
+                  .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;') 
+                    .tablewrapper
+                      table.sortable#fst
+                        thead
+                          tr
+                            th Type
+                            th Block Height
+                            th.sorttable_nosort Time (GMT)
+                            th Confirmations
+                            th TXID
+                        tbody
+                          each tx in dtxs
+                            tr
+                              td(align='center', data-label='Type') 
+                                | TX
+                              td(align='center', data-label='D Block Height') 
+                                a.txid(href='https://chainz.cryptoid.info/d/tx.dws?'+tx.transactionBlock, target='_blank') #{tx.transactionBlock}
+                              td(align='center', data-label='Timestamp') 
+                                .date= new Date(tx.transactionHex.time*1000).toUTCString().replace('GMT','')
+                              td(align='center', data-label='Confirmations') 
+                                | #{tx.transactionHex.confirmations}
+                              td(align='center', data-label='TXID') 
+                                a.txid(href='https://chainz.cryptoid.info/d/tx.dws?'+tx.transactionHex.txid, target='_blank') #{tx.transactionHex.txid}
+                else
+                  h1(style='color:#666;', align='center') No D Transactions Available
+              else
+                h1(style='color:#666;', align='center') No D Transactions Available
+          div(style='text-align:center;margin-bottom:35px;')
+            p
+              img.res(src='../img/bitcoin.png', alt='BTC', border='0', style='height:75px !important;width: 75px !important;margin:0 auto !important;')
+            p 
+            .bal(style='font-size:2.5em;') 
+              span#totalbtcbal.format #{totalbtcbal || 0}
+              small(style='font-size:16px;')  BTC
+            p
+            .bal(style='font-size:1.6em;color:#888;') $
+              span#usdbtcbalance #{usdbtcbalance || 0}
+              small(style='font-size:16px;')  USD @ $
+                span#currentbtcprice #{currentbtcprice || 0}
+                |  ea
+            p
+              p
+                .addressdash(style='font-size:1.3vw;font-weight:400;border-radius:15px;padding:10px;margin:0 auto;margin-top:10px;margin-bottom:10px;')
+                  span.addr(style='background-color: #1e1e1e;padding: 8px;padding-left: 15px;padding-right: 15px;border-radius:15px;') #{btcaddress}
+                  button.clip(style='background-color: transparent;border: none;margin-left: 5px;', data-clipboard-text=btcaddress)
+                    i.fas.fa-copy
+              if (typeof qrcode != 'undefined')
+                .qrcode(align='center')
+                    button.clip(data-clipboard-text=btcaddress, style='background-color: transparent;border: none;')
+                      img(src='' + btcqrcode, style='border-radius:10px;')
+              .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:10px;', align='center') BITCOIN 
+                span#btcblock
+            .divider(style='background-color:#111 !important;height:2px;width:80%;margin:0 auto;', align='center')
+            p
+              if (typeof btctxs != 'undefined')
+                if (typeof btctxs[0] != 'undefined')
+                  .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;') 
+                    .tablewrapper
+                      table.sortable#fst
+                        thead
+                          tr
+                            th Type
+                            th Block Height
+                            th.sorttable_nosort Time (GMT)
+                            th Confirmations
+                            th TXID
+                        tbody
+                          each tx in btctxs
+                            tr
+                              td(align='center', data-label='Type') 
+                                | TX
+                              td(align='center', data-label='BTC Block Height') 
+                                a.txid(href='https://chainz.cryptoid.info/btc/tx.dws?'+tx.transactionBlock, target='_blank') #{tx.transactionBlock}
+                              td(align='center', data-label='Timestamp') 
+                                .date= new Date(tx.transactionHex.time*1000).toUTCString().replace('GMT','')
+                              td(align='center', data-label='Confirmations') 
+                                | #{tx.transactionHex.confirmations}
+                              td(align='center', data-label='TXID') 
+                                a.txid(href='https://chainz.cryptoid.info/btc/tx.dws?'+tx.transactionHex.txid, target='_blank') #{tx.transactionHex.txid}
+                          each tx in btcmemtxs
+                            tr
+                              td(align='center', data-label='Type') 
+                                | Mempool
+                              td(align='center', data-label='BTC Block Height') 
+                                a.txid(href='https://chainz.cryptoid.info/btc/tx.dws?'+tx.transactionBlock, target='_blank') MEM #{tx.transactionBlock}
+                              td(align='center', data-label='Timestamp') 
+                                .date= new Date(tx.transactionHex.time*1000).toUTCString().replace('GMT','')
+                              td(align='center', data-label='Confirmations') 
+                                | #{tx.transactionHex.confirmations}
+                              td(align='center', data-label='TXID') 
+                                a.txid(href='https://chainz.cryptoid.info/btc/tx.dws?'+tx.transactionHex.txid, target='_blank') #{tx.transactionHex.txid}
+                else
+                  h1(style='color:#666;', align='center') No BTC Transactions Available
+              else
+                h1(style='color:#666;', align='center') No BTC Transactions Available
+          div(style='text-align:center;margin-bottom:35px;')
+            p
+              img.res(src='../img/eth.png', alt='ETH', border='0', style='height:75px !important;width:75px !important;margin:0 auto !important;')
+            p 
+            .bal(style='font-size:2.5em;') 
+              span#totalethbal.format #{totalethbal || 0}
+              small(style='font-size:16px;')  ETH
+            p
+            .bal(style='font-size:1.6em;color:#888;') $
+              span#ethusdbalance #{ethbalance || 0}
+              small(style='font-size:16px;')  USD @ $
+                span#currentethprice #{currentethprice || 0}
+                |  ea
+            p
+              p
+                .addressdash(style='font-size:1.3vw;font-weight:400;border-radius:15px;padding:10px;margin:0 auto;margin-top:10px;margin-bottom:10px;')
+                  span.addr(style='background-color: #1e1e1e;padding: 8px;padding-left: 15px;padding-right: 15px;border-radius:15px;') #{ethaddy}
+                  button.clip(style='background-color: transparent;border: none;margin-left: 5px;', data-clipboard-text=ethaddy)
+                    i.fas.fa-copy
+              if (typeof qrcode != 'undefined')
+                .qrcode(align='center')
+                    button.clip(data-clipboard-text=ethaddy, style='background-color: transparent;border: none;')
+                      img(src='' + ethqrcode, style='border-radius:10px;')
+              .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:10px;', align='center') ETHEREUM 
+                span#ethhblock
+            .divider(style='background-color:#111 !important;height:2px;width:80%;margin:0 auto;', align='center')
+            p              
+              if (typeof ethtxs != 'undefined')
+                if (typeof ethtxs[0] != 'undefined')
+                  .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;')
+                    .tablewrapper
+                      table.sortable.ethtable#fst
+                        thead
+                          tr
+                            th Block Height
+                            th.sorttable_nosort Time (GMT)
+                            th Confirmations
+                            th TXID
+                        tbody
+                          each tx in ethtxs
+                            tr
+                              td(align='center', data-label='ETH Block Height') !{tx.blockNumber}
+                              td(align='center', data-label='Timestamp') 
+                                if (typeof tx.timeStamp != 'undefined')
+                                  .date= new Date(tx.timeStamp*1000).toUTCString().replace('GMT','')
+                              td(align='center', data-label='Confirmations') 
+                                .label.label-success(style='background: none;') !{tx.confirmations}
+                              td(align='center', data-label='TXID') 
+                                a.txid(href=`https://etherscan.io/tx/${tx.hash}`, target='_blank') !{tx.hash}
+                else
+                  h1(style='color:#666;', align='center') No ETH Transactions Available
+          div(style='text-align:center;margin-bottom:35px;')
+            p
+              img.res(src='../img/ari.png', alt='ARI', border='0', style='height:75px !important;width:75px !important;margin:0 auto !important;')
+            p 
+            .bal(style='font-size:2.5em;') 
+              span#totalaribal.format #{totalaribal || 0}
+              small(style='font-size:16px;')  ARI
+            p
+            .bal(style='font-size:1.6em;color:#888;') $
+              span#ariusdbalance #{aribalance || 0}
+              small(style='font-size:16px;')  USD @ $
+                span#currentariprice #{currentariprice || 0}
+                |  ea
+            p
+              p
+                .addressdash(style='font-size:1.3vw;font-weight:400;border-radius:15px;padding:10px;margin:0 auto;margin-top:10px;margin-bottom:10px;')
+                  span.addr(style='background-color: #1e1e1e;padding: 8px;padding-left: 15px;padding-right: 15px;border-radius:15px;') #{ethaddy}
+                  button.clip(style='background-color: transparent;border: none;margin-left: 5px;', data-clipboard-text=ethaddy)
+                    i.fas.fa-copy
+              if (typeof qrcode != 'undefined')
+                .qrcode(align='center')
+                    button.clip(data-clipboard-text=ethaddy, style='background-color: transparent;border: none;')
+                      img(src='' + ethqrcode, style='border-radius:10px;')
+              .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:10px;', align='center') DENARII 
+                span#aribblock
+            .divider(style='background-color:#111 !important;height:2px;width:80%;margin:0 auto;', align='center')
+            p
+              if (typeof erctxs != 'undefined')
+                if (typeof erctxs[0] != 'undefined')
+                  .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;')
+                    .tablewrapper
+                      table.sortable#fst
+                        thead
+                          tr
+                            th Block Height
+                            th.sorttable_nosort Time (GMT)
+                            th Confirmations
+                            th TXID
+                        tbody
+                          each tx in erctxs
+                            tr
+                              td(align='center', data-label='ARI Block Height') !{tx.blockNumber}
+                              td(align='center', data-label='Timestamp') 
+                                if (typeof tx.timeStamp != 'undefined')
+                                  .date= new Date(tx.timeStamp*1000).toUTCString().replace('GMT','')
+                              td(align='center', data-label='Confirmations') 
+                                .label.label-success(style='background: none;') !{tx.confirmations}
+                              td(align='center', data-label='TXID') 
+                                a.txid(href=`https://etherscan.io/tx/${tx.hash}`, target='_blank') !{tx.hash}
+                else
+                  h1(style='color:#666;', align='center') No ARI Transactions Available
       //- .divider(style='background-color:#2b2b2b !important;height:2px;width:60%;margin:0 auto;', align='center')
       //- .row(class='rowclass').animate__animated.animate__fadeIn
       //-   .col-sm-3
@@ -309,11 +307,21 @@ block content
     script(src='https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js')
     script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js")
     script(src='https://unpkg.com/tabulator-tables@4.9.1/dist/js/tabulator.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js')
     script.
-      new Splide( '.splide', {
-        type   : 'loop',
-        arrowPath: 'm15.5 0.932-4.3 4.38 14.5 14.6-14.5 14.5 4.3 4.4 14.6-14.6 4.4-4.3-4.4-4.4-14.6-14.6z',
-      } ).mount();
+      //- new Splide( '.splide', {
+      //-   type   : 'loop',
+      //-   arrowPath: 'm15.5 0.932-4.3 4.38 14.5 14.6-14.5 14.5 4.3 4.4 14.6-14.6 4.4-4.3-4.4-4.4-14.6-14.6z',
+      //-   autoHeight: true
+      //- } ).mount();
+      $('.slickk').slick({
+        adaptiveHeight: true,
+        infinite: true,
+        dots: true,
+        arrows: false,
+        fade: false,
+        dots: true
+      });
       var clipboard = new ClipboardJS('.clip');
       clipboard.on('success', function(e) {
           console.info('Action:', e.action);
