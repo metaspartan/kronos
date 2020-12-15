@@ -97,6 +97,9 @@ body {
   .mobilerow {
     margin-bottom: 25px !important;
   }
+  .Youchat {
+    display: block !important;
+  }
   .mobilerow2 {
     margin-bottom: 55px !important;
   }
@@ -238,6 +241,13 @@ body {
   border-radius:15px;
   padding:30px;
   margin:15px;
+}
+
+.slick-dots li.slick-active button:before {
+  color: #FFF !important;
+}
+.slick-dots li button:before {
+  color: #FFF !important;
 }
 
 .rainbowbg {

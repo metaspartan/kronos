@@ -1,6 +1,6 @@
 {
   "name": "Kronos",
-  "version": "1.8.9-Beta",
+  "version": "1.9.0-Beta",
   "description": "A Dashboard Interface and Wallet for Denarius (D), Ethereum (ETH), and Denarii (ARI) built with NodeJS and Electron",
   "repository": {
     "type": "git",
