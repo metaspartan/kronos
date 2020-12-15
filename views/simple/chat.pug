@@ -10,32 +10,28 @@ block content
   #ethaccount(data-value=ethaddress)
   #daccount(data-value=mainaddress)
   div(style='background-color:#111;padding:20px;width:100%;text-align:center;')
-    #loader Encrypting & Connecting...Please wait...
+    span#loader(style='text-align: center; color: #fff; vertical-align: middle;') Encrypting & Connecting...Please wait...
+    span#connectdot(style='text-align: center; color: #46a900; vertical-align: middle;')
   #logingroup(style='')
     .input-group#alias(style='width:350px;margin:0 auto;top: 50%;left: 40%;position: absolute;z-index:10002;')
       input.blackinputchat.form-control#entername(type='text', placeholder='Enter an alias to start chatting...', maxlength='15' autofocus)
       span#enter.input-group-addon(style='background-color:#222;color:#999;border-color: #444;border-top-right-radius:15px;border-bottom-right-radius:15px;outline:none;cursor:pointer;', onClick='enterChat()')
         i.fas.fa-arrow-circle-right
   #loginbg(style='background: rgb(56,56,56);background: radial-gradient(circle, rgba(56,56,56,1) 0%, rgba(17,17,17,1) 77%);width: 100%;height: calc(100% - 122px);position: absolute; z-index: 1000;')
-  #messagewrapper(style='margin: 0 auto;margin-top:15px;overflow-x:hidden;display: flex;flex-direction: column-reverse;background-color:#111;border-radius:15px;padding:30px;width:95%;height:600px;overflow-y: scroll;margin-bottom:15px;')
+  #messagewrapper(style='margin: 0 auto;margin-top:15px;overflow-x:hidden;display: flex;flex-direction: column-reverse;background-color:#111;border-radius:15px;padding:30px;width:95%;height: calc(100vh - 235px); position: absolute;left: 50%;transform: translate(-50%, 0);overflow-y: scroll;margin-bottom:15px;')
     #messagehodler(style='')
       #messages
-  .input-group#chatinput(style='bottom:0;position:relative;width:80%;z-index:999;margin:0 auto;')
+  .input-group#chatinput(style='display:none;bottom:25px;position: absolute;left: 50%;transform: translate(-50%, 0);width:95%;z-index:999;margin:0 auto;')
     input.blackinputchat#message.form-control(type='text', placeholder='Type a message...', data-value=ethaddress, data-emoji-input="unicode" autofocus)
-    span#connectordot(style='background-color:#222;color:#999;border-color: #444;outline:none;display:none;')
-      span.online-icon.greenCircle
-        span.ripple.greenCircler
-        span.ripple.greenCircler
-        span.ripple.greenCircler
     span#mutebutton.input-group-addon(onclick='muteAudio()', style='background-color:#222;color:#999;border-left: none;border-color: #444;outline:none;cursor:pointer;')
       i.fas.fa-volume-up
     span.input-group-addon#emoji-trigger(style='background-color:#222;color:#999;border-color: #444;border-left: none;outline:none;cursor:pointer;')
       i.far.fa-smile-beam
     span#send.input-group-addon(style='background-color:#222;color:#999;border-color: #444;border-top-right-radius:15px;border-bottom-right-radius:15px;outline:none;')
       i.far.fa-paper-plane
-  p#connectdot(style='text-align: center; color: #5a5a5a; vertical-align: middle;margin-top:10px;')
   script(src='https://chr15m.github.io/bugout/bugout.min.js')
   script(src='https://unpkg.com/3box/dist/3box.min.js')
+  script(src='https://cdn.jsdelivr.net/npm/ipfs-http-client/dist/index.min.js')
   script(type="module").
     import { EmojiButton } from 'https://unpkg.com/@joeattardi/emoji-button@4.1.0/dist/index.js';
 
@@ -54,6 +50,10 @@ block content
     var b = Bugout("Kronos");
     console.log(b.address() + " [ me ]");
     //- var c = Bugout("Kronos2"); // 2nd Channel
+
+    const ipfs = window.IpfsHttpClient({ host: 'ipfs.infura.io', port: 5001 });
+
+    console.log(ipfs);
 
     localStorage.debug = "";
 
@@ -223,8 +223,8 @@ block content
 
     b.on("seen", function(address) { 
       console.log(address + " [ seen ]");
-      $('#loader').html("Kronos Chat Peer ID: " + b.address() + " • CONNECTED");
-      $('#connectordot').show();
+      $('#loader').html("Kronos Chat " + b.address());
+      $('#chatinput').show();
     });
 
     //- var thebox = document.getElementById("threebox").getAttribute("data-value");
@@ -233,13 +233,42 @@ block content
 
     b.on("connections", function(connection) { 
         //console.log(connection + " [ connections ]");
-        $('#connectdot').html('<strong>'+connection + '</strong> connection(s)');
+        if (connection == 0) {
+          $('#connectdot').html(' ◯ Waiting on peers...');
+        } else if (connection <= 1) {
+          $('#connectdot').html(' ⬤ <strong>'+connection+'</strong> connection');
+        } else {
+          $('#connectdot').html(' ⬤ <strong>'+connection+'</strong> connections');
+        }
     });
 
+    let bannedusers = [];
+
+    function banUser(usertoban) {
+      if (confirm('Are you sure you want to ban '+usertoban +'?')) {
+        alert('User banned! Refresh if you want to remove the ban.');
+        bannedusers.push(usertoban);
+      } else {
+        console.log('User not banned');
+      }
+    }
+
     b.on("message", function(address, message) {
+      console.log("Kronos Chat Banned Users: " + bannedusers.join(","));
+      user = message[0].username;
+      if (bannedusers.some(v => user.includes(v))) {
+          console.log("Kronos banned user message incoming matching '" + user + "' - message blocked");
+          return;
+      } else {
+          console.log("No banned user match using '" + user + "'");
+      }
       audio.play();
-      //console.log("RECEIVED MESSAGE:" + address + ": " + message);
-      $('#messages').append("<div style='font-size:13px;color:#999;margin-top:4px !important; background-color:#22222296;border-radius:15px;padding:10px;' class='row animate__animated animate__flipInX tooltippy'><div class='col-md-2 tooltippy' align='center' title='"+message[0].username+"<br>ARI: "+message[0].address+"<br>D: "+message[0].daddress+"'><img src="+message[0].boxprofile+" border='0' style='display:inline-block;height:45px;width:45px;border-radius:9999px;object-fit:cover;margin-right: 15px;margin-top:9px;margin-bottom:9px;border: 3px #333 solid;'/><span style='margin-top:15px;'>From <span id='maintippy' style='font-weight:bold;'>"+message[0].username+"</span></span></div><div class='col-md-10' style='display:inline-block;vertical-align:middle;margin-top:3px;'><span id='msgtime' data-value="+message[0].time+" style='color: #555;font-size:9px;'>"+message[0].time+"</span><br><span style='font-size:16px;color:#FFF;'>"+message[0].msg+"</span></div></div>");
+      var username = document.getElementById("entername").getAttribute("data-value");
+      if (username == message[0].username) {
+        $('#messages').append("<div style='position:relative;z-index:1;font-size:13px;color:#999;margin-top:4px !important; background-color:#22222296;border: 1px solid #fff00026;border-radius:15px;' class='row animate__animated animate__flipInX tooltippy'><div class='rainbowbg'></div><div class='Youchat'><div class='col-md-2 tooltippy' align='center' title='"+message[0].username+"<br>ARI: "+message[0].address+"<br>D: "+message[0].daddress+"'><img src="+message[0].boxprofile+" border='0' style='display:inline-block;height:45px;width:45px;border-radius:9999px;object-fit:cover;margin-right: 15px;margin-top:9px;margin-bottom:9px;border: 3px #333 solid;'/><span style='margin-top:15px;'>From <span id='maintippy' style='font-weight:bold;'>"+message[0].username+"</span></span></div><div class='col-md-10' style='display:inline-block;vertical-align:middle;margin-top:3px;'><span id='msgtime' data-value="+message[0].time+" style='color: #555;font-size:9px;'>"+message[0].time+"</span><br><span style='font-size:16px;color:#FFF;'>"+message[0].msg+"</span></div></div></div>");
+      } else {
+        $('#messages').append("<div style='font-size:13px;color:#999;margin-top:4px !important; background-color:#22222296;border-radius:15px;padding:10px;' class='row animate__animated animate__flipInX tooltippy'><div class='col-md-2 tooltippy' align='center' title='"+message[0].username+"<br>ARI: "+message[0].address+"<br>D: "+message[0].daddress+"'><img src="+message[0].boxprofile+" border='0' style='display:inline-block;height:45px;width:45px;border-radius:9999px;object-fit:cover;margin-right: 15px;margin-top:9px;margin-bottom:9px;border: 3px #333 solid;'/><span style='margin-top:15px;'>From <span id='maintippy' style='font-weight:bold;'>"+message[0].username+"</span></span></div><div class='col-md-9' style='display:inline-block;vertical-align:middle;margin-top:3px;'><span id='msgtime' data-value="+message[0].time+" style='color: #555;font-size:9px;'>"+message[0].time+"</span><br><span style='font-size:16px;color:#FFF;'>"+message[0].msg+"</span></div><div class='col-md-1' align='right'><button onclick='banUser(`"+message[0].username+"`)' style='background-color:#910000;color:#fff;border:none;border-radius:5px;outline:none;cursor:pointer;'>Ban</button></div></div>");
+      }
       tippy('.tooltippy', {
         animateFill: true,
         arrow: true,
