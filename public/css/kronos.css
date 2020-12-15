@@ -93,7 +93,10 @@ body {
   .rowclass {
     margin: 0px !important;
     border-radius: 0px !important;
-  } 
+  }
+  .clip {
+    font-size: 16px !important;
+  }
   .mobilerow {
     margin-bottom: 25px !important;
   }
@@ -1221,10 +1224,11 @@ a.send {
     display: block !important;
   }
   .navbar-collapse {
-    text-align: right;
+    text-align: center;
   }
   .navbar-fixed-top .navbar-collapse, .navbar-fixed-bottom .navbar-collapse {
     max-height: 100% !important;
+    padding-bottom: 20px !important;
   }
   .navbar-default .navbar-collapse, .navbar-default .navbar-form {
     border-color: #000 !important;
