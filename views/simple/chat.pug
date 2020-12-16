@@ -18,10 +18,10 @@ block content
       span#enter.input-group-addon(style='background-color:#222;color:#999;border-color: #444;border-top-right-radius:15px;border-bottom-right-radius:15px;outline:none;cursor:pointer;', onClick='enterChat()')
         i.fas.fa-arrow-circle-right
   #loginbg(style='background: rgb(56,56,56);background: radial-gradient(circle, rgba(56,56,56,1) 0%, rgba(17,17,17,1) 77%);width: 100%;height: calc(100% - 122px);position: absolute; z-index: 1000;')
-  #messagewrapper(style='margin: 0 auto;margin-top:15px;overflow-x:hidden;display: flex;flex-direction: column-reverse;background-color:#111;border-radius:15px;padding:30px;width:95%;height: calc(100vh - 235px); position: absolute;left: 50%;transform: translate(-50%, 0);overflow-y: scroll;margin-bottom:15px;')
+  #messagewrapper(style='margin: 0 auto;margin-top:0px;overflow-x:hidden;display: flex;flex-direction: column-reverse;background-color:#111;border-bottom-left-radius:15px;border-bottom-right-radius:15px;padding:30px;width:95%;height: calc(100vh - 250px); position: absolute;left: 50%;transform: translate(-50%, 0);overflow-y: scroll;margin-bottom:15px;')
     #messagehodler(style='')
       #messages
-  .input-group#chatinput(style='display:none;bottom:25px;position: absolute;left: 50%;transform: translate(-50%, 0);width:95%;z-index:999;margin:0 auto;')
+  .input-group#chatinput(style='display:none;bottom:25px;position: absolute;left: 50%;transform: translate(-50%, -35px);width:95%;z-index:999;margin:0 auto;')
     input.blackinputchat#message.form-control(type='text', placeholder='Type a message...', data-value=ethaddress, data-emoji-input="unicode" autofocus)
     span#cancelpm.input-group-addon(onclick='swapPublic()', style='display:none;background-color:#222;color:#999;border-left: none;border-color: #444;outline:none;cursor:pointer;')
       i.fas.fa-comment-slash
@@ -49,41 +49,25 @@ block content
       document.getElementById("message").value += selection.emoji;
     });
   script.
-    var b = Bugout("Kronos");
-    console.log(b.address() + " [ me ]");
-    //- var c = Bugout("Kronos2"); // 2nd Channel
+      var b = Bugout("Kronos");
+      console.log(b.address() + " [ me ]");
+      //- var c = Bugout("Kronos2"); // 2nd Channel
 
-    const ipfs = window.IpfsHttpClient({ host: 'ipfs.infura.io', port: 5001 });
+      const ipfs = window.IpfsHttpClient({ host: 'ipfs.infura.io', port: 5001 });    
 
-    console.log(ipfs);
+      console.log(ipfs);
+      
+      const audio = new Audio("../notification.wav");
+      const audiopm = new Audio("../pmdrop.wav");
 
-    localStorage.debug = "";
+      localStorage.debug = "";
 
-    var ethaddy = document.getElementById("ethaccount").getAttribute("data-value");
+      var ethaddy = document.getElementById("ethaccount").getAttribute("data-value");
 
-    var daddy = document.getElementById("daccount").getAttribute("data-value");
+      var daddy = document.getElementById("daccount").getAttribute("data-value");
 
-    function enterChat() {
-      var userinput = $("#entername").val().replace(/</g, "&lt;").replace(/>/g, "&gt;");
-      document.getElementById("entername").setAttribute("data-value", userinput);
-
-      if (userinput == '') {
-        return false;
-      } else {
-        $('#logingroup').fadeOut();
-        $('#loginbg').fadeOut();
-        $('#message').focus();
-      }
-    }
-
-    document.getElementById("entername").onkeydown = function(e){
-      if (e.keyCode == 32){
-          return false;
-      }
-      if(e.keyCode == 13){
-        e.preventDefault();
+      function enterChat() {
         var userinput = $("#entername").val().replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
         document.getElementById("entername").setAttribute("data-value", userinput);
 
         if (userinput == '') {
@@ -94,32 +78,51 @@ block content
           $('#message').focus();
         }
       }
-    };
 
-    function timeSince(date) {
-      var seconds = Math.floor((new Date() - date) / 1000);
-      var interval = seconds / 31536000;
-      if (interval > 1) {
-        return Math.floor(interval) + " years ago";
+      document.getElementById("entername").onkeydown = function(e){
+        if (e.keyCode == 32){
+            return false;
+        }
+        if(e.keyCode == 13){
+          e.preventDefault();
+          var userinput = $("#entername").val().replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+          document.getElementById("entername").setAttribute("data-value", userinput);
+
+          if (userinput == '') {
+            return false;
+          } else {
+            $('#logingroup').fadeOut();
+            $('#loginbg').fadeOut();
+            $('#message').focus();
+          }
+        }
+      };
+
+      function timeSince(date) {
+        var seconds = Math.floor((new Date() - date) / 1000);
+        var interval = seconds / 31536000;
+        if (interval > 1) {
+          return Math.floor(interval) + " years ago";
+        }
+        interval = seconds / 2592000;
+        if (interval > 1) {
+          return Math.floor(interval) + " months ago";
+        }
+        interval = seconds / 86400;
+        if (interval > 1) {
+          return Math.floor(interval) + " days ago";
+        }
+        interval = seconds / 3600;
+        if (interval > 1) {
+          return Math.floor(interval) + " hours ago";
+        }
+        interval = seconds / 60;
+        if (interval > 1) {
+          return Math.floor(interval) + " minutes ago";
+        }
+        return Math.floor(seconds) + " seconds ago";
       }
-      interval = seconds / 2592000;
-      if (interval > 1) {
-        return Math.floor(interval) + " months ago";
-      }
-      interval = seconds / 86400;
-      if (interval > 1) {
-        return Math.floor(interval) + " days ago";
-      }
-      interval = seconds / 3600;
-      if (interval > 1) {
-        return Math.floor(interval) + " hours ago";
-      }
-      interval = seconds / 60;
-      if (interval > 1) {
-        return Math.floor(interval) + " minutes ago";
-      }
-      return Math.floor(seconds) + " seconds ago";
-    }
 
 
       let privateuser = 'undefined';
@@ -134,6 +137,7 @@ block content
           privateusername = username;
           console.log(privateuser);
           $('#message').val('@'+username+' ');
+          $('#message').focus();
           $('#cancelpm').show();
           //bannedusers.push(usertoban);
         } else {
@@ -165,17 +169,28 @@ block content
             //alert('Sent to user privately');
             b.send(privateuser, messages);
             $('#messages').append("<div style='position:relative;z-index:1;font-size:13px;color:#999;margin-top:4px !important; background-color:#22222296;border: 1px solid #fff00026;border-radius:15px;' class='row animate__animated animate__flipInX tooltippy'><div class='rainbowbg'></div><div class='PMchat'><div class='col-md-3 tooltippy' align='center' title='"+username+"<br>ARI: "+ethaddy+"<br>D: "+daddy+"'><img src="+boxprofile+" border='0' style='display:inline-block;height:45px;width:45px;border-radius:9999px;object-fit:cover;margin-right: 15px;margin-top:9px;margin-bottom:9px;border: 3px #333 solid;'/><span style='margin-top:15px;'><span id='maintippy' style='font-weight:bold;'>PM SENT</span></span></div><div class='col-md-9' style='display:inline-block;vertical-align:middle;margin-top:3px;'><span id='msgtime' data-value="+time+" style='color: #555;font-size:9px;'>"+time+"</span><br><span style='font-size:16px;color:#FFF;'>"+txt+"</span></div></div></div>");
-            var atuser = ['@'+privateusername];
-
-            atuser.forEach(function(item){
-
-              $("#messages:contains("+item+")").html(
-                function( _ , html ) {
-                  return html.split(item).join("<span id='maintippy'><strong>" + item + "</strong></span>");
-                }
-              )
-
+            tippy('.tooltippy', {
+              animateFill: true,
+              arrow: true,
+              size: 'large',
+              duration: 0,
+              placement: 'auto',
+              animation: 'perspective',
+              interactive: true,
+              theme: 'material',
             });
+            //- var atuser = ['@'+privateusername];
+
+            //- atuser.forEach(function(item){
+
+            //-   $("#messages:contains("+item+")").html(
+            //-     function( _ , html ) {
+            //-       return html.split(item).join("<span style='background: linear-gradient(317deg, rgba(221,76,76,1) 0%, rgba(208,170,57,1) 100%);-webkit-background-clip: text;background-clip: text;-webkit-text-fill-color: transparent;'><strong>" + item + "</strong></span>");
+            //-     }
+            //-   )
+
+            //- });
+            audiopm.play();
             //b.send(userid, messages);
             $('#message').val('');
             $('#message').val('@'+privateusername+' ');
@@ -203,17 +218,28 @@ block content
           //alert('Sent to user privately');
           b.send(privateuser, messages);
           $('#messages').append("<div style='position:relative;z-index:1;font-size:13px;color:#999;margin-top:4px !important; background-color:#22222296;border: 1px solid #fff00026;border-radius:15px;' class='row animate__animated animate__flipInX tooltippy'><div class='rainbowbg'></div><div class='PMchat'><div class='col-md-3 tooltippy' align='center' title='"+username+"<br>ARI: "+ethaddy+"<br>D: "+daddy+"'><img src="+boxprofile+" border='0' style='display:inline-block;height:45px;width:45px;border-radius:9999px;object-fit:cover;margin-right: 15px;margin-top:9px;margin-bottom:9px;border: 3px #333 solid;'/><span style='margin-top:15px;'><span id='maintippy' style='font-weight:bold;'>PM SENT</span></span></div><div class='col-md-9' style='display:inline-block;vertical-align:middle;margin-top:3px;'><span id='msgtime' data-value="+time+" style='color: #555;font-size:9px;'>"+time+"</span><br><span style='font-size:16px;color:#FFF;'>"+txt+"</span></div></div></div>");
-          var atuser = ['@'+privateusername];
-
-          atuser.forEach(function(item){
-
-            $("#messages:contains("+item+")").html(
-              function( _ , html ) {
-                return html.split(item).join("<span id='maintippy'><strong>" + item + "</strong></span>");
-              }
-            )
-
+          tippy('.tooltippy', {
+            animateFill: true,
+            arrow: true,
+            size: 'large',
+            duration: 0,
+            placement: 'auto',
+            animation: 'perspective',
+            interactive: true,
+            theme: 'material',
           });
+          //- var atuser = ['@'+privateusername];
+
+          //- atuser.forEach(function(item){
+
+          //-   $("#messages:contains("+item+")").html(
+          //-     function( _ , html ) {
+          //-       return html.split(item).join("<span style='background: linear-gradient(317deg, rgba(221,76,76,1) 0%, rgba(208,170,57,1) 100%);-webkit-background-clip: text;background-clip: text;-webkit-text-fill-color: transparent;'><strong>" + item + "</strong></span>");
+          //-     }
+          //-   )
+
+          //- });
+          audiopm.play();
           //b.send(userid, messages);
           $('#message').val('');
           $('#message').val('@'+privateusername+' ');
@@ -224,13 +250,11 @@ block content
         }
       };
 
-    //- });
-
-    const audio = new Audio("../notification.wav");
-
     function muteAudio() {
       var audioElm = audio;
+      var audioElm2 = audiopm;
       audioElm.muted = !audioElm.muted;
+      audioElm2.muted = !audioElm2.muted;
       if (!audioElm.muted) {
         $("#mutebutton").html("<i class='fas fa-volume-up'></i>");
       } else {
@@ -284,7 +308,7 @@ block content
       if (username == message[0].username) {
         $('#messages').append("<div style='position:relative;z-index:1;font-size:13px;color:#999;margin-top:4px !important; background-color:#22222296;border: 1px solid #fff00026;border-radius:15px;' class='row animate__animated animate__flipInX tooltippy'><div class='rainbowbg'></div><div class='Youchat'><div class='col-md-3 tooltippy' align='center' title='"+message[0].username+"<br>ARI: "+message[0].address+"<br>D: "+message[0].daddress+"'><img src="+message[0].boxprofile+" border='0' style='display:inline-block;height:45px;width:45px;border-radius:9999px;object-fit:cover;margin-right: 15px;margin-top:9px;margin-bottom:9px;border: 3px #333 solid;'/><span style='margin-top:15px;'>From <span id='maintippy' style='font-weight:bold;'>"+message[0].username+"</span></span></div><div class='col-md-9' style='display:inline-block;vertical-align:middle;margin-top:3px;'><span id='msgtime' data-value="+message[0].time+" style='color: #555;font-size:9px;'>"+message[0].time+"</span><br><span style='font-size:16px;color:#FFF;'>"+message[0].msg+"</span></div></div></div>");
       } else {
-        $('#messages').append("<div style='font-size:13px;color:#999;margin-top:4px !important; background-color:#22222296;border-radius:15px;padding:10px;' class='row animate__animated animate__flipInX tooltippy'><div class='col-md-3 tooltippy' align='center' title='"+message[0].username+"<br>ARI: "+message[0].address+"<br>D: "+message[0].daddress+"'><img src="+message[0].boxprofile+" border='0' style='display:inline-block;height:45px;width:45px;border-radius:9999px;object-fit:cover;margin-right: 15px;margin-top:9px;margin-bottom:9px;border: 3px #333 solid;'/><span style='margin-top:15px;'>From <span id='maintippy' style='font-weight:bold;'>"+message[0].username+"</span></span></div><div class='col-md-8' style='display:inline-block;vertical-align:middle;margin-top:3px;'><span id='msgtime' data-value="+message[0].time+" style='color: #555;font-size:9px;'>"+message[0].time+"</span><br><span style='font-size:16px;color:#FFF;'>"+message[0].msg+"</span></div><div class='col-md-1' align='right'><button onclick='pmUser(`"+message[0].userid+"`,`"+message[0].username+"`)' style='background-color:#009133;color:#fff;border:none;border-radius:5px;outline:none;cursor:pointer;'>PM</button>&nbsp;<button onclick='banUser(`"+message[0].username+"`)' style='background-color:#910000;color:#fff;border:none;border-radius:5px;outline:none;cursor:pointer;'>Ban</button></div></div>");
+        $('#messages').append("<div style='font-size:13px;color:#999;margin-top:4px !important; background-color:#22222296;border-radius:15px;padding:10px;' class='row animate__animated animate__flipInX tooltippy'><div class='col-md-3 tooltippy' align='center' title='"+message[0].username+"<br>ARI: "+message[0].address+"<br>D: "+message[0].daddress+"'><img src="+message[0].boxprofile+" border='0' style='display:inline-block;height:45px;width:45px;border-radius:9999px;object-fit:cover;margin-right: 15px;margin-top:9px;margin-bottom:9px;border: 3px #333 solid;'/><span style='margin-top:15px;'>From <span id='maintippy' style='font-weight:bold;'>"+message[0].username+"</span></span></div><div class='col-md-8' style='display:inline-block;vertical-align:middle;margin-top:3px;'><span id='msgtime' data-value="+message[0].time+" style='color: #555;font-size:9px;'>"+message[0].time+"</span><br><span style='font-size:16px;color:#FFF;'>"+message[0].msg+"</span></div><div class='col-md-1' align='right'><button onclick='pmUser(`"+message[0].userid+"`,`"+message[0].username+"`)' style='background-color:#009133;color:#fff;border:none;border-radius:5px;outline:none;cursor:pointer;'>PM</button>&nbsp;&nbsp;<button onclick='banUser(`"+message[0].username+"`)' style='background-color:#910000;color:#fff;border:none;border-radius:5px;outline:none;cursor:pointer;'>Ban</button></div></div>");
       }
       tippy('.tooltippy', {
         animateFill: true,
@@ -296,17 +320,17 @@ block content
         interactive: true,
         theme: 'material',
       });
-      var atuser = ['@'+username];
+      //- var atuser = ['@'+username];
 
-      atuser.forEach(function(item){
+      //- atuser.forEach(function(item){
 
-        $("#messages:contains("+item+")").html(
-          function( _ , html ) {
-            return html.split(item).join("<span id='maintippy'><strong>" + item + "</strong></span>");
-          }
-        )
+      //-   $("#messages:contains("+item+")").html(
+      //-     function( _ , html ) {
+      //-       return html.split(item).join("<span style='background: linear-gradient(317deg, rgba(221,76,76,1) 0%, rgba(208,170,57,1) 100%);-webkit-background-clip: text;background-clip: text;-webkit-text-fill-color: transparent;'><strong>" + item + "</strong></span>");
+      //-     }
+      //-   )
 
-      });
+      //- });
     });
 
     //- b.on("connections", console.log.bind(console, "Connections:"));
