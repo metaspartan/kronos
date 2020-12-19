@@ -52,6 +52,7 @@ const fs = require('fs');
 const os = require('os');
 const appRoot = require('app-root-path');
 const files = require('fs');
+const csrf = require('csurf');
 //const gritty = require('gritty');
 const rateLimit = require("express-rate-limit");
 const randomstring = require("randomstring");
@@ -385,6 +386,7 @@ app.use((req, res, next) => {
 
     setInterval(() => {asyncFun();}, 3000);
   });
+  // res.locals.csrftoken = req.csrfToken(); 
   next();
 });
 
@@ -435,8 +437,13 @@ app.set('trust proxy',1);
 // You can pass an object of default options to toastr(), see example/index.coffee
 app.use(toastr());
 
+app.use(csrf());
+
+var csrfProtection = csrf({ cookie: true })
+
 app.use(function (req, res, next)
 {
+    res.locals.csrftoken = req.csrfToken(); 
     res.locals.toasts = req.toastr.render()
     next()
 });
@@ -529,6 +536,9 @@ app.get('/core', auth, Limiter, coreController.getcoresettings);
 app.get('/createtx', auth, Limiter, sTXController.getsend);
 app.post('/simplesend', Limiter, sTXController.postcreate);
 app.post('/autosend', Limiter, sTXController.postauto);
+
+//D Send API
+app.post('/dapisend', Limiter, sTXController.postapisend);
 
 //BTC Send
 app.get('/sendbtc', auth, Limiter, sTXController.getbtcsend);

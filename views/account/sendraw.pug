@@ -19,6 +19,7 @@ block content
       p
         form.form-horizontal(action='/sendrawtx', method='POST', id='sendrawform')
           input(type='hidden', name='_csrf', value=_csrf)
+          input(type='hidden' name='_csrf' value=csrftoken)
           .form-group
             label.col-sm-3.control-label(for='rawtx') Raw Transaction in HEX format
             .col-sm-7

@@ -52,6 +52,7 @@ block content
       p
         form.form-horizontal(action='/withdraw/send', method='POST', id='sendform')
           input(type='hidden', name='_csrf', value=_csrf)
+          input(type='hidden' name='_csrf' value=csrftoken)
           .form-group
             label.col-sm-3.control-label(for='sendaddress') D Wallet Address
             .col-sm-7

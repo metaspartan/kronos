@@ -135,6 +135,7 @@ html(dir="ltr", lang="en-US")
 					a(onClick="window.location.reload();", style="color:#777;")
 						i.fas.fa-sync.fa-2x
 					br
+					input(type='hidden' name='_csrf' value=csrftoken)
 					input(type="hidden" id="SEED" name="SEED" value=seedphrase)
 					p.animate__animated.animate__fadeIn(style='background-color:#000;color:#FFF;padding:20px;border-radius:15px;font-size:21px;') #{seedphrase}
 					br

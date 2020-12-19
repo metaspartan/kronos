@@ -145,6 +145,7 @@ html(dir="ltr", lang="en-US")
 					br
 					.toptxt(style='color:#777;font-size:12px;max-width:500px;') Input a BIP39 12 or 24 Word Seed "Phrase", Ensure that you have these words written down and saved somewhere safe. Your Kronos wallets will be derived from this phrase. 
 					div(style='background-color:#311212;border-radius:15px;padding:5px;color:#fff;font-weight:bold;font-size:11px;margin-top:10px;margin-bottom:10px;') Importing a seed phrase will permanently erase your current Kronos seed phrase!
+					input(type='hidden' name='_csrf' value=csrftoken)
 					textarea(id="SEEDPHRASE" name="SEEDPHRASE" placeholder='' autofocus) #{mnemonic}
 					br
 					input.button(style='background-color: #a81010;', type="submit" value="Import Seed") 

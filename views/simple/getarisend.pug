@@ -75,6 +75,7 @@ block content
                       label.col-sm-3.control-label(for='total') Total Est. Gas
                       .col-sm-8
                         .input-group
+                          input(type='hidden' name='_csrf' value=csrftoken)
                           input.form-control.blackinput5(type='text', id='totalgas', disabled)
                           span.input-group-addon(style='background-color:#333;color:#FFF;border:none;') ETH est. gas fee
                 .modal-footer(style='border-top: none !important;')
@@ -82,7 +83,7 @@ block content
                     button.btn.btn-default(type='button', data-dismiss='modal', style='background-color: #602828;border-radius: 15px;font-size: 15px !important;') Close      
       p
         form.form-horizontal(action='/arisend', method='POST', id='sendform')
-          input(type='hidden', name='_csrf', value=_csrf)
+          input(type='hidden' name='_csrf' value=csrftoken)
           input(type='hidden', name='gasfeer', id='gasfeer')
           input(type='hidden', name='gasfeeg', id='gasfeeg')
           .form-group

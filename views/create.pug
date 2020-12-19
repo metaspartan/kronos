@@ -126,6 +126,7 @@ html(dir="ltr", lang="en-US")
 						| Enter in a username and password you want to login to Kronos with
 					br
 					br
+					input(type='hidden' name='_csrf' value=csrftoken)
 					input(type="text" id="PPU1" name="PPU1" placeholder="username" autofocus)
 					input(type="password" id="PPP1" name="PPP1" placeholder="password")
 					input(type="password" id="PPP2" name="PPP2" placeholder="confirm password")

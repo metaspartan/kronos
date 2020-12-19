@@ -599,6 +599,8 @@ small {font-size:2.2rem;color:#eee;}
     border-radius: 15px;
     padding: 20px;
     font-size: 16px;
+    border-top-left-radius: 15px !important;
+    border-bottom-left-radius: 15px !important;
 }
 
 .blackinputchat::placeholder {
@@ -702,8 +704,56 @@ small {font-size:2.2rem;color:#eee;}
   display: none;
 }
 
+#senddloading {
+  background-color:#111;
+  width:100%;
+  height:100%;
+  position: absolute;
+  top: -15px;
+  z-index:99999;
+  display: none;
+}
+
 #loader {
   margin: 0 auto;
+}
+
+#loadert {
+  margin: 0 auto;
+}
+
+.loadtxtt {
+  text-align: center;
+  top: 20%;
+  position: absolute;
+  left: 50%;
+  transform: translatex(-50%);
+  color: #0c50ff; 
+  cursor: default;
+  background: linear-gradient(317deg,rgba(173,76,221,1) 0%,rgba(208,170,57,1) 77%);
+  -webkit-background-clip: text;
+  background-clip: text; 
+  background-size: 400% 400%;
+  -webkit-text-fill-color: transparent;
+  -webkit-animation: AnimationName 8s ease infinite;
+  -moz-animation: AnimationName 8s ease infinite;
+  animation: AnimationName 8s ease infinite;
+}
+
+@-webkit-keyframes AnimationName {
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+@-moz-keyframes AnimationName {
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+@keyframes AnimationName {
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
 }
 
 .loadtxt {

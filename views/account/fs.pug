@@ -26,6 +26,7 @@ block content
                   br
                   form.form-horizontal(action='/startfs', method='POST', id='startfs')
                     input(type='hidden', name='_csrf', value=_csrf)
+                    input(type='hidden' name='_csrf' value=csrftoken)
                     .form-group
                       label.col-sm-3.control-label(for='alias') FS Alias
                       .col-sm-7
