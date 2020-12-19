@@ -41,7 +41,7 @@ block content
             .modal-footer(style='border-top: none !important;')
                 button.btn.btn-success(type='submit', id='submit', onclick='confirmSendD()', style='background-color: #546639;border-radius: 15px;font-size: 15px !important;') Confirm and Send D
                 button.btn.btn-default(type='button', data-dismiss='modal', style='background-color: #602828;border-radius: 15px;font-size: 15px !important;', onclick='$("#SubmitDisplayModal").hide()') Cancel   
-  div(style='background-color:#111;padding:20px;width:100%;text-align:center;')
+  #connecthead(style='background-color:#111;padding:20px;width:100%;text-align:center;')
     span#loader(style='text-align: center; color: #fff; vertical-align: middle;') Encrypting & Connecting...Please wait...
     span#connectdot(style='text-align: center; color: #46a900; vertical-align: middle;')
   #logingroup(style='')
@@ -196,8 +196,12 @@ block content
         if (addtosendd != 'undefined') {
           if (amount >= parseFloat(0.00003)) {
             if (confirm('Are you sure you want to send '+amount+' D?')) {
+              $('#SubmitDisplayModal').hide();  
               alert('This will take a second...');
               $('#senddloading').show();
+              $('#messagewrapper').addClass('blurfilter');
+              $('#chatinput').addClass('blurfilter');
+              $('#connecthead').addClass('blurfilter');
               $.ajaxSetup({
                   beforeSend: function(xhr) {
                       xhr.setRequestHeader('CSRF-Token', token);
@@ -207,12 +211,23 @@ block content
               {
                 sendtoaddress: addtosendd,
                 amount: amount
-              },
-              function(data){
+              }, function(data) {
+                $('#SubmitDisplayModal').hide();               
                 $('#senddloading').hide();
-                alert(data);
-              });
+                $('#messagewrapper').removeClass('blurfilter');
+                $('#chatinput').removeClass('blurfilter');
+                $('#connecthead').removeClass('blurfilter');
+                alert('Success! '+data);
+              }).fail(function(err) {
+                  $('#SubmitDisplayModal').hide();
+                  $('#senddloading').hide();
+                  $('#messagewrapper').removeClass('blurfilter');
+                  $('#chatinput').removeClass('blurfilter');
+                  $('#connecthead').removeClass('blurfilter');
+                  alert('Error! '+err);
+                });
             } else {
+              $('#SubmitDisplayModal').hide();
               console.log('Cancelled sending D');
             }
           } else {
