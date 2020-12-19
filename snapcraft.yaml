@@ -3,7 +3,7 @@
 # https://github.com/carsenk/kronos
 # By Carsen Klock
 name: kronos
-version: '1.9.1'
+version: '1.9.2'
 summary: Kronos
 description: |
   A Dashboard Interface and Wallet for Denarius (D), Ethereum (ETH), and Denarii (ARI) built with NodeJS and Electron
@@ -41,7 +41,7 @@ apps:
       # https://docs.snapcraft.io/environment-variables/7983
       HOME: $SNAP_USER_COMMON
   kronos:
-    command: bin/npm run kronos
+    command: bin/node $SNAP/src/main.js
     plugs: [home, network, network-bind, unity7, wayland, desktop-legacy, desktop, x11, gsettings]
     desktop: kronos.desktop
     environment:

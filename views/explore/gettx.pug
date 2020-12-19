@@ -34,7 +34,7 @@ block content
       br
       .div(style='margin-top:25px;')
         form.form-horizontal(action='/search', method='POST', id='explorer')
-          input(type='hidden', name='_csrf', value=_csrf)
+          input(type='hidden' name='_csrf' value=csrftoken)
           input.form-control.blackinput4(type='text', align='center', name='explorersearch', id='explorersearch', placeholder='Search Kronos for Denarius Block # or Transaction Hash or D Address')
   .row.rowclass.container(id="menu", style='margin: 0 auto; margin-top:15px;width:90%;')
     if (txinfo)

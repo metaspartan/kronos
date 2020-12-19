@@ -184,7 +184,7 @@ block content
                         | Enter your Denarius wallet encryption passphrase below
                   br
                   form.form-horizontal(action='/unlockstaking', method='POST', id='sendunlocks')
-                    input(type='hidden', name='_csrf', value=_csrf)
+                    input(type='hidden' name='_csrf' value=csrftoken)
                     .form-group
                       label.col-sm-3.control-label(for='password') Enter passphrase
                       .col-sm-7
@@ -210,7 +210,7 @@ block content
                         | Enter your Denarius wallet encryption passphrase below
                   br
                   form.form-horizontal(action='/unlock', method='POST', id='sendunlock')
-                    input(type='hidden', name='_csrf', value=_csrf)
+                    input(type='hidden' name='_csrf' value=csrftoken)
                     .form-group
                       label.col-sm-3.control-label(for='password') Enter passphrase
                       .col-sm-7
@@ -233,7 +233,7 @@ block content
                     p(align='left')
                       strong Are you sure you want to lock your wallet?
                     form.form-horizontal(action='/lock', method='POST', id='sendlock')
-                      input(type='hidden', name='_csrf', value=_csrf)
+                      input(type='hidden' name='_csrf' value=csrftoken)
                       p(align='left') Locking your wallet will prevent staking rewards and the staker thread from running, but your coinage on your D will still grow.
               .modal-footer(style='border-top: none !important;')
                   button.btn.btn-danger(type='submit', id='submit', onclick='confirmedl()') Lock Wallet
@@ -256,7 +256,7 @@ block content
                         | Enter a wallet encryption passphrase below
                   br
                   form.form-horizontal(action='/encrypt', method='POST', id='sendencrypt')
-                    input(type='hidden', name='_csrf', value=_csrf)
+                    input(type='hidden' name='_csrf' value=csrftoken)
                     .form-group
                       label.col-sm-3.control-label(for='passphrase') Enter a passphrase
                       .col-sm-7
@@ -271,7 +271,7 @@ block content
     .container(style='width:90%')
       .div(style='margin-top:25px;')
         form.form-horizontal(action='/search', method='POST', id='explorer')
-          input(type='hidden', name='_csrf', value=_csrf)
+          input(type='hidden' name='_csrf' value=csrftoken)
           input.form-control.blackinput4(type='text', align='center', name='explorersearch', id='explorersearch', placeholder='Search Kronos for Denarius Block # or Transaction Hash or D Address')
       .row.mobilerow(style='margin-top:9px;')
         .col-md-4(align='left', style='margin-top:40px;')

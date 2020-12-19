@@ -620,6 +620,8 @@ small {font-size:2.2rem;color:#eee;}
   border-color: #444 !important;
   color: #FFF !important;
   width: 420px !important;
+  border-bottom-left-radius: 15px !important;
+  border-top-left-radius: 15px !important;
 }
 
 .blackinput::placeholder {
@@ -646,7 +648,9 @@ small {font-size:2.2rem;color:#eee;}
   background-color: #212121 !important;
   border-color: #444 !important;
   color: #a4a4a4 !important;
-  width: 370px !important;
+  width: 100% !important;
+  border-bottom-left-radius: 15px !important;
+  border-top-left-radius: 15px !important;
 }
 
 .blackinput3 {

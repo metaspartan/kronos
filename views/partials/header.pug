@@ -6,7 +6,7 @@ div(class=offline)
       #rebooter
       button.btn.btn-danger(type='submit', id='submitrb',  onclick='reboot()') REBOOT DENARIUS NODE
       form.form-horizontal(action='/reboot', method='POST', id='sendreboot')
-        input(type='hidden', name='_csrf', value=_csrf)
+        input(type='hidden' name='_csrf' value=csrftoken)
 div(class=chaindl)
   #container3(name='container3') &nbsp;
   div(class=chaindlbtn)
@@ -188,7 +188,7 @@ script.
           li
             #searchinput.animate__animated.animate__fadeInRight(style='margin-top:8px;display:none;')
               form.form-horizontal(action='http://'+lanip+':3000/search', method='POST', id='explorer')
-                input(type='hidden', name='_csrf', value=_csrf)
+                input(type='hidden' name='_csrf' value=csrftoken)
                 input.form-control.blackinput4(style='min-width:350px;', type='text', align='center', name='explorersearch', id='explorersearch', placeholder='Search the chain for TX Hashes, Block #, or Address')
           li
             a(href='#', onclick='togglesearch()')

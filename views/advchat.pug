@@ -11,6 +11,7 @@ block content
     #loader Encrypting & Connecting...Please wait...
   #logingroup(style='')
     .input-group#alias(style='width:350px;margin:0 auto;top: 50%;left: 40%;position: absolute;z-index:10002;')
+      input(type='hidden' name='_csrf' value=csrftoken)
       input.blackinputchat.form-control#entername(type='text', placeholder='Enter an alias to start chatting...', maxlength='15' autofocus)
       span#enter.input-group-addon(style='background-color:#222;color:#999;border-color: #444;border-top-right-radius:15px;border-bottom-right-radius:15px;outline:none;cursor:pointer;', onClick='enterChat()')
         i.fas.fa-arrow-circle-right
@@ -19,6 +20,7 @@ block content
     #messagehodler(style='')
       #messages
   .input-group#chatinput(style='bottom:0;position:relative;width:80%;z-index:999;margin:0 auto;')
+    input(type='hidden' name='_csrf' value=csrftoken)
     input.blackinputchat#message.form-control(type='text', placeholder='Type a message...', data-value=ethaddress, data-emoji-input="unicode" autofocus)
     span#connectordot(style='background-color:#222;color:#999;border-color: #444;outline:none;display:none;')
       span.online-icon.greenCircle

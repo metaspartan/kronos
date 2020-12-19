@@ -126,6 +126,7 @@ html(dir="ltr", lang="en-US")
 						| Enter in a new password you want to login to Kronos with
 					p(style='color:#fff;margin-top:3px;') Username: 
 						strong #{username}
+					input(type='hidden' name='_csrf' value=csrftoken)
 					input(type="password" id="LPP" name="LPP" placeholder="current password")
 					input(type="password" id="PPP1" name="PPP1" placeholder="new password")
 					input(type="password" id="PPP2" name="PPP2" placeholder="confirm new pass")

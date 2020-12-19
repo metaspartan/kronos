@@ -203,7 +203,7 @@
       <!-- <button onclick="togglelog()" class="togglebtn"><i class="fas fa-server"></i> <span id="togglebtn">Logs [+] <span id="version"></span></span></button> -->
     </div>
     <!-- <iframe id="expressApp" class="expressApp" frameborder="0"></iframe> -->
-    <webview id="expressApp" class="expressApp"></webview>
+    <webview id="expressApp" class="expressApp" allowpopups></webview>
 
     <script>
       // const appmain = require('electron').remote.app;
@@ -266,11 +266,11 @@
       var loadedversion;
       ipcRenderer.send('app_version');
 
-      ipcRenderer.on('app_version', (event, arg) => {
-        ipcRenderer.removeAllListeners('app_version');
-        version.innerText = 'Kronos Version ' + arg.version;
-        loadedversion = arg.version;
-      });
+      // ipcRenderer.on('app_version', (event, arg) => {
+      //   ipcRenderer.removeAllListeners('app_version');
+      //   version.innerText = 'Kronos Version ' + arg.version;
+      //   loadedversion = arg.version;
+      // });
 
       const notification = document.getElementById('notification');
       const message = document.getElementById('message');
@@ -368,17 +368,17 @@
         sendToElectron('close-metamask-notification');
       }
 
-      function togglelog() {
-        if ($serverLog.css("display") === "none") {
-          $serverLog.css("display", "block");
-          togglebutton.innerHTML = "Hide [-] Kronos Version "+loadedversion;
-          $expressApp.addClass("expressAppHide");
-        } else {
-          $expressApp.removeClass("expressAppHide");
-          $serverLog.css("display", "none");
-          togglebutton.innerHTML = "Logs [+] Kronos Version "+loadedversion;
-        }
-      }
+      // function togglelog() {
+      //   if ($serverLog.css("display") === "none") {
+      //     $serverLog.css("display", "block");
+      //     togglebutton.innerHTML = "Hide [-] Kronos Version "+loadedversion;
+      //     $expressApp.addClass("expressAppHide");
+      //   } else {
+      //     $expressApp.removeClass("expressAppHide");
+      //     $serverLog.css("display", "none");
+      //     togglebutton.innerHTML = "Logs [+] Kronos Version "+loadedversion;
+      //   }
+      // }
 
       function toggleflake() {
         if ($snowflake.css("display") === "none") {

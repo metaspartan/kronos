@@ -8,7 +8,9 @@ const fs = require('fs');
 const randomstring = require("randomstring");
 const Storage = require('json-storage-fs');
 
-const { shell, session, Menu, protocol, nativeTheme, ipcMain } = require('electron');
+const { shell, session, Menu, protocol, nativeTheme, ipcMain} = require('electron');
+
+const contextMenu = require('electron-context-menu');
 
 app.setAppUserModelId("com.carsenk.kronos");
 app.setAsDefaultProtocolClient('Kronos');
@@ -46,6 +48,7 @@ function createWindow() {
       nodeIntegration: true,
       nativeWindowOpen: true,
       webSecurity: true,
+      spellcheck: true,
       enableRemoteModule: true,
       webviewTag: true
     }
@@ -83,6 +86,27 @@ function createWindow() {
     ]}
   ];
 
+  contextMenu({
+    showInspectElement: false,
+    prepend: (defaultActions, params) => [
+        {
+            label: 'Rainbow',
+            // Only show it when right-clicking images
+            showInspectElement: false,
+            visible: params.mediaType === 'image'
+        },
+        {
+            label: 'Search Google for “{selection}”',
+            // Only show it when right-clicking text
+            showInspectElement: false,
+            visible: params.selectionText.trim().length > 0,
+            click: () => {
+                shell.openExternal(`https://google.com/search?q=${encodeURIComponent(params.selectionText)}`);
+            }
+        }
+    ]
+  });
+
   // Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
   mainWindow.once('ready-to-show', () => {
@@ -118,6 +142,20 @@ app.on("ready", createWindow);
 app.on("browser-window-created", function(e, window) {
   window.setMenu(null);
 });
+
+// Listen for web contents being created
+app.on('web-contents-created', (e, contents) => {
+
+  // Check for a webview
+  if (contents.getType() == 'webview') {
+    contextMenu({ window: contents, }); 
+    // Listen for any new window events
+    contents.on('new-window', (e, url) => {
+      e.preventDefault()
+      shell.openExternal(url)
+    })
+  }
+})
 
 app.on("window-all-closed", function() {
   if (process.platform !== "darwin") {
