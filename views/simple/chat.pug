@@ -40,7 +40,7 @@ block content
                       | in network fees
             .modal-footer(style='border-top: none !important;')
                 button.btn.btn-success(type='submit', id='submit', onclick='confirmSendD()', style='background-color: #546639;border-radius: 15px;font-size: 15px !important;') Confirm and Send D
-                button.btn.btn-default(type='button', data-dismiss='modal', style='background-color: #602828;border-radius: 15px;font-size: 15px !important;', onclick='$("#SubmitDisplayModal").hide()') Cancel   
+                button.btn.btn-default(type='button', data-dismiss='modal', style='background-color: #602828;border-radius: 15px;font-size: 15px !important;', onclick='$("#SubmitDisplayModal").hide();$("#message").focus();') Cancel   
   #connecthead(style='background-color:#111;padding:20px;width:100%;text-align:center;')
     span#loader(style='text-align: center; color: #fff; vertical-align: middle;') Encrypting & Connecting...Please wait...
     span#connectdot(style='text-align: center; color: #46a900; vertical-align: middle;')
@@ -174,10 +174,12 @@ block content
           console.log(privateuser);
           $('#message').val('@'+username+' ');
           $('#message').focus();
+          $('#chatinput').focus();
           $('#cancelpm').show();
           //bannedusers.push(usertoban);
         } else {
           console.log('User not private messaged');
+          $('#message').focus();
         }
       }
 
@@ -224,14 +226,16 @@ block content
                   $('#messagewrapper').removeClass('blurfilter');
                   $('#chatinput').removeClass('blurfilter');
                   $('#connecthead').removeClass('blurfilter');
-                  alert('Error! '+err);
+                  alert('Error! '+JSON.stringify(err));
                 });
             } else {
               $('#SubmitDisplayModal').hide();
               console.log('Cancelled sending D');
+              $('#message').focus();
             }
           } else {
             alert('Please enter in a valid amount of D to send!');
+            $('#dsendamount').focus();
           }
         } else {
           alert('An error occured, try again, we are missing an address for some reason?');
@@ -244,8 +248,10 @@ block content
             //document.getElementById("SubmitDisplayModal").setAttribute('data-toggle', 'modal');
             //document.getElementById("SubmitDisplayModal").setAttribute('data-target', 'SubmitDisplayModal');
             $('#SubmitDisplayModal').show();
+            $('#dsendamount').focus();
         } else {
           console.log('Cancelled sending D');
+          $('#message').focus();
         }
       }
 
