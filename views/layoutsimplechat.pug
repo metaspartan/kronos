@@ -5,9 +5,8 @@ html
     meta(http-equiv='X-UA-Compatible', content='IE=edge')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     meta(name='theme-color' content='#4DA5F4')
-    meta(name='csrf-token', content=_csrf)
     title #{title} - Kronos
-    link(rel='shortcut icon', href='/img/caesar.png')
+    link(rel='shortcut icon', href='/img/klogo.png')
     link(rel='stylesheet', href='/css/main.css')
     link(rel='stylesheet', href='/css/kronos.css')
     link(rel='stylesheet', href='/css/lib/bootstrap-toggle.min.css')
@@ -15,24 +14,14 @@ html
     link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css')
     link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css')
     link(rel='stylesheet', href='/css/loading-bar.min.css')
-    link(rel='stylesheet' href='//cdnjs.cloudflare.com/ajax/libs/tippy.js/0.3.0/tippy.css')
-    script(src='/js/pace.min.js')
-    script(src='/js/loading-bar.min.js')
-    script(src='/js/lib/jquery-3.1.1.min.js') 
-    script(src='/js/jquery.sparkline.min.js')
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/tippy.js/0.3.0/tippy.js')
+    link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/tippy.js/0.3.0/tippy.css')
+
     style.  
       body {
         margin: 0px !important;
       }
 
   body
-    script.
-      function reboot() {
-        document.getElementById("submitrb").style.display='none';
-        document.getElementById("rebooter").innerHTML = 'Attempting to reboot your node...Please wait 4 minutes...';
-        $('#sendreboot').submit();
-      }
     include partials/headersimple
 
     include partials/flash
@@ -40,14 +29,470 @@ html
 
     //- include partials/footer
 
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js')
+    script(src='//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js')
     script(src='//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/js/toastr.min.js')
     script(src='//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/js/all.min.js')
+    script(src='//cdnjs.cloudflare.com/ajax/libs/tippy.js/0.3.0/tippy.js')
     script(src='/js/lib/bootstrap.bundle.min.js')
     script(src='/js/lib/bootstrap-toggle.min.js')
-    script(src='/js/progressbar.min.js')
+    //- script(src='/js/progressbar.min.js')
     script(src='/js/sorttable.js')
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js')
+    script(src='/js/pace.min.js')
+    //- script(src='/js/loading-bar.min.js')
+    script.
+      var ethaddy = document.getElementById("ethaccount").getAttribute("data-value");
+      Box.getProfile(ethaddy).then(profile => {
+        //console.log(profile);
+        var profileimage;
+
+        if (typeof profile.image == 'undefined') {
+            profileimage = profile.image;
+            //console.log(profileimage);
+            var boximage = '';
+            if (typeof profileimage == 'undefined') {
+                boximage = '../img/avatar.png'; //IPFS Default Avatar Hash
+            } else {
+                profileimage = profile.image[0].contentUrl['/'];
+                boximage = 'https://cloudflare-ipfs.com/ipfs/' + profileimage;
+            }
+            //console.log(boximage);
+
+            $("#threebox").html('<img src="'+boximage+'" border="0" class="res threebox"/>');
+            $("#threebox").val(boximage);
+            document.getElementById("threebox").setAttribute("data-value", boximage);
+
+        } else {
+            profileimage = profile.image[0].contentUrl['/'];
+            //console.log(profileimage);
+            var boximage = '';
+            if (typeof profileimage == 'undefined') {
+                boximage = '../img/avatar.png'; //IPFS Default Avatar Hash
+            } else {
+                profileimage = profile.image[0].contentUrl['/'];
+                boximage = 'https://cloudflare-ipfs.com/ipfs/' + profileimage;
+            }
+            //console.log(boximage);
+
+            $("#threebox").html('<img src="'+boximage+'" border="0" class="res threebox"/>');
+            $("#threebox").val(boximage);
+            document.getElementById("threebox").setAttribute("data-value", boximage);
+        }
+
+      });
+    script(src='https://chr15m.github.io/bugout/bugout.min.js')
+    script(src='https://unpkg.com/3box/dist/3box.min.js')
+    //- script(src='https://cdn.jsdelivr.net/npm/ipfs-http-client/dist/index.min.js')
+    script(type="module").
+      import { EmojiButton } from 'https://unpkg.com/@joeattardi/emoji-button@4.1.0/dist/index.js';
+
+      const picker = new EmojiButton({
+                        theme: 'dark',
+                        position: 'top-start',
+                        autoHide: false
+                      });
+      const trigger = document.querySelector('#emoji-trigger');
+
+      trigger.addEventListener('click', () => picker.togglePicker(trigger));
+      picker.on('emoji', selection => {
+        document.getElementById("message").value += selection.emoji;
+      });
+    script.
+      var b = Bugout("Kronos");
+      console.log(b.address() + " [ me ]");
+      //- var c = Bugout("Kronos2"); // 2nd Channel
+
+      //- const ipfs = window.IpfsHttpClient({ host: 'ipfs.infura.io', port: 5001 });    
+
+      //- console.log(ipfs);
+      
+      const audio = new Audio("../notification.wav");
+      const audiopm = new Audio("../pmdrop.wav");
+
+      localStorage.debug = "";
+
+      var ethaddy = document.getElementById("ethaccount").getAttribute("data-value");
+
+      var daddy = document.getElementById("daccount").getAttribute("data-value");
+
+      var btcaddy = document.getElementById("btcaccount").getAttribute("data-value");
+
+      function enterChat() {
+        var userinput = $("#entername").val().replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        document.getElementById("entername").setAttribute("data-value", userinput);
+
+        if (userinput == '') {
+          return false;
+        } else {
+          $('#logingroup').fadeOut();
+          $('#loginbg').fadeOut();
+          $('#message').focus();
+        }
+      }
+
+      document.getElementById("entername").onkeydown = function(e){
+        if (e.keyCode == 32){
+            return false;
+        }
+        if(e.keyCode == 13){
+          e.preventDefault();
+          var userinput = $("#entername").val().replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+          document.getElementById("entername").setAttribute("data-value", userinput);
+
+          if (userinput == '') {
+            return false;
+          } else {
+            $('#logingroup').fadeOut();
+            $('#loginbg').fadeOut();
+            $('#message').focus();
+          }
+        }
+      };
+
+      function timeSince(date) {
+        var seconds = Math.floor((new Date() - date) / 1000);
+        var interval = seconds / 31536000;
+        if (interval > 1) {
+          return Math.floor(interval) + " years ago";
+        }
+        interval = seconds / 2592000;
+        if (interval > 1) {
+          return Math.floor(interval) + " months ago";
+        }
+        interval = seconds / 86400;
+        if (interval > 1) {
+          return Math.floor(interval) + " days ago";
+        }
+        interval = seconds / 3600;
+        if (interval > 1) {
+          return Math.floor(interval) + " hours ago";
+        }
+        interval = seconds / 60;
+        if (interval > 1) {
+          return Math.floor(interval) + " minutes ago";
+        }
+        return Math.floor(seconds) + " seconds ago";
+      }
+
+
+      let privateuser = 'undefined';
+      let privateusername = 'undefined';
+
+      let atregex = new RegExp('/[^@]/u');
+
+      function pmUser(userid, username) {
+        if (confirm('Are you sure you want to private message '+username+'?')) {
+          //alert('User banned! Refresh if you want to remove the ban.');
+          privateuser = userid;
+          privateusername = username;
+          console.log(privateuser);
+          $('#message').val('@'+username+' ');
+          $('#message').focus();
+          $('#chatinput').focus();
+          $('#cancelpm').show();
+          //bannedusers.push(usertoban);
+        } else {
+          console.log('User not private messaged');
+          $('#message').focus();
+        }
+      }
+
+      let addtosendd = 'undefined';
+      let amount = parseFloat(document.getElementById("dsendamount").value);
+      if (!amount) { amount = 0; };
+
+      function updateD() {
+        amount = parseFloat(document.getElementById("dsendamount").value);
+        if (!amount) { amount = 0; };
+      }
+
+      var token = $('input[name="_csrf"]').attr('value');
+
+      function confirmSendD() {
+        if (addtosendd != 'undefined') {
+          if (amount >= parseFloat(0.00003)) {
+            if (confirm('Are you sure you want to send '+amount+' D?')) {
+              $('#SubmitDisplayModal').hide();  
+              alert('This will take a second...');
+              $('#senddloading').show();
+              $('#messagewrapper').addClass('blurfilter');
+              $('#chatinput').addClass('blurfilter');
+              $('#connecthead').addClass('blurfilter');
+              $.ajaxSetup({
+                  beforeSend: function(xhr) {
+                      xhr.setRequestHeader('CSRF-Token', token);
+                  }
+              });
+              $.post("/dapisend",
+              {
+                sendtoaddress: addtosendd,
+                amount: amount
+              }, function(data) {
+                $('#SubmitDisplayModal').hide();               
+                $('#senddloading').hide();
+                $('#messagewrapper').removeClass('blurfilter');
+                $('#chatinput').removeClass('blurfilter');
+                $('#connecthead').removeClass('blurfilter');
+                alert('Success! '+data);
+              }).fail(function(err) {
+                  $('#SubmitDisplayModal').hide();
+                  $('#senddloading').hide();
+                  $('#messagewrapper').removeClass('blurfilter');
+                  $('#chatinput').removeClass('blurfilter');
+                  $('#connecthead').removeClass('blurfilter');
+                  alert('Error! '+JSON.stringify(err));
+                });
+            } else {
+              $('#SubmitDisplayModal').hide();
+              console.log('Cancelled sending D');
+              $('#message').focus();
+            }
+          } else {
+            alert('Please enter in a valid amount of D to send!');
+            $('#dsendamount').focus();
+          }
+        } else {
+          alert('An error occured, try again, we are missing an address for some reason?');
+        }
+      }
+
+      function sendD(address, username) {
+        if (confirm('Are you sure you want to send Denarius (D) to '+username+' at address: '+address+'?')) {
+            addtosendd = address;
+            //document.getElementById("SubmitDisplayModal").setAttribute('data-toggle', 'modal');
+            //document.getElementById("SubmitDisplayModal").setAttribute('data-target', 'SubmitDisplayModal');
+            $('#SubmitDisplayModal').show();
+            $('#dsendamount').focus();
+        } else {
+          console.log('Cancelled sending D');
+          $('#message').focus();
+        }
+      }
+
+      function swapPublic() {
+        privateuser = 'undefined';
+        privateusername = 'undefined';
+        $('#message').val('');
+        $('#cancelpm').hide();
+      }
+
+      document.getElementById("message").onkeydown = function(e){
+        if(e.keyCode == 13){
+          e.preventDefault();
+          var messages = [];
+          var boxprofile = document.getElementById("threebox").getAttribute("data-value");
+          var username = document.getElementById("entername").getAttribute("data-value");
+          var userid = b.address();
+          var time = new Date().toUTCString().replace('GMT','');
+          var txt = $("#message").val().replace(/</g, "&lt;").replace(/>/g, "&gt;");
+          var private = false;
+          if (txt == '') {
+              return;
+          }
+          if (privateuser != 'undefined') {
+            private = true;
+          } else {
+            private = false;
+          }
+          messages.push({msg: txt, address: ethaddy, daddress: daddy, private: private, btcaddress: btcaddy, boxprofile: boxprofile, time: time, username: username, userid: userid});
+          if (privateuser != 'undefined') {
+            //alert('Sent to user privately');
+            b.send(privateuser, messages);
+            $('#messages').append("<div style='position:relative;z-index:1;font-size:13px;color:#999;margin-top:4px !important; background-color:#22222296;border: 1px solid #fff00026;border-radius:15px;' class='row animate__animated animate__flipInX tooltippy'><div class='rainbowbg'></div><div class='PMchat'><div class='col-md-3 tooltippy' align='center' title='"+username+"<br>ARI: "+ethaddy+"<br>D: "+daddy+"<br>BTC: "+btcaddy+"'><img src="+boxprofile+" border='0' style='display:inline-block;height:45px;width:45px;border-radius:9999px;object-fit:cover;margin-right: 15px;margin-top:9px;margin-bottom:9px;border: 3px #333 solid;'/><span style='margin-top:15px;'><span id='maintippy' style='font-weight:bold;'>SENT PM</span></span></div><div class='col-md-9' style='display:inline-block;vertical-align:middle;margin-top:3px;'><span id='msgtime' data-value="+time+" style='color: #555;font-size:9px;'>"+time+" 🔒 <strong>SENT SECURE PM</strong></span><br><span style='font-size:16px;color:#FFF;'>"+txt+"</span></div></div></div>");
+            tippy('.tooltippy', {
+              animateFill: true,
+              arrow: true,
+              size: 'large',
+              duration: 0,
+              placement: 'auto',
+              animation: 'perspective',
+              interactive: true,
+              theme: 'material',
+            });
+            //- var atuser = ['@'+privateusername];
+
+            //- atuser.forEach(function(item){
+
+            //-   $("#messages:contains("+item+")").html(
+            //-     function( _ , html ) {
+            //-       return html.split(item).join("<span style='background: linear-gradient(317deg, rgba(221,76,76,1) 0%, rgba(208,170,57,1) 100%);-webkit-background-clip: text;background-clip: text;-webkit-text-fill-color: transparent;'><strong>" + item + "</strong></span>");
+            //-     }
+            //-   )
+
+            //- });
+            audiopm.play();
+            //b.send(userid, messages);
+            $('#message').val('');
+            $('#message').val('@'+privateusername+' ');
+            //alert('Successfully sent message privately!');
+          } else {
+            b.send(messages);
+            $('#message').val('');
+          }
+        }
+      };
+
+      document.getElementById("send").onmousedown = function(e){
+        e.preventDefault();
+        var messages = [];
+        var time = new Date().toUTCString().replace('GMT','');
+        var boxprofile = document.getElementById("threebox").getAttribute("data-value");
+        var username = document.getElementById("entername").getAttribute("data-value");
+        var userid = b.address();
+        var txt = $("#message").val().replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        var private = false;
+        if (txt == '') {
+            return;
+        }
+        if (privateuser != 'undefined') {
+          private = true;
+        } else {
+          private = false;
+        }
+        messages.push({msg: txt, address: ethaddy, daddress: daddy, private: private, btcaddress: btcaddy, boxprofile: boxprofile, time: time, username: username, userid: userid});
+        if (privateuser != 'undefined') {
+          //alert('Sent to user privately');
+          b.send(privateuser, messages);
+          $('#messages').append("<div style='position:relative;z-index:1;font-size:13px;color:#999;margin-top:4px !important; background-color:#22222296;border: 1px solid #fff00026;border-radius:15px;' class='row animate__animated animate__flipInX tooltippy'><div class='rainbowbg'></div><div class='PMchat'><div class='col-md-3 tooltippy' align='center' title='"+username+"<br>ARI: "+ethaddy+"<br>D: "+daddy+"<br>BTC: "+btcaddy+"'><img src="+boxprofile+" border='0' style='display:inline-block;height:45px;width:45px;border-radius:9999px;object-fit:cover;margin-right: 15px;margin-top:9px;margin-bottom:9px;border: 3px #333 solid;'/><span style='margin-top:15px;'><span id='maintippy' style='font-weight:bold;'>SENT PM</span></span></div><div class='col-md-9' style='display:inline-block;vertical-align:middle;margin-top:3px;'><span id='msgtime' data-value="+time+" style='color: #555;font-size:9px;'>"+time+" 🔒 <strong>SENT SECURE PM</strong></span><br><span style='font-size:16px;color:#FFF;'>"+txt+"</span></div></div></div>");
+          tippy('.tooltippy', {
+            animateFill: true,
+            arrow: true,
+            size: 'large',
+            duration: 0,
+            placement: 'auto',
+            animation: 'perspective',
+            interactive: true,
+            theme: 'material',
+          });
+          //- var atuser = ['@'+privateusername];
+
+          //- atuser.forEach(function(item){
+
+          //-   $("#messages:contains("+item+")").html(
+          //-     function( _ , html ) {
+          //-       return html.split(item).join("<span style='background: linear-gradient(317deg, rgba(221,76,76,1) 0%, rgba(208,170,57,1) 100%);-webkit-background-clip: text;background-clip: text;-webkit-text-fill-color: transparent;'><strong>" + item + "</strong></span>");
+          //-     }
+          //-   )
+
+          //- });
+          audiopm.play();
+          //b.send(userid, messages);
+          $('#message').val('');
+          $('#message').val('@'+privateusername+' ');
+          //alert('Successfully sent message privately!');
+        } else {
+          b.send(messages);
+          $('#message').val('');
+        }
+      };
+
+      function muteAudio() {
+        var audioElm = audio;
+        var audioElm2 = audiopm;
+        audioElm.muted = !audioElm.muted;
+        audioElm2.muted = !audioElm2.muted;
+        if (!audioElm.muted) {
+          $("#mutebutton").html("<i class='fas fa-volume-up'></i>");
+        } else {
+          $("#mutebutton").html("<i class='fas fa-volume-mute'></i>");
+        }
+      }
+
+      b.on("seen", function(address) { 
+        console.log(address + " [ seen ]");
+        $('#loader').html("Kronos Chat " + b.address());
+        $('#chatinput').show();
+      });
+
+      //- var thebox = document.getElementById("threebox").getAttribute("data-value");
+
+      //- $('#thebox').html('<img src="'+thebox+'" style="width:100px;height:100px;"/>');
+
+      b.on("connections", function(connection) { 
+          //console.log(connection + " [ connections ]");
+          if (connection == 0) {
+            $('#connectdot').html(' ◯ Waiting on peers...');
+          } else if (connection <= 1) {
+            $('#connectdot').html(' ⬤ <strong>'+connection+'</strong> connection');
+          } else {
+            $('#connectdot').html(' ⬤ <strong>'+connection+'</strong> connections');
+          }
+      });
+
+      let bannedusers = [];
+
+      function banUser(usertoban) {
+        if (confirm('Are you sure you want to ban '+usertoban +'?')) {
+          alert('User banned! Refresh if you want to remove the ban.');
+          bannedusers.push(usertoban);
+        } else {
+          console.log('User not banned');
+        }
+      }
+
+      b.on("message", function(address, message) {
+        console.log("Kronos Chat Banned Users: " + bannedusers.join(","));
+        user = message[0].username;
+        if (bannedusers.some(v => user.includes(v))) {
+            console.log("Kronos banned user message incoming matching '" + user + "' - message blocked");
+            return;
+        } else {
+            console.log("No banned user match using '" + user + "'");
+        }
+        var username = document.getElementById("entername").getAttribute("data-value");
+        if (message[0].private == true) {
+          audiopm.play();
+          $('#messages').append("<div style='font-size:13px;color:#999;margin-top:4px !important; background-color:#000;border-radius:15px;padding:10px;' class='row animate__animated animate__flipInX tooltippy'><div class='col-md-3 tooltippy' align='center' title='"+message[0].username+"<br>ARI: "+message[0].address+"<br>D: "+message[0].daddress+"<br>BTC: "+message[0].btcaddress+"'><img src="+message[0].boxprofile+" border='0' style='display:inline-block;height:45px;width:45px;border-radius:9999px;object-fit:cover;margin-right: 15px;margin-top:9px;margin-bottom:9px;border: 3px #333 solid;'/><span style='margin-top:15px;'>From <span id='maintippy' style='font-weight:bold;'>"+message[0].username+"</span></span></div><div class='col-md-7' style='display:inline-block;vertical-align:middle;margin-top:3px;'><span id='msgtime' data-value="+message[0].time+" style='color: #555;font-size:9px;'>"+message[0].time+" 🔒 <strong>RECEIVED SECURE PM</strong></span><br><span style='font-size:16px;color:#FFF;'>"+message[0].msg+"</span></div><div class='col-md-2' align='right'><button title='Tip Denarius (D)' onclick='sendD(`"+message[0].daddress+"`,`"+message[0].username+"`)' style='background-color:transparent;color:#fff;border:none;border-radius:5px;outline:none;cursor:pointer;'><img src='../img/denarius.png' style='margin-bottom: 5px;' border='0' width='16px' height='16px'/></button>&nbsp;&nbsp;<button onclick='pmUser(`"+message[0].userid+"`,`"+message[0].username+"`)' style='background-color:#009133;color:#fff;border:none;border-radius:5px;outline:none;cursor:pointer;'>PM</button>&nbsp;&nbsp;<button onclick='banUser(`"+message[0].username+"`)' style='background-color:#910000;color:#fff;border:none;border-radius:5px;outline:none;cursor:pointer;'>Ban</button></div></div>");
+        } else if (username == message[0].username) {
+          audio.play();
+          $('#messages').append("<div style='position:relative;z-index:1;font-size:13px;color:#999;margin-top:4px !important; background-color:#22222296;border: 1px solid #fff00026;border-radius:15px;' class='row animate__animated animate__flipInX tooltippy'><div class='rainbowbg'></div><div class='Youchat'><div class='col-md-3 tooltippy' align='center' title='"+message[0].username+"<br>ARI: "+message[0].address+"<br>D: "+message[0].daddress+"<br>BTC: "+message[0].btcaddress+"'><img src="+message[0].boxprofile+" border='0' style='display:inline-block;height:45px;width:45px;border-radius:9999px;object-fit:cover;margin-right: 15px;margin-top:9px;margin-bottom:9px;border: 3px #333 solid;'/><span style='margin-top:15px;'>From <span id='maintippy' style='font-weight:bold;'>"+message[0].username+"</span></span></div><div class='col-md-9' style='display:inline-block;vertical-align:middle;margin-top:3px;'><span id='msgtime' data-value="+message[0].time+" style='color: #555;font-size:9px;'>"+message[0].time+" • SENT</span><br><span style='font-size:16px;color:#FFF;'>"+message[0].msg+"</span></div></div></div>");
+        } else {
+          audio.play();
+          $('#messages').append("<div style='font-size:13px;color:#999;margin-top:4px !important; background-color:#22222296;border-radius:15px;padding:10px;' class='row animate__animated animate__flipInX tooltippy'><div class='col-md-3 tooltippy' align='center' title='"+message[0].username+"<br>ARI: "+message[0].address+"<br>D: "+message[0].daddress+"<br>BTC: "+message[0].btcaddress+"'><img src="+message[0].boxprofile+" border='0' style='display:inline-block;height:45px;width:45px;border-radius:9999px;object-fit:cover;margin-right: 15px;margin-top:9px;margin-bottom:9px;border: 3px #333 solid;'/><span style='margin-top:15px;'>From <span id='maintippy' style='font-weight:bold;'>"+message[0].username+"</span></span></div><div class='col-md-7' style='display:inline-block;vertical-align:middle;margin-top:3px;'><span id='msgtime' data-value="+message[0].time+" style='color: #555;font-size:9px;'>"+message[0].time+" • RECEIVED</span><br><span style='font-size:16px;color:#FFF;'>"+message[0].msg+"</span></div><div class='col-md-2' align='right'><button title='Tip Denarius (D)' onclick='sendD(`"+message[0].daddress+"`,`"+message[0].username+"`)' style='background-color:transparent;color:#fff;border:none;border-radius:5px;outline:none;cursor:pointer;'><img src='../img/denarius.png' style='margin-bottom: 5px;' border='0' width='16px' height='16px'/></button>&nbsp;&nbsp;<button onclick='pmUser(`"+message[0].userid+"`,`"+message[0].username+"`)' style='background-color:#009133;color:#fff;border:none;border-radius:5px;outline:none;cursor:pointer;'>PM</button>&nbsp;&nbsp;<button onclick='banUser(`"+message[0].username+"`)' style='background-color:#910000;color:#fff;border:none;border-radius:5px;outline:none;cursor:pointer;'>Ban</button></div></div>");
+        }
+        tippy('.tooltippy', {
+          animateFill: true,
+          arrow: true,
+          size: 'large',
+          duration: 0,
+          placement: 'auto',
+          animation: 'perspective',
+          interactive: true,
+          theme: 'material',
+        });
+        //- var atuser = ['@'+username];
+
+        //- atuser.forEach(function(item){
+
+        //-   $("#messages:contains("+item+")").html(
+        //-     function( _ , html ) {
+        //-       return html.split(item).join("<span style='background: linear-gradient(317deg, rgba(221,76,76,1) 0%, rgba(208,170,57,1) 100%);-webkit-background-clip: text;background-clip: text;-webkit-text-fill-color: transparent;'><strong>" + item + "</strong></span>");
+        //-     }
+        //-   )
+
+        //- });
+      });
+
+      //- b.on("connections", console.log.bind(console, "Connections:"));
+      //- b.on("seen", console.log.bind(console, "Seen:"));
+
+
+
+      //- c.on("seen", function(address) { 
+      //-   console.log(address + " [ seen ]");
+      //-   $('#loader2').html("Kronos Chat Peer ID: " + b.address() + " <span class='online-icon greenCircle' target='_blank'><span class='ripple greenCircler'></span><span class='ripple greenCircler'></span><span class='ripple greenCircler'></span></span> • CONNECTED <span id='connectdot'></div>");
+      //-   b.on("connections", function(connection) { 
+      //-     //console.log(connection + " [ connections ]");
+      //-     $('#connectdot2').html(' • '+connection + ' connection(s)');
+      //-   });
+      //- });
+
+      //- setInterval(function(){ 
+      //-     var msgtime = document.getElementById("msgtime").getAttribute("data-value");
+      //-     var timesince = timeSince(new Date(Date()-msgtime));
+      //-     $('#msgtime').html(timesince);       
+      //- }, 1000);
+
     //- script.
     //-   window.nodeRequire = require;
     //-   delete window.require;

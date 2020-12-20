@@ -655,9 +655,9 @@ app.use(errorHandler());
  */
 app.listen(port, '0.0.0.0', () => {
   var tri = tribus.digest('Denarius');
-  console.log('✓ Tribus Hash of "Denarius"', tri);
-  console.log('✓ Kronos Interface is running at http://' + ip.address() + ':%d', '3000', app.get('env'));
-  console.log('✓ Open the URL above in your web browser on your local network to start using Kronos!\n');
+  console.log('Tribus Hash of "Denarius"', tri);
+  console.log('Kronos Interface is running at http://' + ip.address() + ':%d', '3000', app.get('env'));
+  console.log('Open the URL above in your web browser on your local network to start using the browser version of Kronos!\n');
 });
 
 

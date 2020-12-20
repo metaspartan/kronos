@@ -5,9 +5,8 @@ html
     meta(http-equiv='X-UA-Compatible', content='IE=edge')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     meta(name='theme-color' content='#4DA5F4')
-    meta(name='csrf-token', content=_csrf)
     title #{title} - Kronos
-    link(rel='shortcut icon', href='/img/caesar.png')
+    link(rel='shortcut icon', href='/img/klogo.png')
     link(rel='stylesheet', href='/css/main.css')
     link(rel='stylesheet', href='/css/kronos.css')
     link(rel='stylesheet', href='/css/lib/bootstrap-toggle.min.css')
@@ -15,14 +14,8 @@ html
     link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css')
     link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css')
     link(rel='stylesheet', href='/css/loading-bar.min.css')
-    link(rel='stylesheet', href='//cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/css/splide.min.css')
-    link(rel='stylesheet', href='//unpkg.com/tabulator-tables@4.9.1/dist/css/tabulator.min.css')
     link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css')
     link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css')
-    script(src='/js/pace.min.js')
-    script(src='/js/loading-bar.min.js')
-    script(src='/js/lib/jquery-3.1.1.min.js') 
-    script(src='/js/jquery.sparkline.min.js')
 
   body
     script.
@@ -38,14 +31,55 @@ html
 
     //- include partials/footer
 
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js')
+    script(src='//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js')
     script(src='//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/js/toastr.min.js')
     script(src='//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/js/all.min.js')
     script(src='/js/lib/bootstrap.min.js')
     script(src='/js/lib/bootstrap-toggle.min.js')
     script(src='/js/progressbar.min.js')
     script(src='/js/sorttable.js')
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js')
+    script(src='/js/pace.min.js')
+    script(src='/js/loading-bar.min.js')
+    script.
+      var ethaddy = document.getElementById("ethaccount").getAttribute("data-value");
+      Box.getProfile(ethaddy).then(profile => {
+        //console.log(profile);
+        var profileimage;
+
+        if (typeof profile.image == 'undefined') {
+            profileimage = profile.image;
+            //console.log(profileimage);
+            var boximage = '';
+            if (typeof profileimage == 'undefined') {
+                boximage = '../img/avatar.png'; //IPFS Default Avatar Hash
+            } else {
+                profileimage = profile.image[0].contentUrl['/'];
+                boximage = 'https://cloudflare-ipfs.com/ipfs/' + profileimage;
+            }
+            //console.log(boximage);
+
+            $("#threebox").html('<img src="'+boximage+'" border="0" class="res threebox"/>');
+            $("#threebox").val(boximage);
+            document.getElementById("threebox").setAttribute("data-value", boximage);
+
+        } else {
+            profileimage = profile.image[0].contentUrl['/'];
+            //console.log(profileimage);
+            var boximage = '';
+            if (typeof profileimage == 'undefined') {
+                boximage = '../img/avatar.png'; //IPFS Default Avatar Hash
+            } else {
+                profileimage = profile.image[0].contentUrl['/'];
+                boximage = 'https://cloudflare-ipfs.com/ipfs/' + profileimage;
+            }
+            //console.log(boximage);
+
+            $("#threebox").html('<img src="'+boximage+'" border="0" class="res threebox"/>');
+            $("#threebox").val(boximage);
+            document.getElementById("threebox").setAttribute("data-value", boximage);
+        }
+
+      });
     //- script.
     //-   window.nodeRequire = require;
     //-   delete window.require;

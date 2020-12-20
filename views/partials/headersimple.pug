@@ -17,45 +17,6 @@ script.
         x.style.display = "none";
       }
     }
-    var ethaddy = document.getElementById("ethaccount").getAttribute("data-value");
-    Box.getProfile(ethaddy).then(profile => {
-      //console.log(profile);
-      var profileimage;
-
-      if (typeof profile.image == 'undefined') {
-          profileimage = profile.image;
-          //console.log(profileimage);
-          var boximage = '';
-          if (typeof profileimage == 'undefined') {
-              boximage = '../img/avatar.png'; //IPFS Default Avatar Hash
-          } else {
-              profileimage = profile.image[0].contentUrl['/'];
-              boximage = 'https://cloudflare-ipfs.com/ipfs/' + profileimage;
-          }
-          //console.log(boximage);
-
-          $("#threebox").html('<img src="'+boximage+'" border="0" class="res threebox"/>');
-          $("#threebox").val(boximage);
-          document.getElementById("threebox").setAttribute("data-value", boximage);
-
-      } else {
-          profileimage = profile.image[0].contentUrl['/'];
-          //console.log(profileimage);
-          var boximage = '';
-          if (typeof profileimage == 'undefined') {
-              boximage = '../img/avatar.png'; //IPFS Default Avatar Hash
-          } else {
-              profileimage = profile.image[0].contentUrl['/'];
-              boximage = 'https://cloudflare-ipfs.com/ipfs/' + profileimage;
-          }
-          //console.log(boximage);
-
-          $("#threebox").html('<img src="'+boximage+'" border="0" class="res threebox"/>');
-          $("#threebox").val(boximage);
-          document.getElementById("threebox").setAttribute("data-value", boximage);
-      }
-
-    });
   //- socket.on('notifications', function (data) {
   //-     console.log('GOT NOTIFY', data);
   //-     if (data.notifydb != '') {

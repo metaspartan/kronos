@@ -198,7 +198,9 @@ exports.simpleindex = (req, res) => {
                 // catch(e) {
                 //     console.log('Catch an error: ', e)
                 // }
-            });
+            }, (error) => {
+                console.log(error);
+                });
         } catch(e) {
             console.log(e);
         }
