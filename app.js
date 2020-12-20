@@ -563,6 +563,10 @@ app.post('/import', auth, Limiter, authController.importseed);
 app.get('/sweep', auth, Limiter, authController.getsweep);
 app.post('/sweep', auth, Limiter, authController.sweepkey);
 
+//BTC Sweep key
+app.get('/sweepbtc', auth, Limiter, authController.getbtcsweep);
+app.post('/btcsweep', auth, Limiter, authController.btcsweepkey);
+
 
 //Advanced Mode--------------------------------------------------
 app.get('/setup', authController.getsetup);

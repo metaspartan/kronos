@@ -22,10 +22,12 @@ const exec = require('child_process').exec;
 const shell = require('shelljs');
 const denarius = require('denariusjs');
 const dbitcoin = require('bitcoinjs-d-lib');
+const bitcoinjs = require('bitcoinjs-lib');
 const CryptoJS = require("crypto-js");
-const sha256 = require('sha256');
 const bip39 = require("bip39");
 const bip32 = require("bip32d");
+const bip32b = require("bip32");
+const sha256 = require('sha256');
 const files = require('fs');
 const appRoot = require('app-root-path');
 const split = require('split');
@@ -105,6 +107,15 @@ const delectrumxhost1 = 'electrumx1.denarius.pro';
 const delectrumxhost2 = 'electrumx2.denarius.pro';
 const delectrumxhost3 = 'electrumx3.denarius.pro';
 const delectrumxhost4 = 'electrumx4.denarius.pro';
+
+//ElectrumX Hosts for Bitcoin
+const btcelectrumhost1 = 'bitcoin.lukechilds.co';
+const btcelectrumhost2 = 'fortress.qtornado.com';
+const btcelectrumhost3 = 'electrumx.erbium.eu';
+const btcelectrumhost4 = 'electrum.acinq.co';
+const btcelectrumhost5 = 'alviss.coinjoined.com';
+const btcelectrumhost6 = 'hodlers.beer';
+const btcelectrumhost7 = 'electrum.blockstream.info'; //lol
 
 const changeEndianness = (string) => {
     const result = [];
@@ -1073,84 +1084,91 @@ exports.sweepkey = (request, response) => {
 
 					console.log('UTXO Count: ', numutxo);
 
-					//CREATE A RAW TRANSACTION AND SIGN IT FOR DENARIUS!
-					var txb = new dbitcoin.TransactionBuilder(dbitcoin.networks.denarius);
+					if (numutxo == 0) {
+						request.toastr.error(`Error sweeping D! No UTXOs with a balance`, 'Error!', { positionClass: 'toast-bottom-left' });
+						return response.redirect('/sweep');
+					} else {
 
-					var totalVal = 0;
-					for(i=0; i<numutxo; i++) {  
-						totalVal += utxos[i].value;
-						txb.addInput(utxos[i].tx_hash, parseInt(utxos[i].tx_pos));
-					}
-					//calc fee and add output address
-					var denariifees = numutxo * 10000;
-					var amountToSend = totalVal - denariifees;
+						//CREATE A RAW TRANSACTION AND SIGN IT FOR DENARIUS!
+						var txb = new dbitcoin.TransactionBuilder(dbitcoin.networks.denarius);
 
-					//Add Raw TX Output to Sweep Privkey to and send funds
-					txb.addOutput(mainaddress, amountToSend, dbitcoin.networks.denarius);
-					//txb.addOutput(mainaddress, denariifees, dbitcoin.networks.denarius); //needs secondary output of the fees?
-					
-					//Sign each of our privkey utxo inputs
-					for(i=0; i<numutxo; i++){  
-						txb.sign(dbitcoin.networks.denarius, i, key);
-					}
-			
-					// Print transaction serialized as hex
-					console.log('Denarius Raw Transaction Built and Broadcasting: ' + txb.build().toHex());
-			
-					// => 020000000110fd2be85bba0e8a7a694158fa27819f898def003d2f63b668d9d19084b76820000000006b48304502210097897de69a0bd7a30c50a4b343b7471d1c9cd56aee613cf5abf52d62db1acf6202203866a719620273a4e550c30068fb297133bceee82c58f5f4501b55e6164292b30121022f0c09e8f639ae355c462d7a641897bd9022ae39b28e6ec621cea0a4bf35d66cffffffff0140420f000000000001d600000000
-					
-					let promises = [];
-					let broadcastarray = [];
-			
-					const broadcastTX = async () => {
-						// Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-						const electrum = new ElectrumCluster('Kronos Core Mode Transaction', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
-						
-						// Add some servers to the cluster.
-						electrum.addServer(delectrumxhost1);
-						electrum.addServer(delectrumxhost2);
-						electrum.addServer(delectrumxhost3);
-						electrum.addServer(delectrumxhost4);
-						
-						// Wait for enough connections to be available.
-						await electrum.ready();
-						
-						// Request the balance of the requested Scripthash D address
-			
-						const broadcast = await electrum.request('blockchain.transaction.broadcast', txb.build().toHex());
-						
-						//console.log(broadcast);
-			
-						//await electrum.disconnect();
-						await electrum.shutdown();
-			
-						return broadcast;
-					};
-			
-					//var broadcasted = broadcastTX();
-			
-					promises.push(new Promise((res, rej) => {
-						broadcastTX().then(broadcastedTX => {
-							broadcastarray.push({tx: broadcastedTX});
-							res({broadcastedTX});
-						});
-					}));
-						
-					Promise.all(promises).then((values) => {
-						var broadcasted = broadcastarray[0].tx;
-						console.log(broadcastarray[0].tx);
-			
-						if (!broadcasted.message) {
-							request.toastr.success(`Your ${amountToSend / 1e8} D was imported successfully! TXID: ${broadcasted}`, 'Sweep Success!', { positionClass: 'toast-bottom-left' });
-							request.flash('success', { msg: `Sweep Complete! Your <strong>${amountToSend / 1e8} D</strong> was imported successfully via your private key! TXID: <a href='https://chainz.cryptoid.info/d/tx.dws?${broadcasted}' target='_blank'>${broadcasted}</a>` });
-							return response.redirect('/sweep');
-						} else {
-							request.toastr.error(`Error importing D! Broadcast Error: ${broadcasted.message}`, 'Error!', { positionClass: 'toast-bottom-left' });
-							//req.flash('errors', { msg: `Error sending D! Broadcast - Error: Something went wrong, please go to your dashboard and refresh.` });
-							return response.redirect('/sweep');
+						var totalVal = 0;
+						for(i=0; i<numutxo; i++) {  
+							totalVal += utxos[i].value;
+							txb.addInput(utxos[i].tx_hash, parseInt(utxos[i].tx_pos));
 						}
-			
-					});	
+						//calc fee and add output address
+						var denariifees = numutxo * 10000;
+						var amountToSend = totalVal - denariifees;
+
+						//Add Raw TX Output to Sweep Privkey to and send funds
+						txb.addOutput(mainaddress, amountToSend, dbitcoin.networks.denarius);
+						//txb.addOutput(mainaddress, denariifees, dbitcoin.networks.denarius); //needs secondary output of the fees?
+						
+						//Sign each of our privkey utxo inputs
+						for(i=0; i<numutxo; i++){  
+							txb.sign(dbitcoin.networks.denarius, i, key);
+						}
+				
+						// Print transaction serialized as hex
+						console.log('Denarius Raw Transaction Built and Broadcasting: ' + txb.build().toHex());
+				
+						// => 020000000110fd2be85bba0e8a7a694158fa27819f898def003d2f63b668d9d19084b76820000000006b48304502210097897de69a0bd7a30c50a4b343b7471d1c9cd56aee613cf5abf52d62db1acf6202203866a719620273a4e550c30068fb297133bceee82c58f5f4501b55e6164292b30121022f0c09e8f639ae355c462d7a641897bd9022ae39b28e6ec621cea0a4bf35d66cffffffff0140420f000000000001d600000000
+						
+						let promises = [];
+						let broadcastarray = [];
+				
+						const broadcastTX = async () => {
+							// Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+							const electrum = new ElectrumCluster('Kronos Core Mode Transaction', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+							
+							// Add some servers to the cluster.
+							electrum.addServer(delectrumxhost1);
+							electrum.addServer(delectrumxhost2);
+							electrum.addServer(delectrumxhost3);
+							electrum.addServer(delectrumxhost4);
+							
+							// Wait for enough connections to be available.
+							await electrum.ready();
+							
+							// Request the balance of the requested Scripthash D address
+				
+							const broadcast = await electrum.request('blockchain.transaction.broadcast', txb.build().toHex());
+							
+							//console.log(broadcast);
+				
+							//await electrum.disconnect();
+							await electrum.shutdown();
+				
+							return broadcast;
+						};
+				
+						//var broadcasted = broadcastTX();
+				
+						promises.push(new Promise((res, rej) => {
+							broadcastTX().then(broadcastedTX => {
+								broadcastarray.push({tx: broadcastedTX});
+								res({broadcastedTX});
+							});
+						}));
+							
+						Promise.all(promises).then((values) => {
+							var broadcasted = broadcastarray[0].tx;
+							console.log(broadcastarray[0].tx);
+				
+							if (!broadcasted.message) {
+								request.toastr.success(`Your ${amountToSend / 1e8} D was imported successfully! TXID: ${broadcasted}`, 'Sweep Success!', { positionClass: 'toast-bottom-left' });
+								request.flash('success', { msg: `Sweep Complete! Your <strong>${amountToSend / 1e8} D</strong> was imported successfully via your private key! TXID: <a href='https://chainz.cryptoid.info/d/tx.dws?${broadcasted}' target='_blank'>${broadcasted}</a>` });
+								return response.redirect('/sweep');
+							} else {
+								request.toastr.error(`Error importing D! Broadcast Error: ${broadcasted.message}`, 'Error!', { positionClass: 'toast-bottom-left' });
+								//req.flash('errors', { msg: `Error sending D! Broadcast - Error: Something went wrong, please go to your dashboard and refresh.` });
+								return response.redirect('/sweep');
+							}
+				
+						});	
+
+					}
 		
 				});
 	
@@ -1163,6 +1181,257 @@ exports.sweepkey = (request, response) => {
 	} else {
 		request.toastr.error('Please enter a private key!', 'Error!', { positionClass: 'toast-bottom-left' });
 		response.redirect('/sweep');
+		response.end();
+	}
+};
+
+//GET BTC Sweeping privkey
+exports.getbtcsweep = (req, res) => {
+	const ip = require('ip');
+    const ipaddy = ip.address();
+  
+    res.locals.lanip = ipaddy;
+
+    var totalethbal = Storage.get('totaleth');
+    var totalbal = Storage.get('totalbal');
+    var totalaribal = Storage.get('totalaribal');
+    var ethaddress = Storage.get('ethaddy');
+
+	res.render('simple/btcsweep', {
+        title: 'Kronos Core Mode BTC Sweep Private Key',
+        totalethbal: totalethbal,
+        totalbal: totalbal,
+        totalaribal: totalaribal,
+        ethaddress: ethaddress
+    });
+}
+
+//POST BTC Sweeping privkey
+exports.btcsweepkey = (request, response) => {
+	const privkey = request.body.PRIVATEKEY;
+	
+	if (privkey && request.body) {
+
+			let verified;
+			try {
+				bitcoinjs.ECPair.fromWIF(privkey);
+				verified = true;
+			} catch(e) {
+				verified = false;
+			}
+
+			if (verified) {
+				//Check if privkey is valid and if it is do the following and attempt an import
+
+				// Bitcoin Network Params Object
+				const bitcoinnetwork = {
+					messagePrefix: '\x18Bitcoin Signed Message:\n',
+					bech32: 'bc',
+					bip32: {
+						public: 0x0488b21e,
+						private: 0x0488ade4
+					},
+					pubKeyHash: 0x00,
+					scriptHash: 0x05,
+					wif: 0x80
+				};
+		
+				// Get our current address to send funds to
+				const mainaddress = Storage.get('btcsegwitaddy');
+		
+				// Load up the privkey we are importing
+				const key = bitcoinjs.ECPair.fromWIF(privkey);
+				//const pubKey = key.getPublicKeyBuffer();
+				//const pubKey2 = key.publicKey;
+				//console.log('PUBKEY: ', pubKey);
+				//const pubKeyHash = bitcoinjs.crypto.hash160(pubKey);
+				const importaddress = bitcoinjs.payments.p2sh({ redeem: bitcoinjs.payments.p2wpkh({ pubkey: key.publicKey, network: bitcoinnetwork }), }).address; //Segwit P2SH 3
+				const p2wpkhredeem = bitcoinjs.payments.p2wpkh({ pubkey: key.publicKey, network: bitcoinnetwork });
+				const importp2pkaddress = bitcoinjs.payments.p2pkh({ pubkey: key.publicKey, network: bitcoinnetwork }).pubkey.toString('hex');
+
+				const bytes = bs58.decode(importaddress);
+				const byteshex = bytes.toString('hex');
+				const remove00 = byteshex.substring(2);
+				const removechecksum = remove00.substring(0, remove00.length-8);
+				const HASH160 = "A914" + removechecksum.toUpperCase() + "87"; //OP_HASH160 | | OP_EQUAL
+				const BUFFHASH160 = Buffer.from(HASH160, "hex");
+				const shaaddress = sha256(BUFFHASH160);
+
+				const xpubtopub = importp2pkaddress;
+				const HASH1601 =  "21" + xpubtopub + "ac"; // 21 + COMPRESSED PUBKEY + OP_CHECKSIG = P2PK
+				//console.log(HASH1601);
+				const BUFFHASH1601 = Buffer.from(HASH1601, "hex");
+				const shaaddress1 = sha256(BUFFHASH1601);
+
+				const scripthash = changeEndianness(shaaddress);
+				const scripthashp2pk = changeEndianness(shaaddress1);
+
+				let promises2 = [];
+				let utxoarray = [];
+				//Grab UTXO Transaction History from BTC ElectrumX
+				const utxohistory = async () => {
+					// Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+					const electrum = new ElectrumCluster('Kronos Core Mode UTXO History', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+					
+					// Add some servers to the cluster.
+					electrum.addServer(btcelectrumhost1);
+					electrum.addServer(btcelectrumhost2);
+					electrum.addServer(btcelectrumhost3);
+					electrum.addServer(btcelectrumhost4);
+					electrum.addServer(btcelectrumhost5);
+					electrum.addServer(btcelectrumhost6);
+					electrum.addServer(btcelectrumhost7);
+					
+					// Wait for enough connections to be available.
+					await electrum.ready();
+					
+					// Request the balance of the requested Scripthash D address
+
+					//const utxos = [];
+
+					const getuhistory1 = await electrum.request('blockchain.scripthash.listunspent', scripthash);
+
+					const getuhistory2 = await electrum.request('blockchain.scripthash.listunspent', scripthashp2pk);
+
+					//utxos.push({p2pkhutxos: getuhistory1, p2pkutxos: getuhistory2});
+					const utxos = getuhistory1.concat(getuhistory2);
+
+					await electrum.shutdown();
+
+					return utxos;
+				}
+
+				promises2.push(new Promise((res, rej) => {
+					utxohistory().then(utxohistory => {
+						utxoarray.push({utxos: utxohistory});
+						res({utxohistory});
+					});
+				}));
+					
+				Promise.all(promises2).then((values) => {
+					var utxos = utxoarray[0].utxos;
+					console.log(utxoarray[0].utxos);
+
+					var numutxo = utxos.length;
+
+					console.log('UTXO Count: ', numutxo);
+
+					if (numutxo == 0) {
+						request.toastr.error(`Error sweeping BTC! No UTXOs with a balance`, 'Error!', { positionClass: 'toast-bottom-left' });
+						return response.redirect('/sweepbtc');
+					} else {
+
+						//CREATE A RAW TRANSACTION AND SIGN IT FOR BITCOIN!
+
+						const key = bitcoinjs.ECPair.fromWIF(privkey);
+
+						const psbt = new bitcoinjs.Psbt();
+
+						var totalVal = 0;
+						for(i=0; i<numutxo; i++) {  
+							totalVal += utxos[i].value;
+							psbt.addInput({hash: utxos[i].tx_hash, index: parseInt(utxos[i].tx_pos),       
+								// // If this input was segwit, instead of nonWitnessUtxo, you would add
+								// // a witnessUtxo as follows. The scriptPubkey and the value only are needed.
+								witnessUtxo: {
+									script: Buffer.from(HASH160,'hex'), value: parseInt(utxos[i].value),
+								},
+					
+								redeemScript: p2wpkhredeem.output
+							
+								// Not featured here:
+								//   redeemScript. A Buffer of the redeemScript for P2SH
+								//   witnessScript. A Buffer of the witnessScript for P2WSH
+								});
+						}
+						//calc fee and add output address
+						var btcfees = numutxo * 10000; //10000;
+						var amountToSend = totalVal - btcfees; // 100 BTC total inputs - 30 BTC converted amount - 70 BTC to be sent back to change address
+				
+						psbt.addOutput({address: mainaddress, value: amountToSend,  });
+						//psbt.addOutput({address: btcaddy, value: changeAmnt,  });
+				
+						//Sign each of our privkey utxo inputs
+						for(i=0; i<numutxo; i++){  
+							psbt.signInput(i, key);
+							psbt.validateSignaturesOfInput(i);
+						}
+						//psbt.validateSignaturesOfInput(0);
+						psbt.finalizeAllInputs();
+				
+						// Print transaction serialized as hex
+						console.log('BTC Raw Transaction Built and Broadcast: ' + psbt.extractTransaction().toHex());
+				
+						// => 020000000110fd2be85bba0e8a7a694158fa27819f898def003d2f63b668d9d19084b76820000000006b48304502210097897de69a0bd7a30c50a4b343b7471d1c9cd56aee613cf5abf52d62db1acf6202203866a719620273a4e550c30068fb297133bceee82c58f5f4501b55e6164292b30121022f0c09e8f639ae355c462d7a641897bd9022ae39b28e6ec621cea0a4bf35d66cffffffff0140420f000000000001d600000000
+						
+						let promises = [];
+						let broadcastarray = [];
+				
+						const broadcastTX = async () => {
+							// Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+							const electrum = new ElectrumCluster('Kronos Core Mode Transaction', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+							
+							// Add some servers to the cluster.
+							electrum.addServer(btcelectrumhost1);
+							electrum.addServer(btcelectrumhost2);
+							electrum.addServer(btcelectrumhost3);
+							electrum.addServer(btcelectrumhost4);
+							electrum.addServer(btcelectrumhost5);
+							electrum.addServer(btcelectrumhost6);
+							electrum.addServer(btcelectrumhost7);
+							
+							// Wait for enough connections to be available.
+							await electrum.ready();
+							
+							// Request the balance of the requested Scripthash D address
+				
+							const broadcast = await electrum.request('blockchain.transaction.broadcast', psbt.extractTransaction().toHex());
+							
+							//console.log(broadcast);
+				
+							//await electrum.disconnect();
+							await electrum.shutdown();
+				
+							return broadcast;
+						};
+				
+						//var broadcasted = broadcastTX();
+				
+						promises.push(new Promise((res, rej) => {
+							broadcastTX().then(broadcastedTX => {
+								broadcastarray.push({tx: broadcastedTX});
+								res({broadcastedTX});
+							});
+						}));
+							
+						Promise.all(promises).then((values) => {
+							var broadcasted = broadcastarray[0].tx;
+							console.log(broadcastarray[0].tx);
+				
+							if (!broadcasted.message) {
+								request.toastr.success(`Your ${amountToSend / 1e8} BTC was imported successfully! TXID: ${broadcasted}`, 'Sweep Success!', { positionClass: 'toast-bottom-left' });
+								request.flash('success', { msg: `Sweep Complete! Your <strong>${amountToSend / 1e8} BTC</strong> was imported successfully via your private key! TXID: <a href='https://chainz.cryptoid.info/btc/tx.dws?${broadcasted}' target='_blank'>${broadcasted}</a>` });
+								return response.redirect('/sweepbtc');
+							} else {
+								request.toastr.error(`Error importing BTC! Broadcast Error: ${broadcasted.message}`, 'Error!', { positionClass: 'toast-bottom-left' });
+								//req.flash('errors', { msg: `Error sending BTC! Broadcast - Error: Something went wrong, please go to your dashboard and refresh.` });
+								return response.redirect('/sweepbtc');
+							}
+				
+						});	
+					}
+		
+				});
+	
+			} else {
+				request.toastr.error('Invalid private key! Try again, double check!', 'Error!', { positionClass: 'toast-bottom-left' });
+				response.redirect('/sweepbtc');
+				response.end();
+			}
+	
+	} else {
+		request.toastr.error('Please enter a private key!', 'Error!', { positionClass: 'toast-bottom-left' });
+		response.redirect('/sweepbtc');
 		response.end();
 	}
 };
