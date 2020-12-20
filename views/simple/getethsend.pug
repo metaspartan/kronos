@@ -1,6 +1,7 @@
 extends ../layoutsimple
 
 block content
+  script(src='../js/lib/jquery-3.1.1.min.js')
   script.
     function ethGasEstimate() {
       $.get( "https://ethgasstation.info/api/ethgasAPI.json?api-key=", function( data ) {
