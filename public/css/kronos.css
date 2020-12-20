@@ -1677,6 +1677,16 @@ display:none;
   background-color: #FF6656;
 }
 
+
+.darkred {
+  background-color: #be3323;
+  box-shadow: 0px 5px 0px 0px #9b271a;
+}
+
+.darkred:hover {
+  background-color: #d63d2c;
+}
+
 .purple {
   background-color: #9b59b6;
   box-shadow: 0px 5px 0px 0px #82409D;

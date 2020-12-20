@@ -4,12 +4,16 @@ block content
   #notify
   .maincontent(style='border: none !important;')
     .container(style='width:90%')
-      .row(class='rowclass', style='margin-top:35px !important;')
+      .row(class='rowclass', style='margin: 0px !important; padding:0px !important;border-top-left-radius:0px !important; border-top-right-radius:0px !important;')
         .col-md-12(align='center')
           p
             img(src='../img/kronos.png', style='height:200px;')
-            h4(style='margin-top:0;margin-bottom:0;') Version 1.9.2-Beta
-          p Written and Designed by Carsen Klock (MIT License 2020)
+            h4(style='margin-top:0;margin-bottom:0;') 
+              i.fas.fa-code-branch
+              |  Version 1.9.2-Beta
+          p(style='color:#888;') Written, Developed, and Designed by Carsen Klock
+            br 
+            | (MIT License 2020)
           p
             a(href='https://github.com/carsenk/kronos', target='_blank') Kronos Github 
             | | 
@@ -21,13 +25,62 @@ block content
             | in a local networked browser)
           p 
             em You can currently change your avatar by importing your ETH/ARI private key into Metamask and logging into 3box.io (upload profile image)
-          .row(style='margin-top:55px !important;')
+          .divider(style='border-top:1px solid #111;margin-top: 70px !important;')
+          p
+            h1(style='margin-top: -5px !important;font-size:50px !important;text-shadow: 0 1px 0 #ccc,0 2px 0 #c9c9c9,0 3px 0 #bbb,0 4px 0 #b9b9b9,0 5px 0 #aaa,0 6px 1px rgba(0,0,0,.1),0 0 5px rgba(0,0,0,.1),0 1px 3px rgba(0,0,0,.3),0 3px 5px rgba(0,0,0,.2),0 5px 10px rgba(0,0,0,.25),0 10px 10px rgba(0,0,0,.2),0 20px 20px rgba(0,0,0,.15);') CONTROLS
+          .divider(style='border-top:1px solid #111;')
+          .row(style='margin-top: 50px !important;')
             .col-md-4
-              button.kbtn.orange(onclick="location.href='/sseed';", style='border-radius: 15px;border: none;padding: 10px;padding-left: 30px;padding-right: 30px;margin-right:15px;') VIEW YOUR SEED
+              button.kbtn.orange(onclick="location.href='/sseed';", style='border-radius: 15px;border: none;padding: 10px;padding-left: 30px;padding-right: 30px;margin-right:15px;') 
+                i.far.fa-eye
+                |  VIEW YOUR SEED
             .col-md-4
-              button.kbtn.orange(onclick="location.href='/import';", style='border-radius: 15px;border: none;padding: 10px;padding-left: 30px;padding-right: 30px;margin-right:15px;') IMPORT A SEED
+              button.kbtn.darkred(onclick="location.href='/import';", style='border-radius: 15px;border: none;padding: 10px;padding-left: 30px;padding-right: 30px;margin-right:15px;') 
+                i.fas.fa-long-arrow-alt-down
+                |  IMPORT NEW SEED
             .col-md-4
-              button.kbtn.orange(onclick="location.href='/passchange';", style='border-radius: 15px;border: none;padding: 10px;padding-left: 30px;padding-right: 30px;margin-right:15px;') CHANGE PASSWORD
-          .row
-            .col-md-12
-              button.kbtn.orange(onclick="location.href='/sweep';", style='border-radius: 15px;border: none;padding: 10px;padding-left: 30px;padding-right: 30px;') SWEEP D PRIVATE KEY
+              button.kbtn.orange(onclick="location.href='/passchange';", style='border-radius: 15px;border: none;padding: 10px;padding-left: 30px;padding-right: 30px;margin-right:15px;') 
+                i.fas.fa-key
+                |  CHANGE PASSWORD
+          .row(style='margin-bottom: 50px !important;')
+            .col-md-4
+              button.kbtn.orange(onclick="location.href='/sweep';", style='border-radius: 15px;border: none;padding: 10px;padding-left: 30px;padding-right: 30px;')
+                | SWEEP D 
+                i.fas.fa-angle-double-down
+            .col-md-4
+              button.kbtn.grey(onclick="location.href='/btcsweep';", style='border-radius: 15px;border: none;padding: 10px;padding-left: 30px;padding-right: 30px;' disabled) 
+                | SWEEP BTC 
+                i.fas.fa-angle-double-down
+            .col-md-4
+              button.kbtn.grey(onclick="location.href='/ethsweep';", style='border-radius: 15px;border: none;padding: 10px;padding-left: 30px;padding-right: 30px;' disabled) 
+                | SWEEP ETH 
+                i.fas.fa-angle-double-down
+          .divider(style='border-top:1px solid #111;')
+          p
+            h1(style='margin-top: -5px !important;font-size:50px !important;text-shadow: 0 1px 0 #ccc,0 2px 0 #c9c9c9,0 3px 0 #bbb,0 4px 0 #b9b9b9,0 5px 0 #aaa,0 6px 1px rgba(0,0,0,.1),0 0 5px rgba(0,0,0,.1),0 1px 3px rgba(0,0,0,.3),0 3px 5px rgba(0,0,0,.2),0 5px 10px rgba(0,0,0,.25),0 10px 10px rgba(0,0,0,.2),0 20px 20px rgba(0,0,0,.15);') CREDITS
+          .divider(style='border-top:1px solid #111;')
+          p
+            br
+            | Powered by the Denarius (D) Community
+            br
+            | Special thanks to my best friends, you know who you are.
+            br
+            | Massive thanks to everyone else who contributes and helps to create a better financial future for everyone.
+            br 
+            | Long Live Denarius.
+            br
+            | Long Live Kronos.
+            br
+            | Long Live Cypherpunks.
+            br
+            | &nbsp;
+          .divider(style='border-top:1px solid #111;')
+          .containercredits(style='width:50%;')
+            p
+              br
+              em Long Live: Satoshi, Buzzkillb, Icanhazcrypto, Wookie, Kawaiicrypto, Enkayz, Thr33z, Manosv, Crouton, Inocelda, Voon, FetchMyGold, Luigi, Chris92, Lokh, McTowel, Hossango, notsofast
+            p
+              br
+              em Condolences: RIP Coinomi, RIP Exodus, RIP Cryptopia, RIP Coinexchange, RIP Allcoin, RIP CCex, RIP Mintpal, RIP Bitmex, RIP Mtgox, RIP Cryptsy, RIP all the other centralized exchanges, RIP Banks.
+            br
+            | &nbsp;
