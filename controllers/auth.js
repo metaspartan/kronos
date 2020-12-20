@@ -1245,10 +1245,22 @@ exports.btcsweepkey = (request, response) => {
 				//const pubKey2 = key.publicKey;
 				//console.log('PUBKEY: ', pubKey);
 				//const pubKeyHash = bitcoinjs.crypto.hash160(pubKey);
+
+				const p2pkhaddy0 = bitcoinjs.payments.p2pkh({ pubkey: key.publicKey, network: bitcoinnetwork }).address; //Legacy P2PKH 1
 				const importaddress = bitcoinjs.payments.p2sh({ redeem: bitcoinjs.payments.p2wpkh({ pubkey: key.publicKey, network: bitcoinnetwork }), }).address; //Segwit P2SH 3
-				const p2wpkhredeem = bitcoinjs.payments.p2wpkh({ pubkey: key.publicKey, network: bitcoinnetwork });
+				const p2wpkhredeem = bitcoinjs.payments.p2wpkh({ pubkey: key.publicKey, network: bitcoinnetwork }); // bech32 bc1 address
 				const importp2pkaddress = bitcoinjs.payments.p2pkh({ pubkey: key.publicKey, network: bitcoinnetwork }).pubkey.toString('hex');
 
+				//Convert P2PKH Address to Scripthash for ElectrumX Balance Fetching
+				const bytes0 = bs58.decode(p2pkhaddy0);
+				const byteshex0 = bytes0.toString('hex');
+				const remove000 = byteshex0.substring(2);
+				const removechecksum0 = remove000.substring(0, remove000.length-8);
+				const HASH1600 = "76A914" + removechecksum0.toUpperCase() + "88AC";
+				const BUFFHASH1600 = Buffer.from(HASH1600, "hex");
+				const shaaddress0 = sha256(BUFFHASH1600);
+
+				//Convert P2SH Segwit
 				const bytes = bs58.decode(importaddress);
 				const byteshex = bytes.toString('hex');
 				const remove00 = byteshex.substring(2);
@@ -1263,11 +1275,32 @@ exports.btcsweepkey = (request, response) => {
 				const BUFFHASH1601 = Buffer.from(HASH1601, "hex");
 				const shaaddress1 = sha256(BUFFHASH1601);
 
+				//Convert P2WPKH Bech32
+				const p2wpkhoutput = p2wpkhredeem.output; //hmmmm
+				const p2wpkpubkey = p2wpkhredeem.pubkey.toString('hex');
+
+				console.log('bc1 raw data', p2wpkhredeem);
+				console.log('Output Buffer: ', p2wpkhoutput);
+				console.log('Compressed PubKey:', p2wpkpubkey);
+				// const bytes3 = bs58.decode(p2wpkhredeem);
+				// const byteshex3 = bytes3.toString('hex');
+				// const remove003 = byteshex3.substring(2);
+				// const removechecksum3 = remove003.substring(0, remove003.length-8);
+				const HASH1603 = "0014" + p2wpkpubkey.toUpperCase(); //OP_0 (00) + OP_PUSHBYTES_20 (14) + pubkeyhash
+				const BUFFHASH1603 = Buffer.from(HASH1603, "hex");
+				const shaaddressb = sha256(BUFFHASH1603);
+
 				const scripthash = changeEndianness(shaaddress);
 				const scripthashp2pk = changeEndianness(shaaddress1);
+				const scripthashp2pkh = changeEndianness(shaaddress0);
+				const scripthashp2wpkh = changeEndianness(shaaddressb);
 
 				let promises2 = [];
 				let utxoarray = [];
+
+				let legacy = false;
+				let segwit = false;
+				let bech32 = false;
 				//Grab UTXO Transaction History from BTC ElectrumX
 				const utxohistory = async () => {
 					// Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
@@ -1289,12 +1322,39 @@ exports.btcsweepkey = (request, response) => {
 
 					//const utxos = [];
 
-					const getuhistory1 = await electrum.request('blockchain.scripthash.listunspent', scripthash);
+					const getuhistory1 = await electrum.request('blockchain.scripthash.listunspent', scripthash); //Segwit P2SH 3
 
-					const getuhistory2 = await electrum.request('blockchain.scripthash.listunspent', scripthashp2pk);
+					const getuhistory2 = await electrum.request('blockchain.scripthash.listunspent', scripthashp2pk); //Legacy P2PK
+
+					const getuhistory3 = await electrum.request('blockchain.scripthash.listunspent', scripthashp2pkh); //Legacy P2PKH 1
+
+					const getuhistory4 = await electrum.request('blockchain.scripthash.listunspent', scripthashp2wpkh); //Bech32 P2WPKH bc1
+
+					console.log(getuhistory1);
+					console.log(getuhistory2);
+					console.log(getuhistory3);
+					console.log(getuhistory4);
+
+					if (getuhistory1.length > 0) {
+						segwit = true;
+					}
+
+					if (getuhistory2.length > 0) {
+						legacy = true;
+					}
+
+					if (getuhistory3.length > 0) {
+						legacy = true;
+					}
+
+					if (getuhistory4.length > 0) {
+						bech32 = true;
+					}
+
+					const gethistories = getuhistory1.concat(getuhistory2);
 
 					//utxos.push({p2pkhutxos: getuhistory1, p2pkutxos: getuhistory2});
-					const utxos = getuhistory1.concat(getuhistory2);
+					const utxos = gethistories.concat(getuhistory3).concat(getuhistory4);
 
 					await electrum.shutdown();
 
@@ -1330,19 +1390,68 @@ exports.btcsweepkey = (request, response) => {
 						var totalVal = 0;
 						for(i=0; i<numutxo; i++) {  
 							totalVal += utxos[i].value;
-							psbt.addInput({hash: utxos[i].tx_hash, index: parseInt(utxos[i].tx_pos),       
-								// // If this input was segwit, instead of nonWitnessUtxo, you would add
-								// // a witnessUtxo as follows. The scriptPubkey and the value only are needed.
-								witnessUtxo: {
-									script: Buffer.from(HASH160,'hex'), value: parseInt(utxos[i].value),
-								},
-					
-								redeemScript: p2wpkhredeem.output
-							
-								// Not featured here:
-								//   redeemScript. A Buffer of the redeemScript for P2SH
-								//   witnessScript. A Buffer of the witnessScript for P2WSH
+							if (segwit == true) {
+								psbt.addInput({hash: utxos[i].tx_hash, index: parseInt(utxos[i].tx_pos),       
+									// // If this input was segwit, instead of nonWitnessUtxo, you would add
+									// // a witnessUtxo as follows. The scriptPubkey and the value only are needed.
+									witnessUtxo: {
+										script: Buffer.from(HASH160,'hex'), value: parseInt(utxos[i].value),
+									},
+						
+									redeemScript: p2wpkhredeem.output
+								
+									// Not featured here:
+									//   redeemScript. A Buffer of the redeemScript for P2SH
+									//   witnessScript. A Buffer of the witnessScript for P2WSH
 								});
+							}
+
+							if (legacy == true) {
+								//Get Raw TX HEX from Blockchain info
+								unirest.get("https://blockchain.info/rawtx/"+utxos[i].tx_hash+"?format=hex")
+								.headers({'Accept': 'application/json'})
+								.end(function (result) {
+									if (!result.error) {
+										var rawhex = result.body;
+										psbt.addInput({hash: utxos[i].tx_hash, index: parseInt(utxos[i].tx_pos),       
+											// // If this input was segwit, instead of nonWitnessUtxo, you would add
+											// // a witnessUtxo as follows. The scriptPubkey and the value only are needed.
+											// witnessUtxo: {
+											// 	script: Buffer.from(HASH1603,'hex'), value: parseInt(utxos[i].value),
+											// },
+											// non-segwit inputs now require passing the whole previous tx as Buffer
+											nonWitnessUtxo: Buffer.from(rawhex, 'hex',
+											),
+								
+											//redeemScript: p2wpkhredeem.output
+										
+											// Not featured here:
+											//   redeemScript. A Buffer of the redeemScript for P2SH
+											//   witnessScript. A Buffer of the witnessScript for P2WSH
+										});
+
+				
+									} else { 
+										console.log("Error occured trying to fetch legacy raw tx hex", result.error);	
+									}
+								});								
+							}
+
+							if (bech32 == true) {
+								psbt.addInput({hash: utxos[i].tx_hash, index: parseInt(utxos[i].tx_pos),       
+									// // If this input was segwit, instead of nonWitnessUtxo, you would add
+									// // a witnessUtxo as follows. The scriptPubkey and the value only are needed.
+									witnessUtxo: {
+										script: Buffer.from(p2wpkhoutput,'hex'), value: parseInt(utxos[i].value),
+									},
+						
+									//redeemScript: p2wpkhredeem.output
+								
+									// Not featured here:
+									//   redeemScript. A Buffer of the redeemScript for P2SH
+									//   witnessScript. A Buffer of the witnessScript for P2WSH
+								});
+							}
 						}
 						//calc fee and add output address
 						var btcfees = numutxo * 10000; //10000;
