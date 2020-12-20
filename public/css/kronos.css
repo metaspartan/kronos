@@ -103,6 +103,12 @@ body {
   .Youchat {
     display: block !important;
   }
+  .Incoming {
+    display: block !important;
+  }
+  #messagewrapper {
+    height: calc(100vh - 21em) !important;
+  }
   .PMchat {
     display: block !important;
   }
@@ -293,6 +299,14 @@ body {
 
 .PMchat {
   background: #161a1d;
+  display: flex;
+  flex: 1 1 0%;
+  padding: 10px;
+  border-radius: 15px;
+}
+
+.Incoming {
+  background: #06090a;
   display: flex;
   flex: 1 1 0%;
   padding: 10px;

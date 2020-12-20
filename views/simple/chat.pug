@@ -32,7 +32,7 @@ block content
                     .input-group
                       input(type='hidden' name='_csrf' value=csrftoken)
                       input.form-control.blackinput2(type='text', style='width:100% !important;', id='dsendamount', name='dsendamount', placeholder='1.337', onkeyup='updateD()')
-                      span.input-group-addon(style='background-color:#333;color:#FFF;border:none;') D
+                      span.input-group-addon(style='background-color:#333;color:#FFF;border:none;border-top-right-radius: 15px !important;border-bottom-right-radius: 15px !important;') D
                   .col-sm-12
                     br
                     .feestxt(align='center')
@@ -271,14 +271,20 @@ block content
           var userid = b.address();
           var time = new Date().toUTCString().replace('GMT','');
           var txt = $("#message").val().replace(/</g, "&lt;").replace(/>/g, "&gt;");
+          var private = false;
           if (txt == '') {
-            return;
+              return;
           }
-          messages.push({msg: txt, address: ethaddy, daddress: daddy, btcaddress: btcaddy, boxprofile: boxprofile, time: time, username: username, userid: userid});
+          if (privateuser != 'undefined') {
+            private = true;
+          } else {
+            private = false;
+          }
+          messages.push({msg: txt, address: ethaddy, daddress: daddy, private: private, btcaddress: btcaddy, boxprofile: boxprofile, time: time, username: username, userid: userid});
           if (privateuser != 'undefined') {
             //alert('Sent to user privately');
             b.send(privateuser, messages);
-            $('#messages').append("<div style='position:relative;z-index:1;font-size:13px;color:#999;margin-top:4px !important; background-color:#22222296;border: 1px solid #fff00026;border-radius:15px;' class='row animate__animated animate__flipInX tooltippy'><div class='rainbowbg'></div><div class='PMchat'><div class='col-md-3 tooltippy' align='center' title='"+username+"<br>ARI: "+ethaddy+"<br>D: "+daddy+"<br>BTC: "+btcaddy+"'><img src="+boxprofile+" border='0' style='display:inline-block;height:45px;width:45px;border-radius:9999px;object-fit:cover;margin-right: 15px;margin-top:9px;margin-bottom:9px;border: 3px #333 solid;'/><span style='margin-top:15px;'><span id='maintippy' style='font-weight:bold;'>PM SENT</span></span></div><div class='col-md-9' style='display:inline-block;vertical-align:middle;margin-top:3px;'><span id='msgtime' data-value="+time+" style='color: #555;font-size:9px;'>"+time+"</span><br><span style='font-size:16px;color:#FFF;'>"+txt+"</span></div></div></div>");
+            $('#messages').append("<div style='position:relative;z-index:1;font-size:13px;color:#999;margin-top:4px !important; background-color:#22222296;border: 1px solid #fff00026;border-radius:15px;' class='row animate__animated animate__flipInX tooltippy'><div class='rainbowbg'></div><div class='PMchat'><div class='col-md-3 tooltippy' align='center' title='"+username+"<br>ARI: "+ethaddy+"<br>D: "+daddy+"<br>BTC: "+btcaddy+"'><img src="+boxprofile+" border='0' style='display:inline-block;height:45px;width:45px;border-radius:9999px;object-fit:cover;margin-right: 15px;margin-top:9px;margin-bottom:9px;border: 3px #333 solid;'/><span style='margin-top:15px;'><span id='maintippy' style='font-weight:bold;'>SENT PM</span></span></div><div class='col-md-9' style='display:inline-block;vertical-align:middle;margin-top:3px;'><span id='msgtime' data-value="+time+" style='color: #555;font-size:9px;'>"+time+" 🔒 <strong>SENT SECURE PM</strong></span><br><span style='font-size:16px;color:#FFF;'>"+txt+"</span></div></div></div>");
             tippy('.tooltippy', {
               animateFill: true,
               arrow: true,
@@ -320,14 +326,20 @@ block content
         var username = document.getElementById("entername").getAttribute("data-value");
         var userid = b.address();
         var txt = $("#message").val().replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        var private = false;
         if (txt == '') {
             return;
         }
-        messages.push({msg: txt, address: ethaddy, daddress: daddy, btcaddress: btcaddy, boxprofile: boxprofile, time: time, username: username, userid: userid});
+        if (privateuser != 'undefined') {
+          private = true;
+        } else {
+          private = false;
+        }
+        messages.push({msg: txt, address: ethaddy, daddress: daddy, private: private, btcaddress: btcaddy, boxprofile: boxprofile, time: time, username: username, userid: userid});
         if (privateuser != 'undefined') {
           //alert('Sent to user privately');
           b.send(privateuser, messages);
-          $('#messages').append("<div style='position:relative;z-index:1;font-size:13px;color:#999;margin-top:4px !important; background-color:#22222296;border: 1px solid #fff00026;border-radius:15px;' class='row animate__animated animate__flipInX tooltippy'><div class='rainbowbg'></div><div class='PMchat'><div class='col-md-3 tooltippy' align='center' title='"+username+"<br>ARI: "+ethaddy+"<br>D: "+daddy+"<br>BTC: "+btcaddy+"'><img src="+boxprofile+" border='0' style='display:inline-block;height:45px;width:45px;border-radius:9999px;object-fit:cover;margin-right: 15px;margin-top:9px;margin-bottom:9px;border: 3px #333 solid;'/><span style='margin-top:15px;'><span id='maintippy' style='font-weight:bold;'>PM SENT</span></span></div><div class='col-md-9' style='display:inline-block;vertical-align:middle;margin-top:3px;'><span id='msgtime' data-value="+time+" style='color: #555;font-size:9px;'>"+time+"</span><br><span style='font-size:16px;color:#FFF;'>"+txt+"</span></div></div></div>");
+          $('#messages').append("<div style='position:relative;z-index:1;font-size:13px;color:#999;margin-top:4px !important; background-color:#22222296;border: 1px solid #fff00026;border-radius:15px;' class='row animate__animated animate__flipInX tooltippy'><div class='rainbowbg'></div><div class='PMchat'><div class='col-md-3 tooltippy' align='center' title='"+username+"<br>ARI: "+ethaddy+"<br>D: "+daddy+"<br>BTC: "+btcaddy+"'><img src="+boxprofile+" border='0' style='display:inline-block;height:45px;width:45px;border-radius:9999px;object-fit:cover;margin-right: 15px;margin-top:9px;margin-bottom:9px;border: 3px #333 solid;'/><span style='margin-top:15px;'><span id='maintippy' style='font-weight:bold;'>SENT PM</span></span></div><div class='col-md-9' style='display:inline-block;vertical-align:middle;margin-top:3px;'><span id='msgtime' data-value="+time+" style='color: #555;font-size:9px;'>"+time+" 🔒 <strong>SENT SECURE PM</strong></span><br><span style='font-size:16px;color:#FFF;'>"+txt+"</span></div></div></div>");
           tippy('.tooltippy', {
             animateFill: true,
             arrow: true,
@@ -413,12 +425,16 @@ block content
       } else {
           console.log("No banned user match using '" + user + "'");
       }
-      audio.play();
       var username = document.getElementById("entername").getAttribute("data-value");
-      if (username == message[0].username) {
-        $('#messages').append("<div style='position:relative;z-index:1;font-size:13px;color:#999;margin-top:4px !important; background-color:#22222296;border: 1px solid #fff00026;border-radius:15px;' class='row animate__animated animate__flipInX tooltippy'><div class='rainbowbg'></div><div class='Youchat'><div class='col-md-3 tooltippy' align='center' title='"+message[0].username+"<br>ARI: "+message[0].address+"<br>D: "+message[0].daddress+"<br>BTC: "+message[0].btcaddress+"'><img src="+message[0].boxprofile+" border='0' style='display:inline-block;height:45px;width:45px;border-radius:9999px;object-fit:cover;margin-right: 15px;margin-top:9px;margin-bottom:9px;border: 3px #333 solid;'/><span style='margin-top:15px;'>From <span id='maintippy' style='font-weight:bold;'>"+message[0].username+"</span></span></div><div class='col-md-9' style='display:inline-block;vertical-align:middle;margin-top:3px;'><span id='msgtime' data-value="+message[0].time+" style='color: #555;font-size:9px;'>"+message[0].time+"</span><br><span style='font-size:16px;color:#FFF;'>"+message[0].msg+"</span></div></div></div>");
+      if (message[0].private == true) {
+        audiopm.play();
+        $('#messages').append("<div style='font-size:13px;color:#999;margin-top:4px !important; background-color:#000;border-radius:15px;padding:10px;' class='row animate__animated animate__flipInX tooltippy'><div class='col-md-3 tooltippy' align='center' title='"+message[0].username+"<br>ARI: "+message[0].address+"<br>D: "+message[0].daddress+"<br>BTC: "+message[0].btcaddress+"'><img src="+message[0].boxprofile+" border='0' style='display:inline-block;height:45px;width:45px;border-radius:9999px;object-fit:cover;margin-right: 15px;margin-top:9px;margin-bottom:9px;border: 3px #333 solid;'/><span style='margin-top:15px;'>From <span id='maintippy' style='font-weight:bold;'>"+message[0].username+"</span></span></div><div class='col-md-7' style='display:inline-block;vertical-align:middle;margin-top:3px;'><span id='msgtime' data-value="+message[0].time+" style='color: #555;font-size:9px;'>"+message[0].time+" 🔒 <strong>RECEIVED SECURE PM</strong></span><br><span style='font-size:16px;color:#FFF;'>"+message[0].msg+"</span></div><div class='col-md-2' align='right'><button title='Tip Denarius (D)' onclick='sendD(`"+message[0].daddress+"`,`"+message[0].username+"`)' style='background-color:transparent;color:#fff;border:none;border-radius:5px;outline:none;cursor:pointer;'><img src='../img/denarius.png' style='margin-bottom: 5px;' border='0' width='16px' height='16px'/></button>&nbsp;&nbsp;<button onclick='pmUser(`"+message[0].userid+"`,`"+message[0].username+"`)' style='background-color:#009133;color:#fff;border:none;border-radius:5px;outline:none;cursor:pointer;'>PM</button>&nbsp;&nbsp;<button onclick='banUser(`"+message[0].username+"`)' style='background-color:#910000;color:#fff;border:none;border-radius:5px;outline:none;cursor:pointer;'>Ban</button></div></div>");
+      } else if (username == message[0].username) {
+        audio.play();
+        $('#messages').append("<div style='position:relative;z-index:1;font-size:13px;color:#999;margin-top:4px !important; background-color:#22222296;border: 1px solid #fff00026;border-radius:15px;' class='row animate__animated animate__flipInX tooltippy'><div class='rainbowbg'></div><div class='Youchat'><div class='col-md-3 tooltippy' align='center' title='"+message[0].username+"<br>ARI: "+message[0].address+"<br>D: "+message[0].daddress+"<br>BTC: "+message[0].btcaddress+"'><img src="+message[0].boxprofile+" border='0' style='display:inline-block;height:45px;width:45px;border-radius:9999px;object-fit:cover;margin-right: 15px;margin-top:9px;margin-bottom:9px;border: 3px #333 solid;'/><span style='margin-top:15px;'>From <span id='maintippy' style='font-weight:bold;'>"+message[0].username+"</span></span></div><div class='col-md-9' style='display:inline-block;vertical-align:middle;margin-top:3px;'><span id='msgtime' data-value="+message[0].time+" style='color: #555;font-size:9px;'>"+message[0].time+" • SENT</span><br><span style='font-size:16px;color:#FFF;'>"+message[0].msg+"</span></div></div></div>");
       } else {
-        $('#messages').append("<div style='font-size:13px;color:#999;margin-top:4px !important; background-color:#22222296;border-radius:15px;padding:10px;' class='row animate__animated animate__flipInX tooltippy'><div class='col-md-3 tooltippy' align='center' title='"+message[0].username+"<br>ARI: "+message[0].address+"<br>D: "+message[0].daddress+"<br>BTC: "+message[0].btcaddress+"'><img src="+message[0].boxprofile+" border='0' style='display:inline-block;height:45px;width:45px;border-radius:9999px;object-fit:cover;margin-right: 15px;margin-top:9px;margin-bottom:9px;border: 3px #333 solid;'/><span style='margin-top:15px;'>From <span id='maintippy' style='font-weight:bold;'>"+message[0].username+"</span></span></div><div class='col-md-7' style='display:inline-block;vertical-align:middle;margin-top:3px;'><span id='msgtime' data-value="+message[0].time+" style='color: #555;font-size:9px;'>"+message[0].time+"</span><br><span style='font-size:16px;color:#FFF;'>"+message[0].msg+"</span></div><div class='col-md-2' align='right'><button title='Tip Denarius (D)' onclick='sendD(`"+message[0].daddress+"`,`"+message[0].username+"`)' style='background-color:transparent;color:#fff;border:none;border-radius:5px;outline:none;cursor:pointer;'><img src='../img/denarius.png' style='margin-bottom: 5px;' border='0' width='16px' height='16px'/></button>&nbsp;&nbsp;<button onclick='pmUser(`"+message[0].userid+"`,`"+message[0].username+"`)' style='background-color:#009133;color:#fff;border:none;border-radius:5px;outline:none;cursor:pointer;'>PM</button>&nbsp;&nbsp;<button onclick='banUser(`"+message[0].username+"`)' style='background-color:#910000;color:#fff;border:none;border-radius:5px;outline:none;cursor:pointer;'>Ban</button></div></div>");
+        audio.play();
+        $('#messages').append("<div style='font-size:13px;color:#999;margin-top:4px !important; background-color:#22222296;border-radius:15px;padding:10px;' class='row animate__animated animate__flipInX tooltippy'><div class='col-md-3 tooltippy' align='center' title='"+message[0].username+"<br>ARI: "+message[0].address+"<br>D: "+message[0].daddress+"<br>BTC: "+message[0].btcaddress+"'><img src="+message[0].boxprofile+" border='0' style='display:inline-block;height:45px;width:45px;border-radius:9999px;object-fit:cover;margin-right: 15px;margin-top:9px;margin-bottom:9px;border: 3px #333 solid;'/><span style='margin-top:15px;'>From <span id='maintippy' style='font-weight:bold;'>"+message[0].username+"</span></span></div><div class='col-md-7' style='display:inline-block;vertical-align:middle;margin-top:3px;'><span id='msgtime' data-value="+message[0].time+" style='color: #555;font-size:9px;'>"+message[0].time+" • RECEIVED</span><br><span style='font-size:16px;color:#FFF;'>"+message[0].msg+"</span></div><div class='col-md-2' align='right'><button title='Tip Denarius (D)' onclick='sendD(`"+message[0].daddress+"`,`"+message[0].username+"`)' style='background-color:transparent;color:#fff;border:none;border-radius:5px;outline:none;cursor:pointer;'><img src='../img/denarius.png' style='margin-bottom: 5px;' border='0' width='16px' height='16px'/></button>&nbsp;&nbsp;<button onclick='pmUser(`"+message[0].userid+"`,`"+message[0].username+"`)' style='background-color:#009133;color:#fff;border:none;border-radius:5px;outline:none;cursor:pointer;'>PM</button>&nbsp;&nbsp;<button onclick='banUser(`"+message[0].username+"`)' style='background-color:#910000;color:#fff;border:none;border-radius:5px;outline:none;cursor:pointer;'>Ban</button></div></div>");
       }
       tippy('.tooltippy', {
         animateFill: true,
