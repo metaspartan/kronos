@@ -567,6 +567,10 @@ app.post('/sweep', auth, Limiter, authController.sweepkey);
 app.get('/sweepbtc', auth, Limiter, authController.getbtcsweep);
 app.post('/btcsweep', auth, Limiter, authController.btcsweepkey);
 
+//BTC Sweep key
+app.get('/2fasetting', auth, Limiter, authController.twofasetting);
+app.post('/2fa', auth, Limiter, authController.twofapost);
+
 
 //Advanced Mode--------------------------------------------------
 app.get('/setup', authController.getsetup);

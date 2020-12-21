@@ -109,9 +109,11 @@ exports.getcoresettings = (req, res) => {
     var totalbal = Storage.get('totalbal');
     var totalaribal = Storage.get('totalaribal');
     var ethaddress = Storage.get('ethaddy');
+    var twofaenable = Storage.get('2fa');
 
     res.render('simple/settings', {
         totalethbal: totalethbal,
+        twofaenable: twofaenable,
         totalbal: totalbal,
         totalaribal: totalaribal,
         ethaddress: ethaddress

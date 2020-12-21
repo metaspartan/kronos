@@ -74,6 +74,59 @@ body {
   min-height: 100%;
 }
 
+.toggle2fa {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 112px;
+  height: 32px;
+  display: inline-block;
+  position: relative;
+  border-radius: 50px;
+  overflow: hidden;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  background-color: #707070;
+  transition: background-color ease 0.3s;
+}
+
+.toggle2fa:focus {
+  outline: none;
+}
+
+.toggle2fa:before {
+  content: "enabled disabled";
+  display: block;
+  position: absolute;
+  z-index: 2;
+  width: 28px;
+  height: 28px;
+  background: #fff;
+  left: 2px;
+  top: 2px;
+  border-radius: 50%;
+  font: 10px/28px Helvetica;
+  text-transform: uppercase;
+  font-weight: bold;
+  text-indent: -62px;
+  word-spacing: 52px;
+  color: #fff;
+  text-shadow: -1px -1px rgba(0,0,0,0.15);
+  white-space: nowrap;
+  outline: none;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  transition: all cubic-bezier(0.3, 1.5, 0.7, 1) 0.3s;
+}
+
+.toggle2fa:checked {
+  background-color: #06921e;
+}
+
+.toggle2fa:checked:before {
+  left: 81px;
+}
+
 #maintippy {
   background: linear-gradient(317deg, rgba(221,76,76,1) 0%, rgba(208,170,57,1) 100%);
   -webkit-background-clip: text;

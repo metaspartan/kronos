@@ -41,6 +41,7 @@ const bs58 = require('bs58');
 const randomstring = require("randomstring");
 const Storage = require('json-storage-fs');
 const ethers = require('ethers');
+const speakeasy = require('speakeasy');
 
 var currentOS = os.platform(); 
 
@@ -158,7 +159,8 @@ exports.login = (req, res) => {
 	
 			} else {
 			  
-			  res.render('login', {title: 'Kronos Login'});
+			  var twofaenable = Storage.get('2fa');
+			  res.render('login', {title: 'Kronos Login', twofaenable: twofaenable});
 	
 			}
 		});
@@ -710,6 +712,8 @@ exports.logout = (req, res) => {
 exports.postlogin = (request, response) => {
 	var username = request.body.PPU1;
 	var password = request.body.PPP1;
+	var twofatoken = request.body.FA;
+	var twofaenable = Storage.get('2fa');
 	
 	if (username && password) {
 
@@ -727,29 +731,69 @@ exports.postlogin = (request, response) => {
 						// If password does not exist in levelDB then go to page to create one
 						//request.toastr.error('Password does not exist!', 'Error!', { positionClass: 'toast-bottom-left' });
 					  } else {
-
 						//If it does exist
 						var decryptedpass = decrypt(value);
-
-						if (request.body && (username == decrypteduser) && (password == decryptedpass)) {
-							request.session.loggedin = true;
-							request.session.username = username;
-							request.toastr.success('Logged into Kronos', 'Success!', { positionClass: 'toast-bottom-left' });
-
-							if (Storage.get('mode') == 'simple') {
-								//Storage.set('mode', 'simple');
-								response.redirect('/dashsimple');
-								response.end();
-							} else if (Storage.get('mode') == 'advanced') {
-								response.redirect('/');
+						if (twofaenable == 'true') {
+							if (twofatoken) {
+								var secretkey = Storage.get('2fasecretkey');
+								// Verify that the user token matches what it should at this moment
+								var verified = speakeasy.totp.verify({
+									secret: decrypt(secretkey),
+									encoding: 'base32',
+									token: twofatoken
+								});
+								if (verified == true) {
+									if (request.body && (username == decrypteduser) && (password == decryptedpass)) {
+										request.session.loggedin = true;
+										request.session.username = username;
+										request.toastr.success('Logged into Kronos', 'Success!', { positionClass: 'toast-bottom-left' });
+		
+										if (Storage.get('mode') == 'simple') {
+											//Storage.set('mode', 'simple');
+											response.redirect('/dashsimple');
+											response.end();
+										} else if (Storage.get('mode') == 'advanced') {
+											response.redirect('/');
+											response.end();
+										}
+									} else {
+										//response.send('Incorrect Username and/or Password!');
+										//request.flash('success', { msg: 'TEST' });
+										request.toastr.error('Incorrect Username and/or Password!', 'Error!', { positionClass: 'toast-bottom-left' });
+										response.redirect('/login');
+										response.end();
+									}
+								} else {
+									request.toastr.error('Incorrect 2FA Token!', 'Error!', { positionClass: 'toast-bottom-left' });
+									response.redirect('/login');
+									response.end();
+								}
+							} else {
+								request.toastr.error('You must enter a 2FA Token!', 'Error!', { positionClass: 'toast-bottom-left' });
+								response.redirect('/login');
 								response.end();
 							}
 						} else {
-							//response.send('Incorrect Username and/or Password!');
-							//request.flash('success', { msg: 'TEST' });
-							request.toastr.error('Incorrect Username and/or Password!', 'Error!', { positionClass: 'toast-bottom-left' });
-							response.redirect('/login');
-							response.end();
+							if (request.body && (username == decrypteduser) && (password == decryptedpass)) {
+								request.session.loggedin = true;
+								request.session.username = username;
+								request.toastr.success('Logged into Kronos', 'Success!', { positionClass: 'toast-bottom-left' });
+
+								if (Storage.get('mode') == 'simple') {
+									//Storage.set('mode', 'simple');
+									response.redirect('/dashsimple');
+									response.end();
+								} else if (Storage.get('mode') == 'advanced') {
+									response.redirect('/');
+									response.end();
+								}
+							} else {
+								//response.send('Incorrect Username and/or Password!');
+								//request.flash('success', { msg: 'TEST' });
+								request.toastr.error('Incorrect Username and/or Password!', 'Error!', { positionClass: 'toast-bottom-left' });
+								response.redirect('/login');
+								response.end();
+							}
 						}
 					}
 
@@ -757,8 +801,6 @@ exports.postlogin = (request, response) => {
 	
 			}
 		});
-		
-		//response.end();
 	
 	} else {
 		//response.send('Please enter Username and Password!');
@@ -1543,4 +1585,40 @@ exports.btcsweepkey = (request, response) => {
 		response.redirect('/sweepbtc');
 		response.end();
 	}
+};
+
+//GET 2FA Setup
+exports.twofasetting = (req, res) => {
+
+	var username = decrypt(Storage.get('username'));
+
+	res.render('change', {
+        title: '2FA Setup', username: username
+    });
+};
+
+//POST 2FA
+exports.twofapost = (request, response) => {
+	var twofaenable = Storage.get('2fa');
+
+	if (request.body) {
+
+		if (twofaenable == 'true') {
+			Storage.set('2fa', 'false');
+			return response.send('<h1 style="color:red;">Two-Factor Auth Disabled!</h1>');
+		} else {
+			var secret = speakeasy.generateSecret({length: 20});
+			//console.log(secret.base32); // Save this value to your DB for the user
+			Storage.set('2fasecretkey', encrypt(secret.base32));
+			Storage.set('2fa', 'true');
+			QRCode.toDataURL(secret.otpauth_url, { color: { dark: '#000000FF', light:"#777777FF" } }, function(err, image_data) {
+				//console.log(image_data); // A data URI for the QR code image
+				return response.send('<h1 style="color:#06921e;">Two-Factor Auth Enabled!</h1><p>Secret Key<br><strong>'+secret.base32+'</strong><p><img src="'+image_data+'" height="150px" width="150px" border="0" /></p><p>You must enter or scan the above secret key into your 2FA application, typically Google Authenticator, Authy, or others. <span style="color:red;">DO NOT leave this page with 2FA enabled, until you have successfully added the secret key to your Authentictor.</span></p></p>');
+			});
+		}
+
+	} else {
+		return response.send('Failed!');
+	}
+
 };

@@ -1,6 +1,7 @@
 extends ../layoutsimple
 
 block content
+  #toggle2fa(data-value=twofaenable)
   #notify
   .maincontent(style='border: none !important;')
     .container(style='width:90%')
@@ -10,7 +11,7 @@ block content
             img(src='../img/kronos.png', style='height:200px;')
             h4(style='margin-top:0;margin-bottom:0;') 
               i.fas.fa-code-branch
-              |  Version 1.9.3-Beta
+              |  Version 1.9.4-Beta
           p(style='color:#888;') Written, Developed, and Designed by Carsen Klock
             br 
             | (MIT License 2020)
@@ -27,7 +28,7 @@ block content
             em You can currently change your avatar by importing your ETH/ARI private key into Metamask and logging into 3box.io (upload profile image)
           .divider(style='border-top:1px solid #111;margin-top: 70px !important;')
           p
-            h1(style='margin-top: -5px !important;font-size:50px !important;text-shadow: 0 1px 0 #ccc,0 2px 0 #c9c9c9,0 3px 0 #bbb,0 4px 0 #b9b9b9,0 5px 0 #aaa,0 6px 1px rgba(0,0,0,.1),0 0 5px rgba(0,0,0,.1),0 1px 3px rgba(0,0,0,.3),0 3px 5px rgba(0,0,0,.2),0 5px 10px rgba(0,0,0,.25),0 10px 10px rgba(0,0,0,.2),0 20px 20px rgba(0,0,0,.15);') CONTROLS
+            h1(style='margin-top: 0px !important;font-size:50px !important;color: #a1a1a1;') CONTROLS
           .divider(style='border-top:1px solid #111;')
           .row(style='margin-top: 50px !important;')
             .col-md-4
@@ -57,7 +58,16 @@ block content
                 i.fas.fa-angle-double-down
           .divider(style='border-top:1px solid #111;')
           p
-            h1(style='margin-top: -5px !important;font-size:50px !important;text-shadow: 0 1px 0 #ccc,0 2px 0 #c9c9c9,0 3px 0 #bbb,0 4px 0 #b9b9b9,0 5px 0 #aaa,0 6px 1px rgba(0,0,0,.1),0 0 5px rgba(0,0,0,.1),0 1px 3px rgba(0,0,0,.3),0 3px 5px rgba(0,0,0,.2),0 5px 10px rgba(0,0,0,.25),0 10px 10px rgba(0,0,0,.2),0 20px 20px rgba(0,0,0,.15);') CREDITS
+            h1(style='margin-top: 0px !important;font-size:50px !important;color: #a1a1a1;') Kronos 2FA
+          .divider(style='border-top:1px solid #111;')
+          p
+            br
+            input(type='hidden' name='_csrf' value=csrftoken)
+            input.toggle2fa(type='checkbox', onclick='twofatoggle()')
+            #2fabox(style='display:none;padding: 30px;max-width: 500px;background-color: #1b1b1b;box-shadow: 0px 0px 0px 2px #00000070;border-radius: 15px;margin: 15px;')
+          .divider(style='border-top:1px solid #111;margin-top:333px !important;')
+          p
+            h1(style='margin-top: 0px !important;font-size:50px !important;color: #a1a1a1;') CREDITS
           .divider(style='border-top:1px solid #111;')
           p
             br

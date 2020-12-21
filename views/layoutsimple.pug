@@ -117,6 +117,32 @@ html
         $("#tab1").fadeOut();
         $('#tab2').fadeIn(1000);
       });
+      var toggle2fa = document.getElementById("toggle2fa").getAttribute("data-value");
+      var token = $('input[name="_csrf"]').attr('value');
+      if (toggle2fa == 'true') {
+        $(".toggle2fa").prop("checked", true);
+      } else {
+        $(".toggle2fa").prop("checked", false);
+      }
+      function twofatoggle() {
+        $.ajaxSetup({
+          beforeSend: function(xhr) {
+              xhr.setRequestHeader('CSRF-Token', token);
+          }
+        });
+        $.post("/2fa",
+        {
+          test: 'test'
+        }, function(data) {
+          $('#2fabox').show();
+          $('#2fabox').html(data);
+          //alert('Success! '+data);
+        }).fail(function(err) {
+          $('#2fabox').show();
+          $('#2fabox').html(data);
+          alert('Error! '+JSON.stringify(err));
+        });
+      }
     //- script.
     //-   window.nodeRequire = require;
     //-   delete window.require;

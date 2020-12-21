@@ -3,7 +3,7 @@
 # https://github.com/carsenk/kronos
 # By Carsen Klock
 name: kronos
-version: '1.9.3'
+version: '1.9.4'
 summary: Kronos
 description: |
   A Dashboard Interface and Wallet for Denarius (D), Ethereum (ETH), and Denarii (ARI) built with NodeJS and Electron
