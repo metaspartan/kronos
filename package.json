@@ -1,6 +1,6 @@
 {
   "name": "Kronos",
-  "version": "1.9.4-Beta",
+  "version": "1.9.5-Beta",
   "description": "A Dashboard Interface and Wallet for Denarius (D), Ethereum (ETH), and Denarii (ARI) built with NodeJS and Electron",
   "repository": {
     "type": "git",
@@ -140,6 +140,7 @@
       "compiler.sh",
       "public/notification.wav",
       "public/pmdrop.wav",
+      "public/ding.wav",
       "views/**/*",
       "controllers/**/*",
       "public/css/kronos.css",

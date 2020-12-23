@@ -127,6 +127,12 @@ body {
   left: 81px;
 }
 
+#chatpop {
+  top: 80px;
+  left: 35px;
+  position: absolute;
+}
+
 #maintippy {
   background: linear-gradient(317deg, rgba(221,76,76,1) 0%, rgba(208,170,57,1) 100%);
   -webkit-background-clip: text;
@@ -146,6 +152,9 @@ body {
   .rowclass {
     margin: 0px !important;
     border-radius: 0px !important;
+  }
+  #chatpop {
+    display: none !important;
   }
   .clip {
     font-size: 16px !important;

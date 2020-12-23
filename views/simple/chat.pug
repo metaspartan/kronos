@@ -2,6 +2,69 @@ extends ../layoutsimplechat
 
 block content
   link(href='https://cdnjs.cloudflare.com/ajax/libs/tippy.js/2.5.4/tippy.css')
+  style.
+      .btn-primary {
+        background-color: #ca8500 !important;
+        border-color: #ca8500 !important;
+        font-size:21px;
+      }
+      
+      .btn-primary:hover, .btn-primary:active, .btn-primary:focus {
+        background-color: #e79f16 !important;
+        border-color: #e79f16 !important;
+      }
+
+      .file-upload-input {
+        position: absolute;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        outline: none;
+        opacity: 0;
+        cursor: pointer;
+      }
+
+      .upload-wrap {
+        margin-top: 20px;
+        border: 2px dashed #d19e12;
+        background-color: #111;
+        position: relative;
+        cursor: pointer;
+        border-radius:15px;
+      }
+
+      .image-dropping,
+      .upload-wrap:hover {
+        background-color: #000;
+        border: 2px dashed #d19e12;
+        cursor: pointer;
+        border-radius:15px;
+      }
+
+      .drag-text {
+        text-align: center;
+        cursor: pointer;
+      }
+
+      .drag-text h3 {
+        font-weight: 100;
+        text-transform: uppercase;
+        color: #FFF;
+        padding: 60px 0;
+        cursor: pointer;
+        margin-top: 10px !important;
+      }
+      
+      .hash {
+        width: 80%;
+        background-color: #222;
+        border: 1px solid #444;
+        border-radius: 0 15px 15px 0;
+        padding: 5px;
+        padding-left: 15px;
+        color: #FFF;
+      }
   script(src='https://cdnjs.cloudflare.com/ajax/libs/tippy.js/2.5.4/tippy.min.js')
   script.
     var boxy = document.getElementById("threebox").getAttribute("data-value");
@@ -16,6 +79,36 @@ block content
       h1 Sending D, Please wait...
         br
         small Kronos is signing and broadcasting your transaction
+  #DisplayModalIPFS.modal
+    .modal-dialog
+      .modal-content(style='color:#FFF !important;background-color:#111 !important; border-color: #444 !important;')
+        .modal-header(style='border-bottom: none !important;')
+          button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+          h4.modal-title IPFS File Upload
+        .modal-body
+          #fileupload(style='padding:25px;background-color:#333;border-radius:10px;color:#fff;')
+            div(style='font-size:19px;padding-bottom:25px;')
+              strong Kronos IPFS Upload
+              small  - Decentralize your files!
+              br
+              span(style='font-size:11px;') 
+                strong 100 MB 
+                | Max File Upload Limit
+            form
+              .upload-wrap
+                input(type='hidden' name='_csrf' value=csrftoken)
+                input#file.file-input.file-upload-input(type='file', onchange='loadFile(event)', style='background-color:#333 !important; color: #FFF !important;')
+                .drag-text
+                  h3(style='cursor:pointer;') Drag and drop a file to upload
+            br
+            div(align='center')
+              #progress(style='font-size:26px;')
+              input(type='hidden' name='_csrf' value=csrftoken)
+              input#send_ipfs.btn.btn-primary(type='button', value='Upload!', onclick='javascript:sendIpfs();', style='display: none;cursor:pointer;')
+          #mhash(align='center' style='display:none;padding:25px;background-color:#333;border-radius:10px;color:#fff;')
+            span#linkedhash
+        .modal-footer(style='border-top: none !important;')
+          button.btn.btn-default(type='button', data-dismiss='modal', style='background-color: #602828;border-radius: 15px;font-size: 15px !important;', onclick='$("#DisplayModalIPFS").hide();$("#message").focus();') Cancel  
   #SubmitDisplayModal.modal
     .modal-dialog
         .modal-content(style='color:#FFF !important;background-color:#111 !important; border-color: #444 !important;')
@@ -44,6 +137,9 @@ block content
   #connecthead(style='background-color:#111;padding:20px;width:100%;text-align:center;')
     span#loader(style='text-align: center; color: #fff; vertical-align: middle;') Encrypting & Connecting...Please wait...
     span#connectdot(style='text-align: center; color: #46a900; vertical-align: middle;')
+  #chatpop 
+    a(href="#", onclick='javascript:window.open("http://'+lanip+':3000/chat", "_blank", "titlebar=no,toolbar=no,scrollbars=yes,location=no,resizable=yes,top=100,left=500,width=1300,height=800");')
+      i.fas.fa-link
   #logingroup(style='')
     .input-group#alias(style='width:350px;margin:0 auto;top: 50%;left: 40%;position: absolute;z-index:10002;')
       input(type='hidden' name='_csrf' value=csrftoken)
@@ -57,6 +153,8 @@ block content
   .input-group#chatinput(style='display:none;bottom:25px;position: absolute;left: 50%;transform: translate(-50%, -35px);width:95%;z-index:999;margin:0 auto;')
     input(type='hidden' name='_csrf' value=csrftoken)
     input.blackinputchat#message.form-control(type='text', placeholder='Type a message...', data-value=ethaddress, data-emoji-input="unicode" autofocus)
+    span#ipfsup.input-group-addon(onclick='openIPFS()', style='background-color:#222;color:#999;border-left: none;border-color: #444;outline:none;cursor:pointer;')
+      i.fas.fa-file-upload
     span#cancelpm.input-group-addon(onclick='swapPublic()', style='display:none;background-color:#222;color:#999;border-left: none;border-color: #444;outline:none;cursor:pointer;')
       i.fas.fa-comment-slash
     span#mutebutton.input-group-addon(onclick='muteAudio()', style='background-color:#222;color:#999;border-left: none;border-color: #444;outline:none;cursor:pointer;')

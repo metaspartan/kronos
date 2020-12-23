@@ -5,7 +5,7 @@ html
     meta(http-equiv='X-UA-Compatible', content='IE=edge')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     meta(name='theme-color' content='#4DA5F4')
-    title #{title} - Kronos
+    title Kronos P2P Chat
     link(rel='shortcut icon', href='/img/klogo.png')
     link(rel='stylesheet', href='/css/main.css')
     link(rel='stylesheet', href='/css/kronos.css')
@@ -81,6 +81,15 @@ html
       });
     script(src='/js/kronoschatlib.min.js')
     script(src='https://unpkg.com/3box/dist/3box.min.js')
+    //- <!-- IPFS & BigNumber Lib -->
+    script(src="https://unpkg.com/ipfs/dist/index.min.js")
+    script(src="https://unpkg.com/ipfs-http-client/dist/index.min.js")
+    script(src="https://unpkg.com/ipfs-api@9.0.0/dist/index.js" integrity="sha384-5bXRcW9kyxxnSMbOoHzraqa7Z0PQWIao+cgeg327zit1hz5LZCEbIMx/LWKPReuB" crossorigin="anonymous")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/9.0.0/bignumber.js" integrity="sha256-TYZ2kR74G+TqMIiLuKpB57VUTNKhGFknyOKgRYqxhnw=" crossorigin="anonymous")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous")
+    script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous")
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js')
+    script(src="https://bundle.run/buffer@6.0.3")
     //- script(src='https://cdn.jsdelivr.net/npm/ipfs-http-client/dist/index.min.js')
     script(type="module").
       import { EmojiButton } from 'https://unpkg.com/@joeattardi/emoji-button@4.1.0/dist/index.js';
@@ -97,5 +106,163 @@ html
         document.getElementById("message").value += selection.emoji;
       });
     script(src='/js/kronoschat.min.js')
+    script.
+        // Kronos IPFS File Uploading!
+
+        $(".file-input").on("change", function() {
+          var fileName = $(this).val().split("\\").pop();
+          //$(".file-label").html(fileName);
+          $('#send_ipfs').show();
+          $('.drag-text').html('<h3>'+fileName+'</h3>');
+          if (fileName == '') {
+            $('#send_ipfs').hide();
+            $('.drag-text').html('<h3>Drag and drop a file to upload</h3>');
+          }
+        });
+
+        var clipboard = new ClipboardJS('.clip');
+        clipboard.on('success', function(e) {
+            console.info('Action:', e.action);
+            console.info('Text:', e.text);
+            console.info('Trigger:', e.trigger);
+
+            e.clearSelection();
+        });
+
+        clipboard.on('error', function(e) {
+            console.error('Action:', e.action);
+            console.error('Trigger:', e.trigger);
+        });
+
+        window.Buffer = buffer.Buffer;
+        var progressIPFS = $("#progress");
+        var onLoad;
+        var buf;
+
+        function openIPFS() {
+          $('#DisplayModalIPFS').show();
+        }
+
+        const audiofile = new Audio("../ding.wav");
+
+        //IPFS Init with Infura
+        var ipfs = window.IpfsHttpClient({
+          host: 'ipfs.infura.io',
+          port: 5001,
+          protocol: 'https'
+        });
+
+        const reader = new FileReader();
+      
+        function GoBack() {
+          $('#mhash').hide();
+          $('#progress').hide();
+          $('#send_ipfs').show();          
+          $('#fileupload').show();
+          $('.drag-text').html('<h3 style="cursor:pointer;">Drag and drop a file to upload</h3>');
+        }
+
+        var loadFile = function(event) {
+          console.log('Upload File');
+
+          const reader = new FileReader();
+          reader.onload = function() {
+            console.log('Ready');            
+            onLoad = reader
+            buf = new Buffer(reader.result);
+            console.log(buf);
+          };
+
+          const file = document.getElementById("file");
+          reader.readAsArrayBuffer(file.files[0]);
+
+        };
+        
+        function getJSONP(url, success) {
+
+            var ud = '_' + +new Date,
+                script = document.createElement('script'),
+                head = document.getElementsByTagName('head')[0] 
+                      || document.documentElement;
+
+            window[ud] = function(data) {
+                head.removeChild(script);
+                success && success(data);
+            };
+
+            script.src = url.replace('callback=?', 'callback=' + ud);
+            head.appendChild(script);
+
+        }
+
+        progressCall = function(data){
+          var totalsize = buf.length;
+
+          //console.log(totalsize);
+
+          progressIPFS.html("Upload Progress: <strong>"+(data / 1000000).toFixed(2)+" MB</strong> out of <strong>"+(totalsize / 1000000).toFixed(2)+" MB</strong>");
+
+          //console.log('uploaded progress: ' + data);
+        }
+
+        async function sendIpfs() {
+
+          $('#send_ipfs').hide();
+          $('#progress').show();
+
+          var start = new Date();
+          console.log("Time: ", start);    
+
+          const results = await ipfs.add([{
+            path: 'infury',
+            content: buf,
+          }], {
+            recursive: true,
+            progress: progressCall
+          })
+          console.log(results);
+          var end = new Date();
+          console.log('Time To Upload: ', (end - start) / 1000, 'File Size:', buf.length / 1000, 'KB')
+          
+          var timeu = (end - start) / 1000
+          var filesizing = buf.length / 1000
+
+          const hash = results.cid.string;
+          console.log(results.cid.string);
+          
+          $.getJSON( "https://ipfs.infura.io:5001/api/v0/pin/add?arg=/ipfs/"+hash, function( data ) {
+              
+                if (data.Pins) {
+                  console.log('Pinned Succesfully!');
+                  $('#pinned').html('File Pinned to IPFS Successfully!');
+                } else {
+                  $('#pinned').html('Warning: File was not pinned. Try again!');
+                }
+
+                console.log(data.Pins);
+          });
+          
+          $('#mhash').show();
+          $('#message').val('https://ipfs.denarius.io/ipfs/'+hash);
+          $('#linkedhash').html('<p><span style="color:#5bc400;font-weight:600;">File Uploaded to IPFS Successfully!</span><br><span style="color:#5bc400;font-weight:600;" id="pinned"></span></p><h2>IPFS Uploaded CID</h2><div style="background-color:#111;padding:10px;border-radius:15px;"><span class="font-size:16px;font-weight:600;">'+hash+'</span> <button style="position:absolute;background:transparent;border:0;color:#FFF;cursor:pointer;" class="clip" onclick="CopyC()" data-clipboard-text='+hash+'><i class="fas fa-copy"></i></button></div><br>Time Took To Upload: <strong>'+timeu+'s</strong> - File Size: <strong>'+filesizing+'</strong> KB<h2>Shareable Links</h2><div style="padding:10px;background-color:#111;border-radius:15px;">Denarius IPFS: <a href="https://ipfs.denarius.io/ipfs/'+hash+'" target="_blank">'+hash+'</a><br />Cloudflare IPFS: <a href="https://cloudflare-ipfs.com/ipfs/'+hash+'" target="_blank">'+hash+'</a><br />IPFS: <a href="https://gateway.ipfs.io/ipfs/'+hash+'" target="_blank">'+hash+'</a><br />Infura IPFS: <a href="https://ipfs.infura.io/ipfs/'+hash+'" target="_blank">'+hash+'</a></div><div align="center"><br><button class="btn btn-primary" onclick=GoBack()>Upload Another File</button></div>');
+          $('#fileupload').hide();
+          audiofile.play();
+
+        }
+        
+      function CopyC() {
+        /* Get the text field */
+        var copyText = document.getElementById("ipfshash");
+
+        /* Select the text field */
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+
+        /* Copy the text inside the text field */
+        document.execCommand("copy");
+
+        /* Alert the copied text */
+        alert("Copied the text: " + copyText.value);
+      }
 
     !=toasts
