@@ -44,7 +44,7 @@ const main = require('progressbar.js');
 const ethers = require('ethers');
 
 
-var currentOS = os.platform(); 
+var currentOS = os.platform();        
 
 if (currentOS === 'linux') {
     let SECRET_KEY = process.env.KEY;
@@ -199,10 +199,10 @@ exports.simpleindex = (req, res) => {
                 //     console.log('Catch an error: ', e)
                 // }
             }, (error) => {
-                console.log(error);
+                console.log('Caught Error: ', error);
                 });
         } catch(e) {
-            console.log(e);
+            console.log('Caught Error: ', e);
         }
         // ariContract.on(ethwalletp.address, (balance) => {
         //     console.log('New ARI Balance: ' + balance);
