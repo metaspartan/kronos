@@ -1622,3 +1622,20 @@ exports.twofapost = (request, response) => {
 	}
 
 };
+
+exports.twofavalidate = (request, response) => {
+	var twofatoken = request.body.FA;
+	var secretkey = Storage.get('2fasecretkey');
+	// Verify that the user token matches what it should at this moment
+	var verified = speakeasy.totp.verify({
+		secret: decrypt(secretkey),
+		encoding: 'base32',
+		token: twofatoken
+	});
+	if (verified == true) {
+		//Storage.set('2fa', 'true');
+		return response.send('2FA Setup!');
+	} else {
+		return response.send('Invalid 2FA Token!');
+	}
+};

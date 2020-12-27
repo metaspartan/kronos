@@ -143,6 +143,30 @@ html
           alert('Error! '+JSON.stringify(err));
         });
       }
+      //- function validatefa() {
+      //-   var inputtoken = $('input[name="FA"]').attr('value');
+      //-   if (inputtoken != '') {
+      //-     $.ajaxSetup({
+      //-       beforeSend: function(xhr) {
+      //-           xhr.setRequestHeader('CSRF-Token', token);
+      //-       }
+      //-     });
+      //-     $.post("/2favalid",
+      //-     {
+      //-       FA: inputtoken
+      //-     }, function(data) {
+      //-       //$('#2fabox').show();
+      //-       $('#2fabox').html(data);
+      //-       alert(data);
+      //-     }).fail(function(err) {
+      //-       //$('#2fabox').show();
+      //-       //$('#2fabox').html(data);
+      //-       alert('Error! '+JSON.stringify(err));
+      //-     });
+      //-   } else {
+      //-     alert('Error empty input!');
+      //-   }
+      //- }
     //- script.
     //-   window.nodeRequire = require;
     //-   delete window.require;

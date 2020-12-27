@@ -58,7 +58,8 @@ const rateLimit = require("express-rate-limit");
 const randomstring = require("randomstring");
 const Storage = require('json-storage-fs');
 const mkdirp = require('mkdirp');
-
+const IPFS = require('ipfs');
+const pem = require('pem');
 
 const crypto = require('crypto')
 const Swarm = require('discovery-swarm')
@@ -192,6 +193,43 @@ const readline = require('readline')
 //   askUser()  
 
 // })()
+// ;(async () => {
+//   try {
+//     const options = {
+//       EXPERIMENTAL: {
+//         pubsub: true,
+//         namesys: true
+//       },
+//       // repo: 'ipfs-' + Math.random(),
+//       config: {
+//         Addresses: {
+//           //Swarm: ['/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star']
+//           Swarm: [
+//             "/ip4/0.0.0.0/tcp/4002",
+//             "/ip4/127.0.0.1/tcp/4003/ws"
+//             // "/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star"
+//           ],
+//           API: ["/ip4/127.0.0.1/tcp/5001"],
+//           Gateway: "/ip4/127.0.0.1/tcp/9090"
+//         }
+//       }
+//     }
+//     const node = await IPFS.create(options);
+//     const id = await node.id();
+//     const Gateway = require('ipfs-http-gateway');
+//     const IPFSAPI = require('ipfs-http-server');
+//     const gateway = new Gateway(node);
+//     await gateway.start();
+//     const ipfsa = new IPFSAPI(node);
+//     await ipfsa.start();
+//     console.log('Kronos IPFS Gateway Started: 127.0.0.1:9090')
+//     console.log('Kronos IPFS Node Started: ', id);
+//     Storage.set('ipfs', id);
+//   } catch (err) {
+//     console.error(err);
+//   }
+// })()
+
 var currentOS = os.platform();
 
 function getUserHome() {
@@ -285,7 +323,13 @@ const toolsController = require('./controllers/tools');
 const walletController = require('./controllers/wallet');
 const explorerController = require('./controllers/explorer');
 
-
+// pem.createCertificate({ days: 365, selfSigned: true }, function (err, keys) {
+//   if (err) {
+//     throw err
+//   }
+//   Storage.set('serviceKey', keys.serviceKey);
+//   Storage.set('certificate', keys.certificate);
+// }); //End PEM
 /**
  * Create Express server.
  */
@@ -294,8 +338,10 @@ const app = express();
 const server = require('http').Server(app);
 //const httpsserver = require('https').createServer(credentials, app);
 const io = require('socket.io')(server);
+//const iohttps = require('socket.io')(httpsserver);
 const sharedsession = require("express-socket.io-session");
-io.setMaxListeners(69); 
+io.setMaxListeners(69);
+//iohttps.setMaxListeners(69);
 const port = 3000;
 
 /**
@@ -570,6 +616,7 @@ app.post('/btcsweep', auth, Limiter, authController.btcsweepkey);
 //BTC Sweep key
 app.get('/2fasetting', auth, Limiter, authController.twofasetting);
 app.post('/2fa', auth, Limiter, authController.twofapost);
+app.post('/2favalid', auth, Limiter, authController.twofavalidate);
 
 
 //Advanced Mode--------------------------------------------------
@@ -667,7 +714,6 @@ app.listen(port, '0.0.0.0', () => {
   console.log('Kronos Interface is running at http://' + ip.address() + ':%d', '3000', app.get('env'));
   console.log('Open the URL above in your web browser on your local network to start using the browser version of Kronos!\n');
 });
-
 
 module.exports = {app: app, server: server};
 

@@ -109,6 +109,42 @@ html
     script.
         // Kronos IPFS File Uploading!
 
+        //- ;(async () => {
+        //-   try {
+        //-     const options = {
+        //-       EXPERIMENTAL: {
+        //-         pubsub: true,
+        //-         namesys: true
+        //-       },
+        //-       // repo: 'ipfs-' + Math.random(),
+        //-       config: {
+        //-         Addresses: {
+        //-           //Swarm: ['/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star']
+        //-           Swarm: [
+        //-             "/ip4/0.0.0.0/tcp/4002",
+        //-             "/ip4/127.0.0.1/tcp/4003/ws"
+        //-             // "/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star"
+        //-           ],
+        //-           API: "/ip4/127.0.0.1/tcp/5001",
+        //-           Gateway: "/ip4/127.0.0.1/tcp/9090"
+        //-         }
+        //-       }
+        //-     }
+        //-     const node = await IPFS.create(options);
+        //-     const id = await node.id();
+        //-     //- const Gateway = require('ipfs-http-gateway');
+        //-     //- const IPFSAPI = require('ipfs-http-server');
+        //-     //- const gateway = new Gateway(node);
+        //-     //- await gateway.start();
+        //-     //- const ipfsa = new IPFSAPI(node);
+        //-     //- await ipfsa.start();
+        //-     console.log('Kronos IPFS Gateway Started: 127.0.0.1:9090')
+        //-     console.log('Kronos IPFS Node Started: ', id);
+        //-   } catch (err) {
+        //-     console.error(err);
+        //-   }
+        //- })()
+
         $(".file-input").on("change", function() {
           var fileName = $(this).val().split("\\").pop();
           //$(".file-label").html(fileName);
@@ -213,13 +249,44 @@ html
           var start = new Date();
           console.log("Time: ", start);    
 
+          const options = {
+            EXPERIMENTAL: {
+              pubsub: true,
+              namesys: true
+            },
+            // repo: 'ipfs-' + Math.random(),
+            config: {
+              Addresses: {
+                //Swarm: ['/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star']
+                Swarm: [
+                  "/ip4/0.0.0.0/tcp/4002",
+                  "/ip4/127.0.0.1/tcp/4003/ws"
+                  // "/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star"
+                ],
+                API: "/ip4/127.0.0.1/tcp/5001",
+                Gateway: "/ip4/127.0.0.1/tcp/9090"
+              }
+            }
+          }
+          //- const node = await Ipfs.create(options);
+          //- const id = await node.id();
+
+          //- const results = await node.add([{
+          //-   path: 'kronos',
+          //-   content: buf,
+          //- }], {
+          //-   recursive: true,
+          //-   progress: progressCall
+          //- })
+
           const results = await ipfs.add([{
-            path: 'infury',
+            path: 'kronos',
             content: buf,
           }], {
             recursive: true,
             progress: progressCall
           })
+
           console.log(results);
           var end = new Date();
           console.log('Time To Upload: ', (end - start) / 1000, 'File Size:', buf.length / 1000, 'KB')
