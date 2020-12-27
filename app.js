@@ -58,8 +58,6 @@ const rateLimit = require("express-rate-limit");
 const randomstring = require("randomstring");
 const Storage = require('json-storage-fs');
 const mkdirp = require('mkdirp');
-const IPFS = require('ipfs');
-const pem = require('pem');
 
 const crypto = require('crypto')
 const Swarm = require('discovery-swarm')
