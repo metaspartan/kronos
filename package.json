@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@metamask/detect-provider": "^1.1.0",
+    "3box": "^1.22.2",
     "app-root-path": "^3.0.0",
     "argon2": "^0.27.1",
     "bip32": "^2.0.6",
@@ -73,6 +74,7 @@
     "get-port": "^5.1.1",
     "hotkeys-js": "^3.8.1",
     "ip": "^1.1.5",
+    "ipfs": "^0.52.3",
     "jquery": "^3.5.1",
     "json-storage-fs": "git://github.com/carsenk/json-storage-fs.git",
     "keymaster": "^1.6.2",
@@ -84,6 +86,7 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
     "node": "12.16.3",
+    "orbit-db": "^0.25.3",
     "os": "^0.1.1",
     "progressbar.js": "^1.1.0",
     "promise-loading-spinner": "^2.2.0",

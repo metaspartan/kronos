@@ -25,7 +25,9 @@ block content
             a(href='http://'+lanip+':3000/dashsimple', onclick="javascript:event.target.port=3000", target='_blank') #{lanip}:3000/dashsimple 
             | in a local networked browser)
           p 
-            em You can currently change your avatar by importing your ETH/ARI private key into Metamask and logging into 3box.io (upload profile image)
+            button.kbtn.orange(onclick="location.href='/profile';", style='border-radius: 15px;border: none;padding: 10px;padding-left: 30px;padding-right: 30px;margin-right:15px;') 
+                i.far.fa-user
+                |  EDIT YOUR PROFILE
           .divider(style='border-top:1px solid #111;margin-top: 70px !important;')
           p
             h1(style='margin-top: 0px !important;font-size:50px !important;color: #a1a1a1;') CONTROLS

@@ -42,6 +42,8 @@ const Storage = require('json-storage-fs');
 const PromiseLoadingSpinner = require('promise-loading-spinner');
 const main = require('progressbar.js');
 const ethers = require('ethers');
+const ThreeBox = require('3box');
+const { triggerAsyncId } = require('async_hooks');
 
 
 var currentOS = os.platform(); 
@@ -118,4 +120,185 @@ exports.getcoresettings = (req, res) => {
         totalaribal: totalaribal,
         ethaddress: ethaddress
     });
+};
+
+//Get Core Mode Profile
+exports.getprofile = (req, res) => {
+
+    const ip = require('ip');
+    const ipaddy = ip.address();
+  
+    res.locals.lanip = ipaddy;
+
+    var totalethbal = Storage.get('totaleth');
+    var totalbal = Storage.get('totalbal');
+    var totalaribal = Storage.get('totalaribal');
+    var ethaddress = Storage.get('ethaddy');
+    var twofaenable = Storage.get('2fa');    
+
+    res.render('simple/profile', {
+        totalethbal: totalethbal,
+        twofaenable: twofaenable,
+        totalbal: totalbal,
+        totalaribal: totalaribal,
+        ethaddress: ethaddress
+    });
+};
+
+// POST the Decentralized Profile - WORK IN PROGRESS
+exports.postprofile = (request, response) => {
+	var name = request.body.NAMEBOX;
+	var website = request.body.WEBBOX;
+    var bio = request.body.BIOBOX;
+    var privy = request.body.EMOJI;
+    var avatar = request.body.AVATAR;
+
+	const ip = require('ip');
+	const ipaddy = ip.address();
+  
+    response.locals.lanip = ipaddy;
+
+    let promises = [];
+    let array = [];
+    
+    var ethaddress = Storage.get('ethaddy');
+    var seedphrasedb = Storage.get('seed');
+    let ethnetworktype = 'homestead'; //homestead is mainnet, ropsten for testing, choice for UI selection eventually
+
+    let provider = ethers.getDefaultProvider(ethnetworktype, {
+        etherscan: 'JMBXKNZRZYDD439WT95P2JYI72827M4HHR',
+        // Or if using a project secret:
+        infura: {
+            projectId: 'f95db0ef78244281a226aad15788b4ae',
+            projectSecret: '6a2d027562de4857a1536774d6e65667',
+        },
+        alchemy: 'W5yjuu3Ade1lsIn3Od8rTqJsYiFJszVY',
+        cloudflare: ''
+    });
+
+    console.log(avatar);
+    console.log(name);
+    console.log(bio);
+    console.log(privy);
+    console.log(website);
+	
+	if (avatar) {
+        const Box3 = async() => {
+            try {
+                //const box = await ThreeBox.create();
+
+                var decryptedmnemonic = decrypt(seedphrasedb);
+                mnemonic = decryptedmnemonic;
+                const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
+                let ethwalletp = ethwallet.connect(provider); //Set wallet provider
+
+                const IPFS = require('ipfs');
+                const OrbitDB = require('orbit-db');
+
+                // For js-ipfs >= 0.38
+
+                // Create IPFS instance
+                const initIPFSInstance = async () => {
+                    return await IPFS.create({ repo: "./path-for-js-ipfs-repo" }); //WIP
+                };
+
+                initIPFSInstance().then(async ipfs => {
+                    const orbitdb = await OrbitDB.createInstance(ipfs);
+
+                    // Create / Open a database
+                    const db = await orbitdb.log("hello");
+                    await db.load();
+
+                    // Listen for updates from peers
+                    db.events.on("replicated", address => {
+                        console.log(db.iterator({ limit: -1 }).collect());
+                    });
+
+                    // Add an entry
+                    const hash = await db.add("world");
+                    console.log(hash);
+
+                    // Query
+                    const result = db.iterator({ limit: -1 }).collect();
+                    console.log(JSON.stringify(result, null, 2));
+                });
+
+
+                // For js-ipfs < 0.38
+
+                // // Create IPFS instance
+                // const ipfsOptions = {
+                //     EXPERIMENTAL: {
+                //     pubsub: true
+                //     }
+                // };
+
+                // ipfs = new IPFS(ipfsOptions);
+
+                // initIPFSInstance().then(ipfs => {
+                // ipfs.on("error", e => console.error(e));
+                // ipfs.on("ready", async () => {
+                //     const orbitdb = await OrbitDB.createInstance(ipfs);
+
+                //     // Create / Open a database
+                //     const db = await orbitdb.log("hello");
+                //     await db.load();
+
+                //     // Listen for updates from peers
+                //     db.events.on("replicated", address => {
+                //     console.log(db.iterator({ limit: -1 }).collect());
+                //     });
+
+                //     // Add an entry
+                //     const hash = await db.add("world");
+                //     console.log(hash);
+
+                //     // Query
+                //     const result = db.iterator({ limit: -1 }).collect();
+                //     console.log(JSON.stringify(result, null, 2));
+                // });
+                // });
+
+                // const address = ethaddress;
+                // const spaces = ['3Box']
+                // //await box.auth(spaces, { address, ethwalletp });
+                // const box = await ThreeBox.openBox(address, ethwalletp);
+                // //OrbitDB?
+                // //await box.syncDone;
+
+                // const fields = ['name', 'website', 'description', 'image', 'emoji']
+                // const values = [name, website, bio, avatar, privy]
+
+                //const setProfile = await box.public.setMultiple(fields, values);
+
+                //return setProfile;
+            } catch(e) {
+                console.log(e);
+            }
+        }
+
+        promises.push(new Promise((res, rej) => {
+            Box3().then(globalData => {
+
+                array.push({info: globalData});
+                res({globalData});
+
+            });
+        }));
+
+        Promise.all(promises).then((values) => {           
+            let info = array[0].info;
+            //console.log(info);
+            request.toastr.success('Updated your profile!', 'Success!', { positionClass: 'toast-bottom-left' });
+            response.redirect('http://'+ip.address()+':3000/profile');
+            response.end();
+        });
+        
+	
+	} else {
+		//response.send('Please enter Username and Password!');
+		request.toastr.error('Please ensure you fill out all fields!', 'Error!', { positionClass: 'toast-bottom-left' });
+		response.redirect('http://'+ip.address()+':3000/profile');
+		response.end();
+	}
 };

@@ -575,6 +575,8 @@ app.post('/simplesetup', Limiter, authController.simple);
 app.get('/dashsimple', auth, sDashController.simpleindex);
 
 app.get('/core', auth, Limiter, coreController.getcoresettings);
+app.get('/profile', auth, Limiter, coreController.getprofile);
+app.post('/updateprofile', Limiter, coreController.postprofile);
 
 //D Send
 app.get('/createtx', auth, Limiter, sTXController.getsend);

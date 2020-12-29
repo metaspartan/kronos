@@ -1,0 +1,32 @@
+extends ../layoutsimple
+
+block content
+  #notify
+  .maincontent(style='border: none !important;')
+    .container(style='width:90%')
+      .row(class='rowclass', style='margin: 0px !important; padding:0px !important;border-top-left-radius:0px !important; border-top-right-radius:0px !important;')
+        .col-md-12(align='center')
+          h1(align='center', style='font-size:73px;font-weight:100;margin-top:42px !important;')
+            |  Your Profile
+          form.form-horizontal(action='/updateprofile', method='POST')
+            input(type='hidden' name='_csrf' value=csrftoken)
+            p
+              #edit__userPicture
+                label#chooseFile(for='fileInput')
+                  input#fileInput.light(type='file' name='fileInput' accept='image/*', onchange='loadFile(event)')
+                  img#addImage(src='../img/AddImage.svg' alt='Change Avatar', onchange='loadFile(event)')
+                  //- button#removePic.removeButton(text='remove' type='button') &#x2715;
+                  .profPic_div
+                    .profPic_div_overlay
+                      p CHANGE AVATAR
+                    #profileavatar(style='margin:35px;')
+              #progress(style='display:none;')
+            p
+              button#EMOJITRIGGER.kbtn.grey(name='EMOJITRIGGER', type='button')
+            p
+              input#AVATAR(type='hidden', name='AVATAR')
+              input#EMOJI(type='hidden', name='EMOJI')
+              input#NAMEBOX.profileinput(name='NAMEBOX', placeholder='Your name')
+              input#WEBBOX.profileinput(name='WEBBOX', placeholder='Your website')
+              textarea#BIOBOX.profileinput(type='textarea', row='10', name='BIOBOX', placeholder='Your biography or description')
+              button.kbtn.grey(type='submit') Update Profile

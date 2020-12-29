@@ -540,6 +540,122 @@ footer {
   height:45px !important;
 }
 
+.profilebox {
+  border: 4px solid rgb(255 255 255 / 14%);
+  -o-object-fit: cover;
+  object-fit: cover;
+  border-radius: 999999px;
+  width:144px !important;
+  height:144px !important;
+}
+
+.profileinput {
+  background-color: #212121 !important;
+  border-color: #444 !important;
+  border: 1px solid;
+  color: #a4a4a4 !important;
+  width: 100% !important;
+  margin-bottom: 15px;
+  padding: 15px;
+  outline: none;
+  border-radius: 15px;
+}
+
+.profPic_div_overlay:hover {
+  display: flex;
+}
+
+.profPic_div_overlay {
+  display: none;
+  position: absolute;
+  background-color: rgba(0,0,0,.397);
+  border-radius: 100%;
+  width: 144px;
+  height: 144px;
+  top: 22px;
+  left: 35px;
+  -o-object-fit: cover;
+  object-fit: cover;
+  transition: all .5s ease;
+  z-index: 1;
+}
+
+.profPic_div:hover .profPic_div_overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profPic_div_overlay p {
+  font-weight: 400;
+  font-size: 1em;
+  color: #fff;
+}
+
+#removeCoverPic, #removePic {
+  width: 36px;
+  height: 36px;
+  opacity: 1;
+  z-index: 2;
+  border-radius: 50%;
+}
+
+#removePic {
+  position: absolute;
+  left: 33px;
+  bottom: 35px;
+  background: #0c0c0c;
+  color: #ca3232;
+  align-items: center;
+  justify-content: center;
+}
+.removeButton {
+  font-size: 1em;
+  line-height: 1em;
+  color: #6b6b6b;
+  background: transparent;
+  padding: .5em;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  outline: none;
+  border: none!important;
+}
+
+#addImage {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  right: 33px;
+  opacity: 1;
+  z-index: 2;
+  bottom: 35px;
+}
+
+#fileInput {
+  width: .1px;
+  height: .1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+}
+
+.light {
+  color: #6b6b6b;
+}
+
+#chooseFile {
+  margin: 0 auto;
+  cursor: pointer;
+  text-align: center;
+  color: #6b6b6b;
+  position: relative;
+}
+
+#edit__userPicture {
+  display: flex;
+}
+
 .format {font-size:4rem}
 small {font-size:2.2rem;color:#eee;}
 

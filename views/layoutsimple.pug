@@ -40,10 +40,35 @@ html
     script(src='/js/sorttable.js')
     script(src='/js/pace.min.js')
     script(src='/js/loading-bar.min.js')
+    //- <!-- IPFS & BigNumber Lib -->
+    script(src="https://unpkg.com/ipfs/dist/index.min.js")
+    script(src="https://unpkg.com/ipfs-http-client/dist/index.min.js")
+    script(src="https://unpkg.com/ipfs-api@9.0.0/dist/index.js" integrity="sha384-5bXRcW9kyxxnSMbOoHzraqa7Z0PQWIao+cgeg327zit1hz5LZCEbIMx/LWKPReuB" crossorigin="anonymous")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/9.0.0/bignumber.js" integrity="sha256-TYZ2kR74G+TqMIiLuKpB57VUTNKhGFknyOKgRYqxhnw=" crossorigin="anonymous")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous")
+    script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous")
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js')
+    script(src="https://bundle.run/buffer@6.0.3")
+    script(type="module").
+      import { EmojiButton } from 'https://unpkg.com/@joeattardi/emoji-button@4.1.0/dist/index.js';
+
+      const picker = new EmojiButton({
+                        theme: 'dark',
+                        position: 'top-start',
+                        autoHide: false
+                      });
+      const trigger = document.querySelector('#EMOJITRIGGER');
+
+      trigger.addEventListener('click', () => picker.togglePicker(trigger));
+      picker.on('emoji', selection => {
+        document.getElementById("EMOJITRIGGER").value = selection.emoji;
+        $("#EMOJITRIGGER").text(selection.emoji);
+        $("#EMOJI").val(selection.emoji);
+      });
     script.
       var ethaddy = document.getElementById("ethaccount").getAttribute("data-value");
       Box.getProfile(ethaddy).then(profile => {
-        //console.log(profile);
+        console.log(profile);
         var profileimage;
 
         if (typeof profile.image == 'undefined') {
@@ -51,7 +76,7 @@ html
             //console.log(profileimage);
             var boximage = '';
             if (typeof profileimage == 'undefined') {
-                boximage = '../img/avatar.png'; //IPFS Default Avatar Hash
+                boximage = '../img/avatar.png'; //IPFS Default Avatar Hash (https://ipfs.denarius.io/ipfs/QmaaXanRmNVdLRLscPR4NGhbdBh3EMnkc4HEbAL1VkEJRw)
             } else {
                 profileimage = profile.image[0].contentUrl['/'];
                 boximage = 'https://cloudflare-ipfs.com/ipfs/' + profileimage;
@@ -61,6 +86,9 @@ html
             $("#threebox").html('<img src="'+boximage+'" border="0" class="res threebox"/>');
             $("#threebox").val(boximage);
             document.getElementById("threebox").setAttribute("data-value", boximage);
+            $("#profileavatar").html('<img src="'+boximage+'" border="0" class="res profilebox"/>');
+            $("#AVATAR").val(boximage);
+            //document.getElementById("profileavatar").setAttribute("data-value", boximage);
 
         } else {
             profileimage = profile.image[0].contentUrl['/'];
@@ -77,9 +105,139 @@ html
             $("#threebox").html('<img src="'+boximage+'" border="0" class="res threebox"/>');
             $("#threebox").val(boximage);
             document.getElementById("threebox").setAttribute("data-value", boximage);
+            $("#profileavatar").html('<img src="'+boximage+'" border="0" class="res profilebox"/>');
+            $("#AVATAR").val(boximage);
+            //document.getElementById("profileavatar").setAttribute("data-value", boximage);
+        }
+
+        if (typeof profile.description == 'undefined') {
+          //$('#biobox').val('No profile description set');
+        } else {
+          $('#BIOBOX').val(profile.description);
+        }
+
+        if (typeof profile.website == 'undefined') {
+          //$('#webbox').val('No website set');
+        } else {
+          $('#WEBBOX').val(profile.website);
+        }
+
+        if (typeof profile.emoji == 'undefined') {
+          //$('#emojitrigger').text('Set an 👾');
+        } else {
+          $('#EMOJITRIGGER').text(profile.emoji);
+          $('#EMOJITRIGGER').val(profile.emoji);
+          $('#EMOJI').val(profile.emoji);
+        }
+
+        if (typeof profile.name == 'undefined') {
+          //$('#namebox').val('Set a name');
+        } else {
+          $('#NAMEBOX').val(profile.name);
         }
 
       });
+
+      const audiofile = new Audio("../ding.wav");
+
+      window.Buffer = buffer.Buffer;
+      var onLoad;
+      var buf;
+
+      //IPFS Init with Infura
+      var ipfs = window.IpfsHttpClient({
+        host: 'ipfs.infura.io',
+        port: 5001,
+        protocol: 'https'
+      });
+
+      const reader = new FileReader();
+
+      var progressIPFS = $("#progress");
+
+      var loadFile = function(event) {
+        console.log('Uploading avatar!');
+
+        const reader = new FileReader();
+        reader.onload = function() {
+          //console.log('onLoad Ready!');            
+          onLoad = reader
+          buf = new Buffer(reader.result);
+          //console.log(buf);
+          sendIpfs();
+        };
+
+        const file = document.getElementById("fileInput");
+        reader.readAsArrayBuffer(file.files[0]);
+
+      };
+
+      progressCall = function(data){
+        var totalsize = buf.length;
+        progressIPFS.html("Upload Progress: <strong>"+(data / 1000000).toFixed(2)+" MB</strong> out of <strong>"+(totalsize / 1000000).toFixed(2)+" MB</strong>");
+      }
+
+      async function sendIpfs() {
+
+        progressIPFS.show();
+
+        var start = new Date();
+        //console.log("Time: ", start);    
+
+        const options = {
+          EXPERIMENTAL: {
+            pubsub: true,
+            namesys: true
+          },
+          // repo: 'ipfs-' + Math.random(),
+          config: {
+            Addresses: {
+              //Swarm: ['/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star']
+              Swarm: [
+                "/ip4/0.0.0.0/tcp/4002",
+                "/ip4/127.0.0.1/tcp/4003/ws"
+                // "/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star"
+              ],
+              API: "/ip4/127.0.0.1/tcp/5001",
+              Gateway: "/ip4/127.0.0.1/tcp/9090"
+            }
+          }
+        }
+
+        const results = await ipfs.add([{
+          path: 'kronos',
+          content: buf,
+        }], {
+          recursive: true,
+          progress: progressCall
+        })
+
+        //console.log(results);
+        var end = new Date();
+        //console.log('Time To Upload: ', (end - start) / 1000, 'File Size:', buf.length / 1000, 'KB')
+        
+        var timeu = (end - start) / 1000
+        var filesizing = buf.length / 1000
+
+        const hash = results.cid.string;
+        //console.log(results.cid.string);
+        
+        $.getJSON("https://ipfs.infura.io:5001/api/v0/pin/add?arg=/ipfs/"+hash, function( data ) {
+            
+              if (data.Pins) {
+                console.log('Pinned Succesfully!');
+                //$('#pinned').html('File Pinned to IPFS Successfully!');
+              } else {
+                //$('#pinned').html('Warning: File was not pinned. Try again!');
+              }
+
+              //console.log(data.Pins);
+        });
+        $("#profileavatar").html('<img src="https://ipfs.denarius.io/ipfs/'+hash+'" border="0" class="res profilebox"/>');
+        $('#AVATAR').val('https://ipfs.denarius.io/ipfs/'+hash);
+        progressIPFS.hide();
+        audiofile.play();
+      }
     script.
       var tabs = $('.tabs');
       var selector = $('.tabs').find('a').length;
