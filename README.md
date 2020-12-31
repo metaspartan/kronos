@@ -1,4 +1,6 @@
-# Kronos
+# Kronos Wallet
+
+Official Website: https://kronoswallet.com
 #### A Dashboard Interface and Wallet for Denarius (D), Bitcoin (BTC), Ethereum (ETH), and Denarii (ARI) written in NodeJS and Electron
 =======================
 ![Kronos Logo](https://user-images.githubusercontent.com/10162347/93870495-8bd68680-fc8a-11ea-85f7-a5ca7b52d1ba.png)
@@ -9,7 +11,7 @@
 [![Kronos downloads](https://img.shields.io/github/downloads/carsenk/kronos/total.svg)](https://github.com/carsenk/kronos/releases)
 [![HitCount](http://hits.dwyl.io/carsenk/kronos.svg)](http://hits.dwyl.io/carsenk/kronos)
 <a href="https://discord.gg/UPpQy3n"><img src="https://discordapp.com/api/guilds/334361453320732673/embed.png" alt="Discord server" /></a>
-![Code Climate](https://codeclimate.com/github/carsenk/kronos/badges/gpa.svg)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/carsenk/kronos.svg) ![GitHub repo size in bytes](https://img.shields.io/github/repo-size/carsenk/kronos.svg)
 
 [![Build history](https://buildstats.info/travisci/chart/carsenk/kronos?branch=master)](https://travis-ci.org/carsenk/kronos?branch=master)
 
@@ -48,7 +50,7 @@ Features
 
 -----This list needs some updating soon...
 - Send and Receive D, BTC, ETH, and ARI in Core Mode (Multi Crypto Wallets)
-- Decentralized Chat - Massive WIP
+- Decentralized Chat with private encrypted messaging
 - Core Mode and Advanced Mode
 - Send and Receive D
 - Wallet Addresses

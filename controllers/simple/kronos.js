@@ -42,9 +42,10 @@ const Storage = require('json-storage-fs');
 const PromiseLoadingSpinner = require('promise-loading-spinner');
 const main = require('progressbar.js');
 const ethers = require('ethers');
-const ThreeBox = require('3box');
 const { triggerAsyncId } = require('async_hooks');
-
+const ThreeBox = require('3box');
+const IdentityWallet = require('identity-wallet');
+const prompt = require('async-prompt');
 
 var currentOS = os.platform(); 
 
@@ -181,97 +182,56 @@ exports.postprofile = (request, response) => {
     console.log(bio);
     console.log(privy);
     console.log(website);
+
+    
+    var decryptedmnemonic = decrypt(seedphrasedb);
+    mnemonic = decryptedmnemonic;      
+    // ETH and ARI
+    let ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
+    let ethprivkey = ethwallet.privateKey;
 	
 	if (avatar) {
         const Box3 = async() => {
             try {
-                //const box = await ThreeBox.create();
+                //const ceramic = new Ceramic(); // An instance of Ceramic (either @ceramicnetwork/core, or @ceramicnetwork/http-client)
+                //const threeId = await ThreeIdProvider.create({ consent, ethprivkey, ceramic });
+                //MASSIVE WIP CURRENTLY NOT WORKING
+                async function consent (req) {
+                    console.log('\n ------ ')
+                    console.log('App with origin:', req.origin)
+                    if (req.spaces.length > 0) {
+                        console.log('is requesting access to spaces:', req.spaces)
+                    } else {
+                        console.log('is requesting access to your 3box')
+                    }
+                    console.log('Auto Consent? Then return true');
+                    return true;
+                }
 
-                var decryptedmnemonic = decrypt(seedphrasedb);
-                mnemonic = decryptedmnemonic;
-                const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
-                let ethwalletp = ethwallet.connect(provider); //Set wallet provider
+                const idw = new IdentityWallet.default(consent, { seed: ethprivkey}); //.create(consent, { seed: ethprivkey });
+                console.log('idw created');
 
-                const IPFS = require('ipfs');
-                const OrbitDB = require('orbit-db');
+                const provider = idw.get3idProvider();
+                //const provider = threeId.getDidProvider();
+                console.log('Opening 3Box');
+                const box = await ThreeBox.openBox(ethaddress, provider);
+                console.log('openBox');
+                await box.syncDone;
+                console.log('syncDone');
 
-                // For js-ipfs >= 0.38
+                // const space = await box.openSpace('3Box');
+                // console.log('space opened');
+                // await space.syncDone;
+                // console.log('space synced');
 
-                // Create IPFS instance
-                const initIPFSInstance = async () => {
-                    return await IPFS.create({ repo: "./path-for-js-ipfs-repo" }); //WIP
-                };
+                const fields = ['name', 'website', 'description', 'image', 'emoji'];
+                const values = [name, website, bio, avatar, privy];
 
-                initIPFSInstance().then(async ipfs => {
-                    const orbitdb = await OrbitDB.createInstance(ipfs);
+                const setProfile = await box.public.setMultiple(fields, values);
 
-                    // Create / Open a database
-                    const db = await orbitdb.log("hello");
-                    await db.load();
-
-                    // Listen for updates from peers
-                    db.events.on("replicated", address => {
-                        console.log(db.iterator({ limit: -1 }).collect());
-                    });
-
-                    // Add an entry
-                    const hash = await db.add("world");
-                    console.log(hash);
-
-                    // Query
-                    const result = db.iterator({ limit: -1 }).collect();
-                    console.log(JSON.stringify(result, null, 2));
-                });
-
-
-                // For js-ipfs < 0.38
-
-                // // Create IPFS instance
-                // const ipfsOptions = {
-                //     EXPERIMENTAL: {
-                //     pubsub: true
-                //     }
-                // };
-
-                // ipfs = new IPFS(ipfsOptions);
-
-                // initIPFSInstance().then(ipfs => {
-                // ipfs.on("error", e => console.error(e));
-                // ipfs.on("ready", async () => {
-                //     const orbitdb = await OrbitDB.createInstance(ipfs);
-
-                //     // Create / Open a database
-                //     const db = await orbitdb.log("hello");
-                //     await db.load();
-
-                //     // Listen for updates from peers
-                //     db.events.on("replicated", address => {
-                //     console.log(db.iterator({ limit: -1 }).collect());
-                //     });
-
-                //     // Add an entry
-                //     const hash = await db.add("world");
-                //     console.log(hash);
-
-                //     // Query
-                //     const result = db.iterator({ limit: -1 }).collect();
-                //     console.log(JSON.stringify(result, null, 2));
-                // });
-                // });
-
-                // const address = ethaddress;
-                // const spaces = ['3Box']
-                // //await box.auth(spaces, { address, ethwalletp });
-                // const box = await ThreeBox.openBox(address, ethwalletp);
-                // //OrbitDB?
-                // //await box.syncDone;
-
-                // const fields = ['name', 'website', 'description', 'image', 'emoji']
-                // const values = [name, website, bio, avatar, privy]
-
-                //const setProfile = await box.public.setMultiple(fields, values);
-
-                //return setProfile;
+                //await space.public.set('foo', 'bar')
+                //console.log('get', await space.public.get('foo'))
+                
             } catch(e) {
                 console.log(e);
             }
