@@ -95,13 +95,13 @@ if (typeof Storage.get('rpchost') == 'undefined') {
 
 //Connect to our D node 
 //process.env.DUSER
-const client = new bitcoin.Client({
-	host: decrypt(Storage.get('rpchost')),
-	port: decrypt(Storage.get('rpcport')),
-	user: decrypt(Storage.get('rpcuser')),
-	pass: decrypt(Storage.get('rpcpass')),
-	timeout: 30000
-});
+// const client = new bitcoin.Client({
+// 	host: decrypt(Storage.get('rpchost')),
+// 	port: decrypt(Storage.get('rpcport')),
+// 	user: decrypt(Storage.get('rpcuser')),
+// 	pass: decrypt(Storage.get('rpcpass')),
+// 	timeout: 30000
+// });
 
 //ElectrumX Hosts for Denarius
 const delectrumxhost1 = 'electrumx1.denarius.pro';

@@ -90,6 +90,12 @@ if (currentOS === 'linux') {
     }
 }
 
+// console.log('Opening 3Box');
+// async function ThreeBoxSetup() {
+//     const box = await ThreeBox.create();
+// }
+// ThreeBoxSetup();
+
 const changeEndianness = (string) => {
     const result = [];
     let len = string.length - 2;
@@ -196,11 +202,11 @@ exports.postprofile = (request, response) => {
                 //const ceramic = new Ceramic(); // An instance of Ceramic (either @ceramicnetwork/core, or @ceramicnetwork/http-client)
                 //const threeId = await ThreeIdProvider.create({ consent, ethprivkey, ceramic });
                 //MASSIVE WIP CURRENTLY NOT WORKING
-                async function consent (req) {
+                async function consent (request) {
                     console.log('\n ------ ')
-                    console.log('App with origin:', req.origin)
-                    if (req.spaces.length > 0) {
-                        console.log('is requesting access to spaces:', req.spaces)
+                    console.log('App with origin:', request.origin)
+                    if (request.spaces.length > 0) {
+                        console.log('is requesting access to spaces:', request.spaces)
                     } else {
                         console.log('is requesting access to your 3box')
                     }
@@ -213,11 +219,19 @@ exports.postprofile = (request, response) => {
 
                 const provider = idw.get3idProvider();
                 //const provider = threeId.getDidProvider();
-                console.log('Opening 3Box');
-                const box = await ThreeBox.openBox(ethaddress, provider);
-                console.log('openBox');
+
+                console.log('3Box...Authenticating...');
+
+                const box = await ThreeBox.create();
+
+                //const box = await ThreeBox.openBox(ethaddress, provider);
+                await box.auth(['3Box'], { ethaddress, provider });
+
+                console.log('Authenticated 3Box!');
+
                 await box.syncDone;
                 console.log('syncDone');
+
 
                 // const space = await box.openSpace('3Box');
                 // console.log('space opened');
@@ -227,10 +241,37 @@ exports.postprofile = (request, response) => {
                 const fields = ['name', 'website', 'description', 'image', 'emoji'];
                 const values = [name, website, bio, avatar, privy];
 
-                const setProfile = await box.public.setMultiple(fields, values);
+                const result = await box.public.setMultiple(fields, values); //Set the new values
+
+                console.log(result);
+
+                //await box.private.setMultiple(fields, values); //Set the new values
+
+                // const nickname = await box.public.get('name');
+                // console.log(nickname);
+
+                // const nicknameb = await box.private.get('name');
+                // console.log(nicknameb);
+                // // set
+                // await box.public.set('name', name);
+
+                // await box.private.set('name', name);
+
+                // console.log('SET data-----');
+                // const nicknamec = await box.public.get('name');
+                // console.log(nicknamec);
+
+                // const nicknamed = await box.private.get('name');
+                // console.log(nicknamed);                
+
+                await box.logout(); //End the 3Box session
+
+                console.log('Submitted data and logged out of 3Box.');
 
                 //await space.public.set('foo', 'bar')
                 //console.log('get', await space.public.get('foo'))
+
+                //return result;
                 
             } catch(e) {
                 console.log(e);
