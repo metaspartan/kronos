@@ -578,7 +578,7 @@ app.get('/core', auth, Limiter, coreController.getcoresettings);
 app.get('/profile', auth, Limiter, coreController.getprofile);
 app.post('/updateprofile', Limiter, coreController.postprofile);
 
-app.get('/u2f', authController.u2fsetup);
+app.get('/u2f', auth, authController.u2fsetup);
 app.post('/u2fadd', Limiter, authController.u2fadd);
 app.post('/u2fremove', Limiter, authController.u2fremove);
 
