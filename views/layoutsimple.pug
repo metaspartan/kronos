@@ -301,6 +301,27 @@ html
           alert('Error! '+JSON.stringify(err));
         });
       }
+      function removeDevice(deviceid, devicename) {
+        $.ajaxSetup({
+          beforeSend: function(xhr) {
+              xhr.setRequestHeader('CSRF-Token', token);
+          }
+        });
+        $.post("/u2fremove",
+        {
+          DEVICEID: deviceid
+        }, function(data) {
+          //$('#2fabox').show();
+          //$('#2fabox').html(data);
+          var devicesid = $('#'+devicename);
+          devicesid.fadeOut(2000);
+          alert('Success! '+data);
+        }).fail(function(err) {
+          //$('#2fabox').show();
+          //$('#2fabox').html(data);
+          alert('Error! '+JSON.stringify(err));
+        });
+      }
       //- function validatefa() {
       //-   var inputtoken = $('input[name="FA"]').attr('value');
       //-   if (inputtoken != '') {

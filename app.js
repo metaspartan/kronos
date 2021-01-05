@@ -578,6 +578,10 @@ app.get('/core', auth, Limiter, coreController.getcoresettings);
 app.get('/profile', auth, Limiter, coreController.getprofile);
 app.post('/updateprofile', Limiter, coreController.postprofile);
 
+app.get('/u2f', authController.u2fsetup);
+app.post('/u2fadd', Limiter, authController.u2fadd);
+app.post('/u2fremove', Limiter, authController.u2fremove);
+
 //D Send
 app.get('/createtx', auth, Limiter, sTXController.getsend);
 app.post('/simplesend', Limiter, sTXController.postcreate);

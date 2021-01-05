@@ -67,6 +67,33 @@ block content
             input(type='hidden' name='_csrf' value=csrftoken)
             input.toggle2fa(type='checkbox', onclick='twofatoggle()')
             #2fabox(style='display:none;padding: 30px;max-width: 500px;background-color: #1b1b1b;box-shadow: 0px 0px 0px 2px #00000070;border-radius: 15px;margin: 15px;')
+            br
+          .divider(style='border-top:1px solid #111;')
+          p
+            h1(style='margin-top: 0px !important;font-size:50px !important;color: #a1a1a1;') KRONOS U2F DEVICES
+          .divider(style='border-top:1px solid #111;')
+          p
+            br
+            if (u2fdevices != '')
+              each u2f in u2fdevices
+                p
+                  .row.devices(id=u2f.name, value=u2f.name)
+                    .col-md-8
+                      .usb(style='margin-top:3px;margin-bottom:10px;')
+                        i.fab.fa-usb             
+                        |  #{(u2f.name).toUpperCase()}
+                        img(src='../img/yubikeyicon.svg', style='max-height: 22px; display: inline-block;border:0;')
+                    .col-md-4
+                      input(type='hidden' name='_csrf' value=csrftoken)
+                      button.kbtn.red.removedevice(style='margin-top: 15px !important;text-shadow: 0px 1px 0px #565656; padding: 5px !important; padding-top: 0px !important; padding-bottom: 0px !important;', onclick='removeDevice("'+u2f.id+'", "'+u2f.name+'")') X
+              button.kbtn.orange(onclick="location.href='/u2f';") 
+                i.fas.fa-plus 
+                |  Add a U2F Device
+            else
+              h2 No U2F Devices Added.
+              button.kbtn.orange(onclick="location.href='/u2f';") 
+                i.fas.fa-plus 
+                |  Add a U2F Device
           .divider(style='border-top:1px solid #111;margin-top:333px !important;')
           p
             h1(style='margin-top: 0px !important;font-size:50px !important;color: #a1a1a1;') CREDITS

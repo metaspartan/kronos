@@ -42,6 +42,8 @@ const randomstring = require("randomstring");
 const Storage = require('json-storage-fs');
 const ethers = require('ethers');
 const speakeasy = require('speakeasy');
+const yub = require('yubikey-client');
+const { forEach } = require('lodash');
 
 var currentOS = os.platform(); 
 
@@ -127,6 +129,9 @@ const changeEndianness = (string) => {
     }
     return result.join('');
 }
+ 
+// Initialise the Yub Yubikey U2F library
+yub.init("60504", "nVVPQrJq2geFg3HQPpt5VLbF1RA=");
 
 /**
  * GET /login
@@ -160,7 +165,8 @@ exports.login = (req, res) => {
 			} else {
 			  
 			  var twofaenable = Storage.get('2fa');
-			  res.render('login', {title: 'Kronos Login', twofaenable: twofaenable});
+			  var u2fdevices = Storage.get("u2fdevices");
+			  res.render('login', {title: 'Kronos Login', twofaenable: twofaenable, u2fdevices: u2fdevices});
 	
 			}
 		});
@@ -713,7 +719,9 @@ exports.postlogin = (request, response) => {
 	var username = request.body.PPU1;
 	var password = request.body.PPP1;
 	var twofatoken = request.body.FA;
+	var otptoken = request.body.OTP;
 	var twofaenable = Storage.get('2fa');
+	var u2fdevices = Storage.get("u2fdevices");
 	
 	if (username && password) {
 
@@ -734,6 +742,45 @@ exports.postlogin = (request, response) => {
 						//If it does exist
 						var decryptedpass = decrypt(value);
 						if (twofaenable == 'true') {
+							if (u2fdevices != '') {
+								// Verify that the user token matches what it should at this moment
+								yub.verify(otptoken, function(err, data) {
+									//console.log("Your Device Array: ", u2fdevices);
+									//var devicecount = u2fdevices.length;
+									let filterarray = u2fdevices.filter(function (item) {
+										if (decrypt(item.id) == data.identity) {
+											console.log('2FA Enabled w Found matched Device IDs');
+											return true;
+										}											
+										console.log('2FA Enabled w No matched Device IDs');
+										return false;
+									});
+									if (data.valid == true && filterarray != '') {									
+										if (request.body && (username == decrypteduser) && (password == decryptedpass)) {
+											request.session.loggedin = true;
+											request.session.username = username;
+											request.toastr.success('Logged into Kronos', 'Success!', { positionClass: 'toast-bottom-left' });
+			
+											if (Storage.get('mode') == 'simple') {
+												//Storage.set('mode', 'simple');
+												response.redirect('/dashsimple');
+												response.end();
+											} else if (Storage.get('mode') == 'advanced') {
+												response.redirect('/');
+												response.end();
+											}
+										} else {
+											request.toastr.error('Incorrect Username and/or Password!', 'Error!', { positionClass: 'toast-bottom-left' });
+											response.redirect('/login');
+											response.end();
+										}
+									} else {
+										request.toastr.error('2FA OTP Device Token Invalid!', 'Error!', { positionClass: 'toast-bottom-left' });
+										response.redirect('/login');
+										response.end();
+									}
+								});																
+							}
 							if (twofatoken) {
 								var secretkey = Storage.get('2fasecretkey');
 								// Verify that the user token matches what it should at this moment
@@ -742,63 +789,108 @@ exports.postlogin = (request, response) => {
 									encoding: 'base32',
 									token: twofatoken
 								});
-								if (verified == true) {
-									if (request.body && (username == decrypteduser) && (password == decryptedpass)) {
-										request.session.loggedin = true;
-										request.session.username = username;
-										request.toastr.success('Logged into Kronos', 'Success!', { positionClass: 'toast-bottom-left' });
-		
-										if (Storage.get('mode') == 'simple') {
-											//Storage.set('mode', 'simple');
-											response.redirect('/dashsimple');
-											response.end();
-										} else if (Storage.get('mode') == 'advanced') {
-											response.redirect('/');
+									if (verified == true) {
+										if (request.body && (username == decrypteduser) && (password == decryptedpass)) {
+											request.session.loggedin = true;
+											request.session.username = username;
+											request.toastr.success('Logged into Kronos', 'Success!', { positionClass: 'toast-bottom-left' });
+			
+											if (Storage.get('mode') == 'simple') {
+												//Storage.set('mode', 'simple');
+												response.redirect('/dashsimple');
+												response.end();
+											} else if (Storage.get('mode') == 'advanced') {
+												response.redirect('/');
+												response.end();
+											}
+										} else {
+											//response.send('Incorrect Username and/or Password!');
+											//request.flash('success', { msg: 'TEST' });
+											request.toastr.error('Incorrect Username and/or Password!', 'Error!', { positionClass: 'toast-bottom-left' });
+											response.redirect('/login');
 											response.end();
 										}
 									} else {
-										//response.send('Incorrect Username and/or Password!');
-										//request.flash('success', { msg: 'TEST' });
-										request.toastr.error('Incorrect Username and/or Password!', 'Error!', { positionClass: 'toast-bottom-left' });
+										request.toastr.error('Incorrect 2FA Token!', 'Error!', { positionClass: 'toast-bottom-left' });
 										response.redirect('/login');
 										response.end();
 									}
-								} else {
-									request.toastr.error('Incorrect 2FA Token!', 'Error!', { positionClass: 'toast-bottom-left' });
-									response.redirect('/login');
-									response.end();
-								}
 							} else {
 								request.toastr.error('You must enter a 2FA Token!', 'Error!', { positionClass: 'toast-bottom-left' });
 								response.redirect('/login');
 								response.end();
 							}
 						} else {
-							if (request.body && (username == decrypteduser) && (password == decryptedpass)) {
-								request.session.loggedin = true;
-								request.session.username = username;
-								request.toastr.success('Logged into Kronos', 'Success!', { positionClass: 'toast-bottom-left' });
+							if (u2fdevices != '') {
+								// Verify that the user token matches what it should at this moment
+								yub.verify(otptoken, function(err, data) {
+									//console.log("Your Device Array: ", u2fdevices);
+									//var devicecount = u2fdevices.length;
+									let filterarray = u2fdevices.filter(function (item) {
+										if (decrypt(item.id) == data.identity) {
+											console.log('Found matched Device IDs');
+											return true;
+										}											
+										console.log('No matched Device IDs');
+										return false;
+									});
+									//console.log(filterarray);
+									if (filterarray != '') {
+										if (data.valid == true) {									
+											if (request.body && (username == decrypteduser) && (password == decryptedpass)) {
+												request.session.loggedin = true;
+												request.session.username = username;
+												request.toastr.success('Logged into Kronos', 'Success!', { positionClass: 'toast-bottom-left' });
+				
+												if (Storage.get('mode') == 'simple') {
+													//Storage.set('mode', 'simple');
+													response.redirect('/dashsimple');
+													response.end();
+												} else if (Storage.get('mode') == 'advanced') {
+													response.redirect('/');
+													response.end();
+												}
+											} else {
+												request.toastr.error('Incorrect Username and/or Password!', 'Error!', { positionClass: 'toast-bottom-left' });
+												response.redirect('/login');
+												response.end();
+											}
+										} else {
+											request.toastr.error('OTP Token Invalid!', 'Error!', { positionClass: 'toast-bottom-left' });
+											response.redirect('/login');
+											response.end();
+										}
+									} else {
+										request.toastr.error('OTP Device Token Invalid!', 'Error!', { positionClass: 'toast-bottom-left' });
+										response.redirect('/login');
+										response.end();
+									}
+								});																
+							} else {
+								if (request.body && (username == decrypteduser) && (password == decryptedpass)) {
+									request.session.loggedin = true;
+									request.session.username = username;
+									request.toastr.success('Logged into Kronos', 'Success!', { positionClass: 'toast-bottom-left' });
 
-								if (Storage.get('mode') == 'simple') {
-									//Storage.set('mode', 'simple');
-									response.redirect('/dashsimple');
-									response.end();
-								} else if (Storage.get('mode') == 'advanced') {
-									response.redirect('/');
+									if (Storage.get('mode') == 'simple') {
+										//Storage.set('mode', 'simple');
+										response.redirect('/dashsimple');
+										response.end();
+									} else if (Storage.get('mode') == 'advanced') {
+										response.redirect('/');
+										response.end();
+									}
+								} else {
+									//response.send('Incorrect Username and/or Password!');
+									//request.flash('success', { msg: 'TEST' });
+									request.toastr.error('Incorrect Username and/or Password!', 'Error!', { positionClass: 'toast-bottom-left' });
+									response.redirect('/login');
 									response.end();
 								}
-							} else {
-								//response.send('Incorrect Username and/or Password!');
-								//request.flash('success', { msg: 'TEST' });
-								request.toastr.error('Incorrect Username and/or Password!', 'Error!', { positionClass: 'toast-bottom-left' });
-								response.redirect('/login');
-								response.end();
 							}
-						}
+						}				
 					}
-
-				});
-	
+				});	
 			}
 		});
 	
@@ -1637,5 +1729,128 @@ exports.twofavalidate = (request, response) => {
 		return response.send('2FA Setup!');
 	} else {
 		return response.send('Invalid 2FA Token!');
+	}
+};
+
+//Post U2F Device Removal
+exports.u2fremove = (request, response) => {
+	var devicearray = Storage.get("u2fdevices");
+	let filteredarray = [];
+	var u2fdevice = request.body.DEVICEID;
+
+	console.log('Request to remove U2F: ', u2fdevice);
+
+	for (var device in devicearray) {
+		//console.log(devicearray[device].id);
+		if (decrypt(devicearray[device].id) === decrypt(u2fdevice)) {
+			//console.log(devicearray[device]);
+			delete devicearray[device];
+			break;
+		}
+	}
+
+	function filter_array(array) {
+		var index = -1,
+			arr_length = array ? array.length : 0,
+			resIndex = -1,
+			result = [];
+	
+		while (++index < arr_length) {
+			var value = array[index];	
+			if (value) {
+				result[++resIndex] = value;
+			}
+		}	
+		return result;
+	}
+
+	//console.log(devicearray);
+	//console.log(filter_array(devicearray));
+	Storage.set("u2fdevices", filter_array(devicearray));
+	return response.send('Removed U2F Device!');
+};
+
+//GET U2F Setup
+exports.u2fsetup = (req, res) => {
+
+	var username = decrypt(Storage.get('username'));
+
+	res.render('simple/u2f', {
+        title: 'U2F Device Setup', username: username
+    });
+};
+
+/**
+ * POST /u2fadd
+ * Kronos U2F Device Adding
+ */
+exports.u2fadd = (request, response) => {
+	var devicename = request.body.U2FNAME;
+	var otp = request.body.OTP;
+
+	var devicearray = [];
+
+	if (typeof Storage.get("u2fdevices") == 'undefined') {
+		//devicearray = [];
+	} else {
+		devicearray = Storage.get("u2fdevices");
+	}
+	
+	if (devicename && otp) {
+
+		if (request.body) {
+
+			let filterarray2 = devicearray.filter(function (item) {
+				if (item.name.toUpperCase() == devicename.toUpperCase()) {
+					//console.log('Found matched Device Names');
+					return true;
+				}
+				//console.log('No matched Device Names');
+				return false;
+			});
+			//console.log(filterarray2);
+			if (filterarray2 == false) {
+				// Attempt to verify their U2F key
+				yub.verify(otp, function(err, data) {
+					//console.log(err, data);
+					//console.log("The Device Array: ", devicearray);
+					let filterarray = devicearray.filter(function (item) {
+						if (decrypt(item.id) == data.identity) {
+							//console.log('Found matched Device IDs');
+							return true;
+						}
+						//console.log('No matched Device IDs');
+						return false;
+					});
+					if (data.valid == true && filterarray == false) {
+
+						devicearray.push({name: devicename, id: encrypt(data.identity)});
+						//console.log("The Device Array Saving: ", devicearray);
+						Storage.set("u2fdevices", devicearray);
+
+						request.toastr.success('Added U2F Device Successfully!', 'Success!', { positionClass: 'toast-bottom-left' });
+						response.redirect('/core');
+						response.end();
+					} else {
+						request.toastr.error('U2F Device Adding Failed!', 'Error!', { positionClass: 'toast-bottom-left' });
+						response.redirect('/u2f');
+						response.end();
+					}	
+				});
+			} else {
+				request.toastr.error('Device Name already used!', 'Error!', { positionClass: 'toast-bottom-left' });
+				response.redirect('/u2f');
+				response.end();
+			}
+		} else {
+			request.toastr.error('Invalid Request!', 'Error!', { positionClass: 'toast-bottom-left' });
+			response.redirect('/u2f');
+			response.end();
+		}
+	
+	} else {
+		request.toastr.error('Please enter a device name and press the button on your device!', 'Error!', { positionClass: 'toast-bottom-left' });
+		response.redirect('/u2f');
+		response.end();
 	}
 };

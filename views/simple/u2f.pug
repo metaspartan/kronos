@@ -1,10 +1,10 @@
-//- loginPage.pug
+//- u2f.pug
 
 doctype html
 html(dir="ltr", lang="en-US")
 	head
 		meta(http-equiv="content-type", content="text/html; charset=utf-8")
-		meta(name="author", content="Kronos Auth")
+		meta(name="author", content="Kronos U2F")
 		link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/css/toastr.min.css')
 		style.
 			/* style.css */	
@@ -114,32 +114,29 @@ html(dir="ltr", lang="en-US")
 			margin-bottom: 0px;
 			}
 	body
-		#toggle2fa(data-value=twofaenable)
-		.container(style='margin-top:100px !important;margin:0;padding:0;', align='center')
-			img(src="https://user-images.githubusercontent.com/10162347/93844293-ed323180-fc59-11ea-9331-9f8ac37f797c.png", height="240px", width="240px", align="center")
+		.container(style='margin-top:50px !important;margin:0;padding:0;', align='center')
+			img(src="https://user-images.githubusercontent.com/10162347/93844293-ed323180-fc59-11ea-9331-9f8ac37f797c.png", height="200px", width="200px", align="center")
 		.container(style='margin-top:20px !important;margin:0;padding:0;', align='center')
-			form(action="/login" method="post")
+			form(action="/u2fadd" method="post")
 				.form-content
-					input(type='hidden' name='_csrf' value=csrftoken)
-					input(type="text" id="PPU1" name="PPU1" placeholder="username" autofocus)
-					input(type="password" id="PPP1" name="PPP1" placeholder="password")
-					input(type="password" id="FA" name="FA" placeholder="2FA Token")
-					if (u2fdevices != '')
-						input(type="password" id="OTP" name="OTP" placeholder="OTP Device Token")
+					span(style='color:#ccc;')
+						| Kronos U2F Device Setup
 					br
-					input.button(style='background-color: #444;', type="submit" value="Login") 
-				br
-				span(style='color:#777;')
-					| Version: v1.9.6-Beta
+					span(style='color:#777;font-size:13px;')
+						| Enter in a device name, select the second input field, plug in your U2F device and press the button on the device
+					img(src='../img/yubikeygrey.svg', style='max-height:50px;margin-top:15px;')
+					br
+					br
+					input(type='hidden' name='_csrf' value=csrftoken)
+					input(type="text" id="U2FNAME" name="U2FNAME" maxlength="10" placeholder="name your device" autofocus)
+					input(type="password" id="OTP" name="OTP" placeholder="press button on device")
+					br
+					input.button(style='background-color: #444;', type="submit" value="Add Device") 
+		span(style='color:#333;bottom:35px;left:15px;position:absolute;')
+			a(onclick='window.history.back()', style='color:#666;cursor: pointer;')
+					i.fas.fa-arrow-left.fa-3x
 		script(src='/js/lib/jquery-3.1.1.min.js')
 		script(src='//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/js/toastr.min.js')
 		script(src='//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/js/all.min.js')
-		script.
-			var toggle2fa = document.getElementById("toggle2fa").getAttribute("data-value");			
-			if (toggle2fa == 'true') {
-				$("#FA").show();
-			} else {
-				$("#FA").hide();
-			}
 
 		!=toasts

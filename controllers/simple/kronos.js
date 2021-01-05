@@ -45,7 +45,6 @@ const ethers = require('ethers');
 const { triggerAsyncId } = require('async_hooks');
 const ThreeBox = require('3box');
 const IdentityWallet = require('identity-wallet');
-const prompt = require('async-prompt');
 
 var currentOS = os.platform(); 
 
@@ -119,12 +118,14 @@ exports.getcoresettings = (req, res) => {
     var totalaribal = Storage.get('totalaribal');
     var ethaddress = Storage.get('ethaddy');
     var twofaenable = Storage.get('2fa');
+    var u2fdevices = Storage.get("u2fdevices");
 
     res.render('simple/settings', {
         totalethbal: totalethbal,
         twofaenable: twofaenable,
         totalbal: totalbal,
         totalaribal: totalaribal,
+        u2fdevices: u2fdevices,
         ethaddress: ethaddress
     });
 };

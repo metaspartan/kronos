@@ -622,6 +622,15 @@ footer {
   border: none!important;
 }
 
+.devices {
+  background-color: #111;
+  padding: 10px;
+  font-size: 21px;
+  border-radius: 15px;
+  width: 350px;
+  margin:10px;
+}
+
 #addImage {
   position: absolute;
   width: 36px;
