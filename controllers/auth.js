@@ -95,6 +95,11 @@ if (typeof Storage.get('rpchost') == 'undefined') {
 	Storage.set('rpcpass', 'null');
 }
 
+if (typeof Storage.get("u2fdevices") == 'undefined') {
+	Storage.set("u2fdevices", []);
+	//devicearray = [];
+}
+
 //Connect to our D node 
 //process.env.DUSER
 // const client = new bitcoin.Client({
@@ -1791,6 +1796,7 @@ exports.u2fadd = (request, response) => {
 	var devicearray = [];
 
 	if (typeof Storage.get("u2fdevices") == 'undefined') {
+		//Storage.set("u2fdevices", []);
 		//devicearray = [];
 	} else {
 		devicearray = Storage.get("u2fdevices");
