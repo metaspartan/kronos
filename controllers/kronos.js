@@ -89,21 +89,21 @@ if (typeof Storage.get('rpchost') == 'undefined') {
 	Storage.set('rpcpass', 'null');
 }
 
-//Connect to our D node 
-//process.env.DUSER
-const client = new bitcoin.Client({
-	host: decrypt(Storage.get('rpchost')),
-	port: decrypt(Storage.get('rpcport')),
-	user: decrypt(Storage.get('rpcuser')),
-	pass: decrypt(Storage.get('rpcpass')),
-	timeout: 30000
-});
-
 //Unlock Wallet
 exports.unlock = (req, res, next) => {
   var password = req.body.password;
   //var sendtoaddress = req.body.sendaddress;
   //var amount = req.body.amount;
+
+  	//Connect to our D node 
+	//process.env.DUSER
+	const client = new bitcoin.Client({
+		host: decrypt(Storage.get('rpchost')),
+		port: decrypt(Storage.get('rpcport')),
+		user: decrypt(Storage.get('rpcuser')),
+		pass: decrypt(Storage.get('rpcpass')),
+		timeout: 30000
+	});
 
   client.walletPassphrase(`${password}`, 9999999, function (error, unlocked, resHeaders) {
 	//if (error) return console.log(error);
@@ -126,6 +126,16 @@ exports.unlockstaking = (req, res, next) => {
 	var password = req.body.password;
 	//var sendtoaddress = req.body.sendaddress;
 	//var amount = req.body.amount;
+
+	//Connect to our D node 
+	//process.env.DUSER
+	const client = new bitcoin.Client({
+		host: decrypt(Storage.get('rpchost')),
+		port: decrypt(Storage.get('rpcport')),
+		user: decrypt(Storage.get('rpcuser')),
+		pass: decrypt(Storage.get('rpcpass')),
+		timeout: 30000
+	});
   
 	client.walletPassphrase(`${password}`, 9999999, true, function (error, unlocked, resHeaders) {
 	  //if (error) return console.log(error);
@@ -148,6 +158,16 @@ exports.lock = (req, res, next) => {
 	//var password = req.body.password;
 	//var sendtoaddress = req.body.sendaddress;
 	//var amount = req.body.amount;
+
+	//Connect to our D node 
+	//process.env.DUSER
+	const client = new bitcoin.Client({
+		host: decrypt(Storage.get('rpchost')),
+		port: decrypt(Storage.get('rpcport')),
+		user: decrypt(Storage.get('rpcuser')),
+		pass: decrypt(Storage.get('rpcpass')),
+		timeout: 30000
+	});
   
 	client.walletLock(function (error, lock, resHeaders) {
 	  //if (error) return console.log(error);
@@ -173,6 +193,15 @@ exports.lock = (req, res, next) => {
 	//var amount = req.body.amount;
 
 	//req.assert('password2', 'Passwords do not match').equals(req.body.passphrase);
+	//Connect to our D node 
+	//process.env.DUSER
+	const client = new bitcoin.Client({
+		host: decrypt(Storage.get('rpchost')),
+		port: decrypt(Storage.get('rpcport')),
+		user: decrypt(Storage.get('rpcuser')),
+		pass: decrypt(Storage.get('rpcpass')),
+		timeout: 30000
+	});
 
 	if (password == password2) {
 		var passworded = password;
@@ -227,6 +256,16 @@ exports.lock = (req, res, next) => {
 	//var sendtoaddress = req.body.sendaddress;
 	//var amount = req.body.amount;
 
+	//Connect to our D node 
+	//process.env.DUSER
+	const client = new bitcoin.Client({
+		host: decrypt(Storage.get('rpchost')),
+		port: decrypt(Storage.get('rpcport')),
+		user: decrypt(Storage.get('rpcuser')),
+		pass: decrypt(Storage.get('rpcpass')),
+		timeout: 30000
+	});
+
 	var valid = WAValidator.validate(`${addi}`, 'DNR'); //Need to update to D still
 
 	if (valid) {
@@ -274,30 +313,6 @@ res.send('Got your notify!');
 next();
 
 };
-
-// //Get Kronos Chat
-// exports.getchat = (req, res) => {
-
-//     const ip = require('ip');
-//     const ipaddy = ip.address();
-  
-//     res.locals.lanip = ipaddy;
-
-//     var totalethbal = Storage.get('totaleth');
-//     var totalbal = Storage.get('totalbal');
-//     var totalaribal = Storage.get('totalaribal');
-//     //var ethaddress = Storage.get('ethaddy');
-//     var mainaddress = Storage.get('mainaddress');
-
-//     res.render('simple/chat', {
-//         totalethbal: totalethbal,
-//         totalbal: totalbal,
-//         totalaribal: totalaribal,
-//         ethaddress: ethaddress,
-//         mainaddress: mainaddress
-//     });
-
-// };
 
 // GET Kronos Chat for Advanced Mode
 exports.getchat = (req, res) => {
