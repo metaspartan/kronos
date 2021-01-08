@@ -58,6 +58,9 @@ const rateLimit = require("express-rate-limit");
 const randomstring = require("randomstring");
 const Storage = require('json-storage-fs');
 const mkdirp = require('mkdirp');
+const getCerts = require(path.resolve(__dirname, "certs.js")).getCerts;
+
+const ipaddy = ip.address();
 
 const crypto = require('crypto')
 const Swarm = require('discovery-swarm')
@@ -331,9 +334,17 @@ const explorerController = require('./controllers/explorer');
 /**
  * Create Express server.
  */
-const app = express();
+// const httpsLocalhost = require("https-localhost")(); //Locally Trusted HTTPS
 
-const server = require('http').Server(app);
+const app = express();
+//const app = require("https-localhost")();
+
+//const server = require('http').Server(app);
+// const app = ...
+// const port = 443
+const certs = app.getCerts = getCerts(ipaddy);
+const server = require('https').createServer(certs, app);
+
 //const httpsserver = require('https').createServer(credentials, app);
 const io = require('socket.io')(server);
 //const iohttps = require('socket.io')(httpsserver);
@@ -715,7 +726,7 @@ app.use(errorHandler());
 app.listen(port, '0.0.0.0', () => {
   var tri = tribus.digest('Denarius');
   console.log('Tribus Hash of "Denarius"', tri);
-  console.log('Kronos Interface is running at http://' + ip.address() + ':%d', '3000', app.get('env'));
+  console.log('Kronos Interface is running at https://' + ip.address() + ':%d', '3000', app.get('env'));
   console.log('Open the URL above in your web browser on your local network to start using the browser version of Kronos!\n');
 });
 
