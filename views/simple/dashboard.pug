@@ -1,4 +1,4 @@
-extends ../layoutsimple
+extends ../layoutcore
 
 block content
   style.
@@ -110,17 +110,18 @@ block content
                             th TXID
                         tbody
                           each tx in btctxs
-                            tr
-                              td(align='center', data-label='Type') 
-                                | TX
-                              td(align='center', data-label='BTC Block Height') 
-                                a.txid(href='https://chainz.cryptoid.info/btc/tx.dws?'+tx.transactionBlock, target='_blank') #{tx.transactionBlock}
-                              td(align='center', data-label='Timestamp') 
-                                .date= new Date(tx.transactionHex.time*1000).toUTCString().replace('GMT','')
-                              td(align='center', data-label='Confirmations') 
-                                | #{tx.transactionHex.confirmations}
-                              td(align='center', data-label='TXID') 
-                                a.txid(href='https://chainz.cryptoid.info/btc/tx.dws?'+tx.transactionHex.txid, target='_blank') #{tx.transactionHex.txid}
+                            if (tx.transactionBlock > 0)
+                              tr
+                                td(align='center', data-label='Type') 
+                                  | TX
+                                td(align='center', data-label='BTC Block Height') 
+                                  a.txid(href='https://chainz.cryptoid.info/btc/tx.dws?'+tx.transactionBlock, target='_blank') #{tx.transactionBlock}
+                                td(align='center', data-label='Timestamp') 
+                                  .date= new Date(tx.transactionHex.time*1000).toUTCString().replace('GMT','')
+                                td(align='center', data-label='Confirmations') 
+                                  | #{tx.transactionHex.confirmations}
+                                td(align='center', data-label='TXID') 
+                                  a.txid(href='https://chainz.cryptoid.info/btc/tx.dws?'+tx.transactionHex.txid, target='_blank') #{tx.transactionHex.txid}
                           each tx in btcmemtxs
                             tr
                               td(align='center', data-label='Type') 
@@ -128,9 +129,9 @@ block content
                               td(align='center', data-label='BTC Block Height') 
                                 a.txid(href='https://chainz.cryptoid.info/btc/tx.dws?'+tx.transactionBlock, target='_blank') MEM #{tx.transactionBlock}
                               td(align='center', data-label='Timestamp') 
-                                .date= new Date(tx.transactionHex.time*1000).toUTCString().replace('GMT','')
+                                .date Waiting
                               td(align='center', data-label='Confirmations') 
-                                | #{tx.transactionHex.confirmations}
+                                | Mempool
                               td(align='center', data-label='TXID') 
                                 a.txid(href='https://chainz.cryptoid.info/btc/tx.dws?'+tx.transactionHex.txid, target='_blank') #{tx.transactionHex.txid}
                 else

@@ -1735,7 +1735,7 @@ exports.getSimpleSeed = (req, res) => {
         };
   
         // A for loop for how many addresses we want from the derivation path of the seed phrase
-        for (let i = 0; i < 1; i++) { //1 (21 = 20 addresses)
+        for (let i = 0; i < 4; i++) { //1 (21 = 20 addresses)
   
           //Get 10 Addresses from the derived mnemonic
           const addressPath = `m/44'/116'/0'/0/${i}`;
@@ -1753,10 +1753,10 @@ exports.getSimpleSeed = (req, res) => {
         }
 
         // A for loop for how many addresses we want from the derivation path of the seed phrase
-        for (let i = 0; i < 1; i++) { //1 (21 = 20 addresses)
+        for (let i = 0; i < 4; i++) { //1 (21 = 20 addresses)
 
             //Get 10 Addresses from the derived mnemonic
-            const btcaddressPath = `m/44'/0'/0'/0/${i}`;
+            const btcaddressPath = `m/49'/0'/0'/0/${i}`;
     
             // Get the keypair from the address derivation path
             const btcaddressKeypair = rootbtc.derivePath(btcaddressPath);

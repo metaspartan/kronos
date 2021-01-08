@@ -552,7 +552,7 @@ exports.simpleindex = (req, res) => {
         //Get 1 Address from the derived mnemonic
         const addressPath0 = `m/44'/116'/0'/0/0`;
 
-        const btcaddressPath0 = `m/44'/0'/0'/0/0`;
+        const btcaddressPath0 = `m/49'/0'/0'/0/0`; //const btcaddressPath0 = `m/44'/0'/0'/0/0`; Previous deriviation
 
         // Get the keypair from the address derivation path
         const addressKeypair0 = root.derivePath(addressPath0);

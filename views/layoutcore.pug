@@ -1,0 +1,335 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    meta(name='theme-color' content='#4DA5F4')
+    title #{title} - Kronos
+    link(rel='shortcut icon', href='/img/klogo.png')
+    link(rel='stylesheet', href='/css/main.css')
+    link(rel='stylesheet', href='/css/kronos.css')
+    link(rel='stylesheet', href='/css/lib/bootstrap-toggle.min.css')
+    link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/css/toastr.min.css')
+    link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css')
+    link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css')
+    link(rel='stylesheet', href='/css/loading-bar.min.css')
+    link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css')
+    link(rel='stylesheet', href='//cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css')
+
+  body
+    script.
+      function reboot() {
+        document.getElementById("submitrb").style.display='none';
+        document.getElementById("rebooter").innerHTML = 'Attempting to reboot your node...Please wait 4 minutes...';
+        $('#sendreboot').submit();
+      }
+    include partials/headersimple
+
+    include partials/flash
+    block content
+
+    //- include partials/footer
+
+    script(src='//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js')
+    script(src='//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/js/toastr.min.js')
+    script(src='//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/js/all.min.js')
+    script(src='/js/lib/bootstrap.min.js')
+    script(src='/js/lib/bootstrap-toggle.min.js')
+    script(src='/js/progressbar.min.js')
+    script(src='/js/sorttable.js')
+    script(src='/js/pace.min.js')
+    script(src='/js/loading-bar.min.js')
+    script.
+      var ethaddy = document.getElementById("ethaccount").getAttribute("data-value");
+      Box.getProfile(ethaddy).then(profile => {
+        console.log(profile);
+        var profileimage;
+
+        if (typeof profile.image == 'undefined') {
+            profileimage = profile.image;
+            //console.log(profileimage);
+            var boximage = '';
+            if (typeof profileimage == 'undefined') {
+                boximage = '../img/avatar.png'; //IPFS Default Avatar Hash (https://ipfs.denarius.io/ipfs/QmaaXanRmNVdLRLscPR4NGhbdBh3EMnkc4HEbAL1VkEJRw)
+            } else {
+                profileimage = profile.image[0].contentUrl['/'];
+                boximage = 'https://cloudflare-ipfs.com/ipfs/' + profileimage;
+            }
+            //console.log(boximage);
+
+            $("#threebox").html('<img src="'+boximage+'" border="0" class="res threebox"/>');
+            $("#threebox").val(boximage);
+            document.getElementById("threebox").setAttribute("data-value", boximage);
+            //- $("#profileavatar").html('<img src="'+boximage+'" border="0" class="res profilebox"/>');
+            //- $("#AVATAR").val(boximage);
+            //document.getElementById("profileavatar").setAttribute("data-value", boximage);
+
+        } else {
+            profileimage = profile.image[0].contentUrl['/'];
+            //console.log(profileimage);
+            var boximage = '';
+            if (typeof profileimage == 'undefined') {
+                boximage = '../img/avatar.png'; //IPFS Default Avatar Hash
+            } else {
+                profileimage = profile.image[0].contentUrl['/'];
+                boximage = 'https://cloudflare-ipfs.com/ipfs/' + profileimage;
+            }
+            //console.log(boximage);
+
+            $("#threebox").html('<img src="'+boximage+'" border="0" class="res threebox"/>');
+            $("#threebox").val(boximage);
+            document.getElementById("threebox").setAttribute("data-value", boximage);
+            //- $("#profileavatar").html('<img src="'+boximage+'" border="0" class="res profilebox"/>');
+            //- $("#AVATAR").val(boximage);
+            //document.getElementById("profileavatar").setAttribute("data-value", boximage);
+        }
+
+        //- if (typeof profile.description == 'undefined') {
+        //-   //$('#biobox').val('No profile description set');
+        //- } else {
+        //-   $('#BIOBOX').val(profile.description);
+        //- }
+
+        //- if (typeof profile.website == 'undefined') {
+        //-   //$('#webbox').val('No website set');
+        //- } else {
+        //-   $('#WEBBOX').val(profile.website);
+        //- }
+
+        //- if (typeof profile.emoji == 'undefined') {
+        //-   //$('#emojitrigger').text('Set an 👾');
+        //- } else {
+        //-   $('#EMOJITRIGGER').text(profile.emoji);
+        //-   $('#EMOJITRIGGER').val(profile.emoji);
+        //-   $('#EMOJI').val(profile.emoji);
+        //- }
+
+        //- if (typeof profile.name == 'undefined') {
+        //-   //$('#namebox').val('Set a name');
+        //- } else {
+        //-   $('#NAMEBOX').val(profile.name);
+        //- }
+
+      });
+
+      //- const audiofile = new Audio("../ding.wav");
+
+      //- window.Buffer = buffer.Buffer;
+      //- var onLoad;
+      //- var buf;
+
+      //- //IPFS Init with Infura
+      //- var ipfs = window.IpfsHttpClient({
+      //-   host: 'ipfs.infura.io',
+      //-   port: 5001,
+      //-   protocol: 'https'
+      //- });
+
+      //- const reader = new FileReader();
+
+      //- var progressIPFS = $("#progress");
+
+      //- var loadFile = function(event) {
+      //-   console.log('Uploading avatar!');
+
+      //-   const reader = new FileReader();
+      //-   reader.onload = function() {
+      //-     //console.log('onLoad Ready!');            
+      //-     onLoad = reader
+      //-     buf = new Buffer(reader.result);
+      //-     //console.log(buf);
+      //-     sendIpfs();
+      //-   };
+
+      //-   const file = document.getElementById("fileInput");
+      //-   reader.readAsArrayBuffer(file.files[0]);
+
+      //- };
+
+      //- progressCall = function(data){
+      //-   var totalsize = buf.length;
+      //-   progressIPFS.html("Upload Progress: <strong>"+(data / 1000000).toFixed(2)+" MB</strong> out of <strong>"+(totalsize / 1000000).toFixed(2)+" MB</strong>");
+      //- }
+
+      //- async function sendIpfs() {
+
+      //-   progressIPFS.show();
+
+      //-   var start = new Date();
+      //-   //console.log("Time: ", start);    
+
+      //-   const options = {
+      //-     EXPERIMENTAL: {
+      //-       pubsub: true,
+      //-       namesys: true
+      //-     },
+      //-     // repo: 'ipfs-' + Math.random(),
+      //-     config: {
+      //-       Addresses: {
+      //-         //Swarm: ['/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star']
+      //-         Swarm: [
+      //-           "/ip4/0.0.0.0/tcp/4002",
+      //-           "/ip4/127.0.0.1/tcp/4003/ws"
+      //-           // "/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star"
+      //-         ],
+      //-         API: "/ip4/127.0.0.1/tcp/5001",
+      //-         Gateway: "/ip4/127.0.0.1/tcp/9090"
+      //-       }
+      //-     }
+      //-   }
+
+      //-   const results = await ipfs.add([{
+      //-     path: 'kronos',
+      //-     content: buf,
+      //-   }], {
+      //-     recursive: true,
+      //-     progress: progressCall
+      //-   })
+
+      //-   //console.log(results);
+      //-   var end = new Date();
+      //-   //console.log('Time To Upload: ', (end - start) / 1000, 'File Size:', buf.length / 1000, 'KB')
+        
+      //-   var timeu = (end - start) / 1000
+      //-   var filesizing = buf.length / 1000
+
+      //-   const hash = results.cid.string;
+      //-   //console.log(results.cid.string);
+        
+      //-   $.getJSON("https://ipfs.infura.io:5001/api/v0/pin/add?arg=/ipfs/"+hash, function( data ) {
+            
+      //-         if (data.Pins) {
+      //-           console.log('Pinned Succesfully!');
+      //-           //$('#pinned').html('File Pinned to IPFS Successfully!');
+      //-         } else {
+      //-           //$('#pinned').html('Warning: File was not pinned. Try again!');
+      //-         }
+
+      //-         //console.log(data.Pins);
+      //-   });
+      //-   $("#profileavatar").html('<img src="https://ipfs.denarius.io/ipfs/'+hash+'" border="0" class="res profilebox"/>');
+      //-   $('#AVATAR').val('https://ipfs.denarius.io/ipfs/'+hash);
+      //-   progressIPFS.hide();
+      //-   audiofile.play();
+      //- }
+    script.
+      var tabs = $('.tabs');
+      var selector = $('.tabs').find('a').length;
+      //var selector = $(".tabs").find(".selector");
+      var activeItem = tabs.find('.active');
+      var activeWidth = activeItem.innerWidth();
+      $('#tab2').hide();
+      $(".selector").css({
+        "left": activeItem.position.left + "px", 
+        "width": activeWidth + "px"
+      });
+
+      $(".tabs").on("click","a",function(e){
+        e.preventDefault();
+        $('.tabs a').removeClass("active");
+        $(this).addClass('active');
+        var activeWidth = $(this).innerWidth();
+        var itemPos = $(this).position();
+        //- $('.selectord').toggle();
+        //- $('.selectorari').toggle();
+        //- $('.selectoreth').toggle();
+        $(".selector").css({
+          "left":itemPos.left + "px", 
+          "width": activeWidth + "px"
+        });
+      });
+      $(".tab1").on("click", function(){
+        $("#tab2").addClass('hide');
+        $("#tab1").fadeIn(1000);
+        $('#tab2').fadeOut(1000);
+      });
+
+      $(".tab2").on("click", function(){
+        $("#tab2").removeClass('hide');
+        $("#tab1").fadeOut();
+        $('#tab2').fadeIn(1000);
+      });
+      //- var toggle2fa = document.getElementById("toggle2fa").getAttribute("data-value");
+      //- var token = $('input[name="_csrf"]').attr('value');
+      //- if (toggle2fa == 'true') {
+      //-   $(".toggle2fa").prop("checked", true);
+      //- } else {
+      //-   $(".toggle2fa").prop("checked", false);
+      //- }
+      //- function twofatoggle() {
+      //-   $.ajaxSetup({
+      //-     beforeSend: function(xhr) {
+      //-         xhr.setRequestHeader('CSRF-Token', token);
+      //-     }
+      //-   });
+      //-   $.post("/2fa",
+      //-   {
+      //-     test: 'test'
+      //-   }, function(data) {
+      //-     $('#2fabox').show();
+      //-     $('#2fabox').html(data);
+      //-     //alert('Success! '+data);
+      //-   }).fail(function(err) {
+      //-     $('#2fabox').show();
+      //-     $('#2fabox').html(data);
+      //-     alert('Error! '+JSON.stringify(err));
+      //-   });
+      //- }
+      //- function removeDevice(deviceid, devicename) {
+      //-   $.ajaxSetup({
+      //-     beforeSend: function(xhr) {
+      //-         xhr.setRequestHeader('CSRF-Token', token);
+      //-     }
+      //-   });
+      //-   $.post("/u2fremove",
+      //-   {
+      //-     DEVICEID: deviceid
+      //-   }, function(data) {
+      //-     //$('#2fabox').show();
+      //-     //$('#2fabox').html(data);
+      //-     var devicesid = $('#'+devicename);
+      //-     devicesid.fadeOut(2000);
+      //-     alert('Success! '+data);
+      //-   }).fail(function(err) {
+      //-     //$('#2fabox').show();
+      //-     //$('#2fabox').html(data);
+      //-     alert('Error! '+JSON.stringify(err));
+      //-   });
+      //- }
+      //- function validatefa() {
+      //-   var inputtoken = $('input[name="FA"]').attr('value');
+      //-   if (inputtoken != '') {
+      //-     $.ajaxSetup({
+      //-       beforeSend: function(xhr) {
+      //-           xhr.setRequestHeader('CSRF-Token', token);
+      //-       }
+      //-     });
+      //-     $.post("/2favalid",
+      //-     {
+      //-       FA: inputtoken
+      //-     }, function(data) {
+      //-       //$('#2fabox').show();
+      //-       $('#2fabox').html(data);
+      //-       alert(data);
+      //-     }).fail(function(err) {
+      //-       //$('#2fabox').show();
+      //-       //$('#2fabox').html(data);
+      //-       alert('Error! '+JSON.stringify(err));
+      //-     });
+      //-   } else {
+      //-     alert('Error empty input!');
+      //-   }
+      //- }
+    //- script.
+    //-   window.nodeRequire = require;
+    //-   delete window.require;
+    //-   delete window.exports;
+    //-   delete window.module;
+    //-   $('body').on('click', 'a.external', (event) => {
+    //-     event.preventDefault();
+    //-     let link = event.target.href;
+    //-     require("electron").shell.openExternal(link);
+    //-   });
+
+    !=toasts
