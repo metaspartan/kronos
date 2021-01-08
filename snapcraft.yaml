@@ -26,11 +26,11 @@ plugs: # plugs for theming, font settings, cursor and to use gtk3 file chooser
  
 apps:
   kronosd:
-    command: bin/npm headless
+    command: bin/node -r esm ./bin/kronos
     plugs: [home, network, network-bind]
     daemon: forking
   headless:
-    command: bin/npm headless
+    command: bin/node -r esm ./bin/kronos
     plugs: [home, network, network-bind]
     environment:
       XDG_DATA_DIRS: $SNAP_USER_DATA:/var/lib/snapd/desktop:$XDG_DATA_DIRS

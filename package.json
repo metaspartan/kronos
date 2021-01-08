@@ -31,7 +31,6 @@
     "@metamask/detect-provider": "^1.1.0",
     "3box": "^1.22.2",
     "app-root-path": "^3.0.0",
-    "argon2": "^0.27.1",
     "bip32": "^2.0.6",
     "bip32d": "git://github.com/carsenk/bip32d.git",
     "bip39": "^3.0.2",

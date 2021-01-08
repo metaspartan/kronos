@@ -967,21 +967,6 @@ exports.simpleindex = (req, res) => {
             // const BUFFHASH1601 = Buffer.from(HASH1601, "hex");
             // const shaaddress1 = sha256(BUFFHASH1601);
 
-            // const changeEndianness = (string) => {
-            //         const result = [];
-            //         let len = string.length - 2;
-            //         while (len >= 0) {
-            //         result.push(string.substr(len, 2));
-            //         len -= 2;
-            //         }
-            //         return result.join('');
-            // }
-
-            //const scripthash = changeEndianness(shaaddress);
-            //const scripthashp2pk = changeEndianness(shaaddress1);
-
-            //End P2PKH and P2PK Scripthash calculations for Electrum and start Electrum
-
             const scripthasha = async () => {
                 // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
                 const electrum = new ElectrumCluster('Kronos Core Mode Balances', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
