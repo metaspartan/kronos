@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@metamask/detect-provider": "^1.1.0",
-    "3box": "^1.22.2",
+    "3box": "git://github.com/carsenk/3box-js.git",
     "app-root-path": "^3.0.0",
     "bip32": "^2.0.6",
     "bip32d": "git://github.com/carsenk/bip32d.git",
@@ -74,7 +74,6 @@
     "hotkeys-js": "^3.8.1",
     "identity-wallet": "^1.4.1",
     "ip": "^1.1.5",
-    "ipfs": "^0.52.3",
     "jquery": "^3.5.1",
     "json-storage-fs": "git://github.com/carsenk/json-storage-fs.git",
     "keymaster": "^1.6.2",
