@@ -43,7 +43,7 @@ const PromiseLoadingSpinner = require('promise-loading-spinner');
 const main = require('progressbar.js');
 const ethers = require('ethers');
 const { triggerAsyncId } = require('async_hooks');
-const ThreeBox = require('3box');
+//const ThreeBox = require('3box');
 const IdentityWallet = require('identity-wallet');
 
 var currentOS = os.platform(); 
@@ -223,14 +223,13 @@ exports.postprofile = (request, response) => {
 
                 console.log('3Box...Authenticating...');
 
-                const box = await ThreeBox.create();
+                //const box = await ThreeBox.create();
 
-                //const box = await ThreeBox.openBox(ethaddress, provider);
-                await box.auth(['3Box'], { ethaddress, provider });
+                //await box.auth(['3Box'], { ethaddress, provider });
 
                 console.log('Authenticated 3Box!');
 
-                await box.syncDone;
+                //await box.syncDone;
                 console.log('syncDone');
 
 
@@ -242,7 +241,7 @@ exports.postprofile = (request, response) => {
                 const fields = ['name', 'website', 'description', 'image', 'emoji'];
                 const values = [name, website, bio, avatar, privy];
 
-                const result = await box.public.setMultiple(fields, values); //Set the new values
+                //const result = await box.public.setMultiple(fields, values); //Set the new values
 
                 console.log(result);
 
@@ -265,7 +264,7 @@ exports.postprofile = (request, response) => {
                 // const nicknamed = await box.private.get('name');
                 // console.log(nicknamed);                
 
-                await box.logout(); //End the 3Box session
+                //await box.logout(); //End the 3Box session
 
                 console.log('Submitted data and logged out of 3Box.');
 
