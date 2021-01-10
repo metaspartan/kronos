@@ -9,6 +9,7 @@ cache:
 before_install:
   - sudo apt-get update
 install:
+  - npm install -g lerna
   - npm install
   - exit 0
 script:
