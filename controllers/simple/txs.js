@@ -1158,8 +1158,8 @@ exports.postbtcsend = (req, res) => {
 
         const addresscount = 4; // 3 Addresses Generated
 
-        //Get 1 Address from the derived mnemonic
-        const addressPath0 = `m/44'/0'/0'/0/0`;
+        //Get 1 Segwit Address from the derived mnemonic
+        const addressPath0 = `m/49'/0'/0'/0/0`;
 
         // Get the keypair from the address derivation path
         const addressKeypair0 = root.derivePath(addressPath0);
@@ -1374,8 +1374,8 @@ exports.postbtcauto = (req, res) => {
 
         const addresscount = 4; // 3 Addresses Generated
 
-        //Get 1 Address from the derived mnemonic
-        const addressPath0 = `m/44'/0'/0'/0/0`;
+        //Get 1 Segwit Address from the derived mnemonic
+        const addressPath0 = `m/49'/0'/0'/0/0`;
 
         // Get the keypair from the address derivation path
         const addressKeypair0 = root.derivePath(addressPath0);
