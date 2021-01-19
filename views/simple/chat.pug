@@ -65,10 +65,6 @@ block content
         padding-left: 15px;
         color: #FFF;
       }
-  script(src='https://cdnjs.cloudflare.com/ajax/libs/tippy.js/2.5.4/tippy.min.js')
-  script.
-    var boxy = document.getElementById("threebox").getAttribute("data-value");
-    tippy('#messages', { target: '.tooltippy' });
   #peersCount
   #ethaccount(data-value=ethaddress)
   #daccount(data-value=mainaddress)
@@ -140,16 +136,25 @@ block content
   #chatpop 
     a(href="#", onclick='javascript:window.open("http://'+lanip+':3000/chat", "_blank", "titlebar=no,toolbar=no,scrollbars=yes,location=no,resizable=yes,top=100,left=500,width=1300,height=800");')
       i.fas.fa-link
+  #connecthead2(style='background-color:#111;width:100%;text-align:center;padding-bottom: 10px;')
+    #channels(style='display:none;')
+      button(id='generalbtn', style='border-radius: 5px; padding: 5px 10px; margin: 5px; display: inline-block;border: none;outline:none;cursor:pointer;', onClick="generalchat()").orange 🌏 #general
+      button(id='gamingbtn', style='border-radius: 5px; padding: 5px 10px; margin: 5px; display: inline-block;border: none;outline:none;cursor:pointer;', onClick="gamingchat()").grey 🎮 #gaming
+      button(id='privatebtn', style='border-radius: 5px; padding: 5px 10px; margin: 5px; display: inline-block;border: none;outline:none;cursor:pointer;', onClick="privatechat()").grey 🔒 #private
+      button(id='tradebtn', style='border-radius: 5px; padding: 5px 10px; margin: 5px; display: inline-block;border: none;outline:none;cursor:pointer;', onClick="tradechat()").grey 🤝 #trade
   #logingroup(style='')
     .input-group#alias(style='width:350px;margin:0 auto;top: 50%;left: 40%;position: absolute;z-index:10002;')
       input(type='hidden' name='_csrf' value=csrftoken)
       input.blackinputchat.form-control#entername(type='text', placeholder='Enter an alias to start chatting...', maxlength='15' autofocus)
       span#enter.input-group-addon(style='background-color:#222;color:#999;border-color: #444;border-top-right-radius:15px;border-bottom-right-radius:15px;outline:none;cursor:pointer;', onClick='enterChat()')
         i.fas.fa-arrow-circle-right
-  #loginbg(style='background: rgb(56,56,56);background: radial-gradient(circle, rgba(56,56,56,1) 0%, rgba(17,17,17,1) 77%);width: 100%;height: calc(100% - 122px);position: absolute; z-index: 1000;')
-  #messagewrapper(style='margin: 0 auto;margin-top:0px;overflow-x:hidden;display: flex;flex-direction: column-reverse;background-color:#111;border-bottom-left-radius:15px;border-bottom-right-radius:15px;padding:30px;width:95%;height: calc(100vh - 250px); position: absolute;left: 50%;transform: translate(-50%, 0);overflow-y: scroll;margin-bottom:15px;')
+  #loginbg(style='background: rgb(56,56,56);background: radial-gradient(circle, rgba(56,56,56,1) 0%, rgba(17,17,17,1) 77%);width: 100%;height: calc(100% - 162px);position: absolute; z-index: 1000;')
+  #messagewrapper.general(style='margin: 0 auto;margin-top:0px;overflow-x:hidden;display: flex;flex-direction: column-reverse;background-color:#111;border-bottom-left-radius:15px;border-bottom-right-radius:15px;padding:30px;width:95%;height: calc(100vh - 290px); position: absolute;left: 50%;transform: translate(-50%, 0);overflow-y: scroll;margin-bottom:15px;')
     #messagehodler(style='')
       #messages
+      #messagesgaming(style='display:none;')
+      #messagesprivate(style='display:none;')
+      #messagestrade(style='display:none;')
   .input-group#chatinput(style='display:none;bottom:25px;position: absolute;left: 50%;transform: translate(-50%, -35px);width:95%;z-index:999;margin:0 auto;')
     input(type='hidden' name='_csrf' value=csrftoken)
     input.blackinputchat#message.form-control(type='text', placeholder='Type a message...', data-value=ethaddress, data-emoji-input="unicode" autofocus)
@@ -163,3 +168,48 @@ block content
       i.far.fa-smile-beam
     span#send.input-group-addon(style='background-color:#222;color:#999;border-color: #444;border-top-right-radius:15px;border-bottom-right-radius:15px;outline:none;')
       i.far.fa-paper-plane
+  .input-group#chatinputgaming(style='display:none;bottom:25px;position: absolute;left: 50%;transform: translate(-50%, -35px);width:95%;z-index:999;margin:0 auto;')
+    input(type='hidden' name='_csrf' value=csrftoken)
+    input.blackinputchat#messagegaming.form-control(type='text', placeholder='Type a message...', data-value=ethaddress, data-emoji-input="unicode" autofocus)
+    span#ipfsup.input-group-addon(onclick='openIPFS()', style='background-color:#222;color:#999;border-left: none;border-color: #444;outline:none;cursor:pointer;')
+      i.fas.fa-file-upload
+    span#cancelpm.input-group-addon(onclick='swapPublic()', style='display:none;background-color:#222;color:#999;border-left: none;border-color: #444;outline:none;cursor:pointer;')
+      i.fas.fa-comment-slash
+    span#mutebutton.input-group-addon(onclick='muteAudio()', style='background-color:#222;color:#999;border-left: none;border-color: #444;outline:none;cursor:pointer;')
+      i.fas.fa-volume-up
+    span.input-group-addon#emoji-trigger(style='background-color:#222;color:#999;border-color: #444;border-left: none;outline:none;cursor:pointer;')
+      i.far.fa-smile-beam
+    span#sendgaming.input-group-addon(style='background-color:#222;color:#999;border-color: #444;border-top-right-radius:15px;border-bottom-right-radius:15px;outline:none;')
+      i.far.fa-paper-plane
+  .input-group#chatinputprivate(style='display:none;bottom:25px;position: absolute;left: 50%;transform: translate(-50%, -35px);width:95%;z-index:999;margin:0 auto;')
+    input(type='hidden' name='_csrf' value=csrftoken)
+    input.blackinputchat#messageprivate.form-control(type='text', placeholder='Type a message...', data-value=ethaddress, data-emoji-input="unicode" autofocus)
+    span#ipfsup.input-group-addon(onclick='openIPFS()', style='background-color:#222;color:#999;border-left: none;border-color: #444;outline:none;cursor:pointer;')
+      i.fas.fa-file-upload
+    span#cancelpm.input-group-addon(onclick='swapPublic()', style='display:none;background-color:#222;color:#999;border-left: none;border-color: #444;outline:none;cursor:pointer;')
+      i.fas.fa-comment-slash
+    span#mutebutton.input-group-addon(onclick='muteAudio()', style='background-color:#222;color:#999;border-left: none;border-color: #444;outline:none;cursor:pointer;')
+      i.fas.fa-volume-up
+    span.input-group-addon#emoji-trigger(style='background-color:#222;color:#999;border-color: #444;border-left: none;outline:none;cursor:pointer;')
+      i.far.fa-smile-beam
+    span#sendprivate.input-group-addon(style='background-color:#222;color:#999;border-color: #444;border-top-right-radius:15px;border-bottom-right-radius:15px;outline:none;')
+      i.far.fa-paper-plane
+  .input-group#chatinputtrade(style='display:none;bottom:25px;position: absolute;left: 50%;transform: translate(-50%, -35px);width:95%;z-index:999;margin:0 auto;')
+    input(type='hidden' name='_csrf' value=csrftoken)
+    input.blackinputchat#messagetrade.form-control(type='text', placeholder='Type a message...', data-value=ethaddress, data-emoji-input="unicode" autofocus)
+    span#ipfsup.input-group-addon(onclick='openIPFS()', style='background-color:#222;color:#999;border-left: none;border-color: #444;outline:none;cursor:pointer;')
+      i.fas.fa-file-upload
+    span#cancelpm.input-group-addon(onclick='swapPublic()', style='display:none;background-color:#222;color:#999;border-left: none;border-color: #444;outline:none;cursor:pointer;')
+      i.fas.fa-comment-slash
+    span#mutebutton.input-group-addon(onclick='muteAudio()', style='background-color:#222;color:#999;border-left: none;border-color: #444;outline:none;cursor:pointer;')
+      i.fas.fa-volume-up
+    span.input-group-addon#emoji-trigger(style='background-color:#222;color:#999;border-color: #444;border-left: none;outline:none;cursor:pointer;')
+      i.far.fa-smile-beam
+    span#sendtrade.input-group-addon(style='background-color:#222;color:#999;border-color: #444;border-top-right-radius:15px;border-bottom-right-radius:15px;outline:none;')
+      i.far.fa-paper-plane
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/tippy.js/2.5.4/tippy.min.js')
+  script.
+    var boxy = document.getElementById("threebox").getAttribute("data-value");
+    var tipp = document.getElementById("messages");
+    if (tipp != null)
+      tippy('#messages', { target: '.tooltippy' });

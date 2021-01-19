@@ -631,6 +631,32 @@ footer {
   margin:10px;
 }
 
+.general {
+  background-image: url('../img/general.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color:#111;
+}
+.gaming {
+  background-image: url('../img/gaming.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color:#111;
+}
+.private {
+  background-image: url('../img/private.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color:#111;
+}
+.trade {
+  background-image: url('../img/trade.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color:#111;
+}
+
+
 #addImage {
   position: absolute;
   width: 36px;
