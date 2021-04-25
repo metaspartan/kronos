@@ -31,8 +31,7 @@ const os = require('os');
 const dbr = require('../db.js');
 const db = dbr.db;
 const { isNullOrUndefined } = require('util');
-const ElectrumClient = require('electrum-cash').Client;
-const ElectrumCluster = require('electrum-cash').Cluster;
+const { ElectrumCluster } = require('electrum-cash');
 const bs58 = require('bs58');
 const randomstring = require("randomstring");
 const Storage = require('json-storage-fs');
@@ -378,7 +377,7 @@ res.io.on('connection', function (socket) {
 	}
 	const latestblocks = async () => {
 		// Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-		const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+		const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4', 1, 2);
 		
 		// Add some servers to the cluster.
 		electrum.addServer(delectrumxhost1);

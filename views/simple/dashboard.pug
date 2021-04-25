@@ -5,6 +5,36 @@ block content
     .dashloader {
       display: none;
     }
+  .topbar(style='background-color:#44444447;height:80px;margin-top:-15px;padding-top:25px;padding-bottom:10px;overflow-y:auto;white-space:nowrap;', align='center')
+    a(href='#', data-slide="1", style='font-size:14px;color:#FFF;display:inline-block;')
+      img.res.hvr-pulse(src='../img/denarius.png', alt='D', border='0', style='height:55px !important;width: 55px !important;margin:-15px 5px -12px !important;')
+    a(href='#', data-slide="2", style='font-size:14px;color:#FFF;display:inline-block;')
+      img.res.hvr-pulse(src='../img/bitcoin.png', alt='BTC', border='0', style='height:48px !important;width: 48px !important;margin:-15px 5px -12px !important;')
+    a(href='#', data-slide="3", style='font-size:14px;color:#FFF;display:inline-block;')
+      img.res.hvr-pulse(src='../img/eth.png', alt='ETH', border='0', style='height:48px !important;width: 48px !important;margin:-15px 5px -12px !important;')
+    a(href='#', data-slide="4", style='font-size:14px;color:#FFF;display:inline-block;')
+      img.res.hvr-pulse(src='../img/usdt.png', alt='USDT', border='0', style='height:48px !important;width: 48px !important;margin:-15px 5px -12px !important;')
+    a(href='#', data-slide="5", style='font-size:14px;color:#FFF;display:inline-block;')
+      img.res.hvr-pulse(src='../img/bsc.png', alt='BSC', border='0', style='height:48px !important;width: 48px !important;margin:-15px 5px -12px !important;')
+    a(href='#', data-slide="6", style='font-size:14px;color:#FFF;display:inline-block;')
+      img.res.hvr-pulse(src='../img/busd.png', alt='BUSD', border='0', style='height:48px !important;width: 48px !important;margin:-15px 5px -12px !important;')
+    a(href='#', data-slide="7", style='font-size:14px;color:#FFF;display:inline-block;')
+      img.res.hvr-pulse(src='../img/ftm.png', alt='FTM', border='0', style='height:48px !important;width: 48px !important;margin:-15px 5px -12px !important;')
+    .slider-nav(style='display:none;')
+      div
+        h3 1
+      div
+        h3 2
+      div
+        h3 3
+      div
+        h3 4
+      div
+        h3 5
+      div
+        h3 6
+      div
+        h3 7
   .maincontent(style='border: none !important;')
     .container(style='width:90%')
       //- .div(style='margin-top:25px;')
@@ -15,7 +45,7 @@ block content
         .slickk
           div(style='text-align:center;margin-top:20px;')
             p
-              img.res(src='../img/denarius.png', alt='D', border='0', style='height:75px !important;width: 75px !important;margin:0 auto !important;')
+              img.res.gpulse(src='../img/denarius.png', alt='D', border='0', style='height:100px !important;width: 100px !important;margin:0 auto !important;')
             p 
             .bal(style='font-size:2.5em;') 
               span#totalbal.format #{totalbal || 0}
@@ -28,14 +58,10 @@ block content
                 |  ea
             p
               p
-                .addressdash(style='font-size:1.3vw;font-weight:400;border-radius:15px;padding:10px;margin:0 auto;margin-top:10px;margin-bottom:10px;')
-                  span.addr(style='background-color: #1e1e1e;padding: 8px;padding-left: 15px;padding-right: 15px;border-radius:15px;') #{mainaddy}
-                  button.clip(style='background-color: transparent;border: none;margin-left: 5px;', data-clipboard-text=mainaddy)
-                    i.fas.fa-copy
-              if (typeof qrcode != 'undefined')
-                .qrcode(align='center')
-                    button.clip(data-clipboard-text=mainaddy, style='background-color: transparent;border: none;')
-                      img(src='' + qrcode, style='border-radius:10px;')
+                a.gray(href='http://'+lanip+':3000/createtx', style='color:#FFF;text-decoration:none;outline:none;')
+                  |  Send
+                button.gray(type='button', id='drecv', onclick='addBlur()', data-toggle='modal', data-target='#DRecv', data-backdrop='static', data-keyboard='false', style='margin-left:10px;')
+                  |  Receive
               .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:10px;', align='center') DENARIUS 
                 span#dblock
             .divider(style='background-color:#111 !important;height:2px;width:80%;margin:0 auto;', align='center')
@@ -71,7 +97,7 @@ block content
                 h1(style='color:#666;', align='center') No D Transactions Available
           div(style='text-align:center;margin-top:20px;')
             p
-              img.res(src='../img/bitcoin.png', alt='BTC', border='0', style='height:75px !important;width: 75px !important;margin:0 auto !important;')
+              img.res.opulse(src='../img/bitcoin.png', alt='BTC', border='0', style='height:100px !important;width: 100px !important;margin:0 auto !important;')
             p 
             .bal(style='font-size:2.5em;') 
               span#totalbtcbal.format #{totalbtcbal || 0}
@@ -84,14 +110,10 @@ block content
                 |  ea
             p
               p
-                .addressdash(style='font-size:1.3vw;font-weight:400;border-radius:15px;padding:10px;margin:0 auto;margin-top:10px;margin-bottom:10px;')
-                  span.addr(style='background-color: #1e1e1e;padding: 8px;padding-left: 15px;padding-right: 15px;border-radius:15px;') #{btcaddress}
-                  button.clip(style='background-color: transparent;border: none;margin-left: 5px;', data-clipboard-text=btcaddress)
-                    i.fas.fa-copy
-              if (typeof qrcode != 'undefined')
-                .qrcode(align='center')
-                    button.clip(data-clipboard-text=btcaddress, style='background-color: transparent;border: none;')
-                      img(src='' + btcqrcode, style='border-radius:10px;')
+                a.gold(href='http://'+lanip+':3000/sendbtc', style='color:#FFF;text-decoration:none;outline:none;')
+                  |  Send
+                button.gold(type='button', id='btcrecv', onclick='addBlur()', data-toggle='modal', data-target='#BTCRecv', data-backdrop='static', data-keyboard='false', style='margin-left:10px;')
+                  |  Receive
               .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:10px;', align='center') BITCOIN 
                 span#btcblock
             .divider(style='background-color:#111 !important;height:2px;width:80%;margin:0 auto;', align='center')
@@ -140,7 +162,7 @@ block content
                 h1(style='color:#666;', align='center') No BTC Transactions Available
           div(style='text-align:center;margin-top:20px;')
             p
-              img.res(src='../img/eth.png', alt='ETH', border='0', style='height:75px !important;width:75px !important;margin:0 auto !important;')
+              img.res.epulse(src='../img/eth.png', alt='ETH', border='0', style='height:100px !important;width:100px !important;margin:0 auto !important;')
             p 
             .bal(style='font-size:2.5em;') 
               span#totalethbal.format #{totalethbal || 0}
@@ -153,14 +175,10 @@ block content
                 |  ea
             p
               p
-                .addressdash(style='font-size:1.3vw;font-weight:400;border-radius:15px;padding:10px;margin:0 auto;margin-top:10px;margin-bottom:10px;')
-                  span.addr(style='background-color: #1e1e1e;padding: 8px;padding-left: 15px;padding-right: 15px;border-radius:15px;') #{ethaddy}
-                  button.clip(style='background-color: transparent;border: none;margin-left: 5px;', data-clipboard-text=ethaddy)
-                    i.fas.fa-copy
-              if (typeof qrcode != 'undefined')
-                .qrcode(align='center')
-                    button.clip(data-clipboard-text=ethaddy, style='background-color: transparent;border: none;')
-                      img(src='' + ethqrcode, style='border-radius:10px;')
+                a.eth(href='http://'+lanip+':3000/sendeth', style='color:#FFF;text-decoration:none;outline:none;')
+                  |  Send
+                button.eth(type='button', id='btcrecv', onclick='addBlur()', data-toggle='modal', data-target='#ETHRecv', data-backdrop='static', data-keyboard='false', style='margin-left:10px;')
+                  |  Receive
               .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:10px;', align='center') ETHEREUM 
                 span#ethhblock
             .divider(style='background-color:#111 !important;height:2px;width:80%;margin:0 auto;', align='center')
@@ -191,29 +209,25 @@ block content
                   h1(style='color:#666;', align='center') No ETH Transactions Available
           div(style='text-align:center;margin-top:20px;')
             p
-              img.res(src='../img/ari.png', alt='ARI', border='0', style='height:75px !important;width:75px !important;margin:0 auto !important;')
+              img.res.tpulse(src='../img/usdt.png', alt='USDT', border='0', style='height:100px !important;width:100px !important;margin:0 auto !important;')
             p 
             .bal(style='font-size:2.5em;') 
-              span#totalaribal.format #{totalaribal || 0}
-              small(style='font-size:16px;')  ARI
+              span#totalusdtbal.format #{totalusdtbal || 0}
+              small(style='font-size:16px;')  USDT
             p
             .bal(style='font-size:1.6em;color:#888;') $
-              span#ariusdbalance #{aribalance || 0}
+              span#usdtusdbalance #{usdtbalance || 0}
               small(style='font-size:16px;')  USD @ $
-                span#currentariprice #{currentariprice || 0}
+                span#currentusdtprice #{currentusdtprice || 0}
                 |  ea
             p
               p
-                .addressdash(style='font-size:1.3vw;font-weight:400;border-radius:15px;padding:10px;margin:0 auto;margin-top:10px;margin-bottom:10px;')
-                  span.addr(style='background-color: #1e1e1e;padding: 8px;padding-left: 15px;padding-right: 15px;border-radius:15px;') #{ethaddy}
-                  button.clip(style='background-color: transparent;border: none;margin-left: 5px;', data-clipboard-text=ethaddy)
-                    i.fas.fa-copy
-              if (typeof qrcode != 'undefined')
-                .qrcode(align='center')
-                    button.clip(data-clipboard-text=ethaddy, style='background-color: transparent;border: none;')
-                      img(src='' + ethqrcode, style='border-radius:10px;')
-              .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:10px;', align='center') DENARII 
-                span#aribblock
+                a.usdt(href='http://'+lanip+':3000/sendusdt', style='color:#FFF;text-decoration:none;outline:none;')
+                  |  Send
+                button.usdt(type='button', id='usdtrecv', onclick='addBlur()', data-toggle='modal', data-target='#USDTRecv', data-backdrop='static', data-keyboard='false', style='margin-left:10px;')
+                  |  Receive
+              .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:10px;', align='center') TETHER USD ERC20 
+                span#usdtbblock
             .divider(style='background-color:#111 !important;height:2px;width:80%;margin:0 auto;', align='center')
             p
               if (typeof erctxs != 'undefined')
@@ -230,7 +244,7 @@ block content
                         tbody
                           each tx in erctxs
                             tr
-                              td(align='center', data-label='ARI Block Height') !{tx.blockNumber}
+                              td(align='center', data-label='USDT Block Height') !{tx.blockNumber}
                               td(align='center', data-label='Timestamp') 
                                 if (typeof tx.timeStamp != 'undefined')
                                   .date= new Date(tx.timeStamp*1000).toUTCString().replace('GMT','')
@@ -239,7 +253,323 @@ block content
                               td(align='center', data-label='TXID') 
                                 a.txid(href=`https://etherscan.io/tx/${tx.hash}`, target='_blank') !{tx.hash}
                 else
-                  h1(style='color:#666;', align='center') No ARI Transactions Available
+                  h1(style='color:#666;', align='center') No USDT Transactions Available
+          div(style='text-align:center;margin-top:20px;')
+            p
+              img.res.opulse(src='../img/bsc.png', alt='BSC', border='0', style='height:100px !important;width:100px !important;margin:0 auto !important;')
+            p 
+            .bal(style='font-size:2.5em;') 
+              span#totalbscbal.format #{totalbscbal || 0}
+              small(style='font-size:16px;')  BSC
+            p
+            .bal(style='font-size:1.6em;color:#888;') $
+              span#bscusdbalance #{bscbalance || 0}
+              small(style='font-size:16px;')  USD @ $
+                span#currentbscprice #{currentbscprice || 0}
+                |  ea
+            p
+              p
+                a.gold(href='http://'+lanip+':3000/sendbsc', style='color:#FFF;text-decoration:none;outline:none;')
+                  |  Send
+                button.gold(type='button', id='bscrecv', onclick='addBlur()', data-toggle='modal', data-target='#BSCRecv', data-backdrop='static', data-keyboard='false', style='margin-left:10px;')
+                  |  Receive
+              .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:10px;', align='center') BINANCE SMART CHAIN 
+                span#bschblock
+            .divider(style='background-color:#111 !important;height:2px;width:80%;margin:0 auto;', align='center')
+            p              
+              if (typeof bsctxs != 'undefined')
+                if (typeof bsctxs[0] != 'undefined')
+                  .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;')
+                    .tablewrapper
+                      table.sortable.bsctable#fst
+                        thead
+                          tr
+                            th Block Height
+                            th.sorttable_nosort Time (GMT)
+                            th Confirmations
+                            th TXID
+                        tbody
+                          each tx in bsctxs
+                            tr
+                              td(align='center', data-label='BSC Block Height') !{tx.blockNumber}
+                              td(align='center', data-label='Timestamp') 
+                                if (typeof tx.timeStamp != 'undefined')
+                                  .date= new Date(tx.timeStamp*1000).toUTCString().replace('GMT','')
+                              td(align='center', data-label='Confirmations') 
+                                .label.label-success(style='background: none;') !{tx.confirmations}
+                              td(align='center', data-label='TXID') 
+                                a.txid(href=`https://bscscan.com/tx/${tx.hash}`, target='_blank') !{tx.hash}
+                else
+                  h1(style='color:#666;', align='center') No BSC Transactions
+          div(style='text-align:center;margin-top:20px;')
+            p
+              img.res.opulse(src='../img/busd.png', alt='BUSD', border='0', style='height:100px !important;width:100px !important;margin:0 auto !important;')
+            p 
+            .bal(style='font-size:2.5em;') 
+              span#totalbusdbal.format #{totalbusdbal || 0}
+              small(style='font-size:16px;')  BUSD
+            p
+            .bal(style='font-size:1.6em;color:#888;') $
+              span#busdusdbalance #{busdbalance || 0}
+              small(style='font-size:16px;')  USD @ $
+                span#currentbusdprice #{currentbusdprice || 0}
+                |  ea
+            p
+              p
+                a.gold(href='http://'+lanip+':3000/sendbusd', style='color:#FFF;text-decoration:none;outline:none;')
+                  |  Send
+                button.gold(type='button', id='busdrecv', onclick='addBlur()', data-toggle='modal', data-target='#BUSDRecv', data-backdrop='static', data-keyboard='false', style='margin-left:10px;')
+                  |  Receive
+              .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:10px;', align='center') BINANCE USD BEP20 
+                span#busdhblock
+            .divider(style='background-color:#111 !important;height:2px;width:80%;margin:0 auto;', align='center')
+            p
+              if (typeof beptxs != 'undefined')
+                if (typeof beptxs[0] != 'undefined')
+                  .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;')
+                    .tablewrapper
+                      table.sortable#fst
+                        thead
+                          tr
+                            th Block Height
+                            th.sorttable_nosort Time (GMT)
+                            th Confirmations
+                            th TXID
+                        tbody
+                          each tx in beptxs
+                            tr
+                              td(align='center', data-label='BUSD Block Height') !{tx.blockNumber}
+                              td(align='center', data-label='Timestamp') 
+                                if (typeof tx.timeStamp != 'undefined')
+                                  .date= new Date(tx.timeStamp*1000).toUTCString().replace('GMT','')
+                              td(align='center', data-label='Confirmations') 
+                                .label.label-success(style='background: none;') !{tx.confirmations}
+                              td(align='center', data-label='TXID') 
+                                a.txid(href=`https://bscscan.com/tx/${tx.hash}`, target='_blank') !{tx.hash}
+                else
+                  h1(style='color:#666;', align='center') No BUSD Transactions Available   
+          div(style='text-align:center;margin-top:20px;')
+            p
+              img.res.fpulse(src='../img/ftm.png', alt='FTM', border='0', style='height:100px !important;width:100px !important;margin:0 auto !important;')
+            p 
+            .bal(style='font-size:2.5em;') 
+              span#totalftmbal.format #{totalftmbal || 0}
+              small(style='font-size:16px;')  FTM
+            p
+            .bal(style='font-size:1.6em;color:#888;') $
+              span#ftmusdbalance #{ftmbalance || 0}
+              small(style='font-size:16px;')  USD @ $
+                span#currentftmprice #{currentftmprice || 0}
+                |  ea
+            p
+              p
+                a.ftm(href='http://'+lanip+':3000/sendftm', style='color:#FFF;text-decoration:none;outline:none;')
+                  |  Send
+                button.ftm(type='button', id='ftmrecv', onclick='addBlur()', data-toggle='modal', data-target='#FTMRecv', data-backdrop='static', data-keyboard='false', style='margin-left:10px;')
+                  |  Receive
+              .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:10px;', align='center') FANTOM 
+                span#ftmhblock
+            .divider(style='background-color:#111 !important;height:2px;width:80%;margin:0 auto;', align='center')
+            p
+              if (typeof ftmtxs != 'undefined')
+                if (typeof ftmtxs[0] != 'undefined')
+                  .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;')
+                    .tablewrapper
+                      table.sortable#fst
+                        thead
+                          tr
+                            th Block Height
+                            th.sorttable_nosort Time (GMT)
+                            th Confirmations
+                            th TXID
+                        tbody
+                          each tx in ftmtxs
+                            tr
+                              td(align='center', data-label='FTM Block Height') !{tx.blockNumber}
+                              td(align='center', data-label='Timestamp') 
+                                if (typeof tx.timeStamp != 'undefined')
+                                  .date= new Date(tx.timeStamp*1000).toUTCString().replace('GMT','')
+                              td(align='center', data-label='Confirmations') 
+                                .label.label-success(style='background: none;') !{tx.confirmations}
+                              td(align='center', data-label='TXID') 
+                                a.txid(href=`https://ftmscan.com/tx/${tx.hash}`, target='_blank') !{tx.hash}
+                else
+                  h1(style='color:#666;', align='center') No FTM Transactions Available       
+      #DRecv.modal
+        .modal-dialog(style='width:90% !important;margin: 50px auto !important;')
+            .modal-content(style='color:#FFF !important;background-color:#111 !important; border-color: #444 !important;')
+                .modal-header(style='border-bottom: none !important;')
+                    button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+                    h4.modal-title Receive D
+                    div(align='center')
+                      img(src='../img/denarius.png', height='125px', width='125px')
+                .modal-body
+                  .form-horizontal
+                    p(align='center')
+                      h3(align='center') Denarius Address
+                    .form-group
+                      p
+                        .addressdash(style='font-size:1.3vw;font-weight:400;border-radius:15px;padding:10px;margin:0 auto;margin-top:10px;margin-bottom:10px;', align='center')
+                          span.addr(style='background-color: #1e1e1e;padding: 8px;padding-left: 15px;padding-right: 15px;border-radius:15px;') #{mainaddy}
+                          button.clip(style='background-color: transparent;border: none;margin-left: 5px;', data-clipboard-text=mainaddy)
+                            i.fas.fa-copy
+                      if (typeof qrcode != 'undefined')
+                        .qrcode(align='center')
+                            button.clip(data-clipboard-text=mainaddy, style='background-color: transparent;border: none;')
+                              img(src='' + qrcode, style='border-radius:10px;')
+                .modal-footer(style='border-top: none !important;')
+                    a.btn.btn-success(href='https://chainz.cryptoid.info/d', style='background-color: #546639;border-radius: 15px;font-size: 15px !important;', target='_blank') View on blockchain
+                    button.btn.btn-default(type='button', data-dismiss='modal', onclick='removeBlur()', style='background-color: #602828;border-radius: 15px;font-size: 15px !important;') Close
+      #BTCRecv.modal
+        .modal-dialog(style='width:90% !important;margin: 50px auto !important;')
+            .modal-content(style='color:#FFF !important;background-color:#111 !important; border-color: #444 !important;')
+                .modal-header(style='border-bottom: none !important;')
+                    button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+                    h4.modal-title Receive BTC
+                    div(align='center')
+                      img(src='../img/bitcoin.png', height='125px', width='125px')
+                .modal-body
+                  .form-horizontal
+                    p(align='center')
+                      h3(align='center') Bitcoin Address
+                    .form-group
+                      p
+                        .addressdash(style='font-size:1.3vw;font-weight:400;border-radius:15px;padding:10px;margin:0 auto;margin-top:10px;margin-bottom:10px;', align='center')
+                          span.addr(style='background-color: #1e1e1e;padding: 8px;padding-left: 15px;padding-right: 15px;border-radius:15px;') #{btcaddress}
+                          button.clip(style='background-color: transparent;border: none;margin-left: 5px;', data-clipboard-text=btcaddress)
+                            i.fas.fa-copy
+                      if (typeof qrcode != 'undefined')
+                        .qrcode(align='center')
+                            button.clip(data-clipboard-text=btcaddress, style='background-color: transparent;border: none;')
+                              img(src='' + btcqrcode, style='border-radius:10px;')
+                .modal-footer(style='border-top: none !important;')
+                    a.btn.btn-success(href='https://blockchain.info', style='background-color: #546639;border-radius: 15px;font-size: 15px !important;', target='_blank') View on blockchain
+                    button.btn.btn-default(type='button', data-dismiss='modal', onclick='removeBlur()', style='background-color: #602828;border-radius: 15px;font-size: 15px !important;') Close
+      #ETHRecv.modal
+        .modal-dialog(style='width:90% !important;margin: 50px auto !important;')
+            .modal-content(style='color:#FFF !important;background-color:#111 !important; border-color: #444 !important;')
+                .modal-header(style='border-bottom: none !important;')
+                    button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+                    h4.modal-title Receive ETH
+                    div(align='center')
+                      img(src='../img/eth.png', height='125px', width='125px')
+                .modal-body
+                  .form-horizontal
+                    p(align='center')
+                      h3(align='center') Ethereum Address
+                    .form-group
+                      p
+                        .addressdash(style='font-size:1.3vw;font-weight:400;border-radius:15px;padding:10px;margin:0 auto;margin-top:10px;margin-bottom:10px;', align='center')
+                          span.addr(style='background-color: #1e1e1e;padding: 8px;padding-left: 15px;padding-right: 15px;border-radius:15px;') #{ethaddy}
+                          button.clip(style='background-color: transparent;border: none;margin-left: 5px;', data-clipboard-text=ethaddy)
+                            i.fas.fa-copy
+                      if (typeof qrcode != 'undefined')
+                        .qrcode(align='center')
+                            button.clip(data-clipboard-text=ethaddy, style='background-color: transparent;border: none;')
+                              img(src='' + ethqrcode, style='border-radius:10px;')
+                .modal-footer(style='border-top: none !important;')
+                    a.btn.btn-success(href='https://etherscan.io', style='background-color: #546639;border-radius: 15px;font-size: 15px !important;', target='_blank') View on blockchain
+                    button.btn.btn-default(type='button', data-dismiss='modal', onclick='removeBlur()', style='background-color: #602828;border-radius: 15px;font-size: 15px !important;') Close
+      #USDTRecv.modal
+        .modal-dialog(style='width:90% !important;margin: 50px auto !important;')
+            .modal-content(style='color:#FFF !important;background-color:#111 !important; border-color: #444 !important;')
+                .modal-header(style='border-bottom: none !important;')
+                    button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+                    h4.modal-title Receive USDT ERC20
+                    div(align='center')
+                      img(src='../img/usdt.png', height='125px', width='125px')
+                .modal-body
+                  .form-horizontal
+                    p(align='center')
+                      h3(align='center') Tether USD ERC20 Address
+                    .form-group
+                      p
+                        .addressdash(style='font-size:1.3vw;font-weight:400;border-radius:15px;padding:10px;margin:0 auto;margin-top:10px;margin-bottom:10px;', align='center')
+                          span.addr(style='background-color: #1e1e1e;padding: 8px;padding-left: 15px;padding-right: 15px;border-radius:15px;') #{ethaddy}
+                          button.clip(style='background-color: transparent;border: none;margin-left: 5px;', data-clipboard-text=ethaddy)
+                            i.fas.fa-copy
+                      if (typeof qrcode != 'undefined')
+                        .qrcode(align='center')
+                            button.clip(data-clipboard-text=ethaddy, style='background-color: transparent;border: none;')
+                              img(src='' + ethqrcode, style='border-radius:10px;')
+                .modal-footer(style='border-top: none !important;')
+                    a.btn.btn-success(href='https://etherscan.io/token/0xdAC17F958D2ee523a2206206994597C13D831ec7', style='background-color: #546639;border-radius: 15px;font-size: 15px !important;', target='_blank') View on blockchain
+                    button.btn.btn-default(type='button', data-dismiss='modal', onclick='removeBlur()', style='background-color: #602828;border-radius: 15px;font-size: 15px !important;') Close
+      #BUSDRecv.modal
+        .modal-dialog(style='width:90% !important;margin: 50px auto !important;')
+            .modal-content(style='color:#FFF !important;background-color:#111 !important; border-color: #444 !important;')
+                .modal-header(style='border-bottom: none !important;')
+                    button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+                    h4.modal-title Receive BUSD BEP20
+                    div(align='center')
+                      img(src='../img/busd.png', height='125px', width='125px')
+                .modal-body
+                  .form-horizontal
+                    p(align='center')
+                      h3(align='center') Binance USD BEP20 Address
+                    .form-group
+                      p
+                        .addressdash(style='font-size:1.3vw;font-weight:400;border-radius:15px;padding:10px;margin:0 auto;margin-top:10px;margin-bottom:10px;', align='center')
+                          span.addr(style='background-color: #1e1e1e;padding: 8px;padding-left: 15px;padding-right: 15px;border-radius:15px;') #{bscaddy}
+                          button.clip(style='background-color: transparent;border: none;margin-left: 5px;', data-clipboard-text=bscaddy)
+                            i.fas.fa-copy
+                      if (typeof qrcode != 'undefined')
+                        .qrcode(align='center')
+                            button.clip(data-clipboard-text=bscaddy, style='background-color: transparent;border: none;')
+                              img(src='' + bscqrcode, style='border-radius:10px;')
+                .modal-footer(style='border-top: none !important;')
+                    a.btn.btn-success(href='https://bscscan.com/token/0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56', style='background-color: #546639;border-radius: 15px;font-size: 15px !important;', target='_blank') View on blockchain
+                    button.btn.btn-default(type='button', data-dismiss='modal', onclick='removeBlur()', style='background-color: #602828;border-radius: 15px;font-size: 15px !important;') Close
+      #FTMRecv.modal
+        .modal-dialog(style='width:90% !important;margin: 50px auto !important;')
+            .modal-content(style='color:#FFF !important;background-color:#111 !important; border-color: #444 !important;')
+                .modal-header(style='border-bottom: none !important;')
+                    button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+                    h4.modal-title Receive FTM
+                    div(align='center')
+                      img(src='../img/ftm.png', height='125px', width='125px')
+                .modal-body
+                  .form-horizontal
+                    p(align='center')
+                      h3(align='center') Fantom Address
+                    .form-group
+                      p
+                        .addressdash(style='font-size:1.3vw;font-weight:400;border-radius:15px;padding:10px;margin:0 auto;margin-top:10px;margin-bottom:10px;', align='center')
+                          span.addr(style='background-color: #1e1e1e;padding: 8px;padding-left: 15px;padding-right: 15px;border-radius:15px;') #{ftmaddy}
+                          button.clip(style='background-color: transparent;border: none;margin-left: 5px;', data-clipboard-text=ftmaddy)
+                            i.fas.fa-copy
+                      if (typeof qrcode != 'undefined')
+                        .qrcode(align='center')
+                            button.clip(data-clipboard-text=ftmaddy, style='background-color: transparent;border: none;')
+                              img(src='' + ftmqrcode, style='border-radius:10px;')
+                .modal-footer(style='border-top: none !important;')
+                    a.btn.btn-success(href='https://ftmscan.com', style='background-color: #546639;border-radius: 15px;font-size: 15px !important;', target='_blank') View on blockchain
+                    button.btn.btn-default(type='button', data-dismiss='modal', onclick='removeBlur()', style='background-color: #602828;border-radius: 15px;font-size: 15px !important;') Close
+      #BSCRecv.modal
+        .modal-dialog(style='width:90% !important;margin: 50px auto !important;')
+            .modal-content(style='color:#FFF !important;background-color:#111 !important; border-color: #444 !important;')
+                .modal-header(style='border-bottom: none !important;')
+                    button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+                    h4.modal-title Receive BSC
+                    div(align='center')
+                      img(src='../img/bsc.png', height='125px', width='125px')
+                .modal-body
+                  .form-horizontal
+                    p(align='center')
+                      h3(align='center') Binance Smart Chain Address
+                    .form-group
+                      p
+                        .addressdash(style='font-size:1.3vw;font-weight:400;border-radius:15px;padding:10px;margin:0 auto;margin-top:10px;margin-bottom:10px;', align='center')
+                          span.addr(style='background-color: #1e1e1e;padding: 8px;padding-left: 15px;padding-right: 15px;border-radius:15px;') #{bscaddy}
+                          button.clip(style='background-color: transparent;border: none;margin-left: 5px;', data-clipboard-text=bscaddy)
+                            i.fas.fa-copy
+                      if (typeof qrcode != 'undefined')
+                        .qrcode(align='center')
+                            button.clip(data-clipboard-text=bscaddy, style='background-color: transparent;border: none;')
+                              img(src='' + bscqrcode, style='border-radius:10px;')
+                .modal-footer(style='border-top: none !important;')
+                    a.btn.btn-success(href='https://bscscan.com', style='background-color: #546639;border-radius: 15px;font-size: 15px !important;', target='_blank') View on blockchain
+                    button.btn.btn-default(type='button', data-dismiss='modal', onclick='removeBlur()', style='background-color: #602828;border-radius: 15px;font-size: 15px !important;') Close
       //- .divider(style='background-color:#2b2b2b !important;height:2px;width:60%;margin:0 auto;', align='center')
       //- .row(class='rowclass').animate__animated.animate__fadeIn
       //-   .col-sm-3
@@ -308,20 +638,45 @@ block content
     script(src='https://cdn.jsdelivr.net/npm/@splidejs/splide@latest/dist/js/splide.min.js')
     script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js")
     script(src='https://unpkg.com/tabulator-tables@4.9.1/dist/js/tabulator.min.js')
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js')
     script.
       //- new Splide( '.splide', {
       //-   type   : 'loop',
       //-   arrowPath: 'm15.5 0.932-4.3 4.38 14.5 14.6-14.5 14.5 4.3 4.4 14.6-14.6 4.4-4.3-4.4-4.4-14.6-14.6z',
       //-   autoHeight: true
       //- } ).mount();
+      function addBlur() {
+        $('.navbar-default').addClass('blur');
+        $('.balancerow').addClass('blur');
+      }
+      function removeBlur() {
+        $('.navbar-default').removeClass('blur');
+        $('.balancerow').removeClass('blur');
+      }
       $('.slickk').slick({
         adaptiveHeight: true,
         infinite: true,
         dots: true,
+        slidesToScroll: 1,
         arrows: false,
         fade: false,
-        dots: true
+        dots: true,
+        asNavFor: '.slider-nav'
+      });
+       $('.slider-nav').slick({
+        slidesToScroll: 1,
+        asNavFor: '.slickk',
+        dots: false,
+        arrows: true,
+        fade: false,
+        infinite: true,
+        focusOnSelect: true
+      });
+      var $jq = jQuery.noConflict();
+      $jq('a[data-slide]').click(function(e) {
+        e.preventDefault();
+        var slideno = $jq(this).data('slide');
+        $jq('.slider-nav').slick('slickGoTo', slideno - 1);
       });
       var clipboard = new ClipboardJS('.clip');
       clipboard.on('success', function(e) {
@@ -390,14 +745,46 @@ block content
           //$('#blockheight').html(height);
           //$('#ethblockhash').html('<a href="https://etherscan.io/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;" target="_blank">ETH BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
           $('#ethhblock').html('<a href="https://etherscan.io/block/'+height+'" target="_blank" style="color: rgb(93 196 41);">• '+height+'</a>');
-          $('#aribblock').html('<a href="https://etherscan.io/block/'+height+'" target="_blank" style="color: rgb(93 196 41);">• '+height+'</a>');
+          $('#usdtbblock').html('<a href="https://etherscan.io/block/'+height+'" target="_blank" style="color: rgb(93 196 41);">• '+height+'</a>');
         } else {
           var height = data9.ethblock[0];
           //var hexhash = data9.ethhash[0];
           //$('#blockheight').html(height);
           //$('#ethblockhash').html('<a href="https://etherscan.io/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;" target="_blank">ETH BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
           $('#ethhblock').html('<a href="https://etherscan.io/block/'+height+'" target="_blank" style="color: rgb(93 196 41);">• '+height+'</a>');
-          $('#aribblock').html('<a href="https://etherscan.io/block/'+height+'" target="_blank" style="color: rgb(93 196 41);">• '+height+'</a>');
+          $('#usdtbblock').html('<a href="https://etherscan.io/block/'+height+'" target="_blank" style="color: rgb(93 196 41);">• '+height+'</a>');
+        }
+      });
+      socket.on('newblockbsc', function (data9) {
+        if (!data9.bscblock[0] && !data9.error) {
+          var height = data9.bscblock;
+          //var hexhash = data9.ethhash;
+          //$('#blockheight').html(height);
+          //$('#ethblockhash').html('<a href="https://etherscan.io/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;" target="_blank">ETH BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
+          $('#bschblock').html('<a href="https://bscscan.com/block/'+height+'" target="_blank" style="color: rgb(93 196 41);" class="animate__animated animate__pulse animate__infinite">• '+height+'</a>');
+          $('#busdhblock').html('<a href="https://bscscan.com/block/'+height+'" target="_blank" style="color: rgb(93 196 41);">• '+height+'</a>');
+        } else {
+          var height = data9.bscblock[0];
+          //var hexhash = data9.ethhash[0];
+          //$('#blockheight').html(height);
+          //$('#ethblockhash').html('<a href="https://etherscan.io/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;" target="_blank">ETH BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
+          $('#bschblock').html('<a href="https://bscscan.com/block/'+height+'" target="_blank" style="color: rgb(93 196 41);" class="animate__animated animate__pulse animate__infinite">• '+height+'</a>');
+          $('#busdhblock').html('<a href="https://bscscan.com/block/'+height+'" target="_blank" style="color: rgb(93 196 41);">• '+height+'</a>');
+        }
+      });
+      socket.on('newblockftm', function (data9) {
+        if (!data9.ftmblock[0] && !data9.error) {
+          var height = data9.ftmblock;
+          //var hexhash = data9.ethhash;
+          //$('#blockheight').html(height);
+          //$('#ethblockhash').html('<a href="https://etherscan.io/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;" target="_blank">ETH BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
+          $('#ftmhblock').html('<a href="https://ftmscan.com/block/'+height+'" target="_blank" style="color: rgb(93 196 41);" class="animate__animated animate__pulse animate__infinite">• '+height+'</a>');
+        } else {
+          var height = data9.ftmblock[0];
+          //var hexhash = data9.ethhash[0];
+          //$('#blockheight').html(height);
+          //$('#ethblockhash').html('<a href="https://etherscan.io/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;" target="_blank">ETH BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
+          $('#ftmhblock').html('<a href="https://ftmscan.com/block/'+height+'" target="_blank" style="color: rgb(93 196 41);" class="animate__animated animate__pulse animate__infinite">• '+height+'</a>');
         }
       });
       //- socket.on('temp', function (data3) {
@@ -500,16 +887,15 @@ block content
           });
         }
       });
-      socket.on('newaribal', function (data22) {
-        if (!data22.aribal[0] && !data22.error) {
-          var bal = data22.aribal;
+      socket.on('newbscbal', function (data69) {
+        if (!data69.bscbal[0] && !data69.error) {
+          var bal = data69.bscbal;
           //- if (bal != 'undefined') {
-          //-   bal = parseFloat(bal.toFixed(4));
+          //-   bal = parseFloat(bal.toFixed(6));
           //- }
-          $('#totalaribal').html(bal);
-          //$('#htotalaribal').html(bal + '<img class="res" src="../img/ari.png" alt="ARI" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">ARI</span>');
-          var updatedusd = bal * $('#currentariprice').text();
-          $('#ariusdbalance').html(updatedusd.toFixed(3));
+          $('#totalbscbal').html(bal);
+          var updatedbscusd = bal * $('#currentbscprice').text();
+          $('#bscusdbalance').html(updatedbscusd.toFixed(3));
           document.querySelectorAll(".format").forEach((e) => {
             let txt = e.innerHTML.split(".")
             if (typeof txt[1] != 'undefined') {
@@ -517,14 +903,98 @@ block content
             }
           });
         } else {
-          var bal = data22.aribal[0];
+          var bal = data69.bscbal[0];
           //- if (bal != 'undefined') {
-          //-   bal = parseFloat(bal.toFixed(4));
+          //-   bal = parseFloat(bal.toFixed(6));
           //- }
-          $('#totalaribal').html(bal);
-          //$('#htotalaribal').html(bal + '<img class="res" src="../img/ari.png" alt="ARI" border="0" style="height:24px !important;width: 24px !important;margin:-15px 5px -12px !important;" /><span style="color:#888;">ARI</span>');
-          var updatedusd = bal * $('#currentariprice').text();
-          $('#ariusdbalance').html(updatedusd.toFixed(3));
+          $('#totalbscbal').html(bal); 
+          //$('#htotalethbal').html(bal + '<img class="res" src="../img/eth.png" alt="ETH" border="0" style="height:24px !important;width: 24px !important;margin:-15px 0px -12px !important;" /><span style="color:#888;">ETH</span>');
+          var updatedbscusd = bal * $('#currentbscprice').text();
+          $('#bscusdbalance').html(updatedbscusd.toFixed(3));
+          document.querySelectorAll(".format").forEach((e) => {
+            let txt = e.innerHTML.split(".")
+            if (typeof txt[1] != 'undefined') {
+              e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
+            }
+          });
+        }
+      });
+      socket.on('newftmbal', function (data69) {
+        if (!data69.ftmbal[0] && !data69.error) {
+          var bal = data69.ftmbal;
+          //- if (bal != 'undefined') {
+          //-   bal = parseFloat(bal.toFixed(6));
+          //- }
+          $('#totalftmbal').html(bal);
+          var updatedftmusd = bal * $('#currentftmprice').text();
+          $('#ftmusdbalance').html(updatedftmusd.toFixed(3));
+          document.querySelectorAll(".format").forEach((e) => {
+            let txt = e.innerHTML.split(".")
+            if (typeof txt[1] != 'undefined') {
+              e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
+            }
+          });
+        } else {
+          var bal = data69.ftmbal[0];
+          //- if (bal != 'undefined') {
+          //-   bal = parseFloat(bal.toFixed(6));
+          //- }
+          $('#totalftmbal').html(bal); 
+          //$('#htotalethbal').html(bal + '<img class="res" src="../img/eth.png" alt="ETH" border="0" style="height:24px !important;width: 24px !important;margin:-15px 0px -12px !important;" /><span style="color:#888;">ETH</span>');
+          var updatedftmusd = bal * $('#currentftmprice').text();
+          $('#ftmusdbalance').html(updatedftmusd.toFixed(3));
+          document.querySelectorAll(".format").forEach((e) => {
+            let txt = e.innerHTML.split(".")
+            if (typeof txt[1] != 'undefined') {
+              e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
+            }
+          });
+        }
+      });
+      socket.on('newusdtbal', function (data22) {
+        if (!data22.usdtbal[0] && !data22.error) {
+          var bal = data22.usdtbal;
+
+          $('#totalusdtbal').html(bal);
+          var updatedusd = bal * $('#currentusdtprice').text();
+          $('#usdtusdbalance').html(updatedusd.toFixed(3));
+          document.querySelectorAll(".format").forEach((e) => {
+            let txt = e.innerHTML.split(".")
+            if (typeof txt[1] != 'undefined') {
+              e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
+            }
+          });
+        } else {
+          var bal = data22.usdtbal[0];
+          $('#totalusdtbal').html(bal);
+          var updatedusd = bal * $('#currentusdtprice').text();
+          $('#usdtusdbalance').html(updatedusd.toFixed(3));
+          document.querySelectorAll(".format").forEach((e) => {
+            let txt = e.innerHTML.split(".")
+            if (typeof txt[1] != 'undefined') {
+              e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
+            }
+          });
+        }
+      });
+      socket.on('newbusdbal', function (data22) {
+        if (!data22.busdbal[0] && !data22.error) {
+          var bal = data22.busdbal;
+
+          $('#totalbusdbal').html(bal);
+          var updatedusd = bal * $('#currentbusdprice').text();
+          $('#busdusdbalance').html(updatedusd.toFixed(3));
+          document.querySelectorAll(".format").forEach((e) => {
+            let txt = e.innerHTML.split(".")
+            if (typeof txt[1] != 'undefined') {
+              e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
+            }
+          });
+        } else {
+          var bal = data22.busdbal[0];
+          $('#totalbusdbal').html(bal);
+          var updatedusd = bal * $('#currentbusdprice').text();
+          $('#busdusdbalance').html(updatedusd.toFixed(3));
           document.querySelectorAll(".format").forEach((e) => {
             let txt = e.innerHTML.split(".")
             if (typeof txt[1] != 'undefined') {

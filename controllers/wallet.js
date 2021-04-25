@@ -15,8 +15,7 @@ const WAValidator = require('wallet-address-validatord');
 const QRCode = require('qrcode');
 const unirest = require('unirest');
 const toastr = require('express-toastr');
-const ElectrumClient = require('electrum-cash').Client;
-const ElectrumCluster = require('electrum-cash').Cluster;
+const { ElectrumCluster } = require('electrum-cash');
 const bs58 = require('bs58');
 const sha256 = require('sha256');
 //const instantiateSecp256k1 = require('@bitauth/libauth'); Unused
@@ -983,7 +982,7 @@ exports.addresses = function (req, res) {
 
         const scripthasha = async () => {
           // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-          const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+          const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4', 1, 2);
           
           // Add some servers to the cluster.
           electrum.addServer(delectrumxhost1);
@@ -1119,7 +1118,7 @@ exports.addresses = function (req, res) {
 
             const scripthashb = async () => {
               // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-              const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+              const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4', 1, 2);
               
               // Add some servers to the cluster.
               electrum.addServer(delectrumxhost1);
@@ -1287,7 +1286,7 @@ exports.addresses = function (req, res) {
 
           const scripthashe = async () => {
             // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-            const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+            const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4', 1, 2);
             
             // Add some servers to the cluster.
             electrum.addServer(delectrumxhost1);
@@ -3004,7 +3003,7 @@ exports.xpub = (req, res) => {
 
     const scripthasha = async () => {
       // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-      const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+      const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4', 1, 2);
       
       // Add some servers to the cluster.
       electrum.addServer(delectrumxhost1);
@@ -3040,7 +3039,7 @@ exports.xpub = (req, res) => {
     //Grab Full Transaction History from D ElectrumX
     const txhistoryfull = async () => {
       // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-      const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+      const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4', 1, 2);
       
       // Add some servers to the cluster.
       electrum.addServer(delectrumxhost1);
@@ -3085,7 +3084,7 @@ exports.xpub = (req, res) => {
     //Grab UTXO Transaction History from D ElectrumX
     const utxohistory = async () => {
       // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-      const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+      const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4', 1, 2);
       
       // Add some servers to the cluster.
       electrum.addServer(delectrumxhost1);

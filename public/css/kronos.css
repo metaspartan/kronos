@@ -43,9 +43,9 @@ html {
 body {
   padding-top: 60px;
   margin-bottom: 75px;
-  background-color: #222;
+  background-color: #101010;
   color: #FFF;
-  font-family: 'Lato', sans-serif;
+  font-family: 'Poppins', sans-serif;
   overflow-x: hidden;
 }
 
@@ -53,6 +53,10 @@ body {
   padding-right: 0px !important;
   margin-right: 0px !important;
   margin: 0 auto !important;
+}
+
+.blur {
+  filter: blur(3px);
 }
 
 .keepkey {
@@ -1941,6 +1945,208 @@ display:none;
   background-color: #FFDE29;
 }
 
+.gold {
+  border: 3px solid #E68A01;
+  background-color: transparent;
+  border-radius: 40px;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  outline:none;
+  font-size: 19px;
+}
+
+.gold:hover {
+  background-color: #E68A01;
+  outline:none;
+}
+
+.gray {
+  border: 3px solid #9C9C9C;
+  background-color: transparent;
+  border-radius: 40px;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  outline:none;
+  font-size: 19px;
+}
+
+.gray:hover {
+  background-color: #9C9C9C;
+  outline:none;
+}
+
+.eth {
+  border: 3px solid #5D6ACF;
+  background-color: transparent;
+  border-radius: 40px;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  outline:none;
+  font-size: 19px;
+}
+
+.eth:hover {
+  background-color: #5D6ACF;
+  outline:none;
+}
+
+.usdt {
+  border: 3px solid #70B19A;
+  background-color: transparent;
+  border-radius: 40px;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  outline:none;
+  font-size: 19px;
+}
+
+.usdt:hover {
+  background-color: #70B19A;
+  outline:none;
+}
+
+.ftm {
+  border: 3px solid #1969FF;
+  background-color: transparent;
+  border-radius: 40px;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  outline:none;
+  font-size: 19px;
+}
+
+.ftm:hover {
+  background-color: #1969FF;
+  outline:none;
+}
+
+
+
+.opulse {
+  border-radius:60px;
+  box-shadow: 0 0 0 0 #E68A01;
+  animation: pulse-orange 2s infinite;
+}
+
+@keyframes pulse-orange {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(235, 169, 27, 0.7);
+  }
+  
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(255, 121, 63, 0);
+  }
+  
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 121, 63, 0);
+  }
+}
+
+
+.gpulse {
+  border-radius:60px;
+  box-shadow: 0 0 0 0 #9C9C9C;
+  animation: pulse-gray 2s infinite;
+}
+
+@keyframes pulse-gray {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(209, 209, 209, 0.7);
+  }
+  
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(255, 121, 63, 0);
+  }
+  
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 121, 63, 0);
+  }
+}
+
+.epulse {
+  border-radius:60px;
+  box-shadow: 0 0 0 0 #5D6ACF;
+  animation: pulse-eth 2s infinite;
+}
+
+@keyframes pulse-eth {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(102, 75, 201, 0.7);
+  }
+  
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(255, 121, 63, 0);
+  }
+  
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 121, 63, 0);
+  }
+}
+
+.tpulse {
+  border-radius:60px;
+  box-shadow: 0 0 0 0 #70B19A;
+  animation: pulse-usdt 2s infinite;
+}
+
+@keyframes pulse-usdt {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(114, 214, 176, 0.7);
+  }
+  
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(255, 121, 63, 0);
+  }
+  
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 121, 63, 0);
+  }
+}
+
+.fpulse {
+  border-radius:60px;
+  box-shadow: 0 0 0 0 #1969FF;
+  animation: pulse-ftm 2s infinite;
+}
+
+@keyframes pulse-ftm {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(56, 121, 218, 0.7);
+  }
+  
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(255, 121, 63, 0);
+  }
+  
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 121, 63, 0);
+  }
+}
 /* Snowflake Tor CSS */
 #active {
   margin: 20px 0;

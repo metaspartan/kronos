@@ -35,8 +35,7 @@ const os = require('os');
 const dbr = require('../db.js');
 const db = dbr.db;
 const { isNullOrUndefined } = require('util');
-const ElectrumClient = require('electrum-cash').Client;
-const ElectrumCluster = require('electrum-cash').Cluster;
+const { ElectrumCluster } = require('electrum-cash');
 const bs58 = require('bs58');
 const randomstring = require("randomstring");
 const Storage = require('json-storage-fs');
@@ -1104,14 +1103,14 @@ exports.getsweep = (req, res) => {
 
     var totalethbal = Storage.get('totaleth');
     var totalbal = Storage.get('totalbal');
-    var totalaribal = Storage.get('totalaribal');
+    var totalusdtbal = Storage.get('totalusdtbal');
     var ethaddress = Storage.get('ethaddy');
 
 	res.render('simple/sweep', {
         title: 'Kronos Core Mode Sweep Private Key',
         totalethbal: totalethbal,
         totalbal: totalbal,
-        totalaribal: totalaribal,
+        totalusdtbal: totalusdtbal,
         ethaddress: ethaddress
     });
 }
@@ -1181,7 +1180,7 @@ exports.sweepkey = (request, response) => {
 				//Grab UTXO Transaction History from D ElectrumX
 				const utxohistory = async () => {
 					// Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-					const electrum = new ElectrumCluster('Kronos Core Mode UTXO History', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+					const electrum = new ElectrumCluster('Kronos Core Mode UTXO History', '1.4', 1, 2);
 					
 					// Add some servers to the cluster.
 					electrum.addServer(delectrumxhost1);
@@ -1259,7 +1258,7 @@ exports.sweepkey = (request, response) => {
 				
 						const broadcastTX = async () => {
 							// Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-							const electrum = new ElectrumCluster('Kronos Core Mode Transaction', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+							const electrum = new ElectrumCluster('Kronos Core Mode Transaction', '1.4', 1, 2);
 							
 							// Add some servers to the cluster.
 							electrum.addServer(delectrumxhost1);
@@ -1333,14 +1332,14 @@ exports.getbtcsweep = (req, res) => {
 
     var totalethbal = Storage.get('totaleth');
     var totalbal = Storage.get('totalbal');
-    var totalaribal = Storage.get('totalaribal');
+    var totalusdtbal = Storage.get('totalusdtbal');
     var ethaddress = Storage.get('ethaddy');
 
 	res.render('simple/btcsweep', {
         title: 'Kronos Core Mode BTC Sweep Private Key',
         totalethbal: totalethbal,
         totalbal: totalbal,
-        totalaribal: totalaribal,
+        totalusdtbal: totalusdtbal,
         ethaddress: ethaddress
     });
 }
@@ -1443,7 +1442,7 @@ exports.btcsweepkey = (request, response) => {
 				//Grab UTXO Transaction History from BTC ElectrumX
 				const utxohistory = async () => {
 					// Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-					const electrum = new ElectrumCluster('Kronos Core Mode UTXO History', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+					const electrum = new ElectrumCluster('Kronos Core Mode UTXO History', '1.4', 1, 2);
 					
 					// Add some servers to the cluster.
 					electrum.addServer(btcelectrumhost1);
@@ -1617,7 +1616,7 @@ exports.btcsweepkey = (request, response) => {
 				
 						const broadcastTX = async () => {
 							// Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-							const electrum = new ElectrumCluster('Kronos Core Mode Transaction', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+							const electrum = new ElectrumCluster('Kronos Core Mode Transaction', '1.4', 1, 2);
 							
 							// Add some servers to the cluster.
 							electrum.addServer(btcelectrumhost1);

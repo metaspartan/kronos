@@ -1,7 +1,7 @@
 # Kronos Wallet
 
 Official Website: https://kronoswallet.com
-#### A Dashboard Interface and Wallet for Denarius (D), Bitcoin (BTC), Ethereum (ETH), and Denarii (ARI) written in NodeJS and Electron
+#### A Dashboard Interface and Wallet for Denarius (D), Bitcoin (BTC), Ethereum (ETH), Binance Smart Chain (BSC), and Fantom Opera (FTM) written in NodeJS and Electron
 =======================
 ![Kronos Logo](https://user-images.githubusercontent.com/10162347/93870495-8bd68680-fc8a-11ea-85f7-a5ca7b52d1ba.png)
 
@@ -17,9 +17,9 @@ Official Website: https://kronoswallet.com
 
 This is a massive project with active development in progress and this repo will be updated in time, be warned, things can break and always always backup backup backup!
 
-Kronos is a Dashboard Interface and Wallet for Denarius (D), Bitcoin (BTC), Ethereum (ETH), and Denarii (ARI) as an app written in NodeJS and Electron. The Kronos Wallet is also now available on Windows, macOS, and Linux platforms. (You can also access it on mobile from your local network).
+Kronos is a Dashboard Interface and Wallet for Denarius (D), Bitcoin (BTC), Ethereum (ETH), Binance Smart Chain (BSC), and Fantom Opera (FTM) as an app written in NodeJS and Electron. The Kronos Wallet is also now available on Windows, macOS, and Linux platforms. (You can also access it on mobile from your local network).
 
-Send and Receive D, BTC, ETH, and ARI Funds, create new addresses, view transactions, unlock/lock wallet, stake D, reboot your node, import private keys, encrypt your wallet, broadcast raw transactions, sign and verify Denarius messages, and much more!
+Send and Receive D, BTC, ETH, USDT, BSC, BUSD, and FTM Funds, create new addresses, view transactions, unlock/lock wallet, stake D, reboot your node, import private keys, encrypt your wallet, broadcast raw transactions, sign and verify Denarius messages, and much more!
 
 This was built for the Raspberry Pi in mind and one with at least 2GB of RAM. 4GB and 8GB models are recommended! Kronos will run on any Linux distro with a minimal amount of 2GB of RAM.
 
@@ -49,7 +49,7 @@ Features
 --------
 
 -----This list needs some updating soon...
-- Send and Receive D, BTC, ETH, and ARI in Core Mode (Multi Crypto Wallets)
+- Send and Receive D, BTC, ETH, BSC, USDT, BUSD, and FTM in Core Mode (Multi Crypto Wallets)
 - Decentralized Chat with private encrypted messaging
 - Core Mode and Advanced Mode
 - Send and Receive D
@@ -86,13 +86,15 @@ As of v1.5.0 Beta of Kronos it is now built with Electron for Windows, macOS, an
 
 As of v1.5.5 Beta of Kronos it now features multi modes "Core" which only relays on ElectrumX SPV Servers and a more "Pro" mode where you can configure the RPC details to your Denarius node.
 
-As of v1.6.0 Beta of Kronos it now features ETH and ARI support fully, you can send and receive ARI or ETH in Core Mode in Kronos
+As of v1.6.0 Beta of Kronos it now features ETH and BSC support fully, you can send and receive BSC or ETH in Core Mode in Kronos
 
 As of v1.6.3 Beta of Kronos it now features using OS built keychain security for storing randomly generated secret keys for use with Kronos encryption.
 
 As of v1.7.5 Beta of Kronos it now has binaries built and auto updating for the binaries along with a dedicated data directory for Kronos data.
 
 As of v1.7.7 Beta of Kronos it now has decentralized encrypted chat between both Core and Advanced Modes. Importing of seed phrases in Core Mode is now available!
+
+As of v2.0.0 Beta of Kronos it now has support for Binance Smart Chain (BSC), Binance USD (BEP20 BUSD), FTM (Fantom Opera), and Tether USD (ERC20 USDT) including many other small UI updates and optimization improvements
 
 Prerequisites
 -------------

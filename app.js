@@ -598,8 +598,17 @@ app.post('/btcautosend', Limiter, sTXController.postbtcauto);
 app.get('/sendeth', auth, Limiter, sTXController.getethsend);
 app.post('/ethsend', Limiter, sTXController.postethsend);
 
-app.get('/sendari', auth, Limiter, sTXController.getarisend);
-app.post('/arisend', Limiter, sTXController.postarisend);
+app.get('/sendbsc', auth, Limiter, sTXController.getbscsend);
+app.post('/bscsend', Limiter, sTXController.postbscsend);
+
+app.get('/sendftm', auth, Limiter, sTXController.getftmsend);
+app.post('/ftmsend', Limiter, sTXController.postftmsend);
+
+app.get('/sendusdt', auth, Limiter, sTXController.getusdtsend);
+app.post('/usdtsend', Limiter, sTXController.postusdtsend);
+
+app.get('/sendbusd', auth, Limiter, sTXController.getbusdsend);
+app.post('/busdsend', Limiter, sTXController.postbusdsend);
 
 app.get('/sseed', auth, authseed, sTXController.getSimpleSeed);
 

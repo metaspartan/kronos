@@ -15,8 +15,7 @@ const WAValidator = require('wallet-address-validatord');
 const QRCode = require('qrcode');
 const unirest = require('unirest');
 const toastr = require('express-toastr');
-const ElectrumClient = require('electrum-cash').Client;
-const ElectrumCluster = require('electrum-cash').Cluster;
+const { ElectrumCluster } = require('electrum-cash');
 const bs58 = require('bs58');
 const sha256 = require('sha256');
 //const instantiateSecp256k1 = require('@bitauth/libauth'); Unused
@@ -272,7 +271,7 @@ const client = new bitcoin.Client({
 
           const scripthashf = async () => {
             // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-            const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+            const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4', 1, 2);
             
             // Add some servers to the cluster.
             electrum.addServer(delectrumxhost1);
@@ -325,7 +324,7 @@ const client = new bitcoin.Client({
 
           const scripthashtx = async () => {
             // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-            const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+            const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4', 1, 2);
             
             // Add some servers to the cluster.
             electrum.addServer(delectrumxhost1);

@@ -4,7 +4,7 @@ html(dir="ltr", lang="en-US")
 	head
 		meta(charset='utf-8')
 		style.
-			@import url('https://fonts.googleapis.com/css?family=Lato:100,200,400|Quicksand:300|Roboto:100,300|Open Sans:100,300|Poppins:100,200,400|Heebo:100,200,400|Ubuntu:100,300|Muli:100,300');
+			@import url('https://fonts.googleapis.com/css?family=Poppins:100,200,400|Quicksand:300|Roboto:100,300|Open Sans:100,300|Poppins:100,200,400|Heebo:100,200,400|Ubuntu:100,300|Muli:100,300');
 			body {
 				background-color: #000;
 				color: #fff;
@@ -15,7 +15,7 @@ html(dir="ltr", lang="en-US")
 				margin: 0 auto;
 				width:500px;
 				margin-top:20vh;
-				font-family: 'Lato', sans-serif;
+				font-family: 'Poppins', sans-serif;
 			}
 			.rainbow {
 				text-align: center;
@@ -97,8 +97,18 @@ html(dir="ltr", lang="en-US")
 				span.three .
 			h4#loadertxt.rainbow.rainbow_text_animated
 	script.
-		(function newFact() {
-			var facts = ['To go forward, you must backup.', 'We know that Kronos cannot be destroyed and that a widely dispersed system cannot be shut down.', 'Such wow, much Kronos', 'Hang on a sec, I know your data is here somewhere', 'Calculating Humans', 'Press any key to continue...jk', 'Breaking chains and taking memes', 'Nothing, nothing, then something', '...as if you had any other choice', 'Do you prefer chicken, stake, or tofu?', 'Go ahead -- hodl your breath', 'A few bits tried to escape, but we caught them', '...while monopolies try to take over the world', 'At least you are not on hodl'];
+		var facts = ['To go forward, you must backup.', 'We know that Kronos cannot be destroyed and that a widely dispersed system cannot be shut down.', 'Such wow, much Kronos', 'Hang on a sec, I know your data is here somewhere', 'Calculating Humans', 'Press any key to continue...jk', 'Breaking chains and taking memes', 'Nothing, nothing, then something', '...as if you had any other choice', 'Do you prefer chicken, stake, or tofu?', 'Go ahead -- hodl your breath', 'Hashing cryptography...', 'Fetching blockchain data...', 'A few bits tried to escape, but we caught them', '...while monopolies try to take over the world', 'At least you are not on hodl'];
+		var randomFact = Math.floor(Math.random() * facts.length);
+		document.getElementById('loadertxt').innerHTML = facts[randomFact];
+		setInterval(function() {
 			var randomFact = Math.floor(Math.random() * facts.length);
 			document.getElementById('loadertxt').innerHTML = facts[randomFact];
-		})();
+		}, 5000);
+		//- setTimeout(function() {
+		//- 	document.getElementById('loadertxt').innerHTML = facts[randomFact];
+		//- }, 1000);
+		//- (function newFact() {
+		//- 	var facts = ['To go forward, you must backup.', 'We know that Kronos cannot be destroyed and that a widely dispersed system cannot be shut down.', 'Such wow, much Kronos', 'Hang on a sec, I know your data is here somewhere', 'Calculating Humans', 'Press any key to continue...jk', 'Breaking chains and taking memes', 'Nothing, nothing, then something', '...as if you had any other choice', 'Do you prefer chicken, stake, or tofu?', 'Go ahead -- hodl your breath', 'A few bits tried to escape, but we caught them', '...while monopolies try to take over the world', 'At least you are not on hodl'];
+		//- 	var randomFact = Math.floor(Math.random() * facts.length);
+		//- 	document.getElementById('loadertxt').innerHTML = facts[randomFact];
+		//- })();

@@ -36,8 +36,7 @@ const os = require('os');
 const dbr = require('../../db.js');
 const db = dbr.db;
 const { isNullOrUndefined } = require('util');
-const ElectrumClient = require('electrum-cash').Client;
-const ElectrumCluster = require('electrum-cash').Cluster;
+const { ElectrumCluster } = require('electrum-cash');
 const bs58 = require('bs58');
 const randomstring = require("randomstring");
 const Storage = require('json-storage-fs');
@@ -127,20 +126,20 @@ exports.getethsend = (req, res) => {
 
     var totalethbal = Storage.get('totaleth');
     var totalbal = Storage.get('totalbal');
-    var totalaribal = Storage.get('totalaribal');
+    var totalusdtbal = Storage.get('totalusdtbal');
     var ethaddress = Storage.get('ethaddy');
 
     res.render('simple/getethsend', {
         totalethbal: totalethbal,
         totalbal: totalbal,
-        totalaribal: totalaribal,
+        totalusdtbal: totalusdtbal,
         ethaddress: ethaddress
     });
 
 };
 
-//Get Send ARI
-exports.getarisend = (req, res) => {
+//Get Send USDT
+exports.getusdtsend = (req, res) => {
 
     const ip = require('ip');
     const ipaddy = ip.address();
@@ -149,14 +148,175 @@ exports.getarisend = (req, res) => {
 
     var totalethbal = Storage.get('totaleth');
     var totalbal = Storage.get('totalbal');
-    var totalaribal = Storage.get('totalaribal');
+    var totalusdtbal = Storage.get('totalusdtbal');
     var ethaddress = Storage.get('ethaddy');
 
-    res.render('simple/getarisend', {
+    res.render('simple/getusdtsend', {
         totalethbal: totalethbal,
         totalbal: totalbal,
-        totalaribal: totalaribal,
+        totalusdtbal: totalusdtbal,
         ethaddress: ethaddress
+    });
+
+};
+
+//Get Send BUSD
+exports.getbusdsend = (req, res) => {
+
+    const ip = require('ip');
+    const ipaddy = ip.address();
+  
+    res.locals.lanip = ipaddy;
+
+    let socket_id0 = [];
+
+    const Web3 = require('web3');
+    const web3 = new Web3('https://bsc-dataseed1.binance.org:443'); //bsc
+
+    const busdAddress = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56";
+    const bepAbi = [
+        // balanceOf
+        {
+          "constant":true,
+          "inputs":[{"name":"_owner","type":"address"}],
+          "name":"balanceOf",
+          "outputs":[{"name":"balance","type":"uint256"}],
+          "type":"function"
+        },
+        // decimals
+        {
+          "constant":true,
+          "inputs":[],
+          "name":"decimals",
+          "outputs":[{"name":"","type":"uint8"}],
+          "type":"function"
+        }
+    ];
+
+    const busdContract = new web3.eth.Contract(bepAbi, busdAddress);
+
+    var totalbsc = Storage.get('totalbsc');
+    var totalbusdbal = Storage.get('totalbusdbal');
+    var bscaddress = Storage.get('bscaddy');
+
+    // Grab BUSD balances in realtime (every 15s)
+    res.io.on('connection', function (socket) {
+        socket_id0.push(socket.id);
+        if (socket_id0[0] === socket.id) {
+        res.io.removeAllListeners('connection'); 
+        }
+        const busdWalletBal = async () => {
+            //let busdbalance = await usdtContract.balanceOf(ethwalletp.address);
+            let busdbalance = await busdContract.methods.balanceOf(bscaddress).call();
+            let busdbalformatted = ethers.utils.formatEther(busdbalance);
+            console.log(busdbalformatted);
+            Storage.set('totalbusdbal', JSON.parse(busdbalformatted).toString());
+            socket.emit("newbusdbal", {busdbal: parseFloat(busdbalformatted)});
+        }
+        busdWalletBal();
+        setInterval(function(){ 
+            busdWalletBal();
+        }, 15000);
+    });
+
+    var totalbusdbal = Storage.get('totalbusdbal');
+
+    res.render('simple/getbusdsend', {
+        totalbscbal: totalbsc,
+        totalbal: totalbsc,
+        totalbusdbal: totalbusdbal,
+        bscaddress: bscaddress
+    });
+
+};
+
+//Get Send BSC
+exports.getbscsend = (req, res) => {
+
+    const ip = require('ip');
+    const ipaddy = ip.address();
+  
+    res.locals.lanip = ipaddy;
+
+    let socket_id0 = [];
+
+    const Web3 = require('web3');
+    const web3 = new Web3('https://bsc-dataseed1.binance.org:443'); //bsc
+
+    var totalbal = Storage.get('totalbal');
+    var totalusdtbal = Storage.get('totalusdtbal');
+    var bscaddress = Storage.get('bscaddy');
+
+    // Grab BSC balances in realtime (every 15s)
+    res.io.on('connection', function (socket) {
+        socket_id0.push(socket.id);
+        if (socket_id0[0] === socket.id) {
+        res.io.removeAllListeners('connection'); 
+        }
+        const bscWalletBal = async () => {
+            let bscbalance = await web3.eth.getBalance(bscaddress);
+            let bscbalformatted = bscbalance / 1e18; //ethers.utils.formatEther(bscbalance); Total BSC:  10000000000000000 = 0.01
+            //console.log('Total BSC: ', bscbalformatted);
+            Storage.set('totalbscbal', bscbalformatted);
+            socket.emit("newbscbal", {bscbal: bscbalformatted});
+        }
+        bscWalletBal();
+        setInterval(function(){ 
+            bscWalletBal();
+        }, 15000);
+    });
+
+    var totalbscbal = Storage.get('totalbsc');
+
+    res.render('simple/getbscsend', {
+        totalbscbal: totalbscbal,
+        totalbal: totalbal,
+        totalusdtbal: totalusdtbal,
+        bscaddress: bscaddress
+    });
+
+};
+
+//Get Send FTM
+exports.getftmsend = (req, res) => {
+
+    const ip = require('ip');
+    const ipaddy = ip.address();
+  
+    res.locals.lanip = ipaddy;
+
+    let socket_id0 = [];
+
+    const Web3 = require('web3');
+    const web3 = new Web3('https://rpcapi.fantom.network/'); //ftm
+
+    var totalbal = Storage.get('totalbal');
+    var ftmaddress = Storage.get('ftmaddy');
+
+    // Grab FTM balances in realtime (every 15s)
+    res.io.on('connection', function (socket) {
+        socket_id0.push(socket.id);
+        if (socket_id0[0] === socket.id) {
+        res.io.removeAllListeners('connection'); 
+        }
+        const ftmWalletBal = async () => {
+            let ftmbalance = await web3.eth.getBalance(ftmaddress);
+            let ftmbalformatted = ftmbalance / 1e18; //ethers.utils.formatEther(bscbalance); Total FTM
+            Storage.set('totalftmbal', ftmbalformatted);
+            socket.emit("newftmbal", {ftmbal: ftmbalformatted});
+        }
+        ftmWalletBal();
+        setInterval(function(){ 
+            ftmWalletBal();
+        }, 15000);
+    });
+
+    var totalftmbal = Storage.get('totalftm');
+
+    res.render('simple/getftmsend', {
+        totalftmbal: totalftmbal,
+        totalbal: totalbal,
+        ftmaddress: ftmaddress
     });
 
 };
@@ -171,7 +331,7 @@ exports.getsend = (req, res) => {
 
     let totalethbal = Storage.get('totaleth');
     let totalbal = Storage.get('totalbal');
-    let totalaribal = Storage.get('totalaribal');
+    let totalusdtbal = Storage.get('totalusdtbal');
     //let utxos = Storage.get('dutxo');
     var ethaddress = Storage.get('ethaddy');
     var mainaddress = Storage.get('mainaddress');
@@ -210,7 +370,7 @@ exports.getsend = (req, res) => {
     //Grab UTXO Transaction History from D ElectrumX
     const utxohistory = async () => {
         // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-        const electrum = new ElectrumCluster('Kronos Core Mode UTXO History', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+        const electrum = new ElectrumCluster('Kronos Core Mode UTXO History', '1.4', 1, 2);
         
         // Add some servers to the cluster.
         electrum.addServer(delectrumxhost1);
@@ -268,7 +428,7 @@ exports.getsend = (req, res) => {
                 totalsendable: totalVal,
                 totalethbal: totalethbal,
                 totalbal: totalbal,
-                totalaribal: totalaribal,
+                totalusdtbal: totalusdtbal,
                 ethaddress: ethaddress,
                 mainaddress: mainaddress
             }, (err, html) => {
@@ -289,7 +449,7 @@ exports.getbtcsend = (req, res) => {
     let totalethbal = Storage.get('totaleth');
     let totalbal = Storage.get('totalbal');
     let totalbtcbal = Storage.get('totalbtcbal');
-    let totalaribal = Storage.get('totalaribal');
+    let totalusdtbal = Storage.get('totalusdtbal');
     //let utxos = Storage.get('dutxo');
     var ethaddress = Storage.get('ethaddy');
     var mainaddress = Storage.get('mainaddress');
@@ -330,7 +490,7 @@ exports.getbtcsend = (req, res) => {
     //Grab UTXO Transaction History from D ElectrumX
     const utxohistory = async () => {
         // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-        const electrum = new ElectrumCluster('Kronos Core Mode BTC UTXO History', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+        const electrum = new ElectrumCluster('Kronos Core Mode BTC UTXO History', '1.4', 1, 2);
         
         // Add some servers to the cluster.
         electrum.addServer(btcelectrumhost1);
@@ -391,7 +551,7 @@ exports.getbtcsend = (req, res) => {
                 totalethbal: totalethbal,
                 totalbal: totalbal,
                 totalbtcbal: totalbtcbal,
-                totalaribal: totalaribal,
+                totalusdtbal: totalusdtbal,
                 ethaddress: ethaddress,
                 mainaddress: btcaddress
             }, (err, html) => {
@@ -412,7 +572,7 @@ exports.getchat = (req, res) => {
 
     var totalethbal = Storage.get('totaleth');
     var totalbal = Storage.get('totalbal');
-    var totalaribal = Storage.get('totalaribal');
+    var totalusdtbal = Storage.get('totalusdtbal');
     var ethaddress = Storage.get('ethaddy');
     var mainaddress = Storage.get('mainaddress');
     var btcaddress = Storage.get('btcsegwitaddy');
@@ -420,7 +580,7 @@ exports.getchat = (req, res) => {
     res.render('simple/chat', {
         totalethbal: totalethbal,
         totalbal: totalbal,
-        totalaribal: totalaribal,
+        totalusdtbal: totalusdtbal,
         ethaddress: ethaddress,
         mainaddress: mainaddress,
         btcaddress: btcaddress
@@ -433,7 +593,7 @@ exports.postapisend = (req, res) => {
 
     let totalethbal = Storage.get('totaleth');
     let totalbal = Storage.get('totalbal');
-    let totalaribal = Storage.get('totalaribal');
+    let totalusdtbal = Storage.get('totalusdtbal');
     //let utxos = Storage.get('dutxo');
     var ethaddress = Storage.get('ethaddy');
     var mainaddress = Storage.get('mainaddress');
@@ -472,7 +632,7 @@ exports.postapisend = (req, res) => {
     //Grab UTXO Transaction History from D ElectrumX
     const utxohistory = async () => {
         // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-        const electrum = new ElectrumCluster('Kronos Core Mode UTXO History', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+        const electrum = new ElectrumCluster('Kronos Core Mode UTXO History', '1.4', 1, 2);
         
         // Add some servers to the cluster.
         electrum.addServer(delectrumxhost1);
@@ -530,7 +690,7 @@ exports.postapisend = (req, res) => {
             //     totalsendable: totalVal,
             //     totalethbal: totalethbal,
             //     totalbal: totalbal,
-            //     totalaribal: totalaribal,
+            //     totalusdtbal: totalusdtbal,
             //     ethaddress: ethaddress,
             //     mainaddress: mainaddress
             // }, (err, html) => {
@@ -660,7 +820,7 @@ exports.postapisend = (req, res) => {
         
                 const broadcastTX = async () => {
                     // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-                    const electrum = new ElectrumCluster('Kronos Core Mode Transaction', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+                    const electrum = new ElectrumCluster('Kronos Core Mode Transaction', '1.4', 1, 2);
                     
                     // Add some servers to the cluster.
                     electrum.addServer(delectrumxhost1);
@@ -835,7 +995,7 @@ exports.postcreate = (req, res) => {
 
         const broadcastTX = async () => {
             // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-            const electrum = new ElectrumCluster('Kronos Core Mode Transaction', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+            const electrum = new ElectrumCluster('Kronos Core Mode Transaction', '1.4', 1, 2);
             
             // Add some servers to the cluster.
             electrum.addServer(delectrumxhost1);
@@ -1019,7 +1179,7 @@ exports.postauto = (req, res) => {
 
         const broadcastTX = async () => {
             // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-            const electrum = new ElectrumCluster('Kronos Core Mode Transaction', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+            const electrum = new ElectrumCluster('Kronos Core Mode Transaction', '1.4', 1, 2);
             
             // Add some servers to the cluster.
             electrum.addServer(delectrumxhost1);
@@ -1234,7 +1394,7 @@ exports.postbtcsend = (req, res) => {
 
         const broadcastTX = async () => {
             // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-            const electrum = new ElectrumCluster('Kronos Core Mode Transaction', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+            const electrum = new ElectrumCluster('Kronos Core Mode Transaction', '1.4', 1, 2);
             
             // Add some servers to the cluster.
             electrum.addServer(btcelectrumhost1);
@@ -1445,7 +1605,7 @@ exports.postbtcauto = (req, res) => {
 
         const broadcastTX = async () => {
             // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-            const electrum = new ElectrumCluster('Kronos Core Mode BTC Transaction', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+            const electrum = new ElectrumCluster('Kronos Core Mode BTC Transaction', '1.4', 1, 2);
             
             // Add some servers to the cluster.
             electrum.addServer(btcelectrumhost1);
@@ -1568,15 +1728,15 @@ exports.postethsend = (req, res) => {
 };
 
 
-exports.postarisend = (req, res) => {
+exports.postusdtsend = (req, res) => {
     var gasfee = req.body.gasfeer; //21000 Gas Limit * 31 Gwei Fee = 0.000651 ETH
     var gwei = req.body.gasfeeg;
     var sendtoaddress = req.body.sendaddress;
     var amount = req.body.amount;
     var totalethbal = Storage.get('totaleth');
-    var totalaribal = Storage.get('totalaribal');
-    var transferamount = ethers.utils.parseUnits(amount, 8);
-    const ariAddress = "0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670"; // 0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670 Denarii (ARI)
+    var totalusdtbal = Storage.get('totalusdtbal');
+    var transferamount = ethers.utils.parseEther(amount);
+    const usdtAddress = "0xdAC17F958D2ee523a2206206994597C13D831ec7"; //0xdAC17F958D2ee523a2206206994597C13D831ec7
 
     var valid = ETHValidator.validate(`${sendtoaddress}`, 'ETH');
     var ensregex = new RegExp('^[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{3}$'); //ENS Name Regex for .eth domains
@@ -1587,23 +1747,23 @@ exports.postarisend = (req, res) => {
     let ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
     let ethwalletp = ethwallet.connect(provider); //Set wallet provider
 
-    let totalcalcbal = parseFloat(totalaribal) - parseFloat(amount);
+    let totalcalcbal = parseFloat(totalusdtbal) - parseFloat(amount);
     let totalcalcgas = parseFloat(totalethbal) - parseFloat(gasfee);
 
     if (parseFloat(gasfee) > parseFloat(totalethbal)) {
 
         req.toastr.error(`Gas fee (`+gasfee+` ETH) exceeds your ETH balance!`, 'Gas Balance Error!', { positionClass: 'toast-bottom-left' });
-        return res.redirect('/sendari');
+        return res.redirect('/sendusdt');
 
-    } else if (parseFloat(amount) > parseFloat(totalaribal)) {
+    } else if (parseFloat(amount) > parseFloat(totalusdtbal)) {
 
         req.toastr.error(`Withdrawal amount (`+amount+` ARI) exceeds your ARI balance!`, 'Balance Error!', { positionClass: 'toast-bottom-left' });
-        return res.redirect('/sendari');
+        return res.redirect('/sendusdt');
 
     } else {
 
     if (valid || ensregex.test(sendtoaddress)) {
-        const ariAbi = [
+        const ercAbi = [
         // Some details about the token
         "function name() view returns (string)",
         "function symbol() view returns (string)",
@@ -1613,7 +1773,7 @@ exports.postarisend = (req, res) => {
         ];
 
         // The Contract object
-        const ariContract = new ethers.Contract(ariAddress, ariAbi, ethwalletp);
+        const usdtContract = new ethers.Contract(usdtAddress, ercAbi, ethwalletp);
         
         var options = {
             gasLimit: 60000,
@@ -1623,15 +1783,14 @@ exports.postarisend = (req, res) => {
         let promises = [];
         let txarray = [];
 
-        const ariTX = async () => {
-            let aritransfer = await ariContract.transfer(sendtoaddress, transferamount, options);
-            return aritransfer;
+        const usdtTX = async () => {
+            let usdttransfer = await usdtContract.transfer(sendtoaddress, transferamount, options);
+            return usdttransfer;
         }
-        //ariTX();
 
         promises.push(new Promise((res, rej) => {
-            ariTX().then(globalData => {
-                txarray.push({aritx: globalData});
+            usdtTX().then(globalData => {
+                txarray.push({usdttx: globalData});
                 res({globalData});
             });
         }));
@@ -1641,22 +1800,341 @@ exports.postarisend = (req, res) => {
             console.log(values);
             console.log(txarray);
 
-            req.toastr.success(`${amount} ARI was sent successfully! ${txarray[0].aritx.hash}`, 'Success!', { positionClass: 'toast-bottom-left' });
-            req.flash('success', { msg: `Your <strong>${amount} ARI</strong> was sent successfully! (${gasfee} ETH gas fee) <a href="https://etherscan.io/tx/${txarray[0].aritx.hash}" target="_blank"><strong>${txarray[0].aritx.hash}</strong></a>` });
-            Storage.set('totalaribal', totalcalcbal);
+            req.toastr.success(`${amount} USDT was sent successfully! ${txarray[0].usdttx.hash}`, 'Success!', { positionClass: 'toast-bottom-left' });
+            req.flash('success', { msg: `Your <strong>${amount} USDT</strong> was sent successfully! (${gasfee} ETH gas fee) <a href="https://etherscan.io/tx/${txarray[0].usdttx.hash}" target="_blank"><strong>${txarray[0].usdttx.hash}</strong></a>` });
+            Storage.set('totalusdtbal', totalcalcbal);
             Storage.set('totaleth', totalcalcgas);
-            return res.redirect('/sendari'); // ????
+            return res.redirect('/sendusdt'); // ????
 
         });
 
     } else {
-        req.toastr.error('You entered an invalid Denarii (ARI) Address!', 'Invalid Address!', { positionClass: 'toast-bottom-left' });
+        req.toastr.error('You entered an invalid Tether USD ERC20 (USDT) Address!', 'Invalid Address!', { positionClass: 'toast-bottom-left' });
         //req.flash('errors', { msg: 'You entered an invalid Ethereum (ETH) Address!' });
-        return res.redirect('/sendari');
+        return res.redirect('/sendusdt');
     }
   }
 
 
+};
+
+exports.postbscsend = (req, res) => {
+    var gasfee = req.body.gasfeer; //21000 Gas Limit * 5 Gwei Fee = 0.000651 ETH
+    var sendtoaddress = req.body.sendaddress;
+    var amount = req.body.amount;
+    var totalbscbal = Storage.get('totalbsc');
+    var transferamount = ethers.utils.parseEther(amount);
+
+    var gasandamount = amount + gasfee;
+
+    let totalcalcbale = totalbscbal - gasandamount;
+
+    var valid = ETHValidator.validate(`${sendtoaddress}`, 'ETH');
+    var ensregex = new RegExp('^[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{3}$'); //ENS Name Regex for .eth domains
+
+    var seedphrasedb = Storage.get('seed');
+    var decryptedmnemonic = decrypt(seedphrasedb);
+    mnemonic = decryptedmnemonic;
+    let ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
+    let ethwalletp = ethwallet.connect(provider); //Set wallet provider
+
+    const Web3 = require('web3');
+
+    const web3 = new Web3('https://bsc-dataseed1.binance.org:443'); //bsc
+
+    const web3account = web3.eth.accounts.privateKeyToAccount(ethwallet.privateKey);
+
+    // const keystore = "Contents of keystore file";
+    // const decryptedAccount = web3.eth.accounts.decrypt(keystore, 'PASSWORD');
+    // const rawTransaction = {
+    // "from": "Keystore account id",
+    // "to": "Account you want to transfer to",
+    // "value": web3.utils.toHex(web3.utils.toWei("0.001", "ether")),
+    // "gas": 2000,
+    // "chainId": 3
+    // };
+    // decryptedAccount.signTransaction(rawTransaction)
+    // .then(signedTx => web3.eth.sendSignedTransaction(signedTx.rawTransaction))
+    // .then(receipt => console.log("Transaction receipt: ", receipt))
+    // .catch(err => console.error(err));
+
+    console.log(gasfee);
+
+    if (parseFloat(amount) + parseFloat(gasfee) > parseFloat(totalbscbal)) {
+        req.toastr.error(`Withdrawal amount (`+amount+` BSC) and gas fee (`+gasfee+` BSC) exceeds your BSC balance!`, 'Balance Error!', { positionClass: 'toast-bottom-left' });
+        return res.redirect('/sendbsc');
+
+    } else {
+
+    if (valid || ensregex.test(sendtoaddress)) {
+
+        // var transaction = {
+        //     gasLimit: 21000,
+        //     //from: `${ethwalletp.address}`,
+        //     to: `${sendtoaddress}`,
+        //     // Optional
+        //     //data: "0x",
+        //     value: transferamount,
+        // };
+            
+        // console.log(transaction);
+
+        const gwei = 5;
+
+        var tx = {
+            from: ethwallet.address,
+            to: `${sendtoaddress}`,
+            gasPrice: gwei * 1e9,
+            gas: 21000,
+            value: transferamount
+        }
+
+        console.log(tx);
+    
+        // web3.eth.sendTransaction({
+        //     from: ethwallet.address,
+        //     to: sendtoaddress, 
+        //     value: web3.toWei(transferamount, "ether"), 
+        // }, function(err, transactionHash) {
+        //     if (err) { 
+        //         console.log(err); 
+        //     } else {
+        //         console.log(transactionHash);
+        //     }
+        // });
+
+        web3.eth.accounts.signTransaction(tx, ethwallet.privateKey)
+        .catch((e) => console.log(e.message))
+        .then((signedTX) => {
+            console.log(`Signed BSC TX!`)
+            web3.eth.sendSignedTransaction(signedTX.raw || signedTX.rawTransaction)
+                .catch((error) => console.log(`[${Math.floor(Date.now() / 1000)}] broadcast tx failed ${error.message}`))
+                .then(function (hash) {
+                    console.log(hash);
+                    req.toastr.success(`${amount} BSC was sent successfully! ${hash.transactionHash}`, 'Success!', { positionClass: 'toast-bottom-left' });
+                    req.flash('success', { msg: `Your <strong>${amount} BSC</strong> was sent successfully! <a href="https://bscscan.com/tx/${hash.transactionHash}" target="_blank">${hash.transactionHash}</a>` });
+                    //Storage.set('totalbsc', totalcalcbale);
+                    return res.redirect('/sendbsc');
+                });
+        });
+        
+        // provider.estimateGas(transaction).then(function (estimate) {
+    
+        //     transaction.gasLimit = estimate; //Set Transaction Gas Limit
+        //     console.log('Gas Limit Estimate: ' + estimate);
+            
+        //     ethwalletp.sendTransaction(transaction).then(function (hash) {
+        //         req.toastr.success(`${amount} BSC was sent successfully! ${hash.hash}`, 'Success!', { positionClass: 'toast-bottom-left' });
+        //         req.flash('success', { msg: `Your <strong>${amount} BSC</strong> was sent successfully! <a href="https://bscscan.com/tx/${hash.hash}" target="_blank">${hash.hash}</a>` });
+        //         Storage.set('totalbsc', totalcalcbale);
+        //         return res.redirect('/sendbsc');
+        //     });    
+        // });
+
+    } else {
+        req.toastr.error('You entered an invalid Binance Smart Chain (BSC) Address!', 'Invalid Address!', { positionClass: 'toast-bottom-left' });
+        return res.redirect('/sendbsc');
+    }
+  }
+};
+
+
+exports.postbusdsend = (req, res) => {
+    var gasfee = req.body.gasfeer; //21000 Gas Limit * 5 Gwei Fee = 0.000651 BSC
+    var gwei = req.body.gasfeeg;
+    var sendtoaddress = req.body.sendaddress;
+    var amount = req.body.amount;
+    var totalbscbal = Storage.get('totalbsc');
+    var totalbusdbal = Storage.get('totalbusdbal');
+    var transferamount = ethers.utils.parseEther(amount);
+
+    var valid = ETHValidator.validate(`${sendtoaddress}`, 'ETH');
+    var ensregex = new RegExp('^[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{3}$'); //ENS Name Regex for .eth domains
+    const Web3 = require('web3');
+    const web3 = new Web3('https://bsc-dataseed1.binance.org:443'); //bsc
+    const busdAddress = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56";
+    const bepAbi = [
+        // balanceOf
+        {
+          "constant":true,
+          "inputs":[{"name":"_owner","type":"address"}],
+          "name":"balanceOf",
+          "outputs":[{"name":"balance","type":"uint256"}],
+          "type":"function"
+        },
+        // decimals
+        {
+          "constant":true,
+          "inputs":[],
+          "name":"decimals",
+          "outputs":[{"name":"","type":"uint8"}],
+          "type":"function"
+        },
+        // transfer
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "_to",
+                    "type": "address"
+                },
+                {
+                    "name": "_value",
+                    "type": "uint256"
+                }
+            ],
+            "name": "transfer",
+            "outputs": [
+                {
+                    "name": "success",
+                    "type": "bool"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        }
+    ];
+
+    const busdContract = new web3.eth.Contract(bepAbi, busdAddress);
+
+    var seedphrasedb = Storage.get('seed');
+    var decryptedmnemonic = decrypt(seedphrasedb);
+    mnemonic = decryptedmnemonic;
+    let ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
+    let ethwalletp = ethwallet.connect(provider); //Set wallet provider
+
+    let totalcalcbal = parseFloat(totalbusdbal) - parseFloat(amount);
+    let totalcalcgas = parseFloat(totalbscbal) - parseFloat(gasfee);
+
+    if (parseFloat(gasfee) > parseFloat(totalbscbal)) {
+
+        req.toastr.error(`Gas fee (`+gasfee+` BSC) exceeds your BSC balance!`, 'Gas Balance Error!', { positionClass: 'toast-bottom-left' });
+        return res.redirect('/sendbusd');
+
+    } else if (parseFloat(amount) > parseFloat(totalbusdbal)) {
+
+        req.toastr.error(`Withdrawal amount (`+amount+` BUSD) exceeds your BUSD balance!`, 'Balance Error!', { positionClass: 'toast-bottom-left' });
+        return res.redirect('/sendbusd');
+
+    } else {
+
+    if (valid || ensregex.test(sendtoaddress)) {
+
+        const gwei = 5;
+
+        var tx = {
+            from: ethwallet.address,
+            gasPrice: 5 * 1e9,
+            gas: 80000,
+            to: busdAddress,
+            value: "0x0",
+            data: busdContract.methods.transfer(sendtoaddress, transferamount).encodeABI()
+        };
+
+        console.log(tx);
+
+        web3.eth.accounts.signTransaction(tx, ethwallet.privateKey)
+        .catch((e) => console.log(e.message))
+        .then((signedTX) => {
+            console.log(`Signed BUSD TX!`)
+            web3.eth.sendSignedTransaction(signedTX.raw || signedTX.rawTransaction)
+                .catch((error) => console.log(`[${Math.floor(Date.now() / 1000)}] broadcast tx failed ${error.message}`))
+                .then(function (hash) {
+                    console.log(hash);
+                    req.toastr.success(`${amount} BUSD was sent successfully! ${hash.transactionHash}`, 'Success!', { positionClass: 'toast-bottom-left' });
+                    req.flash('success', { msg: `Your <strong>${amount} BUSD</strong> was sent successfully! <a href="https://bscscan.com/tx/${hash.transactionHash}" target="_blank">${hash.transactionHash}</a>` });
+                    //Storage.set('totalbsc', totalcalcbale);
+                    //Storage.set('totalbusdbal', totalcalcbal);
+                    Storage.set('totalbsc', totalcalcgas);
+                    return res.redirect('/sendbusd');
+                });
+        });
+
+    } else {
+        req.toastr.error('You entered an invalid Binance USD BEP20 (BUSD) Address!', 'Invalid Address!', { positionClass: 'toast-bottom-left' });
+        return res.redirect('/sendbusd');
+    }
+  }
+
+
+};
+
+exports.postftmsend = (req, res) => {
+    var gasfee = req.body.gasfeer; //21000 Gas Limit * 1 Gwei Fee = 0.0000021 FTM
+    var sendtoaddress = req.body.sendaddress;
+    var amount = req.body.amount;
+    var totalftmbal = Storage.get('totalftm');
+    var transferamount = ethers.utils.parseEther(amount);
+
+    var gasandamount = amount + gasfee;
+
+    let totalcalcbale = totalftmbal - gasandamount;
+
+    var valid = ETHValidator.validate(`${sendtoaddress}`, 'ETH');
+    var ensregex = new RegExp('^[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{3}$'); //ENS Name Regex for .eth domains
+
+    var seedphrasedb = Storage.get('seed');
+    var decryptedmnemonic = decrypt(seedphrasedb);
+    mnemonic = decryptedmnemonic;
+    let ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
+    let ethwalletp = ethwallet.connect(provider); //Set wallet provider
+
+    const Web3 = require('web3');
+    const web3 = new Web3('https://rpcapi.fantom.network/'); //ftm
+
+    console.log(gasfee);
+
+    if (parseFloat(amount) + parseFloat(gasfee) > parseFloat(totalftmbal)) {
+        req.toastr.error(`Withdrawal amount (`+amount+` FTM) and gas fee (`+gasfee+` FTM) exceeds your FTM balance!`, 'Balance Error!', { positionClass: 'toast-bottom-left' });
+        return res.redirect('/sendftm');
+
+    } else {
+
+    if (valid || ensregex.test(sendtoaddress)) {
+
+        // var transaction = {
+        //     gasLimit: 21000,
+        //     //from: `${ethwalletp.address}`,
+        //     to: `${sendtoaddress}`,
+        //     // Optional
+        //     //data: "0x",
+        //     value: transferamount,
+        // };
+            
+        // console.log(transaction);
+
+        const gwei = 1;
+
+        var tx = {
+            from: ethwallet.address,
+            to: `${sendtoaddress}`,
+            gasPrice: gwei * 1e9,
+            gas: 21000,
+            value: transferamount
+        }
+
+        console.log(tx);
+
+        web3.eth.accounts.signTransaction(tx, ethwallet.privateKey)
+        .catch((e) => console.log(e.message))
+        .then((signedTX) => {
+            console.log(`Signed FTM TX!`)
+            web3.eth.sendSignedTransaction(signedTX.raw || signedTX.rawTransaction)
+                .catch((error) => console.log(`[${Math.floor(Date.now() / 1000)}] broadcast tx failed ${error.message}`))
+                .then(function (hash) {
+                    console.log(hash);
+                    req.toastr.success(`${amount} FTM was sent successfully! ${hash.transactionHash}`, 'Success!', { positionClass: 'toast-bottom-left' });
+                    req.flash('success', { msg: `Your <strong>${amount} FTM</strong> was sent successfully! <a href="https://ftmscan.com/tx/${hash.transactionHash}" target="_blank">${hash.transactionHash}</a>` });
+                    return res.redirect('/sendftm');
+                });
+        });
+
+    } else {
+        req.toastr.error('You entered an invalid Fantom Opera (FTM) Address!', 'Invalid Address!', { positionClass: 'toast-bottom-left' });
+        return res.redirect('/sendftm');
+    }
+  }
 };
 
 
@@ -1670,7 +2148,7 @@ exports.getSimpleSeed = (req, res) => {
   
     var totalbal = Storage.get('totalbal');
     var totalethbal = Storage.get('totaleth');
-    var totalaribal = Storage.get('totalaribal');
+    var totalusdtbal = Storage.get('totalusdtbal');
     var seedphrasedb = Storage.get('seed');
   
     var mnemonic;
@@ -1780,7 +2258,7 @@ exports.getSimpleSeed = (req, res) => {
           title: 'Kronos Seed Phrase',
           totalbal: totalbal,
           totalethbal: totalethbal,
-          totalaribal: totalaribal,
+          totalusdtbal: totalusdtbal,
           ethaddress: ethaddress,
           ethprivkey: ethprivkey,
           seedphrase: store

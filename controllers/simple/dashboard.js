@@ -34,14 +34,15 @@ const os = require('os');
 const dbr = require('../../db.js');
 const db = dbr.db;
 const { isNullOrUndefined } = require('util');
-const ElectrumClient = require('electrum-cash').Client;
-const ElectrumCluster = require('electrum-cash').Cluster;
+const { ElectrumClient } = require('electrum-cash');
+const { ElectrumCluster } = require('electrum-cash');
 const bs58 = require('bs58');
 const randomstring = require("randomstring");
 const Storage = require('json-storage-fs');
 const PromiseLoadingSpinner = require('promise-loading-spinner');
 const main = require('progressbar.js');
 const ethers = require('ethers');
+const { combinedDisposable } = require('custom-electron-titlebar/lib/common/lifecycle');
 
 
 var currentOS = os.platform();        
@@ -134,8 +135,13 @@ exports.simpleindex = (req, res) => {
     let socket_id7 = [];
     let socket_id33 = [];
     let socket_id34 = [];
+    let socket_id35 = [];
+    let socket_id36 = [];
+    let socket_id37 = [];
     let socket_idbtc = [];
+    let socket_idbb = [];
     let socket_idbtcb = [];
+    let socket_idftm = [];
 
     var mnemonic;
     var ps;
@@ -147,6 +153,8 @@ exports.simpleindex = (req, res) => {
 
     let ethnetworktype = 'homestead'; //homestead is mainnet, ropsten for testing, choice for UI selection eventually
 
+    let bscnetworktype = 'mainnet';
+
     let provider = ethers.getDefaultProvider(ethnetworktype, {
         etherscan: 'JMBXKNZRZYDD439WT95P2JYI72827M4HHR',
         // Or if using a project secret:
@@ -157,23 +165,54 @@ exports.simpleindex = (req, res) => {
         alchemy: 'W5yjuu3Ade1lsIn3Od8rTqJsYiFJszVY',
         cloudflare: ''
     });
-
     let provider2 = new ethers.providers.CloudflareProvider();
 
     var decryptedmnemonic = decrypt(seedphrasedb);
     mnemonic = decryptedmnemonic;
     const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
     let ethwalletp = ethwallet.connect(provider); //Set wallet provider
-    const ariAddress = "0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670"; // 0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670 Denarii (ARI)
-    const ariAbi = [
-    // Some details about Denarii ERC20 ABI
+
+    const Web3 = require('web3');
+
+    const web3 = new Web3('https://bsc-dataseed1.binance.org:443'); //bsc
+
+    const web3ftm = new Web3('https://rpcapi.fantom.network/'); //ftm
+
+    //console.log('BSC WEB3:', web3account);
+
+    const usdtAddress = "0xdAC17F958D2ee523a2206206994597C13D831ec7"; // 0xdAC17F958D2ee523a2206206994597C13D831ec7 USDT (Tether USD ERC20)
+    const ercAbi = [
+    // Some details about ERC20 ABI
     "function name() view returns (string)",
     "function symbol() view returns (string)",
     "function balanceOf(address) view returns (uint)",
     "function transfer(address to, uint amount)",
     "event Transfer(address indexed from, address indexed to, uint amount)"
     ];
-    const ariContract = new ethers.Contract(ariAddress, ariAbi, provider);
+    const usdtContract = new ethers.Contract(usdtAddress, ercAbi, provider);
+
+
+    const busdAddress = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56";
+    const bepAbi = [
+        // balanceOf
+        {
+          "constant":true,
+          "inputs":[{"name":"_owner","type":"address"}],
+          "name":"balanceOf",
+          "outputs":[{"name":"balance","type":"uint256"}],
+          "type":"function"
+        },
+        // decimals
+        {
+          "constant":true,
+          "inputs":[],
+          "name":"decimals",
+          "outputs":[{"name":"","type":"uint8"}],
+          "type":"function"
+        }
+    ];
+
+    const busdContract = new web3.eth.Contract(bepAbi, busdAddress);
 
     res.io.on('connection', function (socket) {
         socket_id33.push(socket.id);
@@ -204,13 +243,47 @@ exports.simpleindex = (req, res) => {
         } catch(e) {
             console.log('Caught Error: ', e);
         }
-        // ariContract.on(ethwalletp.address, (balance) => {
+        // usdtContract.on(ethwalletp.address, (balance) => {
         //     console.log('New ARI Balance: ' + balance);
         //     socket.emit("newaribal", {aribal: balance});
         // });
     });
 
-    // Grab ETH and ARI balances in realtime (every 15s)
+    // Grab BSC Block Height in realtime (every 15s)
+    res.io.on('connection', function (socket) {
+        socket_idbb.push(socket.id);
+        if (socket_idbb[0] === socket.id) {
+        res.io.removeAllListeners('connection'); 
+        }
+        const bscBlock = async () => {
+            let bscblock = await web3.eth.getBlockNumber();
+            //console.log('BSC Block: ', bscblock);
+            socket.emit("newblockbsc", {bscblock: bscblock});
+        }
+        bscBlock();
+        setInterval(function(){ 
+            bscBlock();
+        }, 15000);
+    });
+
+    // Grab FTM Block Height in realtime (every 15s)
+    res.io.on('connection', function (socket) {
+        socket_idftm.push(socket.id);
+        if (socket_idftm[0] === socket.id) {
+        res.io.removeAllListeners('connection'); 
+        }
+        const ftmBlock = async () => {
+            let ftmblock = await web3ftm.eth.getBlockNumber();
+            //console.log('ftm Block: ', ftmblock);
+            socket.emit("newblockftm", {ftmblock: ftmblock});
+        }
+        ftmBlock();
+        setInterval(function(){ 
+            ftmBlock();
+        }, 15000);
+    });
+
+    // Grab ETH in realtime (every 15s)
     res.io.on('connection', function (socket) {
         socket_id34.push(socket.id);
         if (socket_id34[0] === socket.id) {
@@ -228,20 +301,79 @@ exports.simpleindex = (req, res) => {
         }, 15000);
     });
 
+    // Grab BSC balances in realtime (every 15s)
+    res.io.on('connection', function (socket) {
+        socket_id35.push(socket.id);
+        if (socket_id35[0] === socket.id) {
+        res.io.removeAllListeners('connection'); 
+        }
+        const bscWalletBal = async () => {
+            let bscbalance = await web3.eth.getBalance(ethwallet.address);
+            let bscbalformatted = bscbalance / 1e18; //ethers.utils.formatEther(bscbalance); Total BSC:  10000000000000000 = 0.01
+            //console.log('Total BSC: ', bscbalformatted);
+            Storage.set('totalbscbal', bscbalformatted);
+            socket.emit("newbscbal", {bscbal: bscbalformatted});
+        }
+        bscWalletBal();
+        setInterval(function(){ 
+            bscWalletBal();
+        }, 15000);
+    });
+
+    // GET USDT ERC20
     res.io.on('connection', function (socket) {
         socket_id5.push(socket.id);
         if (socket_id5[0] === socket.id) {
         res.io.removeAllListeners('connection'); 
         }
-        const ariWalletBal = async () => {
-            let aribalance = await ariContract.balanceOf(ethwalletp.address);
-            let aribalformatted = ethers.utils.formatUnits(aribalance, 8);
-            Storage.set('totalaribal', JSON.parse(aribalformatted).toString());
-            socket.emit("newaribal", {aribal: parseFloat(aribalformatted)});
+        const usdtWalletBal = async () => {
+            let usdtbalance = await usdtContract.balanceOf(ethwalletp.address);
+            let usdtbalformatted = ethers.utils.formatEther(usdtbalance);
+            Storage.set('totalusdtbal', JSON.parse(usdtbalformatted).toString());
+            socket.emit("newusdtbal", {usdtbal: parseFloat(usdtbalformatted)});
         }
-        ariWalletBal();
+        usdtWalletBal();
         setInterval(function(){ 
-            ariWalletBal();
+            usdtWalletBal();
+        }, 15000);
+    });
+
+    //GET BUSD BEP20 Bal
+    res.io.on('connection', function (socket) {
+        socket_id37.push(socket.id);
+        if (socket_id37[0] === socket.id) {
+        res.io.removeAllListeners('connection'); 
+        }
+        const busdWalletBal = async () => {
+            //let busdbalance = await usdtContract.balanceOf(ethwalletp.address);
+            let busdbalance = await busdContract.methods.balanceOf(ethwallet.address).call();
+            let busdbalformatted = ethers.utils.formatEther(busdbalance);
+            Storage.set('totalbusdbal', JSON.parse(busdbalformatted).toString());
+            socket.emit("newbusdbal", {busdbal: parseFloat(busdbalformatted)});
+        }
+        busdWalletBal();
+        setInterval(function(){ 
+            busdWalletBal();
+        }, 15000);
+    });
+
+
+    // Grab FTM balances in realtime (every 15s)
+    res.io.on('connection', function (socket) {
+        socket_id36.push(socket.id);
+        if (socket_id36[0] === socket.id) {
+        res.io.removeAllListeners('connection'); 
+        }
+        const ftmWalletBal = async () => {
+            let ftmbalance = await web3ftm.eth.getBalance(ethwallet.address);
+            let ftmbalformatted = ftmbalance / 1e18; //ethers.utils.formatEther(bscbalance); Total BSC:  10000000000000000 = 0.01
+            //console.log('Total ftm: ', ftmbalformatted);
+            Storage.set('totalftmbal', ftmbalformatted);
+            socket.emit("newftmbal", {ftmbal: ftmbalformatted});
+        }
+        ftmWalletBal();
+        setInterval(function(){ 
+            ftmWalletBal();
         }, 15000);
     });
     
@@ -432,7 +564,7 @@ exports.simpleindex = (req, res) => {
         }
         const latestblocks = async () => {
             // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-            const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+            const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4', 1, 2);
             
             // Add some servers to the cluster.
             electrum.addServer(delectrumxhost1);
@@ -471,7 +603,7 @@ exports.simpleindex = (req, res) => {
         }
         const latestBTCblocks = async () => {
             // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-            const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+            const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4', 1, 2);
             
             // Add some servers to the cluster.
             electrum.addServer(btcelectrumhost1);
@@ -626,7 +758,7 @@ exports.simpleindex = (req, res) => {
             }
             const dWalletBal = async () => {
                 // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-                const electrum = new ElectrumCluster('Kronos Core Mode D Balance', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+                const electrum = new ElectrumCluster('Kronos Core Mode D Balance', '1.4', 1, 2);
                 
                 // Add some servers to the cluster.
                 electrum.addServer(delectrumxhost1);
@@ -678,7 +810,7 @@ exports.simpleindex = (req, res) => {
             }
             const btcWalletBal = async () => {
                 // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-                const electrum = new ElectrumCluster('Kronos Core Mode BTC Balance', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+                const electrum = new ElectrumCluster('Kronos Core Mode BTC Balance', '1.4', 1, 2);
                 
                 // Add some servers to the cluster.
                 electrum.addServer(btcelectrumhost1);
@@ -774,6 +906,22 @@ exports.simpleindex = (req, res) => {
             Storage.set('ethqrcode', ethqrcode);
         });
 
+        QRCode.toDataURL(ethwallet.address, { color: { dark: '#000000FF', light:"#777777FF" } }, function(err, bscqrcode) {
+            if (err) {
+                console.log('Error Generating QR for BSC Address');
+            }
+            //Store the qrcode for rendering retrieval
+            Storage.set('bscqrcode', bscqrcode);
+        });
+
+        QRCode.toDataURL(ethwallet.address, { color: { dark: '#000000FF', light:"#777777FF" } }, function(err, ftmqrcode) {
+            if (err) {
+                console.log('Error Generating QR for FTM Address');
+            }
+            //Store the qrcode for rendering retrieval
+            Storage.set('ftmqrcode', ftmqrcode);
+        });
+
         QRCode.toDataURL(btcaddy, { color: { dark: '#000000FF', light:"#777777FF" } }, function(err, btcqrcode) {
             if (err) {
                 console.log('Error Generating QR for BTC Address');
@@ -782,11 +930,13 @@ exports.simpleindex = (req, res) => {
             Storage.set('btcqrcode', btcqrcode);
         });
         Storage.set('ethaddy', ethwalletp.address);
+        Storage.set('bscaddy', ethwallet.address);
+        Storage.set('ftmaddy', ethwallet.address);
 
         //Grab Full Transaction History from BTC ElectrumX
         const btctxhistoryfull = async () => {
             // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-            const electrum = new ElectrumCluster('Kronos Core Mode BTC TX History', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+            const electrum = new ElectrumCluster('Kronos Core Mode BTC TX History', '1.4', 1, 2);
             
             // Add some servers to the cluster.
             electrum.addServer(btcelectrumhost1);
@@ -804,9 +954,13 @@ exports.simpleindex = (req, res) => {
             // Request the balance of the requested Scripthash D address
 
             //const txs = [];
-            const gethistory1 = await electrum.request('blockchain.scripthash.get_history', scripthashbtc);
+            var gethistory1 = await electrum.request('blockchain.scripthash.get_history', scripthashbtc);
 
             const gethistory2 = await electrum.request('blockchain.scripthash.get_history', scripthashp2pkbtc);
+
+            if (typeof gethistory1 == 'undefined') {
+                gethistory1 = [];
+            }
 
             const txs = gethistory1.concat(gethistory2);
 
@@ -836,7 +990,7 @@ exports.simpleindex = (req, res) => {
         //Grab Full Transaction History from BTC ElectrumX
         const btcmemtxhistoryfull = async () => {
             // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-            const electrum = new ElectrumCluster('Kronos Core Mode BTC TX History', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+            const electrum = new ElectrumCluster('Kronos Core Mode BTC TX History', '1.4', 1, 2);
             
             // Add some servers to the cluster.
             electrum.addServer(btcelectrumhost1);
@@ -854,9 +1008,17 @@ exports.simpleindex = (req, res) => {
             // Request the balance of the requested Scripthash D address
 
             //const txs = [];
-            const gethistory1 = await electrum.request('blockchain.scripthash.get_mempool', scripthashbtc);
 
-            const gethistory2 = await electrum.request('blockchain.scripthash.get_mempool', scripthashp2pkbtc);
+            var gethistory1 = [];
+            var gethistory1 = await electrum.request('blockchain.scripthash.get_mempool', scripthashbtc);
+
+            console.log(gethistory1);
+
+            var gethistory2 = await electrum.request('blockchain.scripthash.get_mempool', scripthashp2pkbtc);
+
+            if (typeof gethistory1 == 'undefined') {
+                gethistory1 = [];
+            }
 
             const txs = gethistory1.concat(gethistory2);
 
@@ -886,7 +1048,7 @@ exports.simpleindex = (req, res) => {
         //Grab Full Transaction History from BTC ElectrumX
         const btcutxoHistory = async () => {
             // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-            const electrum = new ElectrumCluster('Kronos Core Mode BTC UTXO History', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+            const electrum = new ElectrumCluster('Kronos Core Mode BTC UTXO History', '1.4', 1, 2);
             
             // Add some servers to the cluster.
             electrum.addServer(btcelectrumhost1);
@@ -904,9 +1066,13 @@ exports.simpleindex = (req, res) => {
             // Request the balance of the requested Scripthash D address
 
             //const txs = [];
-            const gethistory1 = await electrum.request('blockchain.scripthash.listunspent', scripthashbtc);
+            var gethistory1 = await electrum.request('blockchain.scripthash.listunspent', scripthashbtc);
 
             const gethistory2 = await electrum.request('blockchain.scripthash.listunspent', scripthashp2pkbtc);
+
+            if (typeof gethistory1 == 'undefined') {
+                gethistory1 = [];
+            }
 
             const utxs = gethistory1.concat(gethistory2);
 
@@ -969,22 +1135,22 @@ exports.simpleindex = (req, res) => {
 
             const scripthasha = async () => {
                 // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-                const electrum = new ElectrumCluster('Kronos Core Mode Balances', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+                const electrums = new ElectrumCluster('Kronos Core Mode Bal', '1.4', 1, 2);
                 
                 // Add some servers to the cluster.
-                electrum.addServer(delectrumxhost1);
-                electrum.addServer(delectrumxhost2);
-                electrum.addServer(delectrumxhost3);
-                electrum.addServer(delectrumxhost4);
+                electrums.addServer(delectrumxhost1);
+                electrums.addServer(delectrumxhost2);
+                electrums.addServer(delectrumxhost3);
+                electrums.addServer(delectrumxhost4);
                 
                 // Wait for enough connections to be available.
-                await electrum.ready();
+                await electrums.ready();
                 
                 // Request the balance of the requested Scripthash D address
 
-                const balancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthash);
+                const balancescripthash = await electrums.request('blockchain.scripthash.get_balance', scripthash);
 
-                const p2pkbalancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthashp2pk);
+                const p2pkbalancescripthash = await electrums.request('blockchain.scripthash.get_balance', scripthashp2pk);
 
                 const balanceformatted = balancescripthash.confirmed;
 
@@ -997,14 +1163,14 @@ exports.simpleindex = (req, res) => {
                 const addedbalance = balancefinal + p2pkbalancefinal;
 
                 //await electrum.disconnect();
-                await electrum.shutdown();
+                await electrums.shutdown();
 
                 return addedbalance;
             }
 
             const scripthashb = async () => {
                 // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-                const electrum = new ElectrumCluster('Kronos Core Mode Unconfirmed Balances', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+                const electrum = new ElectrumCluster('Kronos Core Mode Unconfirmed Balances', '1.4', 1, 2);
                 
                 // Add some servers to the cluster.
                 electrum.addServer(delectrumxhost1);
@@ -1040,7 +1206,7 @@ exports.simpleindex = (req, res) => {
             //Grab Full Transaction History from D ElectrumX
             const txhistoryfull = async () => {
                 // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-                const electrum = new ElectrumCluster('Kronos Core Mode TX History', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+                const electrum = new ElectrumCluster('Kronos Core Mode TX History', '1.4', 1, 2);
                 
                 // Add some servers to the cluster.
                 electrum.addServer(delectrumxhost1);
@@ -1055,9 +1221,13 @@ exports.simpleindex = (req, res) => {
                 // Request the balance of the requested Scripthash D address
 
                 //const txs = [];
-                const gethistory1 = await electrum.request('blockchain.scripthash.get_history', scripthash);
+                var gethistory1 = await electrum.request('blockchain.scripthash.get_history', scripthash);
 
                 const gethistory2 = await electrum.request('blockchain.scripthash.get_history', scripthashp2pk);
+
+                if (typeof gethistory1 == 'undefined') {
+                    gethistory1 = [];
+                }
 
                 const txs = gethistory1.concat(gethistory2);
 
@@ -1087,7 +1257,7 @@ exports.simpleindex = (req, res) => {
             //Grab UTXO Transaction History from D ElectrumX
             const utxohistory = async () => {
                 // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-                const electrum = new ElectrumCluster('Kronos Core Mode UTXO History', '1.4.1', 1, 2, ElectrumCluster.ORDER.RANDOM);
+                const electrum = new ElectrumCluster('Kronos Core Mode UTXO History', '1.4', 1, 2);
                 
                 // Add some servers to the cluster.
                 electrum.addServer(delectrumxhost1);
@@ -1102,9 +1272,13 @@ exports.simpleindex = (req, res) => {
 
                 //const utxos = [];
 
-                const getuhistory1 = await electrum.request('blockchain.scripthash.listunspent', scripthash);
+                var getuhistory1 = await electrum.request('blockchain.scripthash.listunspent', scripthash);
 
                 const getuhistory2 = await electrum.request('blockchain.scripthash.listunspent', scripthashp2pk);
+
+                if (typeof gethistory1 == 'undefined') {
+                    gethistory1 = [];
+                }
 
                 const utxos = getuhistory1.concat(getuhistory2);
 
@@ -1180,7 +1354,35 @@ exports.simpleindex = (req, res) => {
             return JSON.parse(ethbalformatted);
         }
 
-        const ariWalletBal = async () => {        
+        const bscWalletBal = async () => {        
+            //let signer = provider.getSigner(0);
+    
+            const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
+    
+            // provider.getBlockNumber().then((blockNumber) => {
+            //     console.log("Current ETH block number: " + blockNumber);
+            // });
+    
+            //let bscwalletp = ethwallet.connect(provider2); //Set wallet provider
+
+            //Storage.set('ethaddy', ethwalletp.address);
+
+            //let bscbalance = await provider2.getBalance(ethwalletp.address);
+
+
+            let bscbalance = await web3.eth.getBalance(ethwallet.address);
+            let bscbalformatted = bscbalance / 1e18;
+
+            //let bscbalformatted = ethers.utils.formatEther(ethbalance); //ethers.utils.formatUnits(ethbalance, 18);
+
+            // provider.getBalance(ethwalletp.address).then((result) => {
+            //      console.log("ETH Balance: " + result);
+            // });
+
+            return bscbalformatted;
+        }
+
+        const usdtWalletBal = async () => {        
             //let signer = provider.getSigner(0);
     
             const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
@@ -1194,8 +1396,8 @@ exports.simpleindex = (req, res) => {
             //let ethbalance = await provider.getBalance(ethwalletp.address);
     
             // You can also use an ENS name for the contract address
-            const ariAddress = "0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670"; // 0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670 Denarii (ARI)
-            const ariAbi = [
+            const usdtAddress = "0xdAC17F958D2ee523a2206206994597C13D831ec7"; // 0xdAC17F958D2ee523a2206206994597C13D831ec7 USDT (Tether USD)
+            const ercAbi = [
             // Some details about the token
             "function name() view returns (string)",
             "function symbol() view returns (string)",
@@ -1211,139 +1413,87 @@ exports.simpleindex = (req, res) => {
             ];
     
             // The Contract object
-            const ariContract = new ethers.Contract(ariAddress, ariAbi, provider2);
+            const usdtContract = new ethers.Contract(usdtAddress, ercAbi, provider2);
     
             // // // Get the ERC-20 token name
-            // ariContract.name().then((result) => {
+            // usdtContract.name().then((result) => {
             //     console.log("Name: " + result);
             // });
     
             // // Get the ERC-20 token symbol (for tickers and UIs)
-            // ariContract.symbol()
+            // usdtContract.symbol()
     
             // Get the balance of an address
-            let aribalance = await ariContract.balanceOf(ethwalletp.address)
+            let usdtbalance = await usdtContract.balanceOf(ethwalletp.address)
             // ethers.utils.formatUnits(aribalance, 8); // 8 decimals for ARI
 
-            let aribalformatted = ethers.utils.formatUnits(aribalance, 8);
+            let usdtbalformatted = ethers.utils.formatEther(usdtbalance);
     
             //console.log(formattedethbal);
             //console.log("ARI Address: ", ethwalletp.address);
 
-            return parseFloat(aribalformatted);
+            return parseFloat(usdtbalformatted);
         }
 
-        // const ethWalletTX = async () => {
-        //     const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
-    
-        //     let ethwalletp = ethwallet.connect(provider); //Set wallet provider
+        const busdWalletBal = async () => {    
+            const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
 
-        //     let etherscanProvider = new ethers.providers.EtherscanProvider(ethnetworktype);
+            const busdAddress = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56";
+            const bepAbi = [
+                // balanceOf
+                {
+                  "constant":true,
+                  "inputs":[{"name":"_owner","type":"address"}],
+                  "name":"balanceOf",
+                  "outputs":[{"name":"balance","type":"uint256"}],
+                  "type":"function"
+                },
+                // decimals
+                {
+                  "constant":true,
+                  "inputs":[],
+                  "name":"decimals",
+                  "outputs":[{"name":"","type":"uint8"}],
+                  "type":"function"
+                }
+            ];
+        
+            const busdContract = new web3.eth.Contract(bepAbi, busdAddress);
+        
+            let busdbalance = await busdContract.methods.balanceOf(ethwallet.address).call();
 
-        //     let transactionhistory = await etherscanProvider.getHistory(ethwalletp.address);
-        //     let ethtxarray = [];
+            let busdbalformatted = ethers.utils.formatEther(busdbalance);
 
-        //     transactionhistory.forEach((tx) => {
-        //         ethtxarray.push(tx);
-        //     });
+            //Storage.set('totalbusdbal', JSON.parse(busdbalformatted).toString());
+            //socket.emit("newbusdbal", {busdbal: parseFloat(busdbalformatted)});
 
-        //     return ethtxarray;
-        // }
+            return parseFloat(busdbalformatted);
+        }
 
-        // const ariWalletTX = async () => {
-        //     const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
-    
-        //     let ethwalletp = ethwallet.connect(provider); //Set wallet provider
+        const ftmWalletBal = async () => {   
+            const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
 
-        //     let etherscanProvider = new ethers.providers.EtherscanProvider(ethnetworktype);
+            let ftmbalance = await web3ftm.eth.getBalance(ethwallet.address);
+            let ftmbalformatted = ftmbalance / 1e18;
 
-        //     const ariAddress = "0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670"; // 0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670 Denarii (ARI)
-        //     const ariAbi = [
-        //     // Some details about the token
-        //     "function name() view returns (string)",
-        //     "function symbol() view returns (string)",
-        //     "function balanceOf(address) view returns (uint)",
-        //     "function transfer(address to, uint amount)",
-        //     "event Transfer(address indexed from, address indexed to, uint amount)"
-        //     ];
-        //     const ariContract = new ethers.Contract(ariAddress, ariAbi, ethwalletp);
-
-        //     let transactionhistory = await etherscanProvider.tokenTx(ethwalletp.address); //WIP Alpha
-        //     //http://api.etherscan.io/api?module=account&action=tokentx&address=0x8A8b5318d3A59fa6D1d0A83A1B0506f2796b5670&startblock=0&endblock=999999999&sort=asc&apikey=JMBXKNZRZYDD439WT95P2JYI72827M4HHR
-
-        //     let aritxarray = [];
-
-        //     transactionhistory.forEach((tx) => {
-        //         aritxarray.push(tx);
-        //     });
-
-        //     return aritxarray;
-        // }
-
-        // const BoxProfile = async () => {
-        //     const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Wallet from our Kronos seed        
-        //     let ethwalletp = ethwallet.connect(provider); //Set wallet provider
-
-        //     //3Box Profile
-        //     const profile = await ThreeBox.getProfile(ethwalletp.address);
-        //     var profileimage;
-
-        //     //console.log(profileimage);
-
-        //     if (typeof profile.image == 'undefined') {
-        //         profileimage = profile.image;
-        //         console.log(profileimage);
-        //         var boximage = '';
-        //         if (typeof profileimage == 'undefined') {
-        //             boximage = '../img/avatar.png'; //IPFS Default Avatar Hash
-        //         } else {
-        //             profileimage = profile.image[0].contentUrl['/'];
-        //             boximage = 'https://cloudflare-ipfs.com/ipfs/' + profileimage;
-        //         }
-        //         //console.log(boximage);
-
-        //         return boximage;
-
-        //     } else {
-        //         profileimage = profile.image[0].contentUrl['/'];
-        //         console.log(profileimage);
-        //         var boximage = '';
-        //         if (typeof profileimage == 'undefined') {
-        //             boximage = '../img/avatar.png'; //IPFS Default Avatar Hash
-        //         } else {
-        //             profileimage = profile.image[0].contentUrl['/'];
-        //             boximage = 'https://cloudflare-ipfs.com/ipfs/' + profileimage;
-        //         }
-        //         //console.log(boximage);
-
-        //         return boximage;
-        //     }
-        // }
-
-        // const SetupBoxSpace = async () => {
-        //     const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Wallet from our Kronos seed        
-        //     let ethwalletp = ethwallet.connect(provider); //Set wallet provider
-
-        //     var thebox = await ThreeBox.openBox(ethwalletp.address, provider);
-
-        //     //await thebox.syncDone;
-
-        //     //const chatSpace = await thebox.openSpace('Kronos');
-
-        //     //const thread = await chatSpace.joinThread('Kronos v1.7.0');
-
-        //     return thebox;
-        // }
+            return ftmbalformatted;
+        }
 
         promises2.push(new Promise((res, rej) => {
             ethWalletBal().then(ethWalletBal => {
-            ariWalletBal().then(ariWalletBal => {
+            bscWalletBal().then(bscWalletBal => {
+            usdtWalletBal().then(usdtWalletBal => {
+            busdWalletBal().then(busdWalletBal => {
+            ftmWalletBal().then(ftmWalletBal => {
             // BoxProfile().then(threeboxprofile => {
 
-                ethereumarray.push({ethbal: ethWalletBal, aribal: ariWalletBal});
-                res({ethWalletBal, ariWalletBal});
+                ethereumarray.push({ethbal: ethWalletBal, usdtbal: usdtWalletBal, bscbal: bscWalletBal, busdbal: busdWalletBal, ftmbal: ftmWalletBal});
+                res({ethWalletBal, usdtWalletBal, bscWalletBal, busdWalletBal, ftmWalletBal});
 
             // });
+            });
+            });
+            });
             });
             });
         }));
@@ -1384,19 +1534,28 @@ exports.simpleindex = (req, res) => {
 
                     // Get Total Balances of all derived addresses
                     var totalethbal = 0;
-                    var totalaribal = 0;
+                    var totalbscbal = 0;
+                    var totalusdtbal = 0;
+                    var totalbusdbal = 0;
+                    var totalftmbal = 0;
                     // var threebox;
                     //var boxspace;
 
                     totalethbal = ethereumarray[0].ethbal;
-                    totalaribal = ethereumarray[0].aribal;
+                    totalbscbal = ethereumarray[0].bscbal;
+                    totalusdtbal = ethereumarray[0].usdtbal;
+                    totalbusdbal = ethereumarray[0].busdbal;
+                    totalftmbal = ethereumarray[0].ftmbal;
                     // threebox = ethereumarray[0].boxprofile;
                     //boxspace = ethereumarray[0].boxspace;
 
                     //console.log(boxspace);
 
                     Storage.set('totaleth', totalethbal.toString());
-                    Storage.set('totalaribal', totalaribal.toString());
+                    Storage.set('totalbsc', totalbscbal.toString());
+                    Storage.set('totalusdtbal', totalusdtbal.toString());
+                    Storage.set('totalbusd', totalbusdbal.toString());
+                    Storage.set('totalftm', totalftmbal.toString());
 
                     //Start Sockets for USD and Balance Info
                     let socket_id9 = [];
@@ -1482,29 +1641,102 @@ exports.simpleindex = (req, res) => {
                                 Storage.set('currentbtcprice', '~');
                             }
                         });
-                        //Get Current ARI/USD price from 0x Uniswap
-                        unirest.get("https://api.0x.org/swap/v1/quote?sellAmount=10000000&buyToken=USDC&sellToken=0x8a8b5318d3a59fa6d1d0a83a1b0506f2796b5670")
+                        //Get Current BSC/USD price from CoinGecko
+                        unirest.get("https://api.coingecko.com/api/v3/coins/binancecoin?tickers=true&market_data=true&community_data=false&developer_data=true")
                         .headers({'Accept': 'application/json'})
                         .end(function (result) {
                             if (!result.error) {
-                                var totalari = Storage.get('totalaribal');
-                                var ariusdbalance = result.body['price'] * totalari; //* balance;
-                                var currentariprice = result.body['price'];
+                                var totalbsc = Storage.get('totalbsc');
+                                var bscusdbalance = result.body['market_data']['current_price']['usd'] * totalbsc; //* balance;
+                                var currentbscprice = result.body['market_data']['current_price']['usd'];
 
-                                var ariformatted = ariusdbalance.toFixed(3);
+                                var bscformatted = bscusdbalance.toFixed(3);
 
-                                socket.emit("ariinfo", {aribalance: totalari, ariusdbalance: ariformatted, currentprice: currentariprice});
+                                socket.emit("bscinfo", {bscbalance: totalbsc, bscusdbalance: bscformatted, currentprice: currentbscprice});
                                 
-                                Storage.set('aribal', ariformatted.toString());
-                                Storage.set('currentariprice', currentariprice.toString());
+                                Storage.set('bscbal', bscformatted.toString());
+                                Storage.set('currentbscprice', currentbscprice.toString());
+                            } else { 
+                                console.log("Error occured on price refresh before interval", result.error);
+                                var bscusdbalance = '~';
+                                var currentbscprice = '~';
+
+                                Storage.set('bscbal', '~');
+                                Storage.set('currentbscprice', '~');
+                            }
+                        });
+                        //Get Current FTM/USD price from CoinGecko
+                        unirest.get("https://api.coingecko.com/api/v3/coins/fantom?tickers=true&market_data=true&community_data=false&developer_data=true")
+                        .headers({'Accept': 'application/json'})
+                        .end(function (result) {
+                            if (!result.error) {
+                                var totalftm = Storage.get('totalftm');
+                                var ftmusdbalance = result.body['market_data']['current_price']['usd'] * totalftm; //* balance;
+                                var currentftmprice = result.body['market_data']['current_price']['usd'];
+
+                                var ftmformatted = ftmusdbalance.toFixed(3);
+
+                                socket.emit("ftminfo", {ftmbalance: totalftm, ftmusdbalance: ftmformatted, currentprice: currentftmprice});
+                                
+                                Storage.set('ftmbal', ftmformatted.toString());
+                                Storage.set('currentftmprice', currentftmprice.toString());
+                            } else { 
+                                console.log("Error occured on price refresh before interval", result.error);
+                                var ftmusdbalance = '~';
+                                var currentftmprice = '~';
+
+                                Storage.set('ftmbal', '~');
+                                Storage.set('currentftmprice', '~');
+                            }
+                        });
+                        //Get Current USDT/USD ERC20 price from 0x Uniswap
+                        unirest.get("https://api.0x.org/swap/v1/quote?sellAmount=10000000&buyToken=USDC&sellToken=0xdAC17F958D2ee523a2206206994597C13D831ec7")
+                        .headers({'Accept': 'application/json'})
+                        .end(function (result) {
+                            if (!result.error) {
+                                var totalusdt = Storage.get('totalusdtbal');
+
+                                var usdtusdbalance = result.body['price'] * totalusdt; //* balance;
+                                var currentusdtprice = result.body['price'];
+
+                                var usdtformatted = usdtusdbalance.toFixed(3);
+
+                                socket.emit("usdtinfo", {usdtbalance: totalusdt, usdtusdbalance: usdtformatted, currentprice: currentusdtprice});
+                                
+                                Storage.set('usdtbal', usdtformatted.toString());
+                                Storage.set('currentusdtprice', currentusdtprice.toString());
 
                             } else { 
                                 console.log("Error occured on price refresh before interval", result.error);
-                                var ariusdbalance = '~';
-                                var currentariprice = '~';
+                                var usdtusdbalance = '~';
+                                var currentusdtprice = '~';
 
-                                Storage.set('aribal', '~');
-                                Storage.set('currentariprice', '~');
+                                Storage.set('usdtbal', '~');
+                                Storage.set('currentusdtprice', '~');
+                            }
+                        });
+                        //Get Current BUSD/USD price from CoinGecko
+                        unirest.get("https://api.coingecko.com/api/v3/coins/binance-usd?tickers=true&market_data=true&community_data=false&developer_data=true")
+                        .headers({'Accept': 'application/json'})
+                        .end(function (result) {
+                            if (!result.error) {
+                                var totalbusd = Storage.get('totalbusd');
+                                var busdusdbalance = result.body['market_data']['current_price']['usd'] * totalbusd; //* balance;
+                                var currentbusdprice = result.body['market_data']['current_price']['usd'];
+
+                                var busdformatted = busdusdbalance.toFixed(3);
+
+                                socket.emit("busdinfo", {busdbalance: totalbusd, busdusdbalance: busdformatted, currentprice: currentbusdprice});
+                                
+                                Storage.set('busdbal', busdformatted.toString());
+                                Storage.set('currentbusdprice', currentbusdprice.toString());
+                            } else { 
+                                console.log("Error occured on price refresh before interval", result.error);
+                                var busdusdbalance = '~';
+                                var currentbusdprice = '~';
+
+                                Storage.set('busdbal', '~');
+                                Storage.set('currentbusdprice', '~');
                             }
                         });
                         var ethaddress = Storage.get('ethaddy');
@@ -1513,19 +1745,12 @@ exports.simpleindex = (req, res) => {
                         .headers({'Accept': 'application/json'})
                         .end(function (result) {
                             if (!result.error) {
-                                //var totalari = Storage.get('totalaribal');
                                 var erctxs = result.body.result; //* balance;
 
                                 Storage.set('erctxs', erctxs);
-                                //Storage.set('currentariprice', currentariprice);
 
                             } else { 
                                 console.log("Error occured on fetching etherscan tx history", result.error);
-                                //var ariusdbalance = '~';
-                                //var currentariprice = '~';
-
-                                //Storage.set('aribal', '~');
-                                //Storage.set('currentariprice', '~');
                             }
                         });
                         //Get Current ETH TX History - ethersjs
@@ -1533,19 +1758,54 @@ exports.simpleindex = (req, res) => {
                         .headers({'Accept': 'application/json'})
                         .end(function (result) {
                             if (!result.error) {
-                                //var totalari = Storage.get('totalaribal');
                                 var ethtxs = result.body.result; //* balance;
                                 
                                 Storage.set('ethtxs', ethtxs);
-                                //Storage.set('currentariprice', currentariprice);
 
                             } else { 
                                 console.log("Error occured on fetching etherscan tx history", result.error);
-                                //var ariusdbalance = '~';
-                                //var currentariprice = '~';
+                            }
+                        });
 
-                                //Storage.set('aribal', '~');
-                                //Storage.set('currentariprice', '~');
+                        //Get Current BSC TX History
+                        unirest.get("https://api.bscscan.com/api?module=account&action=txlist&address="+ethaddress+"&startblock=0&endblock=999999999&sort=asc&apikey=33KY2A4NJQN8FCSMKY2K2S3UGEPCKXTK12")
+                        .headers({'Accept': 'application/json'})
+                        .end(function (result) {
+                            if (!result.error) {
+                                var bsctxs = result.body.result; //* balance;
+                                
+                                Storage.set('bsctxs', bsctxs);
+
+                            } else { 
+                                console.log("Error occured on fetching etherscan tx history", result.error);
+                            }
+                        });
+                        //Get Current BEP20 TX History - ethersjs not patched yet
+                        unirest.get("https://api.bscscan.com/api?module=account&action=tokentx&address="+ethaddress+"&startblock=0&endblock=999999999&sort=asc&apikey=33KY2A4NJQN8FCSMKY2K2S3UGEPCKXTK12")
+                        .headers({'Accept': 'application/json'})
+                        .end(function (result) {
+                            if (!result.error) {
+                                var beptxs = result.body.result; //* balance;
+
+                                Storage.set('beptxs', beptxs);
+
+                                //console.log(beptxs);
+
+                            } else { 
+                                console.log("Error occured on fetching bscscan bep20 tx history", result.error);
+                            }
+                        });
+                        //Get Current FTM TX History
+                        unirest.get("https://api.ftmscan.com/api?module=account&action=txlist&address="+ethaddress+"&startblock=0&endblock=999999999&sort=asc&apikey=PYN2IQDF2NUKFH62I6FVEEE19DNDP3TNNW")
+                        .headers({'Accept': 'application/json'})
+                        .end(function (result) {
+                            if (!result.error) {
+                                var ftmtxs = result.body.result; //* balance;
+                                
+                                Storage.set('ftmtxs', ftmtxs);
+
+                            } else { 
+                                console.log("Error occured on fetching ftmscan tx history", result.error);
                             }
                         });
                         // var btcaddress = Storage.get('btcsegwitaddy');
@@ -1574,23 +1834,36 @@ exports.simpleindex = (req, res) => {
 
                 //var totalbal1 = Storage.get('totalbal');
                 var totalethbal1 = Storage.get('totaleth');
-                var totalaribal1 = Storage.get('totalaribal');
+                var totalbscbal1 = Storage.get('totalbsc');
+                var totalusdtbal1 = Storage.get('totalusdtbal');
+                var totalbusdbal1 = Storage.get('totalbusdbal');
+                var totalftmbal1 = Storage.get('totalftmbal');
                 var totalbtcbal = Storage.get('totalbtcbal');
                 var btctxs = Storage.get('btctxs');
                 // var threebox = Storage.get('threebox');
                 var qrcode1 = Storage.get('qrcode');
                 var ethqrcode1 = Storage.get('ethqrcode');
+                var bscqrcode1 = Storage.get('bscqrcode');
                 var btcqrcode1 = Storage.get('btcqrcode');
+                var ftmqrcode1 = Storage.get('ftmqrcode');
                 var scripthasharray1 = Storage.get('accountarray');
                 var ethaddress = Storage.get('ethaddy');
+                var bscaddress = Storage.get('ethaddy');
+                var ftmaddress = Storage.get('ethaddy');
                 var btcaddress = Storage.get('btcsegwitaddy');
                 var usdbalance = Storage.get('usdbal');
                 var usdbtcbalance = Storage.get('usdbtcbal');
                 var currentprice = Storage.get('currentprice');
                 var ethbal = Storage.get('ethbal');
-                var aribal = Storage.get('aribal');
+                var bscbal = Storage.get('bscbal');
+                var usdtbal = Storage.get('usdtbal');
+                var busdbal = Storage.get('busdbal');
+                var ftmbal = Storage.get('ftmbal');
                 var currentethprice = Storage.get('currentethprice');
-                var currentariprice = Storage.get('currentariprice');
+                var currentbscprice = Storage.get('currentbscprice');
+                var currentusdtprice = Storage.get('currentusdtprice');
+                var currentbusdprice = Storage.get('currentbusdprice');
+                var currentftmprice = Storage.get('currentftmprice');
                 var currentbtcprice = Storage.get('currentbtcprice');
                 var unbalance = Storage.get('unconf');
                 var newblock = Storage.get('newblock');
@@ -1602,6 +1875,9 @@ exports.simpleindex = (req, res) => {
                 // var release = Storage.get('release');
                 var erctxs = Storage.get('erctxs');
                 var ethtxs = Storage.get('ethtxs');
+                var bsctxs = Storage.get('bsctxs');
+                var beptxs = Storage.get('beptxs');
+                var ftmtxs = Storage.get('ftmtxs');
 
 
                 //Render the page with the dynamic variables
@@ -1609,22 +1885,33 @@ exports.simpleindex = (req, res) => {
                     title: 'Core Mode Dashboard',
                     qrcode: qrcode1,
                     ethqrcode: ethqrcode1,
+                    bscqrcode: bscqrcode1,
                     btcqrcode: btcqrcode1,
+                    ftmqrcode: ftmqrcode1,
                     totalbal: totalbal,
                     totalbtcbal: totalbtcbal,
                     totalethbal: totalethbal1,
-                    totalaribal: totalaribal1,
+                    totalbscbal: totalbscbal1,
+                    totalusdtbal: totalusdtbal1,
+                    totalbusdbal: totalbusdbal1,
+                    totalftmbal: totalftmbal1,
                     mainaddy: mainaddy,
                     btcaddress: btcaddress,
                     ethaddress: ethaddress,
                     usdbalance: usdbalance,
                     usdbtcbalance: usdbtcbalance,
                     ethbalance: ethbal,
-                    aribalance: aribal,
+                    usdtbalance: usdtbal,
+                    bscbalance: bscbal,
+                    busdbalance: busdbal,
+                    ftmbalance: ftmbal,
                     currentprice: currentprice,
                     currentethprice: currentethprice,
-                    currentariprice: currentariprice,
+                    currentbscprice: currentbscprice,
+                    currentusdtprice: currentusdtprice,
                     currentbtcprice: currentbtcprice,
+                    currentbusdprice: currentbusdprice,
+                    currentftmprice: currentftmprice,
                     newblock: newblock,
                     unbalance: unbalance,
                     balancearray: scripthasharray,
@@ -1632,10 +1919,15 @@ exports.simpleindex = (req, res) => {
                     utxos: denariusutxos,
                     erctxs: erctxs,
                     ethtxs: ethtxs,
+                    bsctxs: bsctxs,
+                    beptxs: beptxs,
+                    ftmtxs: ftmtxs,
                     btctxs: bitcointxs,
                     btcutxos: bitcoinutxos,
                     btcmemtxs: bitcoinmem,
-                    ethaddy: ethaddress
+                    ethaddy: ethaddress,
+                    ftmaddy: ftmaddress,
+                    bscaddy: bscaddress
                 }, (err, html) => {
                     res.end(html + '\n');
                 });
