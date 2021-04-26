@@ -161,7 +161,7 @@ let socket_idg = [];
 
 // });	
 
-si.cpuCurrentspeed(function (data2) {
+si.cpuCurrentSpeed(function (data2) {
 
 	var min = data2.min;
 	var avg = data2.avg;
@@ -335,8 +335,8 @@ si.osInfo().then(data4 => {
 
 si.currentLoad().then(data6 => {
 
-	var avgload = data6.avgload;
-	var currentload = data6.currentload;
+	var avgload = data6.avgLoad;
+	var currentload = data6.currentLoad;
 
 	var cpu = currentload / 100;
 
@@ -352,8 +352,8 @@ si.currentLoad().then(data6 => {
 		setInterval(() => {
 			si.currentLoad().then(data6 => {
 
-				var avgload = data6.avgload;
-				var currentload = data6.currentload;
+				var avgload = data6.avgLoad;
+				var currentload = data6.currentLoad;
 			
 				var cpu = currentload / 100;
 
