@@ -9,8 +9,9 @@ cache:
 before_install:
   - sudo apt-get update
 install:
-  - npm install -g lerna
-  - npm install
+  - rm -rf node_modules
+  - npm install -g lerna yarn
+  - yarn install
   - exit 0
 script:
   - npm test
