@@ -1,0 +1,109 @@
+extends ../layoutcore
+
+block content
+  script(src='../js/lib/jquery-3.1.1.min.js')
+  script.
+    function updateDue() {
+      var amnt = parseFloat(document.getElementById("amount").value);
+      var gasfee = 250 / 1e9;
+      if (!amnt) { amnt = 0; }
+      var total = document.getElementById("totalwithdraw");
+      total.value = amnt + gasfee;
+    }
+    function clicked() {
+      $('#addy').val($('#sendaddress').val());
+      $('#total').val($('#totalwithdraw').val());
+    }
+    function confirmed() {
+      $('#sendform').submit();
+      $('#sendloading').show();
+    }
+  #notify
+  #sendloading
+    #loader(align='center').loadtxt
+      img(src='../img/kload.gif', alt='Sending...', border='0')
+      h1 Sending CLOUT, Please wait...
+        br
+        small Kronos is signing and broadcasting your transaction
+  .container(style='margin-top:30px;')
+    h1(align='center', style='font-size:73px;font-weight:100;margin-top:42px !important;') Send 
+      img.res(src='../img/clout.png', alt='CLOUT', border='0', style='height:100px !important;width: 100px !important;margin:-25px -15px 0px !important;')
+    p
+      .titlesmall(align='center') Send CLOUT to any other BitClout public key!
+    br
+    div.rowclass(style='font-weight:400;font-size:14px;padding:30px;background-color:#222;margin:15px;border-radius:15px;', align='center')
+      p
+        .balancebig(align='center', style='font-size:33px;') Total Balance: 
+          span#totalcloutbal #{totalcloutbal || 0} CLOUT
+      br
+      #SubmitDisplayModal.modal
+        .modal-dialog
+            .modal-content(style='color:#FFF !important;background-color:#111 !important; border-color: #444 !important;')
+                .modal-header(style='border-bottom: none !important;')
+                    button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+                    h4.modal-title Confirm Withdrawal
+                .modal-body
+                  .form-horizontal
+                    p(align='center')
+                      strong Are you sure you want to withdraw?
+                    .form-group
+                      label.col-sm-3.control-label(for='addy') Confirm Address
+                      .col-sm-8
+                        input.form-control.blackinput2(type='text', id='addy', disabled)
+                    .form-group
+                      label.col-sm-3.control-label(for='total') Confirm Total
+                      .col-sm-8
+                        .input-group
+                          input(type='hidden' name='_csrf' value=csrftoken)
+                          input.form-control.blackinput2(type='text', id='total', disabled)
+                          span.input-group-addon(style='background-color:#333;color:#FFF;border:none;') CLOUT
+                .modal-footer(style='border-top: none !important;')
+                    button.btn.btn-success(type='submit', id='submit', onclick='confirmed()', style='background-color: #546639;border-radius: 15px;font-size: 15px !important;') Confirm and Send CLOUT
+                    button.btn.btn-default(type='button', data-dismiss='modal', style='background-color: #602828;border-radius: 15px;font-size: 15px !important;') Close      
+      p
+        form.form-horizontal(action='/cloutsend', method='POST', id='sendform')
+          input(type='hidden' name='_csrf' value=csrftoken)
+          input(type='hidden', name='gasfeer', id='gasfeer')
+          .form-group
+            label.col-sm-3.control-label(for='sendaddress') To CLOUT Public Key
+            .col-sm-7
+              input.form-control.blackinput3(type='text', name='sendaddress', id='sendaddress', placeholder='BC1YLgf8RZExvknHNhxd8XYTTmdud57G9yiSwphpf99h8aR3AWektjU')
+          .form-group
+            label.col-sm-3.control-label(for='amount') Amount to Send
+            .col-sm-7
+              .input-group
+                input.form-control.blackinput3(type='text', name='amount', id='amount', placeholder='1.333',  onkeyup='updateDue()')
+                span.input-group-addon(style='background-color:#333;color:#FFF;border:none;') CLOUT
+          .form-group
+            label.col-sm-3.control-label(for='total') Total with fees
+            .col-sm-7
+              .input-group
+                input.form-control.blackinput3(type='text', name='total', id='totalwithdraw', value='', disabled)
+                span.input-group-addon(style='background-color:#333;color:#FFF;border:none;') Est. Total CLOUT
+          .form-group
+            .col-sm-12
+              button.kbtn.grey(type='button', id='sendCLOUT', onclick='clicked()', data-toggle='modal', data-target='#SubmitDisplayModal')
+                |  Send CLOUT
+    script(src='../js/lib/jquery-3.1.1.min.js')
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js")
+    script.
+      socket.on('newcloutbal', function (data69) {
+        if (!data69.cloutbal[0] && !data69.error) {
+          var bal = data69.cloutbal;
+          //- if (bal != 'undefined') {
+          //-   bal = parseFloat(bal.toFixed(6));
+          //- }
+          $('#totalcloutbal').html(bal+' CLOUT');
+          //var updatedftmusd = bal * $('#currentftmprice').text();
+          //$('#ftmusdbalance').html(updatedftmusd.toFixed(3));
+        } else {
+          var bal = data69.ftmbal[0];
+          //- if (bal != 'undefined') {
+          //-   bal = parseFloat(bal.toFixed(6));
+          //- }
+          $('#totalcloutbal').html(bal+' CLOUT'); 
+          //$('#htotalethbal').html(bal + '<img class="res" src="../img/eth.png" alt="ETH" border="0" style="height:24px !important;width: 24px !important;margin:-15px 0px -12px !important;" /><span style="color:#888;">ETH</span>');
+          //var updatedftmusd = bal * $('#currentftmprice').text();
+          //$('#ftmusdbalance').html(updatedftmusd.toFixed(3));
+        }
+      });

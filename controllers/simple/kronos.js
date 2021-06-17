@@ -192,7 +192,7 @@ exports.postprofile = (request, response) => {
     
     var decryptedmnemonic = decrypt(seedphrasedb);
     mnemonic = decryptedmnemonic;      
-    // ETH and ARI
+    // ETH
     let ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
     let ethprivkey = ethwallet.privateKey;
 	

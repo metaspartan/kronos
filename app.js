@@ -604,6 +604,9 @@ app.post('/bscsend', Limiter, sTXController.postbscsend);
 app.get('/sendftm', auth, Limiter, sTXController.getftmsend);
 app.post('/ftmsend', Limiter, sTXController.postftmsend);
 
+app.get('/sendclout', auth, Limiter, sTXController.getcloutsend);
+app.post('/cloutsend', Limiter, sTXController.postcloutsend);
+
 app.get('/sendusdt', auth, Limiter, sTXController.getusdtsend);
 app.post('/usdtsend', Limiter, sTXController.postusdtsend);
 

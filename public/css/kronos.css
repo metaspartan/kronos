@@ -2030,6 +2030,23 @@ display:none;
   outline:none;
 }
 
+.clout {
+  border: 3px solid #007BFF;
+  background-color: transparent;
+  border-radius: 40px;
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  outline:none;
+  font-size: 19px;
+}
+
+.clout:hover {
+  background-color: #007BFF;
+  outline:none;
+}
+
 
 
 .opulse {

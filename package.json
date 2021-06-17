@@ -1,7 +1,7 @@
 {
   "name": "Kronos",
-  "version": "2.0.0-Beta",
-  "description": "A Dashboard Interface and Wallet for Denarius (D) with support for BTC, ETH, BSC, USDT, BUSD, and FTM built with NodeJS and Electron",
+  "version": "2.0.1-Beta",
+  "description": "A Dashboard Interface and Wallet for Denarius (D) with support for BTC, ETH, BSC, USDT, BUSD, CLOUT and FTM built with NodeJS and Electron",
   "repository": {
     "type": "git",
     "url": "https://github.com/carsenk/kronos.git"
@@ -30,6 +30,7 @@
   "dependencies": {
     "@metamask/detect-provider": "^1.1.0",
     "app-root-path": "^3.0.0",
+    "axios": "^0.21.1",
     "bip32": "^2.0.6",
     "bip32d": "git://github.com/carsenk/bip32d.git",
     "bip39": "^3.0.2",
@@ -39,6 +40,7 @@
     "bluebird": "^3.7.2",
     "body-parser": "^1.19.0",
     "bs58": "^4.0.1",
+    "bs58check": "^2.1.2",
     "compression": "^1.7.4",
     "connect-flash": "^0.1.1",
     "cpu-stats": "^1.0.0",
@@ -58,6 +60,7 @@
     "electron-open-link-in-browser": "^1.0.2",
     "electron-updater": "^4.3.8",
     "electrum-cash": "^2.0.7",
+    "elliptic": "^6.5.4",
     "errorhandler": "^1.5.1",
     "esm": "^3.2.25",
     "ethers": "^5.0.19",
@@ -70,6 +73,7 @@
     "express-toastr": "^2.0.2",
     "fs": "0.0.1-security",
     "get-port": "^5.1.1",
+    "hdkey": "^2.0.1",
     "hotkeys-js": "^3.8.1",
     "identity-wallet": "^1.4.1",
     "ip": "^1.1.5",

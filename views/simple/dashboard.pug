@@ -20,6 +20,8 @@ block content
       img.res.hvr-pulse(src='../img/busd.png', alt='BUSD', border='0', style='height:48px !important;width: 48px !important;margin:-15px 5px -12px !important;')
     a(href='#', data-slide="7", style='font-size:14px;color:#FFF;display:inline-block;')
       img.res.hvr-pulse(src='../img/ftm.png', alt='FTM', border='0', style='height:48px !important;width: 48px !important;margin:-15px 5px -12px !important;')
+    a(href='#', data-slide="8", style='font-size:14px;color:#FFF;display:inline-block;')
+      img.res.hvr-pulse(src='../img/clout.png', alt='CLOUT', border='0', style='height:48px !important;width: 48px !important;margin:-15px 5px -12px !important;')
     .slider-nav(style='display:none;')
       div
         h3 1
@@ -35,6 +37,8 @@ block content
         h3 6
       div
         h3 7
+      div
+        h3 8
   .maincontent(style='border: none !important;')
     .container(style='width:90%')
       //- .div(style='margin-top:25px;')
@@ -394,7 +398,47 @@ block content
                               td(align='center', data-label='TXID') 
                                 a.txid(href=`https://ftmscan.com/tx/${tx.hash}`, target='_blank') !{tx.hash}
                 else
-                  h1(style='color:#666;', align='center') No FTM Transactions Available       
+                  h1(style='color:#666;', align='center') No FTM Transactions Available      
+          div(style='text-align:center;margin-top:20px;')
+            p
+              img.res.fpulse(src='../img/clout.png', alt='CLOUT', border='0', style='height:100px !important;width:100px !important;margin:0 auto !important;')
+            p 
+            .bal(style='font-size:2.5em;') 
+              span#totalcloutbal.format #{totalcloutbal || 0}
+              small(style='font-size:16px;')  CLOUT
+            p
+            .bal(style='font-size:1.6em;color:#888;') $
+              span#cloutusdbalance #{cloutbalance || 0}
+              small(style='font-size:16px;')  USD @ $
+                span#currentcloutprice #{currentcloutprice || 0}
+                |  ea
+            p
+              p
+                a.clout(href='http://'+lanip+':3000/sendclout', style='color:#FFF;text-decoration:none;outline:none;')
+                  |  Send
+                button.clout(type='button', id='cloutrecv', onclick='addBlur()', data-toggle='modal', data-target='#CLOUTRecv', data-backdrop='static', data-keyboard='false', style='margin-left:10px;')
+                  |  Receive
+              .bal(style='font-size:1.3vw;font-weight:400;text-align:center;margin-top:10px;', align='center') BITCLOUT 
+                span#clouthblock
+            .divider(style='background-color:#111 !important;height:2px;width:80%;margin:0 auto;', align='center')
+            p
+              if (typeof clouttxs != 'undefined')
+                if (typeof clouttxs[0] != 'undefined')
+                  .row(style='color:#eee;margin:5px !important;padding:20px;padding-right: 20px !important;border-radius:5px;')
+                    .tablewrapper
+                      table.sortable#fst
+                        thead
+                          tr
+                            th TX Type
+                            th TXID
+                        tbody
+                          each tx in clouttxs
+                            tr
+                              td(align='center', data-label='CLOUT TX Type') !{tx.TransactionType}
+                              td(align='center', data-label='TXID') 
+                                a.txid(href=`https://www.bitcloutpulse.com/explorer/transactions/${tx.TransactionIDBase58Check}`, target='_blank') !{tx.TransactionIDBase58Check}
+                else
+                  h1(style='color:#666;', align='center') No CLOUT Transactions Available    
       #DRecv.modal
         .modal-dialog(style='width:90% !important;margin: 50px auto !important;')
             .modal-content(style='color:#FFF !important;background-color:#111 !important; border-color: #444 !important;')
@@ -544,6 +588,31 @@ block content
                               img(src='' + ftmqrcode, style='border-radius:10px;')
                 .modal-footer(style='border-top: none !important;')
                     a.btn.btn-success(href='https://ftmscan.com', style='background-color: #546639;border-radius: 15px;font-size: 15px !important;', target='_blank') View on blockchain
+                    button.btn.btn-default(type='button', data-dismiss='modal', onclick='removeBlur()', style='background-color: #602828;border-radius: 15px;font-size: 15px !important;') Close
+      #CLOUTRecv.modal
+        .modal-dialog(style='width:90% !important;margin: 50px auto !important;')
+            .modal-content(style='color:#FFF !important;background-color:#111 !important; border-color: #444 !important;')
+                .modal-header(style='border-bottom: none !important;')
+                    button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+                    h4.modal-title Receive CLOUT
+                    div(align='center')
+                      img(src='../img/clout.png', height='125px', width='125px')
+                .modal-body
+                  .form-horizontal
+                    p(align='center')
+                      h3(align='center') BitClout Address
+                    .form-group
+                      p
+                        .addressdash(style='font-size:1.3vw;font-weight:400;border-radius:15px;padding:10px;margin:0 auto;margin-top:10px;margin-bottom:10px;', align='center')
+                          span.addr(style='background-color: #1e1e1e;padding: 8px;padding-left: 15px;padding-right: 15px;border-radius:15px;') #{cloutaddy}
+                          button.clip(style='background-color: transparent;border: none;margin-left: 5px;', data-clipboard-text=cloutaddy)
+                            i.fas.fa-copy
+                      if (typeof qrcode != 'undefined')
+                        .qrcode(align='center')
+                            button.clip(data-clipboard-text=cloutaddy, style='background-color: transparent;border: none;')
+                              img(src='' + cloutqrcode, style='border-radius:10px;')
+                .modal-footer(style='border-top: none !important;')
+                    a.btn.btn-success(href='https://explorer.bitcloutpulse.com', style='background-color: #546639;border-radius: 15px;font-size: 15px !important;', target='_blank') View on blockchain
                     button.btn.btn-default(type='button', data-dismiss='modal', onclick='removeBlur()', style='background-color: #602828;border-radius: 15px;font-size: 15px !important;') Close
       #BSCRecv.modal
         .modal-dialog(style='width:90% !important;margin: 50px auto !important;')
@@ -995,6 +1064,38 @@ block content
           $('#totalbusdbal').html(bal);
           var updatedusd = bal * $('#currentbusdprice').text();
           $('#busdusdbalance').html(updatedusd.toFixed(3));
+          document.querySelectorAll(".format").forEach((e) => {
+            let txt = e.innerHTML.split(".")
+            if (typeof txt[1] != 'undefined') {
+              e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
+            }
+          });
+        }
+      });
+      socket.on('newcloutbal', function (data69) {
+        if (!data69.cloutbal[0] && !data69.error) {
+          var bal = data69.cloutbal;
+          //- if (bal != 'undefined') {
+          //-   bal = parseFloat(bal.toFixed(6));
+          //- }
+          $('#totalcloutbal').html(bal);
+          var updatedcloutusd = bal * $('#currentcloutprice').text();
+          $('#cloutusdbalance').html(updatedcloutusd.toFixed(3));
+          document.querySelectorAll(".format").forEach((e) => {
+            let txt = e.innerHTML.split(".")
+            if (typeof txt[1] != 'undefined') {
+              e.innerHTML = txt[0] + ".<small>" + txt[1] + "</small>"
+            }
+          });
+        } else {
+          var bal = data69.cloutbal[0];
+          //- if (bal != 'undefined') {
+          //-   bal = parseFloat(bal.toFixed(6));
+          //- }
+          $('#totalcloutbal').html(bal); 
+          //$('#htotalethbal').html(bal + '<img class="res" src="../img/eth.png" alt="ETH" border="0" style="height:24px !important;width: 24px !important;margin:-15px 0px -12px !important;" /><span style="color:#888;">ETH</span>');
+          var updatedcloutusd = bal * $('#currentcloutprice').text();
+          $('#cloutusdbalance').html(updatedcloutusd.toFixed(3));
           document.querySelectorAll(".format").forEach((e) => {
             let txt = e.innerHTML.split(".")
             if (typeof txt[1] != 'undefined') {

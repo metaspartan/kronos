@@ -43,7 +43,10 @@ const Storage = require('json-storage-fs');
 const PromiseLoadingSpinner = require('promise-loading-spinner');
 const main = require('progressbar.js');
 const ethers = require('ethers');
-
+const axios = require('axios');
+const HDKey = require('hdkey');
+const EC = require('elliptic').ec;
+const bs58check = require('bs58check');
 
 var currentOS = os.platform(); 
 
@@ -273,6 +276,56 @@ exports.getbscsend = (req, res) => {
         totalbal: totalbal,
         totalusdtbal: totalusdtbal,
         bscaddress: bscaddress
+    });
+
+};
+
+//Get Send CLOUT
+exports.getcloutsend = (req, res) => {
+
+    const ip = require('ip');
+    const ipaddy = ip.address();
+  
+    res.locals.lanip = ipaddy;
+
+    let socket_id0 = [];
+
+    var cloutaddress = Storage.get('cloutaddy');
+
+    // Grab FTM balances in realtime (every 15s)
+    res.io.on('connection', function (socket) {
+        socket_id0.push(socket.id);
+        if (socket_id0[0] === socket.id) {
+        res.io.removeAllListeners('connection'); 
+        }
+        const cloutWalletBal = async () => {
+            axios
+            .post('https://api.bitclout.com/api/v1/balance', {PublicKeyBase58Check: cloutaddress}, {    
+                headers: {
+                'Content-Type': 'application/json'
+                }
+            })
+            .then(res => {
+                let cloutbal = res.data.ConfirmedBalanceNanos;
+                let formattedclout = cloutbal / 1e9; //Clout Nanos are 1e9
+                Storage.set('totalcloutbal', formattedclout);
+                socket.emit("newcloutbal", {cloutbal: formattedclout});
+            })
+            .catch(error => {
+                console.error(error)
+            });
+        }
+        cloutWalletBal();
+        setInterval(function(){ 
+            cloutWalletBal();
+        }, 15000);
+    });
+
+    var totalcloutbal = Storage.get('totalcloutbal');
+
+    res.render('simple/getcloutsend', {
+        totalcloutbal: totalcloutbal,
+        cloutaddress: cloutaddress
     });
 
 };
@@ -1757,7 +1810,7 @@ exports.postusdtsend = (req, res) => {
 
     } else if (parseFloat(amount) > parseFloat(totalusdtbal)) {
 
-        req.toastr.error(`Withdrawal amount (`+amount+` ARI) exceeds your ARI balance!`, 'Balance Error!', { positionClass: 'toast-bottom-left' });
+        req.toastr.error(`Withdrawal amount (`+amount+` USDT) exceeds your USDT balance!`, 'Balance Error!', { positionClass: 'toast-bottom-left' });
         return res.redirect('/sendusdt');
 
     } else {
@@ -2137,6 +2190,82 @@ exports.postftmsend = (req, res) => {
   }
 };
 
+exports.postcloutsend = (req, res) => {
+    var sendtoaddress = req.body.sendaddress;
+    var amount = req.body.amount;
+    var totalcloutbal = Storage.get('totalcloutbal');
+    var transferamount = amount * 1e9; // Nanos are 1e9
+
+    var formatclout = totalcloutbal * 1e9; // Nanos are 1e9
+
+    // This needs work
+    // var valid = CLOUTValidator.validate(`${sendtoaddress}`, 'CLOUT');
+
+    var seedphrasedb = Storage.get('seed');
+    var decryptedmnemonic = decrypt(seedphrasedb);
+    mnemonic = decryptedmnemonic;
+
+    //Convert our mnemonic seed phrase to BIP39 Seed Buffer 
+    const seedc = bip39.mnemonicToSeedSync(mnemonic); //No pass included to keep Coinomi styled seed
+
+    // Generate BitClout Pubkey and Privkey from BIP39 Seed
+    // By Carsen Klock @carsenk and @kronoswallet
+    const cloutkeychain = HDKey.fromMasterSeed(seedc).derive('m/44\'/0\'/0\'/0/0', false);
+    const cloutseedhex = cloutkeychain.privateKey.toString('hex');
+
+    const ecc = new EC('secp256k1');
+    const eckeyfrompriv = ecc.keyFromPrivate(cloutseedhex);
+    const prefixc = [0xcd, 0x14, 0x0]; // BC for Clout Pub
+    const keyc = eckeyfrompriv.getPublic().encode('array', true);
+    const prefixAndKey = Uint8Array.from([...prefixc, ...keyc]);
+    const cloutpub = bs58check.encode(prefixAndKey);
+
+    const prefixp = [0x35, 0x0, 0x0]; // bc for Clout Priv
+    const keyp = cloutkeychain.privateKey;
+    const pAndKey = Uint8Array.from([...prefixp, ...keyp]);
+    const cloutpriv = bs58check.encode(pAndKey);
+
+    if (transferamount >= formatclout) {
+        req.toastr.error(`CLOUT Transfer Failed: The CLOUT to send is greater than the amount in your balance`, 'CLOUT Transfer Failed!', { positionClass: 'toast-bottom-left' });
+        req.flash('error', { msg: `CLOUT Transfer Failed: The CLOUT to send is greater than the amount in your balance` });
+        return res.redirect('/sendclout');
+    } else {
+        // POST the request to send with BitClout API uses Clout.Black to use transfers
+        axios
+            .post('https://clout.black/api/v1/transfer-bitclout', {
+                SenderPublicKeyBase58Check: cloutpub, 
+                SenderPrivateKeyBase58Check: cloutpriv, 
+                RecipientPublicKeyBase58Check: sendtoaddress, 
+                AmountNanos: transferamount
+                // DryRun: true // Optional will not actually broadcast when set true
+            }, {    
+                headers: {
+                'Content-Type': 'application/json'
+                }
+            })
+            .then(res => {
+                let tx = res.data.Transaction;
+
+                req.toastr.success(`${amount} CLOUT was sent successfully! ${tx.TransactionIDBase58Check}`, 'Success!', { positionClass: 'toast-bottom-left' });
+                req.flash('success', { msg: `Your <strong>${amount} CLOUT</strong> was sent successfully! <a href="https://bitcloutpulse.com/explorer/transactions/${tx.TransactionIDBase58Check}" target="_blank">${tx.TransactionIDBase58Check}</a>` });
+                return res.redirect('/sendclout');
+
+            })
+            .catch(error => {
+                if (error.response) {
+                    if (error.response.status === 400 && error.response.data != 'undefined') {
+                        req.toastr.error(`CLOUT Transfer Failed: "`+error.response.data.Error+`"`, 'CLOUT Transfer Failed!', { positionClass: 'toast-bottom-left' });
+                        //req.flash('error', { msg: `CLOUT Transfer Failed: "`+error.data.Error+`"` });
+                        console.log(error.response.data.Error);
+                        return res.redirect('/sendclout');
+                    }
+                }
+                return res.redirect('/sendclout');
+            });
+
+    }
+};
+
 
 exports.getSimpleSeed = (req, res) => {
     const ip = require('ip');
@@ -2174,12 +2303,29 @@ exports.getSimpleSeed = (req, res) => {
           mnemonic = decryptedmnemonic;
         }
 
-        // ETH and ARI
+        // ETH
         let ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
         let ethwalletp = ethwallet.connect(provider); //Set wallet provider
   
         //Convert our mnemonic seed phrase to BIP39 Seed Buffer 
         const seed = bip39.mnemonicToSeedSync(mnemonic);
+
+        // Generate BitClout Pubkey and Privkey from BIP39 Seed
+        // By Carsen Klock @carsenk and @kronoswallet
+        const cloutkeychain = HDKey.fromMasterSeed(seed).derive('m/44\'/0\'/0\'/0/0', false);
+        const cloutseedhex = cloutkeychain.privateKey.toString('hex');
+
+        const ecc = new EC('secp256k1');
+        const eckeyfrompriv = ecc.keyFromPrivate(cloutseedhex);
+        const prefixc = [0xcd, 0x14, 0x0]; // BC for Clout Pub
+        const keyc = eckeyfrompriv.getPublic().encode('array', true);
+        const prefixAndKey = Uint8Array.from([...prefixc, ...keyc]);
+        const cloutpub = bs58check.encode(prefixAndKey);
+
+        const prefixp = [0x35, 0x0, 0x0]; // bc for Clout Priv
+        const keyp = cloutkeychain.privateKey;
+        const pAndKey = Uint8Array.from([...prefixp, ...keyp]);
+        const cloutpriv = bs58check.encode(pAndKey);
         
         // BIP32 From BIP39 Seed
         const root = bip32.fromSeed(seed);
@@ -2261,6 +2407,8 @@ exports.getSimpleSeed = (req, res) => {
           totalusdtbal: totalusdtbal,
           ethaddress: ethaddress,
           ethprivkey: ethprivkey,
+          cloutpub: cloutpub,
+          cloutpriv: cloutpriv,
           seedphrase: store
       });
     });

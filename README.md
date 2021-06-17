@@ -95,6 +95,8 @@ As of v1.7.7 Beta of Kronos it now has decentralized encrypted chat between both
 
 As of v2.0.0 Beta of Kronos it now has support for Binance Smart Chain (BSC), Binance USD (BEP20 BUSD), FTM (Fantom Opera), and Tether USD (ERC20 USDT) including many other small UI updates and optimization improvements
 
+As of v2.0.1 Beta of Kronos it now has support for BitClout (CLOUT). Further integration is a WIP, Send and Receiving CLOUT works!
+
 Prerequisites
 -------------
 
