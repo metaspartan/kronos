@@ -94,7 +94,6 @@
     "qrcode": "^1.4.4",
     "qs": "^6.5.1",
     "randomstring": "^1.1.5",
-    "request": "^2.88.2",
     "rpg-awesome": "^0.2.0",
     "sha256": "^0.2.0",
     "shelljs": "^0.8.4",
