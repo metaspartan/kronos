@@ -42,7 +42,6 @@ const Storage = require('json-storage-fs');
 const PromiseLoadingSpinner = require('promise-loading-spinner');
 const main = require('progressbar.js');
 const ethers = require('ethers');
-const { combinedDisposable } = require('custom-electron-titlebar/lib/common/lifecycle');
 const HDKey = require('hdkey');
 const EC = require('elliptic').ec;
 const bs58check = require('bs58check');

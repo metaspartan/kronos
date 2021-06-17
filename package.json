@@ -48,7 +48,6 @@
     "cross-spawn": "^7.0.3",
     "crypto-js": "^4.0.0",
     "csurf": "^1.11.0",
-    "custom-electron-titlebar": "^3.2.4",
     "dat-swarm-defaults": "^1.0.2",
     "denariusjs": "git://github.com/carsenk/denariusjs-lib.git",
     "discovery-swarm": "^6.1.0",

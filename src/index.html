@@ -211,16 +211,6 @@
 
 
       // document.getElementById("image").html(`<img src=${appmain.getAppPath()}+'./public/img/kload.gif' border='0' />`)
- 
-      if (process.platform !== 'darwin') {
-        const customTitlebar = require('custom-electron-titlebar');
-        new customTitlebar.Titlebar({
-            backgroundColor: customTitlebar.Color.fromHex('#333'),
-            unfocusEffect: true,
-            titleHorizontalAlignment: 'center'
-            //icon: '../public/img/caesarsmall.png'
-        });
-      }
 
       $('body').on('click', 'a', (event) => {
         event.preventDefault();
