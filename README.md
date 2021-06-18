@@ -37,8 +37,9 @@ Recommended Devices and OS
 Screenshots
 -----------------
 
-![Kronos](https://user-images.githubusercontent.com/10162347/101270083-c94b9b80-3732-11eb-95cc-d9af53031225.png)
+![Kronos](https://user-images.githubusercontent.com/10162347/122498442-5b6b1100-cfac-11eb-8e91-589ab947bedb.png)
 
+Older Screenshots:
 ![Kronos Chat](https://user-images.githubusercontent.com/10162347/101270126-5131a580-3733-11eb-93e2-56f6f77ff9d8.png)
 
 ![Kronos](https://user-images.githubusercontent.com/10162347/101270092-ee400e80-3732-11eb-97a8-36cf76db37ee.png)
