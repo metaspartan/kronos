@@ -124,7 +124,7 @@
     "chai": "^4.2.0",
     "chrome-ext-downloader": "^1.0.4",
     "electron": "^10.1.6",
-    "electron-builder": "^22.10.5",
+    "electron-builder": "22.10.5",
     "electron-builder-squirrel-windows": "*",
     "electron-prebuilt-compile": "8.2.0",
     "electron-rebuild": "^2.3.5",
