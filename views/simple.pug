@@ -92,6 +92,27 @@ html(dir="ltr", lang="en-US")
 			outline: none;
 			}
 
+			form textarea {
+			color: #FFF;
+			background-color: #222;
+			resize: none;
+			box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03) inset;
+			border: none;
+			border-radius: 15px;
+			text-align:center;
+			vertical-align:center;
+			margin-bottom:5px;
+			padding: 1em;
+			font-family: tahoma, sans-serif;
+			margin-top:20px;
+			font-size: 26px;
+			width: 100%;
+			height:220px;
+			}
+			form textarea:focus {
+			outline: none;
+			}
+
 			.button, input {
 			font-weight: 600;
 			text-align: center;
@@ -119,25 +140,27 @@ html(dir="ltr", lang="en-US")
 			.fa-sync {
 				cursor: pointer;
 			}
+			.toast-error {
+				background-color: #d30202;
+			}
 	body
-		.container(style='margin-top:50px !important;margin:0;padding:0;', align='center')
+		.container(style='margin-top:30px !important;margin:0;padding:0;', align='center')
 			img(src="https://user-images.githubusercontent.com/10162347/93844293-ed323180-fc59-11ea-9331-9f8ac37f797c.png", height="200px", width="200px", align="center")
 		.container(style='margin-top:20px !important;margin:0;padding:0;', align='center')
 			form(action="/simplesetup" method="post")
 				.form-content
-					span(style='color:#ccc;')
+					span(style='color:#ccc;font-size:26px;')
 						| Core Mode Setup
 					br
-					span(style='color:#777;font-size:12px;')
-						| Below is your BIP39 Generated 24 Word Seed "Phrase", Ensure that you write these words down and save it somewhere safe. Your Kronos wallet will be derived from this phrase.
+					span(style='color:#999;font-size:14px;')
+						| Below is your BIP39 Generated 24 Word Seed "Phrase", You may also import and enter an existing seed phrase here. Ensure that you write these words down and save it somewhere safe. Your Kronos wallet will be derived from this phrase.
 					br
 					br
 					a(onClick="window.location.reload();", style="color:#777;")
 						i.fas.fa-sync.fa-2x
 					br
 					input(type='hidden' name='_csrf' value=csrftoken)
-					input(type="hidden" id="SEED" name="SEED" value=seedphrase)
-					p.animate__animated.animate__fadeIn(style='background-color:#000;color:#FFF;padding:20px;border-radius:15px;font-size:21px;') #{seedphrase}
+					textarea(id="SEEDPHRASE" name="SEEDPHRASE" placeholder='' autofocus) #{seedphrase}
 					br
 					input.button(style='background-color: #444;', type="submit" value="Next Step")
 				br

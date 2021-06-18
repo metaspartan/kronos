@@ -52,94 +52,120 @@ html(dir="ltr", lang="en-US")
 			}
 
 			.container {
-			display: flex;
-			-webkit-display: box;
-			-moz-display: box;
-			-ms-display: flexbox;
-			-webkit-display: flex;
-			flex-wrap: wrap;
-			justify-content: center;
-			align-content: center;
-			padding: 10%;
-			height: 100vh !import;
-			margin: 0;
+				display: flex;
+				-webkit-display: box;
+				-moz-display: box;
+				-ms-display: flexbox;
+				-webkit-display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				align-content: center;
+				padding: 10%;
+				height: 100vh !import;
+				margin: 0;
 			}
 
 			form {
-			background-color: #fff;
-			padding: 2em;
-			border-radius: 8px;
-			max-width: 400px;
-			display: flex;
-			flex-wrap: wrap;
-			flex-direction: column;
-			justify-content: center;
-			box-shadow: 0 10px 40px -14px rgba(0, 0, 0, 0.25);
-			display: flex;
-			flex-wrap: wrap;
-			flex-direction: column;
-				background-color: #333;
+				background-color: #fff;
+				padding: 2em;
+				border-radius: 8px;
+				max-width: 400px;
+				display: flex;
+				flex-wrap: wrap;
+				flex-direction: column;
+				justify-content: center;
+				box-shadow: 0 10px 40px -14px rgba(0, 0, 0, 0.25);
+				display: flex;
+				flex-wrap: wrap;
+				flex-direction: column;
+					background-color: #333;
 			}
 			form input {
-			color: #FFF;
-			background-color: #222;
-			box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03) inset;
-			border: none;
-			border-radius: 4px;
-			padding: 1em;
-			width: 100%;
+				color: #FFF;
+				background-color: #222;
+				box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03) inset;
+				border: none;
+				border-radius: 4px;
+				padding: 1em;
+				width: 100%;
 			}
 			form input:focus {
-			outline: none;
+				outline: none;
 			}
 
 			.button, input {
-			font-weight: 600;
-			text-align: center;
-			font-size: 19px;
-			color: #FFF;
-			background-color: #333;
-			width: 100%;
-			border: none;
-			border-radius: 4px;
-			padding: .75em;
-			margin-top: 0em;
-			margin-bottom: 1em; 
-			cursor: pointer;
-			overflow: hidden;
-			transition: all 200ms ease-in-out;
-			box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+				font-weight: 600;
+				text-align: center;
+				font-size: 19px;
+				color: #FFF;
+				background-color: #333;
+				width: 100%;
+				border: none;
+				border-radius: 4px;
+				padding: .75em;
+				margin-top: 0em;
+				margin-bottom: 1em; 
+				cursor: pointer;
+				overflow: hidden;
+				transition: all 200ms ease-in-out;
+				box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
 			}
 
 
 			.button {
-			padding: 1em;
-			margin-bottom: 0px;
+				padding: 1em;
+				margin-bottom: 0px;
 			}
+			#box {
+				width: 100%;
+				height: 100%;
+				padding:30px;
+				background-color:#222;
+				border-radius: 15px;
+			}
+			.toast-error {
+				background-color: #d30202;
+			}
+
+			.rainbowb {
+				--angle: 0deg;
+				border: 3px solid;				
+				border-image: conic-gradient(from var(--angle), red, yellow, lime, aqua, blue, magenta, red) 1;				
+				animation: 10s rotate linear infinite;
+			}
+
+			@keyframes rotate {
+			to {
+				--angle: 360deg;
+			}
+			}
+			@property --angle {
+				syntax: '<angle>';
+				initial-value: 0deg;
+				inherits: false;
+			}			
 	body
-		.container(style='margin-top:50px !important;margin:0 auto;padding:0;', align='center')
+		.container(style='margin-top:30px !important;margin:0 auto;padding:0;', align='center')
 			img(src="https://user-images.githubusercontent.com/10162347/93844293-ed323180-fc59-11ea-9331-9f8ac37f797c.png", height="200px", width="200px", align="center")
-		.start(style='background-color:#333;border-radius:15px;width:95%;padding:30px;margin: 0 auto;margin-top: 45px; ')
-			h1(style='font-family: "Lato", sans-serif; font-size:34px; font-weight:100;') SELECT YOUR MODE
-			.row(style='background-color:#333; margin:0 auto; width:100%;' align='center')
-				.col-md-6
-					.modes(style='padding:30px;background-color:#222;border-radius:15px;')
-						p
-							i.ra.ra-level-two.fa-5x(style='color:#777;')
-						span(style='color:#999;font-family: "Roboto", sans-serif;font-weight:300;') Start Kronos in "Core Mode", A standalone mode of Kronos that runs Kronos by itself. For those that are new to cryptocurrency! Generates a seed phrase for use with Denarius (D), Bitcoin (BTC), Fantom (FTM), Binance Smart Chain (BSC), BitClout (CLOUT) and Ethereum (ETH) wallets.
-						p
-							br
-							a.btn.button(href='/simplesetup', style='background-color: #444;border-radius:15px;color:#eee;width:100%;') Core Mode
-						.span(style='background-color:#00ad00;width:30%;padding:5px;border-radius:15px;color:#FFF;') Beginner
-				.col-md-6
-					.modes(style='padding:30px;background-color:#222;border-radius:15px;')
-						p
-							i.ra.ra-level-three-advanced.fa-5x(style='color:#777;')
-						span(style='color:#999;font-family: "Roboto", sans-serif;font-weight:300;') Start Kronos in "Advanced Mode", An advanced mode of Kronos that runs Kronos and provides the ability to configure a RPC connection to Denarius. Kronos only supports Denarius (D) in this mode.
+		.start(style='border-radius:15px;width:95%;padding:30px;margin: 0 auto; ')
+			h1(style='font-family: "Lato", sans-serif; font-size:34px; font-weight:900;margin-bottom:55px;') SELECT YOUR MODE
+			.row(style='margin:0 auto; width:100%;' align='center')
+				.col-md-7
+					.modes#box.rainbowb(style='padding:30px;background-color:#222;border-radius:15px;')
+						h1(style='font-family: "Lato", sans-serif; font-size:54px; font-weight:900;text-align:left;color:#888;') EASY ✨
+						span(style='color:#999;font-family: "Roboto", sans-serif;font-weight:300;') Start Kronos in "Core Mode", A standalone mode of Kronos that runs Kronos by itself. For those that are new or veteran to cryptocurrency! Generates a 24 word seed phrase for use with Denarius (D), Bitcoin (BTC), Fantom (FTM), Binance Smart Chain (BSC), BitClout (CLOUT) and Ethereum (ETH) wallets. Start sending and receiving your favorite cryptocurrencies now!
 						p
 							br
-							a.btn.button(href='/setup', style='background-color: #444;border-radius:15px;color:#eee;') Advanced Mode
-						.span(style='background-color:#b53900;width:80%;padding:5px;border-radius:15px;color:#FFF;') Expert
+							a.btn.button(href='/simplesetup', style='background-color: #444;border-radius:15px;color:#eee;width:100%;') Start Core Mode
+						.span(style='background-color:#00ad00;width:90%;padding:5px;border-radius:15px;color:#FFF;') Easy
+				.col-md-5
+					.modes(style='padding:30px;background-color:#222;')
+						h1(style='font-family: "Lato", sans-serif; font-size:54px; font-weight:900;text-align:left;color:#888;') EXPERT 🚨
+						span(style='color:#999;font-family: "Roboto", sans-serif;font-weight:300;') Start Kronos in an RPC only "Advanced Mode", An advanced mode of Kronos that runs Kronos and provides the ability to configure a RPC connection to Denarius. Kronos only supports Denarius (D) in this mode.
+						p
+							br
+							a.btn.button(href='/setup', style='background-color: #444;border-radius:15px;color:#eee;') Start Advanced RPC Mode
+						.span(style='background-color:#b53900;width:90%;padding:5px;border-radius:15px;color:#FFF;') Expert
 		script(src='/js/lib/jquery-3.1.1.min.js')
 		script(src='//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/js/toastr.min.js')
 		script(src='//stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js')

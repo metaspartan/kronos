@@ -494,14 +494,12 @@ exports.create = (request, response) => {
 
 //POST
 exports.simple = (request, response) => {
-	var seedphrase = request.body.SEED;
-
-	//var secretkey = request.body.SECRET;
+	// var seedphrase = request.body.SEED;
+	var seedphrase = request.body.SEEDPHRASE;
 	
-	if (seedphrase) {
-			//console.log('Balance:', balance);
+	if (seedphrase && request.body) {
 
-			if (request.body) {
+			if (ethers.utils.isValidMnemonic(seedphrase)) {
 
 						db.get('seedphrase', function (err, value) {
 							if (err) {
@@ -532,13 +530,13 @@ exports.simple = (request, response) => {
 						response.end();	
 	
 			} else {
-				request.toastr.error('Failed!', 'Error!', { positionClass: 'toast-bottom-left' });
+				request.toastr.error('Invalid seed phrase! Try something else!', 'Error!', { positionClass: 'toast-bottom-left' });
 				response.redirect('/login');
 				response.end();
 			}
 	
 	} else {
-		request.toastr.error('Please select a seed phrase!', 'Error!', { positionClass: 'toast-bottom-left' });
+		request.toastr.error('Please enter a seed phrase!', 'Error!', { positionClass: 'toast-bottom-left' });
 		response.redirect('/login');
 		response.end();
 	}
