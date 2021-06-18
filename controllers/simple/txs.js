@@ -2264,7 +2264,7 @@ exports.postcloutsend = (req, res) => {
                 let tx = res.data.Transaction;
 
                 req.toastr.success(`${amount} CLOUT was sent successfully! ${tx.TransactionIDBase58Check}`, 'Success!', { positionClass: 'toast-bottom-left' });
-                req.flash('success', { msg: `Your <strong>${amount} CLOUT</strong> was sent successfully! <a href="https://bitcloutpulse.com/explorer/transactions/${tx.TransactionIDBase58Check}" target="_blank">${tx.TransactionIDBase58Check}</a>` });
+                req.flash('success', { msg: `Your <strong>${amount} CLOUT</strong> was sent successfully! <a href="https://explorer.cloutangel.com/tx/${tx.TransactionIDBase58Check}" target="_blank">${tx.TransactionIDBase58Check}</a>` });
                 return res.redirect('/sendclout');
 
             })

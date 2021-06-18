@@ -42,9 +42,10 @@ const PromiseLoadingSpinner = require('promise-loading-spinner');
 const main = require('progressbar.js');
 const ethers = require('ethers');
 const { triggerAsyncId } = require('async_hooks');
-//const ThreeBox = require('3box');
-const IdentityWallet = require('identity-wallet');
 const axios = require('axios');
+const HDKey = require('hdkey');
+const EC = require('elliptic').ec;
+const bs58check = require('bs58check');
 
 var currentOS = os.platform(); 
 
@@ -171,37 +172,48 @@ exports.getprofile = (req, res) => {
             'Content-Type': 'application/json'
             }
         })
-        .then(res => {
-            let username = res.data.Profile.Username;
-            let biog = res.data.Profile.Description;
-            let FR = res.data.Profile.CoinEntry.CreatorBasisPoints / 100;
+        .then(response => {
+            let username = response.data.Profile.Username;
+            let description = response.data.Profile.Description;
+            let FR = response.data.Profile.CoinEntry.CreatorBasisPoints / 100;
             
             Storage.set('cloutuser', username);
-            Storage.set('cloutdesc', biog);
+            Storage.set('cloutdesc', description);
             Storage.set('FR', FR);
+
+            res.render('simple/profile', {
+                totalethbal: totalethbal,
+                twofaenable: twofaenable,
+                totalbal: totalbal,
+                totalusdtbal: totalusdtbal,
+                ethaddress: ethaddress,
+                cloutaddress: cloutaddress,
+                username: username,
+                description: description,
+                FR: FR
+            });
         })
         .catch(error => {
-            console.error(error)
+            console.error(error);
+            let username = '';
+            let description = '';
+            let FR = 10000 / 100;
+
+            res.render('simple/profile', {
+                totalethbal: totalethbal,
+                twofaenable: twofaenable,
+                totalbal: totalbal,
+                totalusdtbal: totalusdtbal,
+                ethaddress: ethaddress,
+                cloutaddress: cloutaddress,
+                username: username,
+                description: description,
+                FR: FR
+            });
         });
-
-        let username = Storage.get('cloutuser');
-        let description = Storage.get('cloutdesc');
-        let FR = Storage.get('FR');
-
-    res.render('simple/profile', {
-        totalethbal: totalethbal,
-        twofaenable: twofaenable,
-        totalbal: totalbal,
-        totalusdtbal: totalusdtbal,
-        ethaddress: ethaddress,
-        cloutaddress: cloutaddress,
-        username: username,
-        description: description,
-        FR: FR
-    });
 };
 
-// POST the Decentralized Profiles to BitClout - WORK IN PROGRESS
+// POST the Decentralized Profiles to BitClout (CLOUT)
 exports.postprofile = (request, response) => {
 	var name = request.body.NAMEBOX;
 	var founder = request.body.founder * 100; // In Nanos for Founder Reward
@@ -226,62 +238,131 @@ exports.postprofile = (request, response) => {
     
     var decryptedmnemonic = decrypt(seedphrasedb);
     mnemonic = decryptedmnemonic;
+
+    const seedc = bip39.mnemonicToSeedSync(mnemonic); //No pass included to keep Coinomi styled seed
+
+    // Generate BitClout Pubkey and Privkey from BIP39 Seed
+    // By Carsen Klock @carsenk and @kronoswallet
+    const cloutkeychain = HDKey.fromMasterSeed(seedc).derive('m/44\'/0\'/0\'/0/0', false);
+    const cloutseedhex = cloutkeychain.privateKey.toString('hex');
+
+    const ecc = new EC('secp256k1');
+    const eckeyfrompriv = ecc.keyFromPrivate(cloutseedhex);
+    const prefixc = [0xcd, 0x14, 0x0]; // BC for Clout Pub
+    const keyc = eckeyfrompriv.getPublic().encode('array', true);
+    const prefixAndKey = Uint8Array.from([...prefixc, ...keyc]);
+    const cloutpub = bs58check.encode(prefixAndKey);
+
+    const prefixp = [0x35, 0x0, 0x0]; // bc for Clout Priv
+    const keyp = cloutkeychain.privateKey;
+    const pAndKey = Uint8Array.from([...prefixp, ...keyp]);
+    const cloutpriv = bs58check.encode(pAndKey);
+
+    function uvarint64ToBuf(uint) {
+        var result = [];
+        while (uint >= 0x80) {
+            result.push((uint & 0xFF) | 0x80);
+            uint >>>= 7;
+        }
+        result.push(uint | 0);
+        return new Buffer.from(result);
+    };
 	
-	if (avatar && name && bio && founder) {        
-        axios
-        .post('https://bitclout.com/api/v0/update-profile', 
-        {
-            UpdaterPublicKeyBase58Check: cloutaddress,
-            NewUsername: name,
-            NewDescription: bio,
-            NewProfilePic: avatar,
-            NewCreatorBasisPoints: parseInt(founder),
-            NewStakeMultipleBasisPoints: 12500,
-            IsHidden: false,
-            MinFeeRateNanosPerKB: 1000
-        }, {    
-            headers: {
-            'Content-Type': 'application/json'
-            }
-        })
-        .then(res => {
-            let txhex = res.data.TransactionHex;
-            
-            console.log(txhex);
-
-            //POST Submit-Transaction needs signing finished
-
+	if (avatar) {
+        if (name && bio && founder) {          
             axios
-            .post('https://bitclout.com/api/v0/submit-transaction', 
+            .post('https://bitclout.com/api/v0/update-profile', 
             {
-                TransactionHex: txhex,
+                UpdaterPublicKeyBase58Check: cloutaddress,
+                NewUsername: name,
+                NewDescription: bio,
+                NewProfilePic: avatar,
+                NewCreatorBasisPoints: parseInt(founder),
+                NewStakeMultipleBasisPoints: 12500,
+                IsHidden: false,
+                MinFeeRateNanosPerKB: 1000
             }, {    
                 headers: {
                 'Content-Type': 'application/json'
                 }
             })
             .then(res => {
-                let hash = res.data.TransactionHex;
-
-                    
-                request.toastr.success('Updated your profile!', 'Success!', { positionClass: 'toast-bottom-left' });
-                response.redirect('http://'+ip.address()+':3000/profile');
-                response.end();
+                let txhex = res.data.TransactionHex;
                 
+                console.log(txhex);
+
+                const seedHex = cloutkeychain.privateKey.toString('hex');
+                const ec = new EC('secp256k1');
+                const privateKey = ec.keyFromPrivate(seedHex);
+            
+                const transactionBytes = new Buffer.from(txhex, 'hex');
+                const transactionHash = new Buffer.from(sha256.x2(transactionBytes), 'hex');
+                const signature = privateKey.sign(transactionHash);
+                const signatureBytes = new Buffer.from(signature.toDER());
+                const signatureLength = uvarint64ToBuf(signatureBytes.length);
+            
+                const signedTransactionBytes = Buffer.concat([
+                    // This slice is bad. We need to remove the existing signature length field prior to appending the new one.
+                    // Once we have frontend transaction construction we won't need to do this.
+                    transactionBytes.slice(0, -1),
+                    signatureLength,
+                    signatureBytes,
+                ]);
+            
+                const finaltxhex = signedTransactionBytes.toString('hex');
+
+                // console.log('Signed TX', finaltxhex);              
+
+                // POST the Update TX
+                axios
+                .post('https://bitclout.com/api/v0/submit-transaction', 
+                {
+                    TransactionHex: finaltxhex,
+                }, {    
+                    headers: {
+                    'Content-Type': 'application/json'
+                    }
+                })
+                .then(res => {
+                    let hash = res.data.TxnHashHex;
+                    // console.log(res.data);
+                    
+                    request.toastr.success('Updated your profile! TX Hash Hex: '+hash+'', 'Success!', { positionClass: 'toast-bottom-left' });                    
+                    response.redirect('http://'+ip.address()+':3000/profile');
+                    response.end();
+                    
+                })
+                .catch(error => {
+                    if (error.response) {
+                        if (error.response.status === 400 && error.response.data != 'undefined') {
+                            console.log(error.response.data.error);
+                            request.toastr.error('Update Signed TX Error: '+error.response.data.error+'', 'Error!', { positionClass: 'toast-bottom-left' });
+                            response.redirect('http://'+ip.address()+':3000/profile');
+                            response.end();
+                        }
+                    }
+                });
+
             })
             .catch(error => {
-                console.error(error)
-            });
-
-        })
-        .catch(error => {
-            console.error(error)
-        });        
+                if (error.response) {
+                    if (error.response.status === 400 && error.response.data != 'undefined') {
+                        console.log(error.response.data.error);
+                        request.toastr.error('Update Error: '+error.response.data.error+'', 'Error!', { positionClass: 'toast-bottom-left' });
+                        response.redirect('http://'+ip.address()+':3000/profile');
+                        response.end();
+                    }
+                }
+            });        
 	
-	} else {
-		//response.send('Please enter Username and Password!');
-		request.toastr.error('Please ensure you fill out all fields!', 'Error!', { positionClass: 'toast-bottom-left' });
-		response.redirect('http://'+ip.address()+':3000/profile');
-		response.end();
-	}
+        } else {
+            request.toastr.error('Please ensure you fill out all fields!', 'Error!', { positionClass: 'toast-bottom-left' });
+            response.redirect('http://'+ip.address()+':3000/profile');
+            response.end();
+        }
+    } else {
+        request.toastr.error('Please ensure you select an avatar!', 'Error!', { positionClass: 'toast-bottom-left' });
+        response.redirect('http://'+ip.address()+':3000/profile');
+        response.end();
+    }
 };

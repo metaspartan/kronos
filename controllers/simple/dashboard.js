@@ -332,7 +332,7 @@ exports.simpleindex = (req, res) => {
         }, 15000);
     });
 
-    // Grab BitClout balances in realtime (every 15s)
+    // Grab BitClout balances in realtime (every 30s)
     res.io.on('connection', function (socket) {
         socket_idclout.push(socket.id);
         if (socket_idclout[0] === socket.id) {
@@ -358,7 +358,7 @@ exports.simpleindex = (req, res) => {
         cloutWalletBal();
         setInterval(function(){ 
             cloutWalletBal();
-        }, 15000);
+        }, 30000);
     });
 
     // Grab BSC balances in realtime (every 15s)

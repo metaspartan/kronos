@@ -16,9 +16,11 @@ Official Website: https://kronoswallet.com
 
 This is a massive project with active development in progress and this repo will be updated in time, be warned, things can break and always always backup backup backup!
 
-Kronos is a Dashboard Interface and Wallet for Denarius (D), Bitcoin (BTC), Ethereum (ETH), Binance Smart Chain (BSC), and Fantom Opera (FTM) as an app written in NodeJS and Electron. The Kronos Wallet is also now available on Windows, macOS, and Linux platforms. (You can also access it on mobile from your local network).
+Kronos is a Dashboard Interface and Wallet for Denarius (D), Bitcoin (BTC), Ethereum (ETH), Binance Smart Chain (BSC), BitClout (CLOUT) and Fantom Opera (FTM) as an app written in NodeJS and Electron. The Kronos Wallet is also now available on Windows, macOS, and Linux platforms. (You can also access it on mobile from your local network).
 
-Send and Receive D, BTC, ETH, USDT, BSC, BUSD, and FTM Funds, create new addresses, view transactions, unlock/lock wallet, stake D, reboot your node, import private keys, encrypt your wallet, broadcast raw transactions, sign and verify Denarius messages, and much more!
+Send and Receive D, BTC, ETH, USDT, BSC, BUSD, CLOUT, and FTM Funds in Core Mode!
+
+In Advanced Mode create new Denarius addresses, view transactions, unlock/lock wallet, stake D, reboot your node, import private keys, encrypt your wallet, broadcast raw transactions, sign and verify Denarius messages, and much more!
 
 This was built for the Raspberry Pi in mind and one with at least 2GB of RAM. 4GB and 8GB models are recommended! Kronos will run on any Linux distro with a minimal amount of 2GB of RAM.
 
@@ -99,6 +101,8 @@ As of v2.0.0 Beta of Kronos it now has support for Binance Smart Chain (BSC), Bi
 As of v2.0.1 Beta of Kronos it now has support for BitClout (CLOUT). Further integration is a WIP, Send and Receiving CLOUT works!
 
 As of v2.0.2 Beta of Kronos it now has more support for CLOUT profiles, your avatar throughout Kronos will now reflect what your BitClout PubKey has set!
+
+As of v2.0.3 Beta of Kronos it now fully supports CLOUT profiles, allowing profile creation and updating directly in Kronos for the BitClout network, You can now input/import your own seed phrase during Kronos setup. CLOUT Explorer updated to using explorer.cloutangel.com
 
 Prerequisites
 -------------
