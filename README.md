@@ -51,7 +51,8 @@ Features
 --------
 
 -----This list needs some updating soon...
-- Send and Receive D, BTC, ETH, BSC, USDT, BUSD, and FTM in Core Mode (Multi Crypto Wallets)
+- Send and Receive D, BTC, ETH, BSC, USDT, BUSD, CLOUT, and FTM in Core Mode (Multi Crypto Wallets)
+- Decentralized Bitclout.com CLOUT Profile Creation and Updating
 - Decentralized Chat with private encrypted messaging
 - Core Mode and Advanced Mode
 - Send and Receive D
