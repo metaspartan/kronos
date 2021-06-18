@@ -5,28 +5,49 @@ block content
   .maincontent(style='border: none !important;margin-top: -15px;')
     .container(style='width:90%')
       .row(class='rowclass', style='margin: 0px !important; padding:0px !important;border-top-left-radius:0px !important; border-top-right-radius:0px !important;')
-        .col-md-12(align='center')
-          h1(align='center', style='font-size:73px;font-weight:100;margin-top:42px !important;')
-            |  Your Profile
+        .col-md-6(align='center')
+          h2(align='center', style='font-size:43px;font-weight:100;margin-top:42px !important;')
+            |  Your Profile  
+            a(href='https://bitclout.com/u/'+username, target='_blank') @#{username}
+          p
+            h5(style='color:#777;')
+              | This profile is available and attached to BitClout.com. 
+              br
+              | It costs 0.01 CLOUT to update your profile!
+              br
+              | Please update your profile from BitClout.com until this is completed!
+        .col-md-6(align='center')
           form.form-horizontal(action='/updateprofile', method='POST')
             input(type='hidden' name='_csrf' value=csrftoken)
             p
               #edit__userPicture
                 label#chooseFile(for='fileInput')
-                  input#fileInput.light(type='file' name='fileInput' accept='image/*', onchange='loadFile(event)')
-                  img#addImage(src='../img/AddImage.svg' alt='Change Avatar', onchange='loadFile(event)')
+                  input#fileInput.light(type='file' name='fileInput' accept='image/*', onchange='encodeImageFileAsURL()')
+                  img#addImage(src='../img/AddImage.svg' alt='Change Avatar', onchange='encodeImageFileAsURL()')
                   //- button#removePic.removeButton(text='remove' type='button') &#x2715;
                   .profPic_div
                     .profPic_div_overlay
                       p CHANGE AVATAR
                     #profileavatar(style='margin:35px;')
               #progress(style='display:none;')
+        .col-md-12(align='center')
             p
-              button#EMOJITRIGGER.kbtn.grey(name='EMOJITRIGGER', type='button')
+              .form-group.row
+                label.col-sm-2.col-form-label(for='pb', style='margin-top:15px;') CLOUT Public Key
+                .col-sm-10
+                  input#pb.profileinput(name='pb', placeholder='CLOUT PubKey', style='background-color:#111 !important;', value=cloutaddress disabled)
             p
               input#AVATAR(type='hidden', name='AVATAR')
-              input#EMOJI(type='hidden', name='EMOJI')
-              input#NAMEBOX.profileinput(name='NAMEBOX', placeholder='Your name')
-              input#WEBBOX.profileinput(name='WEBBOX', placeholder='Your website')
-              textarea#BIOBOX.profileinput(type='textarea', row='10', name='BIOBOX', placeholder='Your biography or description')
+              .form-group.row
+                label.col-sm-2.col-form-label(for='NAMEBOX', style='margin-top:15px;') Username
+                .col-sm-10
+                  input#NAMEBOX.profileinput(name='NAMEBOX', placeholder='Username', value=username)
+              .form-group.row 
+                label.col-sm-2.col-form-label(for='founder', style='margin-top:15px;') Founder Reward %
+                .col-sm-10
+                  input#founder.profileinput(name='founder', placeholder='Your Founder Reward Rate', value=FR)
+              .form-group.row 
+                label.col-sm-2.col-form-label(for='BIOBOX', style='margin-top:25px;') Description
+                .col-sm-10
+                  textarea#BIOBOX.profileinput(type='textarea', row='10', name='BIOBOX', placeholder='Your biography or description') #{description}
               button.kbtn.grey(type='submit' disabled) Update Profile

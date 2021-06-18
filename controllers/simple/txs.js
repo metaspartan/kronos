@@ -131,12 +131,14 @@ exports.getethsend = (req, res) => {
     var totalbal = Storage.get('totalbal');
     var totalusdtbal = Storage.get('totalusdtbal');
     var ethaddress = Storage.get('ethaddy');
+    var cloutaddress = Storage.get('cloutaddy');
 
     res.render('simple/getethsend', {
         totalethbal: totalethbal,
         totalbal: totalbal,
         totalusdtbal: totalusdtbal,
-        ethaddress: ethaddress
+        ethaddress: ethaddress,
+        cloutaddress: cloutaddress
     });
 
 };
@@ -153,12 +155,14 @@ exports.getusdtsend = (req, res) => {
     var totalbal = Storage.get('totalbal');
     var totalusdtbal = Storage.get('totalusdtbal');
     var ethaddress = Storage.get('ethaddy');
+    var cloutaddress = Storage.get('cloutaddy');
 
     res.render('simple/getusdtsend', {
         totalethbal: totalethbal,
         totalbal: totalbal,
         totalusdtbal: totalusdtbal,
-        ethaddress: ethaddress
+        ethaddress: ethaddress,
+        cloutaddress: cloutaddress
     });
 
 };
@@ -201,6 +205,7 @@ exports.getbusdsend = (req, res) => {
     var totalbsc = Storage.get('totalbsc');
     var totalbusdbal = Storage.get('totalbusdbal');
     var bscaddress = Storage.get('bscaddy');
+    var cloutaddress = Storage.get('cloutaddy');
 
     // Grab BUSD balances in realtime (every 15s)
     res.io.on('connection', function (socket) {
@@ -228,6 +233,7 @@ exports.getbusdsend = (req, res) => {
         totalbscbal: totalbsc,
         totalbal: totalbsc,
         totalbusdbal: totalbusdbal,
+        cloutaddress: cloutaddress,
         bscaddress: bscaddress
     });
 
@@ -249,6 +255,7 @@ exports.getbscsend = (req, res) => {
     var totalbal = Storage.get('totalbal');
     var totalusdtbal = Storage.get('totalusdtbal');
     var bscaddress = Storage.get('bscaddy');
+    var cloutaddress = Storage.get('cloutaddy');
 
     // Grab BSC balances in realtime (every 15s)
     res.io.on('connection', function (socket) {
@@ -275,6 +282,7 @@ exports.getbscsend = (req, res) => {
         totalbscbal: totalbscbal,
         totalbal: totalbal,
         totalusdtbal: totalusdtbal,
+        cloutaddress: cloutaddress,
         bscaddress: bscaddress
     });
 
@@ -345,6 +353,7 @@ exports.getftmsend = (req, res) => {
 
     var totalbal = Storage.get('totalbal');
     var ftmaddress = Storage.get('ftmaddy');
+    var cloutaddress = Storage.get('cloutaddy');
 
     // Grab FTM balances in realtime (every 15s)
     res.io.on('connection', function (socket) {
@@ -369,6 +378,7 @@ exports.getftmsend = (req, res) => {
     res.render('simple/getftmsend', {
         totalftmbal: totalftmbal,
         totalbal: totalbal,
+        cloutaddress: cloutaddress,
         ftmaddress: ftmaddress
     });
 
@@ -387,6 +397,7 @@ exports.getsend = (req, res) => {
     let totalusdtbal = Storage.get('totalusdtbal');
     //let utxos = Storage.get('dutxo');
     var ethaddress = Storage.get('ethaddy');
+    var cloutaddress = Storage.get('cloutaddy');
     var mainaddress = Storage.get('mainaddress');
     var p2pkaddress = Storage.get('p2pkaddress');
     //res.locals.utxos = utxos;
@@ -483,6 +494,7 @@ exports.getsend = (req, res) => {
                 totalbal: totalbal,
                 totalusdtbal: totalusdtbal,
                 ethaddress: ethaddress,
+                cloutaddress: cloutaddress,
                 mainaddress: mainaddress
             }, (err, html) => {
                 res.end(html + '\n');
@@ -505,6 +517,7 @@ exports.getbtcsend = (req, res) => {
     let totalusdtbal = Storage.get('totalusdtbal');
     //let utxos = Storage.get('dutxo');
     var ethaddress = Storage.get('ethaddy');
+    var cloutaddress = Storage.get('cloutaddy');
     var mainaddress = Storage.get('mainaddress');
     var p2pkaddress = Storage.get('p2pkaddress');
     var btcaddress = Storage.get('btcsegwitaddy');
@@ -606,6 +619,7 @@ exports.getbtcsend = (req, res) => {
                 totalbtcbal: totalbtcbal,
                 totalusdtbal: totalusdtbal,
                 ethaddress: ethaddress,
+                cloutaddress: cloutaddress,
                 mainaddress: btcaddress
             }, (err, html) => {
                 res.end(html + '\n');
@@ -627,6 +641,7 @@ exports.getchat = (req, res) => {
     var totalbal = Storage.get('totalbal');
     var totalusdtbal = Storage.get('totalusdtbal');
     var ethaddress = Storage.get('ethaddy');
+    var cloutaddress = Storage.get('cloutaddy');
     var mainaddress = Storage.get('mainaddress');
     var btcaddress = Storage.get('btcsegwitaddy');
 
@@ -635,6 +650,7 @@ exports.getchat = (req, res) => {
         totalbal: totalbal,
         totalusdtbal: totalusdtbal,
         ethaddress: ethaddress,
+        cloutaddress: cloutaddress,
         mainaddress: mainaddress,
         btcaddress: btcaddress
     });
@@ -651,6 +667,7 @@ exports.postapisend = (req, res) => {
     var ethaddress = Storage.get('ethaddy');
     var mainaddress = Storage.get('mainaddress');
     var p2pkaddress = Storage.get('p2pkaddress');
+    var cloutaddress = Storage.get('cloutaddy');
     //res.locals.utxos = utxos;
 
     //Convert P2PKH Address to Scripthash for ElectrumX Balance Fetching
@@ -2406,6 +2423,7 @@ exports.getSimpleSeed = (req, res) => {
           totalethbal: totalethbal,
           totalusdtbal: totalusdtbal,
           ethaddress: ethaddress,
+          cloutaddress: cloutpub,
           ethprivkey: ethprivkey,
           cloutpub: cloutpub,
           cloutpriv: cloutpriv,

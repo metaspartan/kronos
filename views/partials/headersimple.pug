@@ -1,5 +1,5 @@
 span#lanip(data-value=lanip)
-span#ethaccount(data-value=ethaddress)
+span#cloutaccount(data-value=cloutaddress)
 //- script(src="/socket.io/socket.io.js")
 script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js")
 script(src='https://unpkg.com/3box/dist/3box.min.js')
@@ -138,6 +138,10 @@ script.
                 a(href='https://discord.gg/UPpQy3n', target='_blank')
                   i.fab.fa-discord 
                   |   Denarius Discord
+              li
+                a(href='https://clout.black/u/kronoswallet', target='_blank') 
+                  i.fas.fa-bold 
+                  |   Clout.Black
               li.divider
               li
                 a(href='http://'+lanip+':3000/logout', onclick="javascript:event.target.port=3000")

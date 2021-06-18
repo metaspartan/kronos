@@ -2,7 +2,7 @@
 <html data-theme="dark">
   <head>
     <meta charset="UTF-8" />
-    <title>Kronos</title>
+    <title>KRONOS WALLET</title>
     <style>
       html, body {
         background-color: #ccc;
@@ -201,7 +201,7 @@
     <!-- <div id="snowflake"><iframe src="https://snowflake.torproject.org/embed.html" width="320" height="240" frameborder="0" scrolling="no" id="snowframe"></iframe></div> -->
     <!-- <div style="position:absolute;z-index:9999999;bottom:0px;right:0px;"><button onclick="toggleflake()" class="toggleflake"><i class="fas fa-snowflake"></i></button>  -->
       <!-- <button onclick="togglelog()" class="togglebtn"><i class="fas fa-server"></i> <span id="togglebtn">Logs [+] <span id="version"></span></span></button> -->
-    </div>
+
     <!-- <iframe id="expressApp" class="expressApp" frameborder="0"></iframe> -->
     <webview id="expressApp" class="expressApp" allowpopups></webview>
 
@@ -211,6 +211,16 @@
 
 
       // document.getElementById("image").html(`<img src=${appmain.getAppPath()}+'./public/img/kload.gif' border='0' />`)
+
+      if (process.platform !== 'darwin') {
+        const customTitlebar = require('custom-electron-titlebar');
+        new customTitlebar.Titlebar({
+            backgroundColor: customTitlebar.Color.fromHex('#333'),
+            unfocusEffect: true,
+            titleHorizontalAlignment: 'center'
+            //icon: '../public/img/caesarsmall.png'
+        });
+      }
 
       $('body').on('click', 'a', (event) => {
         event.preventDefault();

@@ -97,6 +97,8 @@ As of v2.0.0 Beta of Kronos it now has support for Binance Smart Chain (BSC), Bi
 
 As of v2.0.1 Beta of Kronos it now has support for BitClout (CLOUT). Further integration is a WIP, Send and Receiving CLOUT works!
 
+As of v2.0.2 Beta of Kronos it now has more support for CLOUT profiles, your avatar throughout Kronos will now reflect what your BitClout PubKey has set!
+
 Prerequisites
 -------------
 

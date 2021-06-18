@@ -44,6 +44,7 @@ const ethers = require('ethers');
 const { triggerAsyncId } = require('async_hooks');
 //const ThreeBox = require('3box');
 const IdentityWallet = require('identity-wallet');
+const axios = require('axios');
 
 var currentOS = os.platform(); 
 
@@ -116,8 +117,26 @@ exports.getcoresettings = (req, res) => {
     var totalbal = Storage.get('totalbal');
     var totalusdtbal = Storage.get('totalusdtbal');
     var ethaddress = Storage.get('ethaddy');
+    var cloutaddress = Storage.get('cloutaddy');
     var twofaenable = Storage.get('2fa');
     var u2fdevices = Storage.get("u2fdevices");
+
+    axios
+        .post('https://bitclout.com/api/v0/get-single-profile', {PublicKeyBase58Check: cloutaddress}, {    
+            headers: {
+            'Content-Type': 'application/json'
+            }
+        })
+        .then(res => {
+            let username = res.data.Profile.Username;
+            
+            Storage.set('cloutuser', username);
+        })
+        .catch(error => {
+            console.error(error)
+        });
+
+    let userexists = Storage.get('cloutuser');
 
     res.render('simple/settings', {
         totalethbal: totalethbal,
@@ -125,7 +144,9 @@ exports.getcoresettings = (req, res) => {
         totalbal: totalbal,
         totalusdtbal: totalusdtbal,
         u2fdevices: u2fdevices,
-        ethaddress: ethaddress
+        ethaddress: ethaddress,
+        cloutaddress: cloutaddress,
+        userexists: userexists
     });
 };
 
@@ -141,23 +162,50 @@ exports.getprofile = (req, res) => {
     var totalbal = Storage.get('totalbal');
     var totalusdtbal = Storage.get('totalusdtbal');
     var ethaddress = Storage.get('ethaddy');
-    var twofaenable = Storage.get('2fa');    
+    var cloutaddress = Storage.get('cloutaddy');
+    var twofaenable = Storage.get('2fa');
+
+    axios
+        .post('https://bitclout.com/api/v0/get-single-profile', {PublicKeyBase58Check: cloutaddress}, {    
+            headers: {
+            'Content-Type': 'application/json'
+            }
+        })
+        .then(res => {
+            let username = res.data.Profile.Username;
+            let biog = res.data.Profile.Description;
+            let FR = res.data.Profile.CoinEntry.CreatorBasisPoints / 100;
+            
+            Storage.set('cloutuser', username);
+            Storage.set('cloutdesc', biog);
+            Storage.set('FR', FR);
+        })
+        .catch(error => {
+            console.error(error)
+        });
+
+        let username = Storage.get('cloutuser');
+        let description = Storage.get('cloutdesc');
+        let FR = Storage.get('FR');
 
     res.render('simple/profile', {
         totalethbal: totalethbal,
         twofaenable: twofaenable,
         totalbal: totalbal,
         totalusdtbal: totalusdtbal,
-        ethaddress: ethaddress
+        ethaddress: ethaddress,
+        cloutaddress: cloutaddress,
+        username: username,
+        description: description,
+        FR: FR
     });
 };
 
-// POST the Decentralized Profile - WORK IN PROGRESS
+// POST the Decentralized Profiles to BitClout - WORK IN PROGRESS
 exports.postprofile = (request, response) => {
 	var name = request.body.NAMEBOX;
-	var website = request.body.WEBBOX;
+	var founder = request.body.founder * 100; // In Nanos for Founder Reward
     var bio = request.body.BIOBOX;
-    var privy = request.body.EMOJI;
     var avatar = request.body.AVATAR;
 
 	const ip = require('ip');
@@ -167,133 +215,68 @@ exports.postprofile = (request, response) => {
 
     let promises = [];
     let array = [];
-    
-    var ethaddress = Storage.get('ethaddy');
-    var seedphrasedb = Storage.get('seed');
-    let ethnetworktype = 'homestead'; //homestead is mainnet, ropsten for testing, choice for UI selection eventually
 
-    let provider = ethers.getDefaultProvider(ethnetworktype, {
-        etherscan: 'JMBXKNZRZYDD439WT95P2JYI72827M4HHR',
-        // Or if using a project secret:
-        infura: {
-            projectId: 'f95db0ef78244281a226aad15788b4ae',
-            projectSecret: '6a2d027562de4857a1536774d6e65667',
-        },
-        alchemy: 'W5yjuu3Ade1lsIn3Od8rTqJsYiFJszVY',
-        cloudflare: ''
-    });
+    var cloutaddress = Storage.get('cloutaddy');
+    var seedphrasedb = Storage.get('seed');
 
     console.log(avatar);
     console.log(name);
     console.log(bio);
-    console.log(privy);
-    console.log(website);
-
+    console.log(founder);
     
     var decryptedmnemonic = decrypt(seedphrasedb);
-    mnemonic = decryptedmnemonic;      
-    // ETH
-    let ethwallet = ethers.Wallet.fromMnemonic(mnemonic); //Generate wallet from our Kronos seed
-    let ethprivkey = ethwallet.privateKey;
+    mnemonic = decryptedmnemonic;
 	
-	if (avatar) {
-        const Box3 = async() => {
-            try {
-                //const ceramic = new Ceramic(); // An instance of Ceramic (either @ceramicnetwork/core, or @ceramicnetwork/http-client)
-                //const threeId = await ThreeIdProvider.create({ consent, ethprivkey, ceramic });
-                //MASSIVE WIP CURRENTLY NOT WORKING
-                async function consent (request) {
-                    console.log('\n ------ ')
-                    console.log('App with origin:', request.origin)
-                    if (request.spaces.length > 0) {
-                        console.log('is requesting access to spaces:', request.spaces)
-                    } else {
-                        console.log('is requesting access to your 3box')
-                    }
-                    console.log('Auto Consent? Then return true');
-                    return true;
-                }
-
-                const idw = new IdentityWallet.default(consent, { seed: ethprivkey}); //.create(consent, { seed: ethprivkey });
-                console.log('idw created');
-
-                const provider = idw.get3idProvider();
-                //const provider = threeId.getDidProvider();
-
-                console.log('3Box...Authenticating...');
-
-                //const box = await ThreeBox.create();
-
-                //await box.auth(['3Box'], { ethaddress, provider });
-
-                console.log('Authenticated 3Box!');
-
-                //await box.syncDone;
-                console.log('syncDone');
-
-
-                // const space = await box.openSpace('3Box');
-                // console.log('space opened');
-                // await space.syncDone;
-                // console.log('space synced');
-
-                const fields = ['name', 'website', 'description', 'image', 'emoji'];
-                const values = [name, website, bio, avatar, privy];
-
-                //const result = await box.public.setMultiple(fields, values); //Set the new values
-
-                console.log(result);
-
-                //await box.private.setMultiple(fields, values); //Set the new values
-
-                // const nickname = await box.public.get('name');
-                // console.log(nickname);
-
-                // const nicknameb = await box.private.get('name');
-                // console.log(nicknameb);
-                // // set
-                // await box.public.set('name', name);
-
-                // await box.private.set('name', name);
-
-                // console.log('SET data-----');
-                // const nicknamec = await box.public.get('name');
-                // console.log(nicknamec);
-
-                // const nicknamed = await box.private.get('name');
-                // console.log(nicknamed);                
-
-                //await box.logout(); //End the 3Box session
-
-                console.log('Submitted data and logged out of 3Box.');
-
-                //await space.public.set('foo', 'bar')
-                //console.log('get', await space.public.get('foo'))
-
-                //return result;
-                
-            } catch(e) {
-                console.log(e);
+	if (avatar && name && bio && founder) {        
+        axios
+        .post('https://bitclout.com/api/v0/update-profile', 
+        {
+            UpdaterPublicKeyBase58Check: cloutaddress,
+            NewUsername: name,
+            NewDescription: bio,
+            NewProfilePic: avatar,
+            NewCreatorBasisPoints: parseInt(founder),
+            NewStakeMultipleBasisPoints: 12500,
+            IsHidden: false,
+            MinFeeRateNanosPerKB: 1000
+        }, {    
+            headers: {
+            'Content-Type': 'application/json'
             }
-        }
+        })
+        .then(res => {
+            let txhex = res.data.TransactionHex;
+            
+            console.log(txhex);
 
-        promises.push(new Promise((res, rej) => {
-            Box3().then(globalData => {
+            //POST Submit-Transaction needs signing finished
 
-                array.push({info: globalData});
-                res({globalData});
+            axios
+            .post('https://bitclout.com/api/v0/submit-transaction', 
+            {
+                TransactionHex: txhex,
+            }, {    
+                headers: {
+                'Content-Type': 'application/json'
+                }
+            })
+            .then(res => {
+                let hash = res.data.TransactionHex;
 
+                    
+                request.toastr.success('Updated your profile!', 'Success!', { positionClass: 'toast-bottom-left' });
+                response.redirect('http://'+ip.address()+':3000/profile');
+                response.end();
+                
+            })
+            .catch(error => {
+                console.error(error)
             });
-        }));
 
-        Promise.all(promises).then((values) => {           
-            let info = array[0].info;
-            //console.log(info);
-            request.toastr.success('Updated your profile!', 'Success!', { positionClass: 'toast-bottom-left' });
-            response.redirect('http://'+ip.address()+':3000/profile');
-            response.end();
-        });
-        
+        })
+        .catch(error => {
+            console.error(error)
+        });        
 	
 	} else {
 		//response.send('Please enter Username and Password!');

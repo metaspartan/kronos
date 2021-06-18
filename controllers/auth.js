@@ -547,11 +547,25 @@ exports.simple = (request, response) => {
 //GET Change Pass
 exports.change = (req, res) => {
 
-	var username = decrypt(Storage.get('username'));
+	db.get('username', function (err, value) {
+		if (err) {
+		  
+		  // If username does not exist in levelDB then go to page to create one
+		  res.render('create', {title: 'Create Kronos Login'});
 
-	res.render('change', {
-        title: 'Core Mode Change Pass', username: username
-    });
+		} else {
+
+			var username = decrypt(value); // Storage.get('username')
+			res.render('change', {
+				title: 'Core Mode Change Pass', username: username
+			});
+
+		}
+	});
+
+	// res.render('change', {
+    //     title: 'Core Mode Change Pass', username: username
+    // });
 }
 
 
@@ -642,6 +656,33 @@ exports.importseed = (request, response) => {
 
 						var encryptedseed = encrypt(seedphrase);
 
+						Storage.clearAll(); // Clear the entire storage/reset
+
+						Storage.set('rpchost', '127.0.0.1');
+						Storage.set('rpcport', '32369');
+						Storage.set('rpcuser', 'null');
+						Storage.set('rpcpass', 'null');
+
+						Storage.set('2fa', 'false');
+						Storage.set("u2fdevices", []);
+						Storage.set('mode', 'simple');
+						Storage.set('created', 'true');
+
+						db.get('username', function (err, value) {
+							if (err) {
+								// Do nothing
+							} else {
+								Storage.set('username', value);		
+							}
+						});						
+						db.get('password', function (err, value) {
+							if (err) {
+								// Do nothing
+							} else {
+								Storage.set('password', value);	
+							}
+						});
+
 						// Put the encrypted passworded seedphrase in the DB
 						db.put('seedphrase', encryptedseed, function (err) {
 							if (err) return console.log('Ooops!', err) // some kind of I/O error if so
@@ -651,6 +692,33 @@ exports.importseed = (request, response) => {
 
 					} else {
 						var encryptedseed = encrypt(seedphrase);
+
+						Storage.clearAll();
+
+						Storage.set('rpchost', '127.0.0.1');
+						Storage.set('rpcport', '32369');
+						Storage.set('rpcuser', 'null');
+						Storage.set('rpcpass', 'null');
+
+						Storage.set('2fa', 'false');
+						Storage.set("u2fdevices", []);
+						Storage.set('mode', 'simple');
+						Storage.set('created', 'true');
+
+						db.get('username', function (err, value) {
+							if (err) {
+								// Do nothing
+							} else {
+								Storage.set('username', value);		
+							}
+						});						
+						db.get('password', function (err, value) {
+							if (err) {
+								// Do nothing
+							} else {
+								Storage.set('password', value);	
+							}
+						});
 
 						// Put the encrypted passworded seedphrase in the DB
 						db.put('seedphrase', encryptedseed, function (err) {
@@ -1105,13 +1173,15 @@ exports.getsweep = (req, res) => {
     var totalbal = Storage.get('totalbal');
     var totalusdtbal = Storage.get('totalusdtbal');
     var ethaddress = Storage.get('ethaddy');
+	var cloutaddress = Storage.get('cloutaddy');
 
 	res.render('simple/sweep', {
         title: 'Kronos Core Mode Sweep Private Key',
         totalethbal: totalethbal,
         totalbal: totalbal,
         totalusdtbal: totalusdtbal,
-        ethaddress: ethaddress
+        ethaddress: ethaddress,
+		cloutaddress: cloutaddress
     });
 }
 
@@ -1334,13 +1404,15 @@ exports.getbtcsweep = (req, res) => {
     var totalbal = Storage.get('totalbal');
     var totalusdtbal = Storage.get('totalusdtbal');
     var ethaddress = Storage.get('ethaddy');
+	var cloutaddress = Storage.get('cloutaddy');
 
 	res.render('simple/btcsweep', {
         title: 'Kronos Core Mode BTC Sweep Private Key',
         totalethbal: totalethbal,
         totalbal: totalbal,
         totalusdtbal: totalusdtbal,
-        ethaddress: ethaddress
+        ethaddress: ethaddress,
+		cloutaddress: cloutaddress
     });
 }
 

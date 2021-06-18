@@ -45,7 +45,6 @@ const ethers = require('ethers');
 const HDKey = require('hdkey');
 const EC = require('elliptic').ec;
 const bs58check = require('bs58check');
-const { cssNumber } = require('jquery');
 const axios = require('axios');
 
 
@@ -435,6 +434,33 @@ exports.simpleindex = (req, res) => {
         ftmWalletBal();
         setInterval(function(){ 
             ftmWalletBal();
+        }, 15000);
+    });
+
+    // Grab CLOUT Block Height in realtime (every 15s)
+    res.io.on('connection', function (socket) {
+        socket_id7.push(socket.id);
+        if (socket_id7[0] === socket.id) {
+        res.io.removeAllListeners('connection'); 
+        }
+        const cloutBlock = async () => {
+            axios
+                .get('https://api.bitclout.com/api/v1', {}, {    
+                    headers: {
+                    'Content-Type': 'application/json'
+                    }
+                })
+                .then(res => {
+                    let cloutblock = res.data.Header.Height;
+                    socket.emit("newblockclout", {cloutblock: cloutblock});                
+                })
+                .catch(error => {
+                    console.error(error)
+                });
+        }
+        cloutBlock();
+        setInterval(function(){ 
+            cloutBlock();
         }, 15000);
     });
     
@@ -2065,6 +2091,7 @@ exports.simpleindex = (req, res) => {
                     ethaddy: ethaddress,
                     ftmaddy: ftmaddress,
                     cloutaddy: cloutaddress,
+                    cloutaddress: cloutaddress,
                     bscaddy: bscaddress
                 }, (err, html) => {
                     res.end(html + '\n');

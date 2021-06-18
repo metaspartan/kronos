@@ -66,77 +66,50 @@ html
         $("#EMOJI").val(selection.emoji);
       });
     script.
-      var ethaddy = document.getElementById("ethaccount").getAttribute("data-value");
-      Box.getProfile(ethaddy).then(profile => {
-        console.log(profile);
-        var profileimage;
+        //- if (typeof profile.emoji == 'undefined') {
+        //-   //$('#emojitrigger').text('Set an 👾');
+        //- } else {
+        //-   $('#EMOJITRIGGER').text(profile.emoji);
+        //-   $('#EMOJITRIGGER').val(profile.emoji);
+        //-   $('#EMOJI').val(profile.emoji);
+        //- }
 
-        if (typeof profile.image == 'undefined') {
-            profileimage = profile.image;
-            //console.log(profileimage);
-            var boximage = '';
-            if (typeof profileimage == 'undefined') {
-                boximage = '../img/avatar.png'; //IPFS Default Avatar Hash (https://ipfs.denarius.io/ipfs/QmaaXanRmNVdLRLscPR4NGhbdBh3EMnkc4HEbAL1VkEJRw)
-            } else {
-                profileimage = profile.image[0].contentUrl['/'];
-                boximage = 'https://cloudflare-ipfs.com/ipfs/' + profileimage;
+      var cloutaddy = document.getElementById("cloutaccount").getAttribute("data-value");
+
+      fetch('https://bitclout.com/api/v0/get-single-profile-picture/'+cloutaddy,
+        {
+            method: 'GET',
+            mode: 'no-cors',
+            headers: {
+              'Content-Type': 'application/json'
+        },
+        }).then(
+          function(response) {
+            if (response.status === 400) {
+              console.log('No Profile Picture Set. Status Code: ' + response.status);
+              $("#threebox").html('<img src="../img/avatar.png" border="0" class="res threebox"/>');
+              $("#profileavatar").html('<img src="../img/avatar.png" border="0" class="res profilebox"/>');
+              $("#AVATAR").val("");
+              return;
+            } else if (response.status === 404) {
+              console.log('No Profile Picture Set. Status Code: ' + response.status);
+              $("#threebox").html('<img src="../img/avatar.png" border="0" class="res threebox"/>');
+              $("#profileavatar").html('<img src="../img/avatar.png" border="0" class="res profilebox"/>');
+              $("#AVATAR").val("");
+              return;
             }
-            //console.log(boximage);
 
-            $("#threebox").html('<img src="'+boximage+'" border="0" class="res threebox"/>');
-            $("#threebox").val(boximage);
-            document.getElementById("threebox").setAttribute("data-value", boximage);
-            $("#profileavatar").html('<img src="'+boximage+'" border="0" class="res profilebox"/>');
-            $("#AVATAR").val(boximage);
-            //document.getElementById("profileavatar").setAttribute("data-value", boximage);
-
-        } else {
-            profileimage = profile.image[0].contentUrl['/'];
-            //console.log(profileimage);
-            var boximage = '';
-            if (typeof profileimage == 'undefined') {
-                boximage = '../img/avatar.png'; //IPFS Default Avatar Hash
-            } else {
-                profileimage = profile.image[0].contentUrl['/'];
-                boximage = 'https://cloudflare-ipfs.com/ipfs/' + profileimage;
-            }
-            //console.log(boximage);
-
-            $("#threebox").html('<img src="'+boximage+'" border="0" class="res threebox"/>');
-            $("#threebox").val(boximage);
-            document.getElementById("threebox").setAttribute("data-value", boximage);
-            $("#profileavatar").html('<img src="'+boximage+'" border="0" class="res profilebox"/>');
-            $("#AVATAR").val(boximage);
-            //document.getElementById("profileavatar").setAttribute("data-value", boximage);
-        }
-
-        if (typeof profile.description == 'undefined') {
-          //$('#biobox').val('No profile description set');
-        } else {
-          $('#BIOBOX').val(profile.description);
-        }
-
-        if (typeof profile.website == 'undefined') {
-          //$('#webbox').val('No website set');
-        } else {
-          $('#WEBBOX').val(profile.website);
-        }
-
-        if (typeof profile.emoji == 'undefined') {
-          //$('#emojitrigger').text('Set an 👾');
-        } else {
-          $('#EMOJITRIGGER').text(profile.emoji);
-          $('#EMOJITRIGGER').val(profile.emoji);
-          $('#EMOJI').val(profile.emoji);
-        }
-
-        if (typeof profile.name == 'undefined') {
-          //$('#namebox').val('Set a name');
-        } else {
-          $('#NAMEBOX').val(profile.name);
-        }
-
-      });
+            // Set the image in the response
+            response.text().then(function(data) {
+              $("#threebox").html('<img src="https://bitclout.com/api/v0/get-single-profile-picture/'+cloutaddy+'" onerror="this.src=\'../img/avatar.png\'" border="0" class="res threebox"/>');
+              $("#profileavatar").html('<img src="https://bitclout.com/api/v0/get-single-profile-picture/'+cloutaddy+'" onerror="this.src=\'../img/avatar.png\'" border="0" class="res profilebox"/>');
+              $("#AVATAR").val("");
+            });
+          }
+        )
+        .catch(function(err) {
+          console.log('Profile Image Fetch Error :-S', err);
+        });
 
       const audiofile = new Audio("../ding.wav");
 
@@ -171,6 +144,30 @@ html
         reader.readAsArrayBuffer(file.files[0]);
 
       };
+
+      function encodeImageFileAsURL() {
+        var filesSelected = document.getElementById("fileInput").files;
+        if (filesSelected.length > 0) {
+          var fileToLoad = filesSelected[0];
+
+          var fileReader = new FileReader();
+
+          fileReader.onload = function(fileLoadedEvent) {
+            var srcData = fileLoadedEvent.target.result; // <--- data: base64
+
+            var newImage = document.createElement('img');
+            newImage.src = srcData;
+            newImage.classList.add('res');
+            newImage.classList.add('profilebox');
+
+            document.getElementById("AVATAR").value = srcData;
+
+            document.getElementById("profileavatar").innerHTML = newImage.outerHTML;
+            console.log("Converted Base64 version is " + document.getElementById("profileavatar").innerHTML);
+          }
+          fileReader.readAsDataURL(fileToLoad);
+        }
+      }
 
       progressCall = function(data){
         var totalsize = buf.length;

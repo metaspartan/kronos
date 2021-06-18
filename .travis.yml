@@ -1,14 +1,13 @@
 language: node_js
 node_js:
-  - "12.22.1"
+  - "12.16.3"
 jobs:
   fast_finish: true
 before_install:
   - sudo apt-get update
 install:
-  - rm -rf node_modules
-  - npm install -g lerna yarn
-  - yarn install
+  - npm install -g lerna
+  - npm install
   - exit 0
 script:
   - npm test
