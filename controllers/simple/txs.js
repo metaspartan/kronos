@@ -2207,9 +2207,9 @@ exports.postftmsend = (req, res) => {
   }
 };
 
-exports.postcloutsend = (req, res) => {
-    var sendtoaddress = req.body.sendaddress;
-    var amount = req.body.amount;
+exports.postcloutsend = (request, response) => {
+    var sendtoaddress = request.body.sendaddress;
+    var amount = request.body.amount;
     var totalcloutbal = Storage.get('totalcloutbal');
     var transferamount = amount * 1e9; // Nanos are 1e9
 
@@ -2242,44 +2242,103 @@ exports.postcloutsend = (req, res) => {
     const pAndKey = Uint8Array.from([...prefixp, ...keyp]);
     const cloutpriv = bs58check.encode(pAndKey);
 
+    function uvarint64ToBuf(uint) {
+        var result = [];
+        while (uint >= 0x80) {
+            result.push((uint & 0xFF) | 0x80);
+            uint >>>= 7;
+        }
+        result.push(uint | 0);
+        return new Buffer.from(result);
+    };
+
     if (transferamount >= formatclout) {
-        req.toastr.error(`CLOUT Transfer Failed: The CLOUT to send is greater than the amount in your balance`, 'CLOUT Transfer Failed!', { positionClass: 'toast-bottom-left' });
-        req.flash('error', { msg: `CLOUT Transfer Failed: The CLOUT to send is greater than the amount in your balance` });
-        return res.redirect('/sendclout');
+        request.toastr.error(`CLOUT Transfer Failed: The CLOUT to send is greater than the amount in your balance`, 'CLOUT Transfer Failed!', { positionClass: 'toast-bottom-left' });
+        request.flash('error', { msg: `CLOUT Transfer Failed: The CLOUT to send is greater than the amount in your balance` });
+        return response.redirect('/sendclout');
     } else {
-        // POST the request to send with BitClout API uses Clout.Black to use transfers
+
+        // POST the transaction data, get a transaction hex and then sign the transaction locally
+        // By @carsenk for @kronoswallet
         axios
-            .post('https://clout.black/api/v1/transfer-bitclout', {
-                SenderPublicKeyBase58Check: cloutpub, 
-                SenderPrivateKeyBase58Check: cloutpriv, 
-                RecipientPublicKeyBase58Check: sendtoaddress, 
-                AmountNanos: transferamount
-                // DryRun: true // Optional will not actually broadcast when set true
+            .post('https://api.bitclout.com/api/v0/send-bitclout', 
+            {
+                SenderPublicKeyBase58Check: cloutpub,
+                RecipientPublicKeyOrUsername: sendtoaddress,
+                AmountNanos: parseInt(transferamount),
+                MinFeeRateNanosPerKB: 1000
             }, {    
                 headers: {
                 'Content-Type': 'application/json'
                 }
             })
-            .then(res => {
-                let tx = res.data.Transaction;
+            .then(resy => {
+                let txhex = resy.data.TransactionHex;
+                
+                console.log('RAW TRANSACTION HEX ', txhex);
 
-                req.toastr.success(`${amount} CLOUT was sent successfully! ${tx.TransactionIDBase58Check}`, 'Success!', { positionClass: 'toast-bottom-left' });
-                req.flash('success', { msg: `Your <strong>${amount} CLOUT</strong> was sent successfully! <a href="https://explorer.cloutangel.com/tx/${tx.TransactionIDBase58Check}" target="_blank">${tx.TransactionIDBase58Check}</a>` });
-                return res.redirect('/sendclout');
+                const seedHex = cloutkeychain.privateKey.toString('hex');
+                const ecs = new EC('secp256k1');
+                const privateKey = ecs.keyFromPrivate(seedHex);
+            
+                const transactionBytes = new Buffer.from(txhex, 'hex');
+                const transactionHash = new Buffer.from(sha256.x2(transactionBytes), 'hex');
+                const signature = privateKey.sign(transactionHash);
+                const signatureBytes = new Buffer.from(signature.toDER());
+                const signatureLength = uvarint64ToBuf(signatureBytes.length);
+            
+                const signedTransactionBytes = Buffer.concat([
+                    transactionBytes.slice(0, -1),
+                    signatureLength,
+                    signatureBytes,
+                ]);
+            
+                let finaltxhex = signedTransactionBytes.toString('hex');
+
+                console.log('SiGNED TX', finaltxhex);              
+
+                // POST the Update TX
+            axios
+                .post('https://api.bitclout.com/api/v0/submit-transaction', 
+                {
+                    TransactionHex: finaltxhex
+                }, {    
+                    headers: {
+                    'Content-Type': 'application/json'
+                    }
+                })
+                .then(ress => {
+                    let hash = ress.data.TxnHashHex;
+
+                    console.log('SENT THE TX! ', hash);
+                    
+                    request.toastr.success(`${amount} CLOUT was sent successfully! ${hash}`, 'Success!', { positionClass: 'toast-bottom-left' });
+                    request.flash('success', { msg: `Your <strong>${amount} CLOUT</strong> was sent successfully! <a href="https://bitcloutseek.com/tx/${hash}" target="_blank">${hash}</a>` });
+                    return response.redirect('/sendclout');
+                    
+                })
+                .catch(error => {
+                    console.log('Broadcast Error', error);
+                    if (error.response) {
+                        if (error.response.status === 400 && error.response.data != 'undefined') {
+                            console.log(error.response.data.error);
+                            request.toastr.error('Signed TX Broadcast Error: '+error.response.data.error+'', 'Error!', { positionClass: 'toast-bottom-left' });
+                            return response.redirect('/sendclout');
+                        }
+                    }
+                });
 
             })
             .catch(error => {
+                console.log('Broadcast Error', error);
                 if (error.response) {
                     if (error.response.status === 400 && error.response.data != 'undefined') {
-                        req.toastr.error(`CLOUT Transfer Failed: "`+error.response.data.Error+`"`, 'CLOUT Transfer Failed!', { positionClass: 'toast-bottom-left' });
-                        //req.flash('error', { msg: `CLOUT Transfer Failed: "`+error.data.Error+`"` });
-                        console.log(error.response.data.Error);
-                        return res.redirect('/sendclout');
+                        console.log(error.response.data.error);
+                        request.toastr.error('TX Creation Error: '+error.response.data.error+'', 'Error!', { positionClass: 'toast-bottom-left' });
+                        return response.redirect('/sendclout');
                     }
                 }
-                return res.redirect('/sendclout');
             });
-
     }
 };
 

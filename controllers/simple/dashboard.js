@@ -734,8 +734,11 @@ exports.simpleindex = (req, res) => {
 
         // // Generate BitClout Pubkey and Privkey from BIP39 Seed
         // // By Carsen Klock @carsenk and @kronoswallet
-        // const cloutkeychain = HDKey.fromMasterSeed(seed).derive('m/44\'/0\'/0\'/0/0', false);
-        // const cloutseedhex = cloutkeychain.privateKey.toString('hex');
+        // for (let i = 0; i < 10; i++) {
+        //     const cloutkeychain = HDKey.fromMasterSeed(seed).derive('m/44\'/0\'/0\'/0/0'+i, false);
+        //     const cloutseedhex = cloutkeychain.privateKey.toString('hex');
+        //     return cloutseedhex;
+        // }
 
         // const ecc = new EC('secp256k1');
         // const eckeyfrompriv = ecc.keyFromPrivate(cloutseedhex);

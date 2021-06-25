@@ -107,7 +107,7 @@ As of v2.0.1 Beta of Kronos it now has support for BitClout (CLOUT). Further int
 
 As of v2.0.2 Beta of Kronos it now has more support for CLOUT profiles, your avatar throughout Kronos will now reflect what your BitClout PubKey has set!
 
-As of v2.0.3 Beta of Kronos it now fully supports CLOUT profiles, allowing profile creation and updating directly in Kronos for the BitClout network, You can now input/import your own seed phrase during Kronos setup. CLOUT Explorer updated to using explorer.cloutangel.com
+As of v2.0.3 Beta of Kronos it now fully supports CLOUT profiles, allowing profile creation and updating directly in Kronos for the BitClout network, You can now input/import your own seed phrase during Kronos setup. CLOUT Explorer updated to using https://bitcloutseek.com
 
 Prerequisites
 -------------

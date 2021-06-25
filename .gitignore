@@ -23,6 +23,8 @@ orbitdb
 electron-builder.yml
 dist
 kronos.log
+kronoschat.js
+kronoschatadv.js
 
 # Dependency directory
 node_modules

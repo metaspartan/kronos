@@ -436,7 +436,7 @@ block content
                             tr
                               td(align='center', data-label='CLOUT TX Type') !{tx.TransactionType}
                               td(align='center', data-label='TXID') 
-                                a.txid(href=`https://explorer.cloutangel.com/tx/${tx.TransactionIDBase58Check}`, target='_blank') !{tx.TransactionIDBase58Check}
+                                a.txid(href=`https://bitcloutseek.com/tx/${tx.TransactionIDBase58Check}`, target='_blank') !{tx.TransactionIDBase58Check}
                 else
                   h1(style='color:#666;', align='center') No CLOUT Transactions Available
               else
@@ -614,7 +614,7 @@ block content
                             button.clip(data-clipboard-text=cloutaddy, style='background-color: transparent;border: none;')
                               img(src='' + cloutqrcode, style='border-radius:10px;')
                 .modal-footer(style='border-top: none !important;')
-                    a.btn.btn-success(href='https://explorer.cloutangel.com', style='background-color: #546639;border-radius: 15px;font-size: 15px !important;', target='_blank') View on blockchain
+                    a.btn.btn-success(href='https://bitcloutseek.com', style='background-color: #546639;border-radius: 15px;font-size: 15px !important;', target='_blank') View on blockchain
                     button.btn.btn-default(type='button', data-dismiss='modal', onclick='removeBlur()', style='background-color: #602828;border-radius: 15px;font-size: 15px !important;') Close
       #BSCRecv.modal
         .modal-dialog(style='width:90% !important;margin: 50px auto !important;')
@@ -861,16 +861,12 @@ block content
       socket.on('newblockclout', function (data9) {
         if (!data9.cloutblock[0] && !data9.error) {
           var height = data9.cloutblock;
-          //var hexhash = data9.ethhash;
-          //$('#blockheight').html(height);
-          //$('#ethblockhash').html('<a href="https://etherscan.io/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;" target="_blank">ETH BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
-          $('#clouthblock').html('<a href="https://explorer.cloutangel.com/block/'+height+'" target="_blank" style="color: rgb(93 196 41);" class="animate__animated animate__pulse animate__infinite">• '+height+'</a>');
+          
+          $('#clouthblock').html('<a href="https://bitcloutseek.com/block/'+height+'" target="_blank" style="color: rgb(93 196 41);" class="animate__animated animate__pulse animate__infinite">• '+height+'</a>');
         } else {
           var height = data9.cloutblock[0];
-          //var hexhash = data9.ethhash[0];
-          //$('#blockheight').html(height);
-          //$('#ethblockhash').html('<a href="https://etherscan.io/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;" target="_blank">ETH BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
-          $('#clouthblock').html('<a href="https://explorer.cloutangel.com/block/'+height+'" target="_blank" style="color: rgb(93 196 41);" class="animate__animated animate__pulse animate__infinite">• '+height+'</a>');
+          
+          $('#clouthblock').html('<a href="https://bitcloutseek.com/block/'+height+'" target="_blank" style="color: rgb(93 196 41);" class="animate__animated animate__pulse animate__infinite">• '+height+'</a>');
         }
       });
       //- socket.on('temp', function (data3) {
