@@ -39,11 +39,11 @@ script.
     .collapse.navbar-collapse
       ul.nav.navbar-nav
           li(class=(title == 'Dashboard') ? 'active' : undefined)
-            a(href='http://'+lanip+':3000/dashsimple', onclick="javascript:event.target.port=3000") 
+            a(href='/dashsimple', onclick="javascript:event.target.port=3000") 
               i.fas.fa-wallet  
               |   Wallets
           li(class=(title == 'Chat') ? 'active' : undefined)
-            a(href='http://'+lanip+':3000/chat', onclick="javascript:event.target.port=3000") 
+            a(href='/chat', onclick="javascript:event.target.port=3000") 
               i.fas.fa-comment-dots   
               |   Chat
       //- ul.nav.navbar-nav.centerbal
@@ -125,7 +125,7 @@ script.
               //-     i.fas.fa-terminal  
               //-     |   Terminal 
               li
-                a(href='http://'+lanip+':3000/core', onclick="javascript:event.target.port=3000")
+                a(href='/core', onclick="javascript:event.target.port=3000")
                   i.fa.fa-cog     
                   |   Settings
               li.divider
@@ -147,6 +147,6 @@ script.
                   |   BitCloutSeek
               li.divider
               li
-                a(href='http://'+lanip+':3000/logout', onclick="javascript:event.target.port=3000")
+                a(href='/logout', onclick="javascript:event.target.port=3000")
                   i.fas.fa-sign-out-alt  
                   |   Logout
