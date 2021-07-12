@@ -7,6 +7,7 @@ Official BitClout (CLOUT) @kronoswallet https://bitclout.com/u/kronoswallet by h
 
 #### A Dashboard Interface and Wallet for Denarius (D), Bitcoin (BTC), Ethereum (ETH), Binance Smart Chain (BSC), BitClout (CLOUT) and Fantom Opera (FTM) written in NodeJS and Electron
 =======================
+
 ![Kronos Wallet](https://user-images.githubusercontent.com/10162347/125235791-3e221d80-e2a0-11eb-9270-196b7afd9630.gif)
 
 [![GitHub version](https://img.shields.io/github/release/carsenk/kronos.svg)](https://badge.fury.io/gh/carsenk%2Fkronos)
