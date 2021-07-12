@@ -76,7 +76,6 @@ html
         });
 
     script(src='/js/kronoschatlib.min.js')
-    script(src='https://unpkg.com/3box/dist/3box.min.js')
     //- <!-- IPFS & BigNumber Lib -->
     script(src="https://unpkg.com/ipfs/dist/index.min.js")
     script(src="https://unpkg.com/ipfs-http-client/dist/index.min.js")
@@ -102,6 +101,8 @@ html
         document.getElementById("message").value += selection.emoji;
       });
     script(src='/js/kronoschat.min.js')
+    script(type="module").
+        import * as create from 'https://cdn.jsdelivr.net/npm/ipfs-http-client/dist/index.min.js';
     script.
         // Kronos IPFS File Uploading!
 
@@ -178,7 +179,7 @@ html
         const audiofile = new Audio("../ding.wav");
 
         //IPFS Init with Infura
-        var ipfs = window.IpfsHttpClient({
+        var ipfs = IpfsHttpClient.create({
           host: 'ipfs.infura.io',
           port: 5001,
           protocol: 'https'

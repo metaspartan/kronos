@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION='v2.0.3-Beta'
+VERSION='v2.0.4-Beta'
 
 TEMP=/tmp/answer$$
 whiptail --title "Kronos ${VERSION} for Denarius"  --menu  "Installer for Kronos Secondary Layer :" 20 0 0 1 "Install Kronos w/ Denarius Config" 2 "Install Kronos w/ Denarius Config & Chaindata" 3 "Update & Upgrade Kronos ${VERSION}" 2>$TEMP
