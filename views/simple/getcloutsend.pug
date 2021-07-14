@@ -85,25 +85,12 @@ block content
               button.kbtn.grey(type='button', id='sendCLOUT', onclick='clicked()', data-toggle='modal', data-target='#SubmitDisplayModal')
                 |  Send CLOUT
     script(src='../js/lib/jquery-3.1.1.min.js')
-    script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js")
     script.
-      socket.on('newcloutbal', function (data69) {
-        if (!data69.cloutbal[0] && !data69.error) {
-          var bal = data69.cloutbal;
-          //- if (bal != 'undefined') {
-          //-   bal = parseFloat(bal.toFixed(6));
-          //- }
-          $('#totalcloutbal').html(bal+' CLOUT');
-          //var updatedftmusd = bal * $('#currentftmprice').text();
-          //$('#ftmusdbalance').html(updatedftmusd.toFixed(3));
-        } else {
-          var bal = data69.ftmbal[0];
-          //- if (bal != 'undefined') {
-          //-   bal = parseFloat(bal.toFixed(6));
-          //- }
-          $('#totalcloutbal').html(bal+' CLOUT'); 
-          //$('#htotalethbal').html(bal + '<img class="res" src="../img/eth.png" alt="ETH" border="0" style="height:24px !important;width: 24px !important;margin:-15px 0px -12px !important;" /><span style="color:#888;">ETH</span>');
-          //var updatedftmusd = bal * $('#currentftmprice').text();
-          //$('#ftmusdbalance').html(updatedftmusd.toFixed(3));
-        }
-      });
+      var balsource = new EventSource('/balances');
+
+      balsource.addEventListener('message', function(e) {
+          var cloutbal = JSON.parse(e.data).cloutbal;
+
+          $('#totalcloutbal').html(cloutbal+' CLOUT');
+
+      }, true);

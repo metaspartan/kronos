@@ -65,6 +65,20 @@ const defaults = require('dat-swarm-defaults')
 const getPort = require('get-port')
 const readline = require('readline')
 
+
+let denariusearray = ['electrumx1.denarius.pro', 'electrumx2.denarius.pro', 'electrumx3.denarius.pro', 'electrumx4.denarius.pro'];
+let bitcoinearray = ['bitcoin.lukechilds.co', 'fortress.qtornado.com', 'hodlers.beer', 'electrum.blockstream.info']; // 'electrumx.erbium.eu', 'alviss.coinjoined.com', 
+
+let delectrums = Storage.get('delectrums');
+let belectrums = Storage.get('belectrums');
+
+if (typeof delectrums == 'undefined') {
+  Storage.set('delectrums', denariusearray);
+}
+if (typeof belectrums == 'undefined') {
+  Storage.set('belectrums', bitcoinearray);
+}
+
 // /**
 //  * Here we will save our TCP peer connections
 //  * using the peer id as key: { peer_id: TCP_Connection }
@@ -353,7 +367,18 @@ app.set('view engine', 'pug');
 
 app.use(expressStatusMonitor());
 
-app.use(compression());
+// New Middleware for Compression to not compress our ch0nked data
+const shouldCompress = (req, res) => {
+  // don't compress responses explicitly asking not
+  if (req.headers["x-no-compression"] || res.getHeader('Content-Type') === 'text/event-stream') {
+    return false;
+  }
+
+  // use compression filter function
+  return compression.filter(req, res);
+};
+
+app.use(compression({ filter: shouldCompress }));
 
 app.use(logger('dev'));
 
@@ -488,6 +513,8 @@ app.use(function (req, res, next)
 {
     res.locals.csrftoken = req.csrfToken(); 
     res.locals.toasts = req.toastr.render()
+    // res.header("Access-Control-Allow-Origin", "*"); // Maybe in future?
+    // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next()
 });
 
@@ -633,6 +660,9 @@ app.get('/2fasetting', auth, Limiter, authController.twofasetting);
 app.post('/2fa', auth, Limiter, authController.twofapost);
 app.post('/2favalid', auth, Limiter, authController.twofavalidate);
 
+// Electrum Settings
+app.post('/update-electrumx', auth, Limiter, authController.postelectrum);
+
 
 //Advanced Mode--------------------------------------------------
 app.get('/setup', authController.getsetup);
@@ -714,6 +744,39 @@ app.post('/verifymsg', auth, walletController.verifyMsg);
 
 app.get('/backup', auth, walletController.getBackup);
 app.post('/backupwallet', auth, walletController.backupWallet);
+
+
+// Event Streams
+
+// Event Block Subscriber
+app.get('/newblock', Limiter, sDashController.getnewblock);
+// BTC Block Subscriber
+// app.get('/btcblock', Limiter, sDashController.getbtcblock);
+// // ETH Block Subscriber
+// app.get('/ethblock', Limiter, sDashController.getethblock);
+// // BSC Block Subscriber
+// app.get('/bscblock', Limiter, sDashController.getbscblock);
+// // FTM Block Subscriber
+// app.get('/ftmblock', Limiter, sDashController.getftmblock);
+// // CLOUT Block Subscriber
+// app.get('/cloutblock', Limiter, sDashController.getcloutblock);
+
+// Event Balance Subscriber
+app.get('/balances', Limiter, sDashController.getbalance);
+// BTC Balance Subscriber
+// app.get('/btcbalance', Limiter, sDashController.getbtcbalance);
+// // ETH Balance Subscriber
+// app.get('/ethbalance', Limiter, sDashController.getethbalance);
+// // BSC Balance Subscriber
+// app.get('/bscbalance', Limiter, sDashController.getbscbalance);
+// // FTM Balance Subscriber
+// app.get('/ftmbalance', Limiter, sDashController.getftmbalance);
+// // CLOUT Balance Subscriber
+// app.get('/cloutbalance', Limiter, sDashController.getcloutbalance);
+// // USDT Balance Subscriber
+// app.get('/usdtbalance', Limiter, sDashController.getusdtbalance);
+// // BUSD Balance Subscriber
+// app.get('/busdbalance', Limiter, sDashController.getbusdbalance);
 
 /**
  * Error Handler.

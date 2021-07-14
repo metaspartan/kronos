@@ -101,6 +101,9 @@ block content
       .titlesmall(align='center', style='color:#888;padding-left:15px;padding-right:15px;') Send Denarius (D) to any other Denarius address from your available Unspent Transaction Output (UTXO) balances. You can select a UTXO in your wallet to send D from, set an address and an amount to send to. During the transaction the remaining D, minus the network fee, will be sent to your main address (change address).
     br
     div.rowclass(style='font-weight:400;font-size:14px;padding:30px;background-color:#222;margin:5px;margin-top:0;border-radius:15px;', align='center')
+      p
+        .balancebig(align='center', style='font-size:33px;') Total Balance: 
+          strong#totaldbal #{totalsendable / 1e8 || 0} D
       #SubmitDisplayModal.modal
         .modal-dialog
             .modal-content(style='color:#FFF !important;background-color:#111 !important; border-color: #444 !important;')
@@ -247,3 +250,13 @@ block content
           .col-sm-12
             button.kbtn.grey(type='button', id='sendDNR', onclick='clickedauto()', data-toggle='modal', data-target='#SubmitDisplayModal2')
               |  Send Denarius
+    script(src='../js/lib/jquery-3.1.1.min.js')
+    script.
+      var balsource = new EventSource('/balances');
+
+      balsource.addEventListener('message', function(e) {
+          var dbal = JSON.parse(e.data).bal;
+
+          $('#totaldbal').html(dbal+' D');
+
+      }, true);

@@ -46,6 +46,7 @@ const axios = require('axios');
 const HDKey = require('hdkey');
 const EC = require('elliptic').ec;
 const bs58check = require('bs58check');
+const isPortReachable = require('is-port-reachable');
 
 var currentOS = os.platform(); 
 
@@ -122,32 +123,98 @@ exports.getcoresettings = (req, res) => {
     var twofaenable = Storage.get('2fa');
     var u2fdevices = Storage.get("u2fdevices");
 
-    axios
-        .post('https://bitclout.com/api/v0/get-single-profile', {PublicKeyBase58Check: cloutaddress}, {    
-            headers: {
-            'Content-Type': 'application/json'
-            }
-        })
-        .then(res => {
-            let username = res.data.Profile.Username;
-            
-            Storage.set('cloutuser', username);
-        })
-        .catch(error => {
-            console.error(error)
+    let delectrum = Storage.get('delectrums');
+    let belectrum = Storage.get('belectrums');
+
+    var online0 = false;
+    var online1 = false;
+    var online2 = false;
+    var online3 = false;
+    var online4 = false;
+    var online5 = false;
+    var online6 = false;
+    var online7 = false;
+
+    var dx0 = isPortReachable(50002, {host: delectrum[0]});
+    var dx1 = isPortReachable(50002, {host: delectrum[1]});
+    var dx2 = isPortReachable(50002, {host: delectrum[2]});
+    var dx3 = isPortReachable(50002, {host: delectrum[3]});
+
+    var bx0 = isPortReachable(50002, {host: belectrum[0]});
+    var bx1 = isPortReachable(50002, {host: belectrum[1]});
+    var bx2 = isPortReachable(50002, {host: belectrum[2]});
+    var bx3 = isPortReachable(50002, {host: belectrum[3]});
+
+    Promise.all([dx0, dx1, dx2, dx3, bx0, bx1, bx2, bx3]).then(function(results) {
+        if (results[0] === true) {
+            online0 = true;
+        }
+        if (results[1] === true) {
+            online1 = true;
+        }
+        if (results[2] === true) {
+            online2 = true;
+        }
+        if (results[3] === true) {
+            online3 = true;
+        }
+        if (results[4] === true) {
+            online4 = true;
+        }
+        if (results[5] === true) {
+            online5 = true;
+        }
+        if (results[6] === true) {
+            online6 = true;
+        }
+        if (results[7] === true) {
+            online7 = true;
+        }
+
+        console.log(online0);
+        console.log(online1);
+        console.log(online2);
+        console.log(online3);
+        console.log(online4);
+        console.log(online5);
+        console.log(online6);
+        console.log(online7);
+
+        var donlinearray = [online0, online1, online2, online3];
+        var bonlinearray = [online4, online5, online6, online7];
+
+        axios
+            .post('https://bitclout.com/api/v0/get-single-profile', {PublicKeyBase58Check: cloutaddress}, {    
+                headers: {
+                'Content-Type': 'application/json'
+                }
+            })
+            .then(res => {
+                let username = res.data.Profile.Username;
+                
+                Storage.set('cloutuser', username);
+            })
+            .catch(error => {
+                console.error(error)
+            });
+
+        let userexists = Storage.get('cloutuser');
+
+        res.render('simple/settings', {
+            totalethbal: totalethbal,
+            twofaenable: twofaenable,
+            totalbal: totalbal,
+            totalusdtbal: totalusdtbal,
+            u2fdevices: u2fdevices,
+            ethaddress: ethaddress,
+            cloutaddress: cloutaddress,
+            userexists: userexists,
+            delectrum: delectrum,
+            belectrum: belectrum,
+            donlinearray: donlinearray,
+            bonlinearray: bonlinearray
         });
 
-    let userexists = Storage.get('cloutuser');
-
-    res.render('simple/settings', {
-        totalethbal: totalethbal,
-        twofaenable: twofaenable,
-        totalbal: totalbal,
-        totalusdtbal: totalusdtbal,
-        u2fdevices: u2fdevices,
-        ethaddress: ethaddress,
-        cloutaddress: cloutaddress,
-        userexists: userexists
     });
 };
 

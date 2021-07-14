@@ -109,20 +109,20 @@ if (typeof Storage.get("u2fdevices") == 'undefined') {
 // 	timeout: 30000
 // });
 
+let delectrums = Storage.get('delectrums');
+let belectrums = Storage.get('belectrums');
+
 //ElectrumX Hosts for Denarius
-const delectrumxhost1 = 'electrumx1.denarius.pro';
-const delectrumxhost2 = 'electrumx2.denarius.pro';
-const delectrumxhost3 = 'electrumx3.denarius.pro';
-const delectrumxhost4 = 'electrumx4.denarius.pro';
+const delectrumxhost1 = delectrums[0];
+const delectrumxhost2 = delectrums[1];
+const delectrumxhost3 = delectrums[2];
+const delectrumxhost4 = delectrums[3];
 
 //ElectrumX Hosts for Bitcoin
-const btcelectrumhost1 = 'bitcoin.lukechilds.co';
-const btcelectrumhost2 = 'fortress.qtornado.com';
-const btcelectrumhost3 = 'electrumx.erbium.eu';
-const btcelectrumhost4 = 'electrum.acinq.co';
-const btcelectrumhost5 = 'alviss.coinjoined.com';
-const btcelectrumhost6 = 'hodlers.beer';
-const btcelectrumhost7 = 'electrum.blockstream.info'; //lol
+const btcelectrumhost1 = belectrums[0];
+const btcelectrumhost2 = belectrums[1];
+const btcelectrumhost3 = belectrums[2];
+const btcelectrumhost4 = belectrums[3];
 
 const changeEndianness = (string) => {
     const result = [];
@@ -1519,9 +1519,6 @@ exports.btcsweepkey = (request, response) => {
 					electrum.addServer(btcelectrumhost2);
 					electrum.addServer(btcelectrumhost3);
 					electrum.addServer(btcelectrumhost4);
-					electrum.addServer(btcelectrumhost5);
-					electrum.addServer(btcelectrumhost6);
-					electrum.addServer(btcelectrumhost7);
 					
 					// Wait for enough connections to be available.
 					await electrum.ready();
@@ -1693,9 +1690,6 @@ exports.btcsweepkey = (request, response) => {
 							electrum.addServer(btcelectrumhost2);
 							electrum.addServer(btcelectrumhost3);
 							electrum.addServer(btcelectrumhost4);
-							electrum.addServer(btcelectrumhost5);
-							electrum.addServer(btcelectrumhost6);
-							electrum.addServer(btcelectrumhost7);
 							
 							// Wait for enough connections to be available.
 							await electrum.ready();
@@ -1751,6 +1745,38 @@ exports.btcsweepkey = (request, response) => {
 		response.redirect('/sweepbtc');
 		response.end();
 	}
+};
+
+
+//POST ELECTRUM SETTINGS
+exports.postelectrum = (request, response) => {
+	var delectrum0 = request.body.DELECTRUM0;
+	var delectrum1 = request.body.DELECTRUM1;
+	var delectrum2 = request.body.DELECTRUM2;
+	var delectrum3 = request.body.DELECTRUM3;
+
+	var belectrum0 = request.body.BELECTRUM0;
+	var belectrum1 = request.body.BELECTRUM1;
+	var belectrum2 = request.body.BELECTRUM2;
+	var belectrum3 = request.body.BELECTRUM3;	
+
+	if (request.body && delectrum0 && delectrum1 && delectrum2 && delectrum3 && belectrum0 && belectrum1 && belectrum2 && belectrum3) {
+
+		var newdarray = [delectrum0, delectrum1, delectrum2, delectrum3];
+		var newbarray = [belectrum0, belectrum1, belectrum2, belectrum3];
+
+		Storage.set('delectrums', newdarray);
+		Storage.set('belectrums', newbarray);
+
+		// return response.send('<h1 style="color:#06921e;">Electrum Settings Updated!</h1><br>Refresh or Reboot Kronos to see changes!');
+		request.toastr.success(`Electrum Settings were updated successfully!`, 'Update Success!', { positionClass: 'toast-bottom-left' });
+		return response.redirect('/core');
+
+	} else {
+		request.toastr.error('Please ensure all Electrum fields are filled!', 'Error!', { positionClass: 'toast-bottom-left' });
+		return response.redirect('/core');
+	}
+
 };
 
 //GET 2FA Setup

@@ -91,20 +91,20 @@ if (currentOS === 'linux') {
     }
 }
 
+let delectrums = Storage.get('delectrums');
+let belectrums = Storage.get('belectrums');
+
 //ElectrumX Hosts for Denarius
-const delectrumxhost1 = 'electrumx1.denarius.pro';
-const delectrumxhost2 = 'electrumx2.denarius.pro';
-const delectrumxhost3 = 'electrumx3.denarius.pro';
-const delectrumxhost4 = 'electrumx4.denarius.pro';
+const delectrumxhost1 = delectrums[0];
+const delectrumxhost2 = delectrums[1];
+const delectrumxhost3 = delectrums[2];
+const delectrumxhost4 = delectrums[3];
 
 //ElectrumX Hosts for Bitcoin
-const btcelectrumhost1 = 'bitcoin.lukechilds.co';
-const btcelectrumhost2 = 'fortress.qtornado.com';
-const btcelectrumhost3 = 'electrumx.erbium.eu';
-const btcelectrumhost4 = 'electrum.acinq.co';
-const btcelectrumhost5 = 'alviss.coinjoined.com';
-const btcelectrumhost6 = 'hodlers.beer';
-const btcelectrumhost7 = 'electrum.blockstream.info'; //lol
+const btcelectrumhost1 = belectrums[0];
+const btcelectrumhost2 = belectrums[1];
+const btcelectrumhost3 = belectrums[2];
+const btcelectrumhost4 = belectrums[3];
 
 var mnemonic;
 let ethnetworktype = 'homestead'; //homestead is mainnet, ropsten for testing, choice for UI selection eventually
@@ -563,9 +563,6 @@ exports.getbtcsend = (req, res) => {
         electrum.addServer(btcelectrumhost2);
         electrum.addServer(btcelectrumhost3);
         electrum.addServer(btcelectrumhost4);
-        electrum.addServer(btcelectrumhost5);
-        electrum.addServer(btcelectrumhost6);
-        electrum.addServer(btcelectrumhost7);
         try {
         // Wait for enough connections to be available.
         await electrum.ready();
@@ -1471,9 +1468,6 @@ exports.postbtcsend = (req, res) => {
             electrum.addServer(btcelectrumhost2);
             electrum.addServer(btcelectrumhost3);
             electrum.addServer(btcelectrumhost4);
-            electrum.addServer(btcelectrumhost5);
-            electrum.addServer(btcelectrumhost6);
-            electrum.addServer(btcelectrumhost7);
             
             // Wait for enough connections to be available.
             await electrum.ready();
@@ -1682,9 +1676,6 @@ exports.postbtcauto = (req, res) => {
             electrum.addServer(btcelectrumhost2);
             electrum.addServer(btcelectrumhost3);
             electrum.addServer(btcelectrumhost4);
-            electrum.addServer(btcelectrumhost5);
-            electrum.addServer(btcelectrumhost6);
-            electrum.addServer(btcelectrumhost7);
             
             // Wait for enough connections to be available.
             await electrum.ready();

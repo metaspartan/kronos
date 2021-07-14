@@ -48,7 +48,7 @@ block content
     div.rowclass(style='font-weight:400;font-size:14px;padding:30px;background-color:#222;margin:15px;border-radius:15px;', align='center')
       p
         .balancebig(align='center', style='font-size:33px;') Total Balance: 
-          strong #{totalethbal} ETH
+          strong#totalethbal #{totalethbal || 0} ETH
       br
       #SubmitDisplayModal.modal
         .modal-dialog
@@ -107,3 +107,13 @@ block content
             .col-sm-12
               button.kbtn.grey(type='button', id='sendETH', onclick='clicked()', data-toggle='modal', data-target='#SubmitDisplayModal')
                 |  Send Ethereum
+    script(src='../js/lib/jquery-3.1.1.min.js')
+    script.
+      var balsource = new EventSource('/balances');
+
+      balsource.addEventListener('message', function(e) {
+          var ethbal = JSON.parse(e.data).ethbal;
+
+          $('#totalethbal').html(ethbal+' ETH');
+
+      }, true);

@@ -3,13 +3,14 @@
 **************************************
 **************************************
 * Kronos Core Mode Dashboard Controller
-* Copyright (c) 2020 Carsen Klock
+* Copyright (c) 2020-2021 Carsen Klock
 **************************************
 **************************************
 **************************************
 */
 /* eslint-disable no-tabs */
 /* eslint-disable no-mixed-spaces-and-tabs */
+
 const si = require('systeminformation');
 const bitcoin = require('bitcoin');
 const WAValidator = require('wallet-address-validatord');
@@ -46,7 +47,22 @@ const HDKey = require('hdkey');
 const EC = require('elliptic').ec;
 const bs58check = require('bs58check');
 const axios = require('axios');
+const setupCache = require('axios-cache-adapter').setupCache;
 
+let delectrums = Storage.get('delectrums');
+let belectrums = Storage.get('belectrums');
+
+//ElectrumX Hosts for Denarius
+const delectrumxhost1 = delectrums[0];
+const delectrumxhost2 = delectrums[1];
+const delectrumxhost3 = delectrums[2];
+const delectrumxhost4 = delectrums[3];
+
+//ElectrumX Hosts for Bitcoin
+const btcelectrumhost1 = belectrums[0];
+const btcelectrumhost2 = belectrums[1];
+const btcelectrumhost3 = belectrums[2];
+const btcelectrumhost4 = belectrums[3];
 
 var currentOS = os.platform();        
 
@@ -101,6 +117,521 @@ const changeEndianness = (string) => {
     return result.join('');
 }
 
+// Create `axios-cache-adapter` instance
+const cache = setupCache({
+    maxAge: 5 * 60 * 1000
+});
+const api = axios.create({
+    adapter: cache.adapter,
+});
+
+var mnemonic;
+var ps;
+let seedaddresses = [];
+let store = [];
+
+var passsworddb = Storage.get('password');
+var seedphrasedb = Storage.get('seed');
+
+let ethnetworktype = 'homestead'; //homestead is mainnet, ropsten for testing, choice for UI selection eventually
+
+let provider = ethers.getDefaultProvider(ethnetworktype, {
+    etherscan: 'JMBXKNZRZYDD439WT95P2JYI72827M4HHR',
+    // Or if using a project secret:
+    infura: {
+        projectId: 'f95db0ef78244281a226aad15788b4ae',
+        projectSecret: '6a2d027562de4857a1536774d6e65667',
+    },
+    alchemy: 'W5yjuu3Ade1lsIn3Od8rTqJsYiFJszVY',
+    cloudflare: ''
+});
+
+let provider2 = new ethers.providers.CloudflareProvider();
+
+var decryptedmnemonic = decrypt(seedphrasedb);
+mnemonic = decryptedmnemonic;
+const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); // Generate wallet from our Kronos seed
+let ethwalletp = ethwallet.connect(provider); // Set wallet provider
+
+//Convert our mnemonic seed phrase to BIP39 Seed Buffer 
+const seedc = bip39.mnemonicToSeedSync(mnemonic); //No pass included to keep Coinomi styled seed
+
+// Generate BitClout Pubkey and Privkey from BIP39 Seed
+// By Carsen Klock @carsenk and @kronoswallet
+const cloutkeychain = HDKey.fromMasterSeed(seedc).derive('m/44\'/0\'/0\'/0/0', false);
+const cloutseedhex = cloutkeychain.privateKey.toString('hex');
+
+const ecc = new EC('secp256k1');
+const eckeyfrompriv = ecc.keyFromPrivate(cloutseedhex);
+const prefixc = [0xcd, 0x14, 0x0]; // BC for Clout Pub
+const keyc = eckeyfrompriv.getPublic().encode('array', true);
+const prefixAndKey = Uint8Array.from([...prefixc, ...keyc]);
+const cloutpub = bs58check.encode(prefixAndKey);
+
+Storage.set('cloutaddress', cloutpub);
+
+const Web3 = require('web3');
+
+const web3eth = new Web3('https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'); // ETH
+
+const web3 = new Web3('https://bsc-dataseed1.binance.org:443'); // BSC
+
+const web3ftm = new Web3('https://rpcapi.fantom.network/'); // FTM
+
+const usdtAddress = "0xdAC17F958D2ee523a2206206994597C13D831ec7"; // 0xdAC17F958D2ee523a2206206994597C13D831ec7 USDT (Tether USD ERC20)
+
+const ercAbi = [
+    // Some details about ERC20 ABI
+    "function name() view returns (string)",
+    "function symbol() view returns (string)",
+    "function balanceOf(address) view returns (uint)",
+    "function transfer(address to, uint amount)",
+    "event Transfer(address indexed from, address indexed to, uint amount)"
+];
+
+const usdtContract = new ethers.Contract(usdtAddress, ercAbi, provider);
+
+const busdAddress = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56";
+
+const bepAbi = [
+    // balanceOf
+    {
+      "constant":true,
+      "inputs":[{"name":"_owner","type":"address"}],
+      "name":"balanceOf",
+      "outputs":[{"name":"balance","type":"uint256"}],
+      "type":"function"
+    },
+    // decimals
+    {
+      "constant":true,
+      "inputs":[],
+      "name":"decimals",
+      "outputs":[{"name":"","type":"uint8"}],
+      "type":"function"
+    }
+];
+
+const busdContract = new web3.eth.Contract(bepAbi, busdAddress);
+
+// Event Streaming for Frontend Dynamic Data Kronos Wallet by Carsen Klock @carsenk
+// Event Stream for New Block of all Wallets
+exports.getnewblock = function (req, res) {
+    res.writeHead(200, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive'
+    });
+  
+    res.flushHeaders();
+
+    var dBlock = '';
+    var btcBlock = '';
+    var ethBlock = '';
+    var bscBlock = '';
+    var ftmBlock = '';
+    var cloutBlock = '';
+
+    const latestblocks = async () => {
+        // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+        const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4', 1, 2);
+        
+        // Add some servers to the cluster.
+        electrum.addServer(delectrumxhost1);
+        electrum.addServer(delectrumxhost2);
+        electrum.addServer(delectrumxhost3);
+        electrum.addServer(delectrumxhost4);
+        
+        // Wait for enough connections to be available.
+        await electrum.ready();
+
+        // Set up a callback function to handle new blocks.
+        const handleNewBlocks = function(data)
+        {
+            if (typeof data.height !== 'undefined') {
+                dBlock = data.height;
+            }
+            //res.write("data: " + liveblocks + "\n\n");
+        }
+        //TODO: NEED TO SETUP CLUSTERING AND ALSO ERROR SANITY CHECKING IF SERVER(S) OFFLINE
+        // Set up a subscription for new block headers and handle events with our callback function.
+        await electrum.subscribe(handleNewBlocks, 'blockchain.headers.subscribe');
+
+        //await electrum.disconnect();
+
+        //return handleNewBlocks();
+    }
+    const latestblocks2 = async () => {
+        // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+        const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4', 1, 2);
+        
+        // Add some servers to the cluster.
+        electrum.addServer(btcelectrumhost1);
+        electrum.addServer(btcelectrumhost2);
+        electrum.addServer(btcelectrumhost3);
+        electrum.addServer(btcelectrumhost4);
+        
+        // Wait for enough connections to be available.
+        await electrum.ready();
+
+        // Set up a callback function to handle new blocks.
+        const handleNewBlocks2 = function(data)
+        {
+            if (typeof data.height !== 'undefined') {
+                btcBlock = data.height;
+            }
+        }
+        await electrum.subscribe(handleNewBlocks2, 'blockchain.headers.subscribe');
+    }
+    latestblocks();
+    latestblocks2();
+
+    const getBlock = async () => {
+        let theblock = await web3eth.eth.getBlockNumber();
+        ethBlock = theblock;
+    }
+
+    const getbscBlock = async () => {
+        let theblock = await web3.eth.getBlockNumber();
+        bscBlock = theblock;
+    }
+
+    const getftmBlock = async () => {
+        let theblock = await web3ftm.eth.getBlockNumber();
+        ftmBlock = theblock;
+    }
+
+    const getcloutBlock = async () => {
+        // let theblock = await api({url: 'https://api.bitclout.com/api/v1', method: 'get', headers: {'Content-Type': 'application/json'}});
+        // let cblock = theblock.data.Header.Height;
+        // cloutBlock = cblock;
+        api({
+            url: 'https://api.bitclout.com/api/v1',
+            method: 'get',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then((ress) => {
+              let cloutblock = ress.data.Header.Height;  
+              cloutBlock = cloutblock;
+          })
+          .catch(error => {
+              console.error('Error with Block Call', error);
+          });
+    }
+
+    var interval = setInterval(function(){
+        getBlock();
+        getbscBlock();
+        getftmBlock();
+        getcloutBlock();
+    }, 15000);
+
+    Promise.all([latestblocks(), latestblocks2(), getBlock(), getbscBlock(), getftmBlock(), getcloutBlock()]).then(() => {
+
+        let liveblocks = JSON.stringify({block: dBlock, btcblock: btcBlock, ethblock: ethBlock, bscblock: bscBlock, ftmblock: ftmBlock, cloutblock: cloutBlock});
+
+        res.write("data: " + liveblocks + "\n\n");
+
+    });
+  
+    // close
+    res.on('close', () => {
+        clearInterval(interval);
+        res.end();
+    });
+}
+
+// Event Stream for Balances of all Wallets
+exports.getbalance = function (req, res) {
+
+    res.writeHead(200, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive'
+    });
+
+    res.flushHeaders();
+
+    var dbal = '';
+    var btcbal = '';
+    var ethbal = '';
+    var bscbal = '';
+    var ftmbal = '';
+    var cloutbal = '';
+    var usdtbal = '';
+    var busdbal = '';
+
+    var decryptedpass = decrypt(passsworddb);
+    ps = decryptedpass;
+
+    var decryptedmnemonic = decrypt(seedphrasedb);
+    mnemonic = decryptedmnemonic;
+
+    //Convert our mnemonic seed phrase to BIP39 Seed Buffer 
+    const seed = bip39.mnemonicToSeedSync(mnemonic); //No pass included to keep Coinomi styled seed
+
+    // BIP32 From BIP39 Seed
+    const root = bip32.fromSeed(seed);
+
+    const rootbtc = bip32b.fromSeed(seed);
+
+    // Get XPUB from BIP32
+    const xpub = root.neutered().toBase58();
+
+    const addresscount = 4; // 3 Addresses Generated
+
+    // Denarius Network Params Object
+    const network = {
+        messagePrefix: '\x19Denarius Signed Message:\n',
+        bech32: 'd',
+        bip32: {
+            public: 0x0488b21e,
+            private: 0x0488ade4
+        },
+        pubKeyHash: 0x1e,
+        scriptHash: 0x5a,
+        wif: 0x9e
+    };
+
+    // Clout Network Params Object
+    const cloutnetwork = {
+        pubKeyHash: [0xcd, 0x14, 0x0],
+        wif: [0x35, 0x0, 0x0]
+    };
+
+    // Bitcoin Network Params Object
+    const bitcoinnetwork = {
+        messagePrefix: '\x18Bitcoin Signed Message:\n',
+        bech32: 'bc',
+        bip32: {
+            public: 0x0488b21e,
+            private: 0x0488ade4
+        },
+        pubKeyHash: 0x00,
+        scriptHash: 0x05,
+        wif: 0x80
+    };
+
+    //Get 1 Address from the derived mnemonic
+    const addressPath0 = `m/44'/116'/0'/0/0`;
+
+    const btcaddressPath0 = `m/49'/0'/0'/0/0`; //const btcaddressPath0 = `m/44'/0'/0'/0/0`; Previous deriviation
+
+    // Get the keypair from the address derivation path
+    const addressKeypair0 = root.derivePath(addressPath0);
+
+    const btcaddressKeypair0 = rootbtc.derivePath(btcaddressPath0);
+
+    // Get the p2pkh base58 public address of the keypair
+    const p2pkhaddy0 = denarius.payments.p2pkh({ pubkey: addressKeypair0.publicKey, network }).address;
+
+    const p2pkaddy = denarius.payments.p2pkh({ pubkey: addressKeypair0.publicKey, network }).pubkey.toString('hex');
+
+    const btcp2pkhaddy0 = bitcoinjs.payments.p2pkh({ pubkey: btcaddressKeypair0.publicKey, bitcoinnetwork }).address; //Legacy 1
+
+    const btcp2pkaddy = bitcoinjs.payments.p2pkh({ pubkey: btcaddressKeypair0.publicKey, bitcoinnetwork }).pubkey.toString('hex');
+
+    const btcsegwitbech32 = bitcoinjs.payments.p2wpkh({ pubkey: btcaddressKeypair0.publicKey, bitcoinnetwork }).address; //Segwit Bech32 bc1
+
+    const btcsegwitp2shaddy = bitcoinjs.payments.p2sh({ redeem: bitcoinjs.payments.p2wpkh({ pubkey: btcaddressKeypair0.publicKey, bitcoinnetwork }), }).address; //Segwit P2SH 3
+
+    Storage.set('mainaddress', p2pkhaddy0);
+    Storage.set('p2pkaddress', p2pkaddy);
+
+    Storage.set('btcaddress', btcp2pkhaddy0); // 1
+    Storage.set('btcp2pkaddress', btcp2pkaddy);
+    Storage.set('btcbechaddy', btcsegwitbech32); // bc1
+    Storage.set('btcsegwitaddy', btcsegwitp2shaddy); // 3
+
+    //Denarius Scripthashes
+    const bytes = bs58.decode(p2pkhaddy0);
+    const byteshex = bytes.toString('hex');
+    const remove00 = byteshex.substring(2);
+    const removechecksum = remove00.substring(0, remove00.length-8);
+    const HASH160 = "76A914" + removechecksum.toUpperCase() + "88AC";
+    const BUFFHASH160 = Buffer.from(HASH160, "hex");
+    const shaaddress = sha256(BUFFHASH160);
+
+    const xpubtopub = p2pkaddy;
+    const HASH1601 =  "21" + xpubtopub + "ac"; // 21 + COMPRESSED PUBKEY + OP_CHECKSIG = P2PK
+    const BUFFHASH1601 = Buffer.from(HASH1601, "hex");
+    const shaaddress1 = sha256(BUFFHASH1601);
+
+    const scripthash = changeEndianness(shaaddress);
+    const scripthashp2pk = changeEndianness(shaaddress1);
+
+    //Bitcoin Scripthashes
+    const bbytes = bs58.decode(btcsegwitp2shaddy);
+    const bbyteshex = bbytes.toString('hex');
+    const bremove00 = bbyteshex.substring(2);
+    const bremovechecksum = bremove00.substring(0, bremove00.length-8);
+    const bHASH160 = "A914" + bremovechecksum.toUpperCase() + "87"; // OP_HASH160 and OP_EQUAL
+    const bBUFFHASH160 = Buffer.from(bHASH160, "hex");
+    const shaaddressbtc = sha256(bBUFFHASH160);
+
+    const bxpubtopub = btcp2pkaddy;
+    const bHASH1601 =  "21" + bxpubtopub + "ac"; // 21 + COMPRESSED PUBKEY + OP_CHECKSIG = P2PK
+    const bBUFFHASH1601 = Buffer.from(bHASH1601, "hex");
+    const shaaddressbtc1 = sha256(bBUFFHASH1601);
+
+    const scripthashbtc = changeEndianness(shaaddressbtc);
+    const scripthashp2pkbtc = changeEndianness(shaaddressbtc1);
+
+    const dWalletBal = async () => {
+        // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+        const electrum = new ElectrumCluster('Kronos Core Mode D Balance', '1.4', 1, 2);
+        
+        // Add some servers to the cluster.
+        electrum.addServer(delectrumxhost1);
+        electrum.addServer(delectrumxhost2);
+        electrum.addServer(delectrumxhost3);
+        electrum.addServer(delectrumxhost4);
+        try {
+            // Wait for enough connections to be available.
+            await electrum.ready();
+            
+            // Request the balance of the requested Scripthashed D address
+
+            const balancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthash);
+
+            const p2pkbalancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthashp2pk);
+
+            const balanceformatted = balancescripthash.confirmed;
+
+            const p2pkbalanceformatted = p2pkbalancescripthash.confirmed;
+
+            const balancefinal = balanceformatted / 100000000;
+
+            const p2pkbalancefinal = p2pkbalanceformatted / 100000000;
+
+            const addedbalance = balancefinal + p2pkbalancefinal;
+
+            const addedbalance2 = balanceformatted + p2pkbalanceformatted;
+
+            await electrum.shutdown();
+
+            Storage.set('totalbal', addedbalance);
+            dbal = addedbalance;
+
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    const btcWalletBal = async () => {
+        // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
+        const electrum = new ElectrumCluster('Kronos Core Mode BTC Balance', '1.4', 1, 2);
+        
+        // Add some servers to the cluster.
+        electrum.addServer(btcelectrumhost1);
+        electrum.addServer(btcelectrumhost2);
+        electrum.addServer(btcelectrumhost3);
+        electrum.addServer(btcelectrumhost4);
+
+        try {
+            // Wait for enough connections to be available.
+            await electrum.ready();
+            
+            // Request the balance of the requested Scripthash BTC address
+
+            const balancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthashbtc);
+
+            const p2pkbalancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthashp2pkbtc);
+
+            const balanceformatted = balancescripthash.confirmed;
+
+            const p2pkbalanceformatted = p2pkbalancescripthash.confirmed;
+
+            const balancefinal = balanceformatted / 100000000;
+
+            const p2pkbalancefinal = p2pkbalanceformatted / 100000000;
+
+            const addedbalance = balancefinal + p2pkbalancefinal;
+
+            const addedbalance2 = balanceformatted + p2pkbalanceformatted;
+
+            await electrum.shutdown();
+
+            Storage.set('totalbtcbal', addedbalance);
+            btcbal = addedbalance;
+
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    dWalletBal();
+    btcWalletBal();
+
+    const WalletBal = async () => {
+        let balance = await web3eth.eth.getBalance(ethwallet.address);
+        let balformatted = balance / 1e18; //ethers.utils.formatEther(bal);
+        Storage.set('totalethbal', balformatted);
+        ethbal = balformatted;
+    }
+
+    const BscWalletBal = async () => {
+        let balance = await web3.eth.getBalance(ethwallet.address);
+        let balformatted = balance / 1e18; //ethers.utils.formatEther(bal);
+        Storage.set('totalbscbal', balformatted);
+        bscbal = balformatted;
+    }
+
+    const FtmWalletBal = async () => {
+        let balance = await web3ftm.eth.getBalance(ethwallet.address);
+        let balformatted = balance / 1e18; //ethers.utils.formatEther(bal);
+        Storage.set('totalftmbal', balformatted);
+        ftmbal = balformatted;
+    }
+
+    const cloutWalletBal = async () => {
+        let balance = await axios.post('https://api.bitclout.com/api/v1/balance', {PublicKeyBase58Check: cloutpub}, {headers: {'Content-Type': 'application/json'}});
+        let cloutbalance = balance.data.ConfirmedBalanceNanos;
+        let formattedclout = cloutbalance / 1e9;
+        Storage.set('totalcloutbal', formattedclout);
+        cloutbal = formattedclout;
+    }
+
+    const usdtWalletBal = async () => {
+        let usdtbalance = await usdtContract.balanceOf(ethwalletp.address);
+        let usdtbalformatted = ethers.utils.formatEther(usdtbalance);
+        Storage.set('totalusdtbal', JSON.parse(usdtbalformatted).toString());
+        usdtbal = parseFloat(usdtbalformatted);
+    }
+
+    const busdWalletBal = async () => {
+        let busdbalance = await busdContract.methods.balanceOf(ethwallet.address).call();
+        let busdbalformatted = ethers.utils.formatEther(busdbalance);
+        Storage.set('totalbusdbal', JSON.parse(busdbalformatted).toString());
+        busdbal = parseFloat(busdbalformatted);
+    }
+
+    var interval = setInterval(function(){
+        WalletBal();
+        BscWalletBal();
+        FtmWalletBal();
+        cloutWalletBal();
+        usdtWalletBal();
+        busdWalletBal();
+    }, 15000);
+
+    Promise.all([dWalletBal(), btcWalletBal(), WalletBal(), BscWalletBal(), FtmWalletBal(), cloutWalletBal(), usdtWalletBal(), busdWalletBal()]).then(() => {
+
+        let livebals = JSON.stringify({bal: dbal, btcbal: btcbal, ethbal: ethbal, bscbal: bscbal, ftmbal: ftmbal, cloutbal: cloutbal, usdtbal: usdtbal, busdbal: busdbal});
+
+        res.write("data: " + livebals + "\n\n");
+
+    });
+
+    // close
+    res.on('close', () => {
+        clearInterval(interval);
+        res.end();
+    });
+}
+
 //Get information
 exports.simpleindex = (req, res) => {
 
@@ -113,356 +644,122 @@ exports.simpleindex = (req, res) => {
     let ethereumarray = [];
     let promises = [];
     let promises2 = [];
-  
-    //ElectrumX Hosts for Denarius
-    const delectrumxhost1 = 'electrumx1.denarius.pro';
-    const delectrumxhost2 = 'electrumx2.denarius.pro';
-    const delectrumxhost3 = 'electrumx3.denarius.pro';
-    const delectrumxhost4 = 'electrumx4.denarius.pro';
 
-    //ElectrumX Hosts for Bitcoin
-    const btcelectrumhost1 = 'bitcoin.lukechilds.co';
-    const btcelectrumhost2 = 'fortress.qtornado.com';
-    const btcelectrumhost3 = 'electrumx.erbium.eu';
-    const btcelectrumhost4 = 'electrum.acinq.co';
-    const btcelectrumhost5 = 'alviss.coinjoined.com';
-    const btcelectrumhost6 = 'hodlers.beer';
-    const btcelectrumhost7 = 'electrum.blockstream.info'; //lol
-    
-    let socket_id = [];
-    let socket_id2 = [];
-    let socket_id3 = [];
-    let socket_id4 = [];
-    let socket_id5 = [];
-    let socket_id6 = [];
-    let socket_id7 = [];
-    let socket_id33 = [];
-    let socket_id34 = [];
-    let socket_id35 = [];
-    let socket_id36 = [];
-    let socket_id37 = [];
-    let socket_idbtc = [];
-    let socket_idbb = [];
-    let socket_idbtcb = [];
-    let socket_idftm = [];
-    let socket_idbs = [];
-    let socket_idclout = [];
-
-    var mnemonic;
-    var ps;
-    let seedaddresses = [];
-    let store = [];
-
-    var passsworddb = Storage.get('password');
-    var seedphrasedb = Storage.get('seed');
-
-    let ethnetworktype = 'homestead'; //homestead is mainnet, ropsten for testing, choice for UI selection eventually
-
-    let bscnetworktype = 'mainnet';
-
-    let provider = ethers.getDefaultProvider(ethnetworktype, {
-        etherscan: 'JMBXKNZRZYDD439WT95P2JYI72827M4HHR',
-        // Or if using a project secret:
-        infura: {
-            projectId: 'f95db0ef78244281a226aad15788b4ae',
-            projectSecret: '6a2d027562de4857a1536774d6e65667',
-        },
-        alchemy: 'W5yjuu3Ade1lsIn3Od8rTqJsYiFJszVY',
-        cloudflare: ''
-    });
-    let provider2 = new ethers.providers.CloudflareProvider();
+    var decryptedpass = decrypt(passsworddb);
+    ps = decryptedpass;
 
     var decryptedmnemonic = decrypt(seedphrasedb);
     mnemonic = decryptedmnemonic;
-    const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); // Generate wallet from our Kronos seed
-    let ethwalletp = ethwallet.connect(provider); // Set wallet provider
 
     //Convert our mnemonic seed phrase to BIP39 Seed Buffer 
-    const seedc = bip39.mnemonicToSeedSync(mnemonic); //No pass included to keep Coinomi styled seed
+    const seed = bip39.mnemonicToSeedSync(mnemonic); //No pass included to keep Coinomi styled seed
 
-    // Generate BitClout Pubkey and Privkey from BIP39 Seed
-    // By Carsen Klock @carsenk and @kronoswallet
-    const cloutkeychain = HDKey.fromMasterSeed(seedc).derive('m/44\'/0\'/0\'/0/0', false);
-    const cloutseedhex = cloutkeychain.privateKey.toString('hex');
+    // BIP32 From BIP39 Seed
+    const root = bip32.fromSeed(seed);
 
-    const ecc = new EC('secp256k1');
-    const eckeyfrompriv = ecc.keyFromPrivate(cloutseedhex);
-    const prefixc = [0xcd, 0x14, 0x0]; // BC for Clout Pub
-    const keyc = eckeyfrompriv.getPublic().encode('array', true);
-    const prefixAndKey = Uint8Array.from([...prefixc, ...keyc]);
-    const cloutpub = bs58check.encode(prefixAndKey);
+    const rootbtc = bip32b.fromSeed(seed);
 
-    //Not needed during dashboard load
-    // const prefixp = [0x35, 0x0, 0x0]; // bc for Clout Priv
-    // const keyp = cloutkeychain.privateKey;
-    // const pAndKey = Uint8Array.from([...prefixp, ...keyp]);
-    // const cloutpriv = bs58check.encode(pAndKey);
+    // Get XPUB from BIP32
+    const xpub = root.neutered().toBase58();
 
-    // console.log('BitClout Pubkey:', cloutpub); // BC190fsdjfd09fjsd90a
-    // console.log('BitClout Privkey:', cloutpriv); // bc690jdsf90sdj09ajf90sa
-    // console.log('BitClout PrivkeyHex: ', cloutseedhex); // 20340325023052305
+    const addresscount = 4; // 3 Addresses Generated
 
-    Storage.set('cloutaddress', cloutpub);
-
-    const Web3 = require('web3');
-
-    const web3 = new Web3('https://bsc-dataseed1.binance.org:443'); // BSC
-
-    const web3ftm = new Web3('https://rpcapi.fantom.network/'); // FTM
-
-    const usdtAddress = "0xdAC17F958D2ee523a2206206994597C13D831ec7"; // 0xdAC17F958D2ee523a2206206994597C13D831ec7 USDT (Tether USD ERC20)
-
-    const ercAbi = [
-    // Some details about ERC20 ABI
-    "function name() view returns (string)",
-    "function symbol() view returns (string)",
-    "function balanceOf(address) view returns (uint)",
-    "function transfer(address to, uint amount)",
-    "event Transfer(address indexed from, address indexed to, uint amount)"
-    ];
-    const usdtContract = new ethers.Contract(usdtAddress, ercAbi, provider);
-
-
-    const busdAddress = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56";
-    const bepAbi = [
-        // balanceOf
-        {
-          "constant":true,
-          "inputs":[{"name":"_owner","type":"address"}],
-          "name":"balanceOf",
-          "outputs":[{"name":"balance","type":"uint256"}],
-          "type":"function"
+    // Denarius Network Params Object
+    const network = {
+        messagePrefix: '\x19Denarius Signed Message:\n',
+        bech32: 'd',
+        bip32: {
+            public: 0x0488b21e,
+            private: 0x0488ade4
         },
-        // decimals
-        {
-          "constant":true,
-          "inputs":[],
-          "name":"decimals",
-          "outputs":[{"name":"","type":"uint8"}],
-          "type":"function"
-        }
-    ];
+        pubKeyHash: 0x1e,
+        scriptHash: 0x5a,
+        wif: 0x9e
+    };
 
-    const busdContract = new web3.eth.Contract(bepAbi, busdAddress);
+    // Clout Network Params Object
+    const cloutnetwork = {
+        pubKeyHash: [0xcd, 0x14, 0x0],
+        wif: [0x35, 0x0, 0x0]
+    };
 
-    res.io.on('connection', function (socket) {
-        socket_id33.push(socket.id);
-        if (socket_id33[0] === socket.id) {
-        // remove the connection listener for any subsequent 
-        // connections with the same ID
-        res.io.removeAllListeners('connection'); 
-        }
-        try {
-            provider2.on('block', (blockNumber) => {
-                let ethblock = blockNumber;
-                socket.emit("newblocketh", {ethblock: ethblock});
-                // try {
-                //     provider2.getBlock(blockNumber).then((block) => {
-                //         let blockhash = block.hash;
-                //         //console.log(blockhash);
-                //         socket.emit("newblocketh", {ethblock: ethblock, ethhash: blockhash});
-                //     }).catch((e) => {
-                //         console.log(e);
-                //     });
-                // }
-                // catch(e) {
-                //     console.log('Catch an error: ', e)
-                // }
-            }, (error) => {
-                console.log('Caught Error: ', error);
-                });
-        } catch(e) {
-            console.log('Caught Error: ', e);
-        }
-        // usdtContract.on(ethwalletp.address, (balance) => {
-        //     console.log('New USDT Balance: ' + balance);
-        //     socket.emit("newaribal", {aribal: balance});
-        // });
-    });
+    // Bitcoin Network Params Object
+    const bitcoinnetwork = {
+        messagePrefix: '\x18Bitcoin Signed Message:\n',
+        bech32: 'bc',
+        bip32: {
+            public: 0x0488b21e,
+            private: 0x0488ade4
+        },
+        pubKeyHash: 0x00,
+        scriptHash: 0x05,
+        wif: 0x80
+    };
 
-    // Grab BSC Block Height in realtime (every 15s)
-    res.io.on('connection', function (socket) {
-        socket_idbb.push(socket.id);
-        if (socket_idbb[0] === socket.id) {
-        res.io.removeAllListeners('connection'); 
-        }
-        const bscBlock = async () => {
-            let bscblock = await web3.eth.getBlockNumber();
-            //console.log('BSC Block: ', bscblock);
-            socket.emit("newblockbsc", {bscblock: bscblock});
-        }
-        bscBlock();
-        setInterval(function(){ 
-            bscBlock();
-        }, 15000);
-    });
+    //Get 1 Address from the derived mnemonic
+    const addressPath0 = `m/44'/116'/0'/0/0`;
 
-    // Grab FTM Block Height in realtime (every 15s)
-    res.io.on('connection', function (socket) {
-        socket_idftm.push(socket.id);
-        if (socket_idftm[0] === socket.id) {
-        res.io.removeAllListeners('connection'); 
-        }
-        const ftmBlock = async () => {
-            let ftmblock = await web3ftm.eth.getBlockNumber();
-            //console.log('ftm Block: ', ftmblock);
-            socket.emit("newblockftm", {ftmblock: ftmblock});
-        }
-        ftmBlock();
-        setInterval(function(){ 
-            ftmBlock();
-        }, 15000);
-    });
+    const btcaddressPath0 = `m/49'/0'/0'/0/0`; //const btcaddressPath0 = `m/44'/0'/0'/0/0`; Previous deriviation
 
-    // Grab ETH in realtime (every 15s)
-    res.io.on('connection', function (socket) {
-        socket_id34.push(socket.id);
-        if (socket_id34[0] === socket.id) {
-        res.io.removeAllListeners('connection'); 
-        }
-        const ethWalletBal = async () => {
-            let ethbalance = await provider.getBalance(ethwalletp.address);
-            let ethbalformatted = ethers.utils.formatEther(ethbalance);
-            Storage.set('totalethbal', JSON.parse(ethbalformatted).toString());
-            socket.emit("newethbal", {ethbal: JSON.parse(ethbalformatted)});
-        }
-        ethWalletBal();
-        setInterval(function(){ 
-            ethWalletBal();
-        }, 15000);
-    });
+    // Get the keypair from the address derivation path
+    const addressKeypair0 = root.derivePath(addressPath0);
 
-    // Grab BitClout balances in realtime (every 30s)
-    res.io.on('connection', function (socket) {
-        socket_idclout.push(socket.id);
-        if (socket_idclout[0] === socket.id) {
-        res.io.removeAllListeners('connection'); 
-        }
-        const cloutWalletBal = async () => {
-            axios
-                .post('https://api.bitclout.com/api/v1/balance', {PublicKeyBase58Check: cloutpub}, {    
-                    headers: {
-                    'Content-Type': 'application/json'
-                    }
-                })
-                .then(res => {
-                    let cloutbal = res.data.ConfirmedBalanceNanos;
-                    let formattedclout = cloutbal / 1e9; //Clout Nanos are 1e9
-                    Storage.set('totalcloutbal', formattedclout);
-                    socket.emit("newcloutbal", {cloutbal: formattedclout});
-                })
-                .catch(error => {
-                    console.error(error)
-                });
-        }
-        cloutWalletBal();
-        setInterval(function(){ 
-            cloutWalletBal();
-        }, 30000);
-    });
+    const btcaddressKeypair0 = rootbtc.derivePath(btcaddressPath0);
 
-    // Grab BSC balances in realtime (every 15s)
-    res.io.on('connection', function (socket) {
-        socket_id35.push(socket.id);
-        if (socket_id35[0] === socket.id) {
-        res.io.removeAllListeners('connection'); 
-        }
-        const bscWalletBal = async () => {
-            let bscbalance = await web3.eth.getBalance(ethwallet.address);
-            let bscbalformatted = bscbalance / 1e18; //ethers.utils.formatEther(bscbalance); Total BSC:  10000000000000000 = 0.01
-            //console.log('Total BSC: ', bscbalformatted);
-            Storage.set('totalbscbal', bscbalformatted);
-            socket.emit("newbscbal", {bscbal: bscbalformatted});
-        }
-        bscWalletBal();
-        setInterval(function(){ 
-            bscWalletBal();
-        }, 15000);
-    });
+    // Get the p2pkh base58 public address of the keypair
+    const p2pkhaddy0 = denarius.payments.p2pkh({ pubkey: addressKeypair0.publicKey, network }).address;
 
-    // GET USDT ERC20
-    res.io.on('connection', function (socket) {
-        socket_id5.push(socket.id);
-        if (socket_id5[0] === socket.id) {
-        res.io.removeAllListeners('connection'); 
-        }
-        const usdtWalletBal = async () => {
-            let usdtbalance = await usdtContract.balanceOf(ethwalletp.address);
-            let usdtbalformatted = ethers.utils.formatEther(usdtbalance);
-            Storage.set('totalusdtbal', JSON.parse(usdtbalformatted).toString());
-            socket.emit("newusdtbal", {usdtbal: parseFloat(usdtbalformatted)});
-        }
-        usdtWalletBal();
-        setInterval(function(){ 
-            usdtWalletBal();
-        }, 15000);
-    });
+    const p2pkaddy = denarius.payments.p2pkh({ pubkey: addressKeypair0.publicKey, network }).pubkey.toString('hex');
 
-    //GET BUSD BEP20 Bal
-    res.io.on('connection', function (socket) {
-        socket_id37.push(socket.id);
-        if (socket_id37[0] === socket.id) {
-        res.io.removeAllListeners('connection'); 
-        }
-        const busdWalletBal = async () => {
-            //let busdbalance = await usdtContract.balanceOf(ethwalletp.address);
-            let busdbalance = await busdContract.methods.balanceOf(ethwallet.address).call();
-            let busdbalformatted = ethers.utils.formatEther(busdbalance);
-            Storage.set('totalbusdbal', JSON.parse(busdbalformatted).toString());
-            socket.emit("newbusdbal", {busdbal: parseFloat(busdbalformatted)});
-        }
-        busdWalletBal();
-        setInterval(function(){ 
-            busdWalletBal();
-        }, 15000);
-    });
+    const btcp2pkhaddy0 = bitcoinjs.payments.p2pkh({ pubkey: btcaddressKeypair0.publicKey, bitcoinnetwork }).address; //Legacy 1
 
+    const btcp2pkaddy = bitcoinjs.payments.p2pkh({ pubkey: btcaddressKeypair0.publicKey, bitcoinnetwork }).pubkey.toString('hex');
 
-    // Grab FTM balances in realtime (every 15s)
-    res.io.on('connection', function (socket) {
-        socket_id36.push(socket.id);
-        if (socket_id36[0] === socket.id) {
-        res.io.removeAllListeners('connection'); 
-        }
-        const ftmWalletBal = async () => {
-            let ftmbalance = await web3ftm.eth.getBalance(ethwallet.address);
-            let ftmbalformatted = ftmbalance / 1e18; //ethers.utils.formatEther(bscbalance); Total BSC:  10000000000000000 = 0.01
-            //console.log('Total ftm: ', ftmbalformatted);
-            Storage.set('totalftmbal', ftmbalformatted);
-            socket.emit("newftmbal", {ftmbal: ftmbalformatted});
-        }
-        ftmWalletBal();
-        setInterval(function(){ 
-            ftmWalletBal();
-        }, 15000);
-    });
+    const btcsegwitbech32 = bitcoinjs.payments.p2wpkh({ pubkey: btcaddressKeypair0.publicKey, bitcoinnetwork }).address; //Segwit Bech32 bc1
 
-    // Grab CLOUT Block Height in realtime (every 15s)
-    res.io.on('connection', function (socket) {
-        socket_id7.push(socket.id);
-        if (socket_id7[0] === socket.id) {
-        res.io.removeAllListeners('connection'); 
-        }
-        const cloutBlock = async () => {
-            axios
-                .get('https://api.bitclout.com/api/v1', {}, {    
-                    headers: {
-                    'Content-Type': 'application/json'
-                    }
-                })
-                .then(res => {
-                    let cloutblock = res.data.Header.Height;
-                    socket.emit("newblockclout", {cloutblock: cloutblock});                
-                })
-                .catch(error => {
-                    console.error(error)
-                });
-        }
-        cloutBlock();
-        setInterval(function(){ 
-            cloutBlock();
-        }, 15000);
-    });
+    const btcsegwitp2shaddy = bitcoinjs.payments.p2sh({ redeem: bitcoinjs.payments.p2wpkh({ pubkey: btcaddressKeypair0.publicKey, bitcoinnetwork }), }).address; //Segwit P2SH 3
+
+    Storage.set('mainaddress', p2pkhaddy0);
+    Storage.set('p2pkaddress', p2pkaddy);
+
+    Storage.set('btcaddress', btcp2pkhaddy0); // 1
+    Storage.set('btcp2pkaddress', btcp2pkaddy);
+    Storage.set('btcbechaddy', btcsegwitbech32); // bc1
+    Storage.set('btcsegwitaddy', btcsegwitp2shaddy); // 3
+
+    //Denarius Scripthashes
+    const bytes = bs58.decode(p2pkhaddy0);
+    const byteshex = bytes.toString('hex');
+    const remove00 = byteshex.substring(2);
+    const removechecksum = remove00.substring(0, remove00.length-8);
+    const HASH160 = "76A914" + removechecksum.toUpperCase() + "88AC";
+    const BUFFHASH160 = Buffer.from(HASH160, "hex");
+    const shaaddress = sha256(BUFFHASH160);
+
+    const xpubtopub = p2pkaddy;
+    const HASH1601 =  "21" + xpubtopub + "ac"; // 21 + COMPRESSED PUBKEY + OP_CHECKSIG = P2PK
+    const BUFFHASH1601 = Buffer.from(HASH1601, "hex");
+    const shaaddress1 = sha256(BUFFHASH1601);
+
+    const scripthash = changeEndianness(shaaddress);
+    const scripthashp2pk = changeEndianness(shaaddress1);
+
+    //Bitcoin Scripthashes
+    const bbytes = bs58.decode(btcsegwitp2shaddy);
+    const bbyteshex = bbytes.toString('hex');
+    const bremove00 = bbyteshex.substring(2);
+    const bremovechecksum = bremove00.substring(0, bremove00.length-8);
+    const bHASH160 = "A914" + bremovechecksum.toUpperCase() + "87"; // OP_HASH160 and OP_EQUAL
+    const bBUFFHASH160 = Buffer.from(bHASH160, "hex");
+    const shaaddressbtc = sha256(bBUFFHASH160);
+
+    const bxpubtopub = btcp2pkaddy;
+    const bHASH1601 =  "21" + bxpubtopub + "ac"; // 21 + COMPRESSED PUBKEY + OP_CHECKSIG = P2PK
+    const bBUFFHASH1601 = Buffer.from(bHASH1601, "hex");
+    const shaaddressbtc1 = sha256(bBUFFHASH1601);
+
+    const scripthashbtc = changeEndianness(shaaddressbtc);
+    const scripthashp2pkbtc = changeEndianness(shaaddressbtc1);
     
     // si.cpuCurrentspeed(function (data2) {
     
@@ -544,44 +841,6 @@ exports.simpleindex = (req, res) => {
     //     var memppp = memp / 100;
     //     var mempp = memppp;
     
-    //     //Emit to our Socket.io Server
-    //     res.io.on('connection', function (socket) {
-    //         socket_id4.push(socket.id);
-    //         if (socket_id4[0] === socket.id) {
-    //           // remove the connection listener for any subsequent 
-    //           // connections with the same ID
-    //           res.io.removeAllListeners('connection'); 
-    //         }
-    //         socket.emit("memory", {mema: mema, memt: memt, memf: memf, memu: memu, memp: memp, mempp: mempp});
-    //         setInterval(() => {
-    //             si.mem(function (data1) {
-    
-    //                 var bytes = 1073741824;
-    //                 var memtt = data1.total;
-    //                 var memuu = data1.active;
-    //                 var memff = data1.free;
-    //                 var mema = data1.available;
-                
-    //                 var memttt = memtt / bytes;
-    //                 var memt = memttt.toFixed(2);
-                
-    //                 var memffff = memtt - memuu;
-    //                 var memfff = memffff / bytes;
-    //                 var memf = memfff.toFixed(2);
-                
-    //                 var memuuu = memuu / bytes;
-    //                 var memu = memuuu.toFixed(2);			
-                
-    //                 var memp = memu / memt * 100;
-    //                 var memppp = memp / 100;
-    //                 var mempp = memppp;
-    
-    //                 socket.emit("memory", {mema: mema, memt: memt, memf: memf, memu: memu, memp: memp, mempp: mempp});
-    //             });
-    //         }, 5000);
-    //     });
-    // });
-    
     
     // si.osInfo().then(data4 => {
     
@@ -639,343 +898,6 @@ exports.simpleindex = (req, res) => {
     //     });
     
     // });
-    
-    //Testing out realtime Electrumx Block Header Subscribe
-    //Emit to our Socket.io Server
-    res.io.on('connection', function (socket) {
-        socket_id.push(socket.id);
-        if (socket_id[0] === socket.id) {
-        // remove the connection listener for any subsequent 
-        // connections with the same ID
-        res.io.removeAllListeners('connection'); 
-        }
-        const latestblocks = async () => {
-            // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-            const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4', 1, 2);
-            
-            // Add some servers to the cluster.
-            electrum.addServer(delectrumxhost1);
-            electrum.addServer(delectrumxhost2);
-            electrum.addServer(delectrumxhost3);
-            electrum.addServer(delectrumxhost4);
-            
-            // Wait for enough connections to be available.
-            await electrum.ready();
-    
-            // Set up a callback function to handle new blocks.
-            const handleNewBlocks = function(data)
-            {
-                socket.emit("newblock", {block: data});
-                //Storage.set('newblock', data);
-                //console.log("Got New Denarius Block Height");
-            }
-            //TODO: NEED TO SETUP CLUSTERING AND ALSO ERROR SANITY CHECKING IF SERVER(S) OFFLINE
-            // Set up a subscription for new block headers and handle events with our callback function.
-            await electrum.subscribe(handleNewBlocks, 'blockchain.headers.subscribe');
-
-            //await electrum.disconnect();
-    
-            //return handleNewBlocks();
-        }
-        latestblocks();
-    });
-
-    //Get Bitcoin Blocks
-    res.io.on('connection', function (socket) {
-        socket_idbtc.push(socket.idbtc);
-        if (socket_idbtc[0] === socket.id) {
-        // remove the connection listener for any subsequent 
-        // connections with the same ID
-        res.io.removeAllListeners('connection'); 
-        }
-        const latestBTCblocks = async () => {
-            // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-            const electrum = new ElectrumCluster('Kronos ElectrumX Cluster', '1.4', 1, 2);
-            
-            // Add some servers to the cluster.
-            electrum.addServer(btcelectrumhost1);
-            electrum.addServer(btcelectrumhost2);
-            electrum.addServer(btcelectrumhost3);
-            electrum.addServer(btcelectrumhost4);
-            electrum.addServer(btcelectrumhost5);
-            electrum.addServer(btcelectrumhost6);
-            electrum.addServer(btcelectrumhost7);
-            
-            // Wait for enough connections to be available.
-            await electrum.ready();
-    
-            // Set up a callback function to handle new blocks.
-            const handleNewBlocks = function(data)
-            {
-                socket.emit("newbtcblock", {block: data});
-                //Storage.set('newblock', data);
-                //console.log("Got New Denarius Block Height");
-            }
-            //TODO: NEED TO SETUP CLUSTERING AND ALSO ERROR SANITY CHECKING IF SERVER(S) OFFLINE
-            // Set up a subscription for new block headers and handle events with our callback function.
-            await electrum.subscribe(handleNewBlocks, 'blockchain.headers.subscribe');
-
-            //await electrum.disconnect();
-    
-            //return handleNewBlocks();
-        }
-        latestBTCblocks();
-    });
-
-        var decryptedpass = decrypt(passsworddb);
-        ps = decryptedpass;
-
-        var decryptedmnemonic = decrypt(seedphrasedb);
-        mnemonic = decryptedmnemonic;
-
-
-        //Convert our mnemonic seed phrase to BIP39 Seed Buffer 
-        const seed = bip39.mnemonicToSeedSync(mnemonic); //No pass included to keep Coinomi styled seed
-
-        // // Generate BitClout Pubkey and Privkey from BIP39 Seed
-        // // By Carsen Klock @carsenk and @kronoswallet
-        // for (let i = 0; i < 10; i++) {
-        //     const cloutkeychain = HDKey.fromMasterSeed(seed).derive('m/44\'/0\'/0\'/0/0'+i, false);
-        //     const cloutseedhex = cloutkeychain.privateKey.toString('hex');
-        //     return cloutseedhex;
-        // }
-
-        // const ecc = new EC('secp256k1');
-        // const eckeyfrompriv = ecc.keyFromPrivate(cloutseedhex);
-        // const prefixc = [0xcd, 0x14, 0x0]; // BC for Clout Pub
-        // const keyc = eckeyfrompriv.getPublic().encode('array', true);
-        // const prefixAndKey = Uint8Array.from([...prefixc, ...keyc]);
-        // const cloutpub = bs58check.encode(prefixAndKey);
-
-        // //Not needed during dashboard load
-        // // const prefixp = [0x35, 0x0, 0x0]; // bc for Clout Priv
-        // // const keyp = cloutkeychain.privateKey;
-        // // const pAndKey = Uint8Array.from([...prefixp, ...keyp]);
-        // // const cloutpriv = bs58check.encode(pAndKey);
-
-        // // console.log('BitClout Pubkey:', cloutpub); // BC190fsdjfd09fjsd90a
-        // // console.log('BitClout Privkey:', cloutpriv); // bc690jdsf90sdj09ajf90sa
-        // // console.log('BitClout PrivkeyHex: ', cloutseedhex); // 20340325023052305
-
-        // Storage.set('cloutaddress', cloutpub);
-        
-        // BIP32 From BIP39 Seed
-        const root = bip32.fromSeed(seed);
-
-        const rootbtc = bip32b.fromSeed(seed);
-
-        // Get XPUB from BIP32
-        const xpub = root.neutered().toBase58();
-
-        const addresscount = 4; // 3 Addresses Generated
-
-        // Denarius Network Params Object
-        const network = {
-            messagePrefix: '\x19Denarius Signed Message:\n',
-            bech32: 'd',
-            bip32: {
-              public: 0x0488b21e,
-              private: 0x0488ade4
-            },
-            pubKeyHash: 0x1e,
-            scriptHash: 0x5a,
-            wif: 0x9e
-        };
-
-        // Clout Network Params Object
-        const cloutnetwork = {
-            pubKeyHash: [0xcd, 0x14, 0x0],
-            wif: [0x35, 0x0, 0x0]
-        };
-
-        // Bitcoin Network Params Object
-        const bitcoinnetwork = {
-            messagePrefix: '\x18Bitcoin Signed Message:\n',
-            bech32: 'bc',
-            bip32: {
-                public: 0x0488b21e,
-                private: 0x0488ade4
-            },
-            pubKeyHash: 0x00,
-            scriptHash: 0x05,
-            wif: 0x80
-        };
-
-        //Get 1 Address from the derived mnemonic
-        const addressPath0 = `m/44'/116'/0'/0/0`;
-
-        const btcaddressPath0 = `m/49'/0'/0'/0/0`; //const btcaddressPath0 = `m/44'/0'/0'/0/0`; Previous deriviation
-
-        // Get the keypair from the address derivation path
-        const addressKeypair0 = root.derivePath(addressPath0);
-
-        const btcaddressKeypair0 = rootbtc.derivePath(btcaddressPath0);
-
-        // Get the p2pkh base58 public address of the keypair
-        const p2pkhaddy0 = denarius.payments.p2pkh({ pubkey: addressKeypair0.publicKey, network }).address;
-
-        const p2pkaddy = denarius.payments.p2pkh({ pubkey: addressKeypair0.publicKey, network }).pubkey.toString('hex');
-
-        const btcp2pkhaddy0 = bitcoinjs.payments.p2pkh({ pubkey: btcaddressKeypair0.publicKey, bitcoinnetwork }).address; //Legacy 1
-
-        const btcp2pkaddy = bitcoinjs.payments.p2pkh({ pubkey: btcaddressKeypair0.publicKey, bitcoinnetwork }).pubkey.toString('hex');
-
-        const btcsegwitbech32 = bitcoinjs.payments.p2wpkh({ pubkey: btcaddressKeypair0.publicKey, bitcoinnetwork }).address; //Segwit Bech32 bc1
-
-        const btcsegwitp2shaddy = bitcoinjs.payments.p2sh({ redeem: bitcoinjs.payments.p2wpkh({ pubkey: btcaddressKeypair0.publicKey, bitcoinnetwork }), }).address; //Segwit P2SH 3
-        
-        Storage.set('mainaddress', p2pkhaddy0);
-        Storage.set('p2pkaddress', p2pkaddy);
-
-        Storage.set('btcaddress', btcp2pkhaddy0); // 1
-        Storage.set('btcp2pkaddress', btcp2pkaddy);
-        Storage.set('btcbechaddy', btcsegwitbech32); // bc1
-        Storage.set('btcsegwitaddy', btcsegwitp2shaddy); // 3
-
-        // console.log(btcp2pkhaddy0);
-        // console.log(btcp2pkaddy);
-        // console.log(btcsegwitbech32);
-        // console.log(btcsegwitp2shaddy);
-
-        //Denarius Scripthashes
-        const bytes = bs58.decode(p2pkhaddy0);
-        const byteshex = bytes.toString('hex');
-        const remove00 = byteshex.substring(2);
-        const removechecksum = remove00.substring(0, remove00.length-8);
-        const HASH160 = "76A914" + removechecksum.toUpperCase() + "88AC";
-        const BUFFHASH160 = Buffer.from(HASH160, "hex");
-        const shaaddress = sha256(BUFFHASH160);
-
-        const xpubtopub = p2pkaddy;
-        const HASH1601 =  "21" + xpubtopub + "ac"; // 21 + COMPRESSED PUBKEY + OP_CHECKSIG = P2PK
-        const BUFFHASH1601 = Buffer.from(HASH1601, "hex");
-        const shaaddress1 = sha256(BUFFHASH1601);
-
-        const scripthash = changeEndianness(shaaddress);
-        const scripthashp2pk = changeEndianness(shaaddress1);
-
-        //Bitcoin Scripthashes
-        const bbytes = bs58.decode(btcsegwitp2shaddy);
-        const bbyteshex = bbytes.toString('hex');
-        const bremove00 = bbyteshex.substring(2);
-        const bremovechecksum = bremove00.substring(0, bremove00.length-8);
-        const bHASH160 = "A914" + bremovechecksum.toUpperCase() + "87"; // OP_HASH160 and OP_EQUAL
-        const bBUFFHASH160 = Buffer.from(bHASH160, "hex");
-        const shaaddressbtc = sha256(bBUFFHASH160);
-
-        const bxpubtopub = btcp2pkaddy;
-        const bHASH1601 =  "21" + bxpubtopub + "ac"; // 21 + COMPRESSED PUBKEY + OP_CHECKSIG = P2PK
-        const bBUFFHASH1601 = Buffer.from(bHASH1601, "hex");
-        const shaaddressbtc1 = sha256(bBUFFHASH1601);
-
-        const scripthashbtc = changeEndianness(shaaddressbtc);
-        const scripthashp2pkbtc = changeEndianness(shaaddressbtc1);
-
-        res.io.on('connection', function (socket) {
-            socket_id6.push(socket.id);
-            if (socket_id6[0] === socket.id) {
-            res.io.removeAllListeners('connection'); 
-            }
-            const dWalletBal = async () => {
-                // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-                const electrum = new ElectrumCluster('Kronos Core Mode D Balance', '1.4', 1, 2);
-                
-                // Add some servers to the cluster.
-                electrum.addServer(delectrumxhost1);
-                electrum.addServer(delectrumxhost2);
-                electrum.addServer(delectrumxhost3);
-                electrum.addServer(delectrumxhost4);
-                try {
-                    // Wait for enough connections to be available.
-                    await electrum.ready();
-                    
-                    // Request the balance of the requested Scripthash D address
-
-                    const balancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthash);
-
-                    const p2pkbalancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthashp2pk);
-
-                    const balanceformatted = balancescripthash.confirmed;
-
-                    const p2pkbalanceformatted = p2pkbalancescripthash.confirmed;
-
-                    const balancefinal = balanceformatted / 100000000;
-
-                    const p2pkbalancefinal = p2pkbalanceformatted / 100000000;
-
-                    const addedbalance = balancefinal + p2pkbalancefinal;
-
-                    const addedbalance2 = balanceformatted + p2pkbalanceformatted;
-
-                    //await electrum.disconnect();
-                    await electrum.shutdown();
-                    Storage.set('totalbal', addedbalance);
-                    socket.emit("newdbal", {dbal: addedbalance});
-
-                } catch (e) {
-                    console.log(e);
-                }
-            }
-            dWalletBal();
-            setInterval(function(){ 
-                dWalletBal();
-            }, 15000);
-        });
-
-
-        res.io.on('connection', function (socket) {
-            socket_idbtcb.push(socket.id);
-            if (socket_idbtcb[0] === socket.id) {
-            res.io.removeAllListeners('connection'); 
-            }
-            const btcWalletBal = async () => {
-                // Initialize an electrum cluster where 1 out of 2 out of the 4 needs to be consistent, polled randomly with fail-over.
-                const electrum = new ElectrumCluster('Kronos Core Mode BTC Balance', '1.4', 1, 2);
-                
-                // Add some servers to the cluster.
-                electrum.addServer(btcelectrumhost1);
-                electrum.addServer(btcelectrumhost2);
-                electrum.addServer(btcelectrumhost3);
-                electrum.addServer(btcelectrumhost4);
-                electrum.addServer(btcelectrumhost5);
-                electrum.addServer(btcelectrumhost6);
-                try {
-                    // Wait for enough connections to be available.
-                    await electrum.ready();
-                    
-                    // Request the balance of the requested Scripthash BTC address
-
-                    const balancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthashbtc);
-
-                    const p2pkbalancescripthash = await electrum.request('blockchain.scripthash.get_balance', scripthashp2pkbtc);
-
-                    const balanceformatted = balancescripthash.confirmed;
-
-                    const p2pkbalanceformatted = p2pkbalancescripthash.confirmed;
-
-                    const balancefinal = balanceformatted / 100000000;
-
-                    const p2pkbalancefinal = p2pkbalanceformatted / 100000000;
-
-                    const addedbalance = balancefinal + p2pkbalancefinal;
-
-                    const addedbalance2 = balanceformatted + p2pkbalanceformatted;
-
-                    //await electrum.disconnect();
-                    await electrum.shutdown();
-                    //console.log('BTC TOTAL BEING SET: ', addedbalance);
-                    Storage.set('totalbtcbal', addedbalance);
-                    socket.emit("newbtcbal", {btcbal: addedbalance});
-
-                } catch (e) {
-                    console.log(e);
-                }
-            }
-            btcWalletBal();
-            setInterval(function(){ 
-                btcWalletBal();
-            }, 15000);
-        });
 
         // A for loop for how many addresses we want from the derivation path of the seed phrase
         for (let i = 0; i < addresscount; i++) { //20
@@ -1072,9 +994,6 @@ exports.simpleindex = (req, res) => {
             electrum.addServer(btcelectrumhost2);
             electrum.addServer(btcelectrumhost3);
             electrum.addServer(btcelectrumhost4);
-            electrum.addServer(btcelectrumhost5);
-            electrum.addServer(btcelectrumhost6);
-            electrum.addServer(btcelectrumhost7);
             
             try {
             // Wait for enough connections to be available.
@@ -1126,9 +1045,6 @@ exports.simpleindex = (req, res) => {
             electrum.addServer(btcelectrumhost2);
             electrum.addServer(btcelectrumhost3);
             electrum.addServer(btcelectrumhost4);
-            electrum.addServer(btcelectrumhost5);
-            electrum.addServer(btcelectrumhost6);
-            electrum.addServer(btcelectrumhost7);
             
             try {
             // Wait for enough connections to be available.
@@ -1184,9 +1100,6 @@ exports.simpleindex = (req, res) => {
             electrum.addServer(btcelectrumhost2);
             electrum.addServer(btcelectrumhost3);
             electrum.addServer(btcelectrumhost4);
-            electrum.addServer(btcelectrumhost5);
-            electrum.addServer(btcelectrumhost6);
-            electrum.addServer(btcelectrumhost7);
             
             try {
             // Wait for enough connections to be available.

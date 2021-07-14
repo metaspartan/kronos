@@ -3,7 +3,7 @@ extends ../layoutcoreprofile
 block content
   #toggle2fa(data-value=twofaenable)
   #notify
-  .maincontent(style='border: none !important;margin-top: -15px;')
+  .maincontent(style='border: none !important;margin-top: 4px;')
     .container(style='width:90%')
       .row(class='rowclass', style='margin: 0px !important; padding:0px !important;border-top-left-radius:0px !important; border-top-right-radius:0px !important;')
         .col-md-12(align='center')
@@ -51,13 +51,62 @@ block content
                 | SWEEP D 
                 i.fas.fa-angle-double-down
             .col-md-4
-              button.kbtn.orange(onclick="location.href='/sweepbtc';", style='border-radius: 15px;border: none;padding: 10px;padding-left: 30px;padding-right: 30px;' disabled) 
+              button.kbtn.grey(onclick="location.href='/sweepbtc';", style='border-radius: 15px;border: none;padding: 10px;padding-left: 30px;padding-right: 30px;' disabled) 
                 | SWEEP BTC 
                 i.fas.fa-angle-double-down
             .col-md-4
               button.kbtn.grey(onclick="location.href='/sweepeth';", style='border-radius: 15px;border: none;padding: 10px;padding-left: 30px;padding-right: 30px;' disabled) 
                 | SWEEP ETH 
                 i.fas.fa-angle-double-down
+          .divider(style='border-top:1px solid #111;')
+          p
+            h1(style='margin-top: 0px !important;font-size:50px !important;color: #a1a1a1;') ELECTRUM SERVERS
+          .divider(style='border-top:1px solid #111;')
+          br
+          p(style='color: #999;') DO NOT edit these default Electrum servers unless you know what you are doing!
+          p(style='color: #999;') UTXO Based Blockchains require ElectrumX servers to broadcast transactions and fetch balance information.
+          p
+            form.form-horizontal(action='/update-electrumx', method='POST')
+              br
+              input(type='hidden' name='_csrf' value=csrftoken)
+              .row
+                .col-md-4
+                  h3 Denarius Electrums
+                  each electrum, index in delectrum
+                    p
+                      input.blackinput4(name='DELECTRUM'+index, value=electrum, selected=electrum==electrum.selected, label=electrum.label, style='text-align:center;width:80%; padding:10px; border-radius:10px; outline: none; border: 1px solid #444;')
+                .col-md-2
+                  h3 Status
+                  each online in donlinearray 
+                    if (online == true)
+                      p(style='padding:11px;border-radius:15px;background-color:#222;')
+                        i.fa.fa-circle(style='color:green;')
+                        span(style='color:green;')  ONLINE
+                    else
+                      p(style='padding:11px;border-radius:15px;background-color:#222;')
+                        i.fa.fa-circle(style='color:red;')
+                        span(style='color:red;')  OFFLINE
+                .col-md-4
+                  h3 Bitcoin Electrums
+                  each electrum, index in belectrum
+                    p
+                      input.blackinput4(name='BELECTRUM'+index, value=electrum, selected=electrum==electrum.selected, label=electrum.label, style='text-align:center;width:80%; padding:10px; border-radius:10px; outline: none; border: 1px solid #444;')
+                .col-md-2
+                  h3 Status
+                  each online in bonlinearray 
+                    if (online == true)
+                      p(style='padding:11px;border-radius:15px;background-color:#222;')
+                        i.fa.fa-circle(style='color:green;')
+                        span(style='color:green;')  ONLINE
+                    else
+                      p(style='padding:11px;border-radius:15px;background-color:#222;')
+                        i.fa.fa-circle(style='color:red;')
+                        span(style='color:red;')  OFFLINE
+              button.kbtn.orange(type="submit") 
+                i.fas.fa-save 
+                |  Update Electrums
+          p
+            br
           .divider(style='border-top:1px solid #111;')
           p
             h1(style='margin-top: 0px !important;font-size:50px !important;color: #a1a1a1;') KRONOS 2FA
@@ -70,7 +119,7 @@ block content
             br
           .divider(style='border-top:1px solid #111;')
           p
-            h1(style='margin-top: 0px !important;font-size:50px !important;color: #a1a1a1;') KRONOS U2F DEVICES
+            h1(style='margin-top: 0px !important;font-size:50px !important;color: #a1a1a1;') KRONOS YUBIKEYS
           .divider(style='border-top:1px solid #111;')
           p
             br
@@ -88,12 +137,12 @@ block content
                       button.kbtn.red.removedevice(style='margin-top: 15px !important;text-shadow: 0px 1px 0px #565656; padding: 5px !important; padding-top: 0px !important; padding-bottom: 0px !important;', onclick='removeDevice("'+u2f.id+'", "'+u2f.name+'")') X
               button.kbtn.orange(onclick="location.href='/u2f';") 
                 i.fas.fa-plus 
-                |  Add a U2F Device
+                |  Add a Yubikey
             else
-              h2 No U2F Devices Added.
+              h2 No Yubikey Added.
               button.kbtn.orange(onclick="location.href='/u2f';") 
                 i.fas.fa-plus 
-                |  Add a U2F Device
+                |  Add a Yubikey
           .divider(style='border-top:1px solid #111;margin-top:333px !important;')
           p
             h1(style='margin-top: 0px !important;font-size:50px !important;color: #a1a1a1;') CREDITS

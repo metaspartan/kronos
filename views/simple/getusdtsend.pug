@@ -50,7 +50,7 @@ block content
     div.rowclass(style='font-weight:400;font-size:14px;padding:30px;background-color:#222;margin:15px;border-radius:15px;', align='center')
       p
         .balancebig(align='center', style='font-size:33px;') Total Balance: 
-          strong #{totalusdtbal} USDT
+          strong#totalusdtbal #{totalusdtbal || 0} USDT
       br
       #SubmitDisplayModal.modal
         .modal-dialog
@@ -116,3 +116,14 @@ block content
             .col-sm-12
               button.kbtn.grey(type='button', id='sendDNR', onclick='clicked()', data-toggle='modal', data-target='#SubmitDisplayModal')
                 |  Send USDT
+    script(src='../js/lib/jquery-3.1.1.min.js')
+    //- script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js")
+    script.
+      var balsource = new EventSource('/balances');
+
+      balsource.addEventListener('message', function(e) {
+          var usdtbal = JSON.parse(e.data).usdtbal;
+
+          $('#totalusdtbal').html(usdtbal+' USDT');
+
+      }, true);
