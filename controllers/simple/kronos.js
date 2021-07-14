@@ -171,15 +171,6 @@ exports.getcoresettings = (req, res) => {
             online7 = true;
         }
 
-        console.log(online0);
-        console.log(online1);
-        console.log(online2);
-        console.log(online3);
-        console.log(online4);
-        console.log(online5);
-        console.log(online6);
-        console.log(online7);
-
         var donlinearray = [online0, online1, online2, online3];
         var bonlinearray = [online4, online5, online6, online7];
 

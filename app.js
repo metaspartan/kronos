@@ -67,7 +67,7 @@ const readline = require('readline')
 
 
 let denariusearray = ['electrumx1.denarius.pro', 'electrumx2.denarius.pro', 'electrumx3.denarius.pro', 'electrumx4.denarius.pro'];
-let bitcoinearray = ['bitcoin.lukechilds.co', 'fortress.qtornado.com', 'hodlers.beer', 'electrum.blockstream.info']; // 'electrumx.erbium.eu', 'alviss.coinjoined.com', 
+let bitcoinearray = ['bitcoin.lukechilds.co', 'alviss.coinjoined.com', 'hodlers.beer', 'electrum.blockstream.info']; // 'electrumx.erbium.eu', 'fortress.qtornado.com', 
 
 let delectrums = Storage.get('delectrums');
 let belectrums = Storage.get('belectrums');
