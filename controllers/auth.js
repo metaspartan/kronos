@@ -67,21 +67,22 @@ if (currentOS === 'linux') {
     }
 
 } else {
-    let SECRET_KEY = process.env.KEY; //keytar.getPasswordSync('Kronos', 'localkey');
+	
+    let KEY = process.env.KEY;
 
     function shahash(key) {
-        key = CryptoJS.SHA256(key, SECRET_KEY);
+        key = CryptoJS.SHA256(key, KEY);
         return key.toString();
     }
 
     function encrypt(data) {
-        data = CryptoJS.AES.encrypt(data, SECRET_KEY);
+        data = CryptoJS.AES.encrypt(data, KEY);
         data = data.toString();
         return data;
     }
 
     function decrypt(data) {
-        data = CryptoJS.AES.decrypt(data, SECRET_KEY);
+        data = CryptoJS.AES.decrypt(data, KEY);
         data = data.toString(CryptoJS.enc.Utf8);
         return data;
     }

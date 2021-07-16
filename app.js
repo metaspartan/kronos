@@ -285,18 +285,26 @@ if (currentOS === 'linux') {
   }
 
 } else {
-  // const randosecret = randomstring.generate(42);
-  // const randosess = randomstring.generate(42);
-  // let keytary = keytar.getPasswordSync('Kronos', 'localkey');
+  // const keytar = require('keytar-sync');
+  const randosecret = randomstring.generate(42);
+  const randosess = randomstring.generate(42);
 
+  // getPassword('Kronos', 'localkey') from promise from keytar and check if value is null and if it is, setPassword()
+  // keytar.getPassword('Kronos', 'localkey').then(function(wkey) {
+  //   console.log(wkey);
+  //   if (wkey === null) {
+  //     keytar.setPasswordSync('Kronos', 'localkey', randosecret);
+  //     keytar.setPasswordSync('Kronos', 'localses', randosess);      
+  //   }
+  // });
   // // console.log('Keytar: ' + keytary);
 
   // if (keytary == null) {
   //   keytar.setPasswordSync('Kronos', 'localkey', randosecret);
   //   keytar.setPasswordSync('Kronos', 'localses', randosess);
   // }
-  const randosecret = randomstring.generate(42);
-  const randosess = randomstring.generate(42);
+  // const randosecret = randomstring.generate(42);
+  // const randosess = randomstring.generate(42);
 
   //console.log(`Kronos Data Directory: ` + getUserHome()+`\\Kronos\\DATA`); 
   
@@ -478,12 +486,22 @@ if (currentOS === 'linux') {
   app.use(sess);
   
   io.use(sharedsession(sess));
-} else {
 
-  const SESSION_SECRET = process.env.SESS_KEY; //process.env.SESSION_SECRET
+} else {
+  // // For Windows and macOS
+  //const keytar = require('keytar');
+
+  // let SEC;
+  // let seckey = keytar.getPassword('Kronos', 'localses');
+
+  // Promise.resolve(seckey).then(function (res) {
+  //   SEC = res;
+  // }).catch(function (err) {
+  //   console.log('Error: ', err);
+  // });
 
   const sess = session({
-    secret: SESSION_SECRET,
+    secret: randomstring.generate(42),
     resave: true,
     saveUninitialized: true,
     unset: 'destroy',

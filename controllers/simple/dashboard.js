@@ -86,22 +86,23 @@ if (currentOS === 'linux') {
         return data;
     }
 
-} else {
-    let SECRET_KEY = process.env.KEY; //keytar.getPasswordSync('Kronos', 'localkey');
+} else {  
+	
+    let KEY = process.env.KEY;
 
     function shahash(key) {
-        key = CryptoJS.SHA256(key, SECRET_KEY);
+        key = CryptoJS.SHA256(key, KEY);
         return key.toString();
     }
 
     function encrypt(data) {
-        data = CryptoJS.AES.encrypt(data, SECRET_KEY);
+        data = CryptoJS.AES.encrypt(data, KEY);
         data = data.toString();
         return data;
     }
 
     function decrypt(data) {
-        data = CryptoJS.AES.decrypt(data, SECRET_KEY);
+        data = CryptoJS.AES.decrypt(data, KEY);
         data = data.toString(CryptoJS.enc.Utf8);
         return data;
     }
@@ -125,98 +126,74 @@ const api = axios.create({
     adapter: cache.adapter,
 });
 
-var mnemonic;
-var ps;
-let seedaddresses = [];
-let store = [];
-
-var passsworddb = Storage.get('password');
-var seedphrasedb = Storage.get('seed');
-
-let ethnetworktype = 'homestead'; //homestead is mainnet, ropsten for testing, choice for UI selection eventually
-
-let provider = ethers.getDefaultProvider(ethnetworktype, {
-    etherscan: 'JMBXKNZRZYDD439WT95P2JYI72827M4HHR',
-    // Or if using a project secret:
-    infura: {
-        projectId: 'f95db0ef78244281a226aad15788b4ae',
-        projectSecret: '6a2d027562de4857a1536774d6e65667',
-    },
-    alchemy: 'W5yjuu3Ade1lsIn3Od8rTqJsYiFJszVY',
-    cloudflare: ''
-});
-
-let provider2 = new ethers.providers.CloudflareProvider();
-
-var decryptedmnemonic = decrypt(seedphrasedb);
-mnemonic = decryptedmnemonic;
-const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); // Generate wallet from our Kronos seed
-let ethwalletp = ethwallet.connect(provider); // Set wallet provider
-
-//Convert our mnemonic seed phrase to BIP39 Seed Buffer 
-const seedc = bip39.mnemonicToSeedSync(mnemonic); //No pass included to keep Coinomi styled seed
-
-// Generate BitClout Pubkey and Privkey from BIP39 Seed
-// By Carsen Klock @carsenk and @kronoswallet
-const cloutkeychain = HDKey.fromMasterSeed(seedc).derive('m/44\'/0\'/0\'/0/0', false);
-const cloutseedhex = cloutkeychain.privateKey.toString('hex');
-
-const ecc = new EC('secp256k1');
-const eckeyfrompriv = ecc.keyFromPrivate(cloutseedhex);
-const prefixc = [0xcd, 0x14, 0x0]; // BC for Clout Pub
-const keyc = eckeyfrompriv.getPublic().encode('array', true);
-const prefixAndKey = Uint8Array.from([...prefixc, ...keyc]);
-const cloutpub = bs58check.encode(prefixAndKey);
-
-Storage.set('cloutaddress', cloutpub);
-
-const Web3 = require('web3');
-
-const web3eth = new Web3('https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'); // ETH
-
-const web3 = new Web3('https://bsc-dataseed1.binance.org:443'); // BSC
-
-const web3ftm = new Web3('https://rpcapi.fantom.network/'); // FTM
-
-const usdtAddress = "0xdAC17F958D2ee523a2206206994597C13D831ec7"; // 0xdAC17F958D2ee523a2206206994597C13D831ec7 USDT (Tether USD ERC20)
-
-const ercAbi = [
-    // Some details about ERC20 ABI
-    "function name() view returns (string)",
-    "function symbol() view returns (string)",
-    "function balanceOf(address) view returns (uint)",
-    "function transfer(address to, uint amount)",
-    "event Transfer(address indexed from, address indexed to, uint amount)"
-];
-
-const usdtContract = new ethers.Contract(usdtAddress, ercAbi, provider);
-
-const busdAddress = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56";
-
-const bepAbi = [
-    // balanceOf
-    {
-      "constant":true,
-      "inputs":[{"name":"_owner","type":"address"}],
-      "name":"balanceOf",
-      "outputs":[{"name":"balance","type":"uint256"}],
-      "type":"function"
-    },
-    // decimals
-    {
-      "constant":true,
-      "inputs":[],
-      "name":"decimals",
-      "outputs":[{"name":"","type":"uint8"}],
-      "type":"function"
-    }
-];
-
-const busdContract = new web3.eth.Contract(bepAbi, busdAddress);
+// var mnemonic;
+// var ps;
+// let seedaddresses = [];
+// let store = [];
 
 // Event Streaming for Frontend Dynamic Data Kronos Wallet by Carsen Klock @carsenk
 // Event Stream for New Block of all Wallets
 exports.getnewblock = function (req, res) {
+
+    let ethnetworktype = 'homestead'; //homestead is mainnet, ropsten for testing, choice for UI selection eventually
+
+    let provider = ethers.getDefaultProvider(ethnetworktype, {
+        etherscan: 'JMBXKNZRZYDD439WT95P2JYI72827M4HHR',
+        // Or if using a project secret:
+        infura: {
+            projectId: 'f95db0ef78244281a226aad15788b4ae',
+            projectSecret: '6a2d027562de4857a1536774d6e65667',
+        },
+        alchemy: 'W5yjuu3Ade1lsIn3Od8rTqJsYiFJszVY',
+        cloudflare: ''
+    });
+
+    let provider2 = new ethers.providers.CloudflareProvider();
+
+    const Web3 = require('web3');
+
+    const web3eth = new Web3('https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'); // ETH
+
+    const web3 = new Web3('https://bsc-dataseed1.binance.org:443'); // BSC
+
+    const web3ftm = new Web3('https://rpcapi.fantom.network/'); // FTM
+
+    const usdtAddress = "0xdAC17F958D2ee523a2206206994597C13D831ec7"; // 0xdAC17F958D2ee523a2206206994597C13D831ec7 USDT (Tether USD ERC20)
+
+    const ercAbi = [
+        // Some details about ERC20 ABI
+        "function name() view returns (string)",
+        "function symbol() view returns (string)",
+        "function balanceOf(address) view returns (uint)",
+        "function transfer(address to, uint amount)",
+        "event Transfer(address indexed from, address indexed to, uint amount)"
+    ];
+
+    const usdtContract = new ethers.Contract(usdtAddress, ercAbi, provider);
+
+    const busdAddress = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56";
+
+    const bepAbi = [
+        // balanceOf
+        {
+        "constant":true,
+        "inputs":[{"name":"_owner","type":"address"}],
+        "name":"balanceOf",
+        "outputs":[{"name":"balance","type":"uint256"}],
+        "type":"function"
+        },
+        // decimals
+        {
+        "constant":true,
+        "inputs":[],
+        "name":"decimals",
+        "outputs":[{"name":"","type":"uint8"}],
+        "type":"function"
+        }
+    ];
+
+    const busdContract = new web3.eth.Contract(bepAbi, busdAddress);
+
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
@@ -345,6 +322,95 @@ exports.getnewblock = function (req, res) {
 
 // Event Stream for Balances of all Wallets
 exports.getbalance = function (req, res) {
+
+    var mnemonic;
+    var ps;
+    let seedaddresses = [];
+    let store = [];
+    
+    var passsworddb = Storage.get('password');
+    var seedphrasedb = Storage.get('seed');
+    
+    let ethnetworktype = 'homestead'; //homestead is mainnet, ropsten for testing, choice for UI selection eventually
+    
+    let provider = ethers.getDefaultProvider(ethnetworktype, {
+        etherscan: 'JMBXKNZRZYDD439WT95P2JYI72827M4HHR',
+        // Or if using a project secret:
+        infura: {
+            projectId: 'f95db0ef78244281a226aad15788b4ae',
+            projectSecret: '6a2d027562de4857a1536774d6e65667',
+        },
+        alchemy: 'W5yjuu3Ade1lsIn3Od8rTqJsYiFJszVY',
+        cloudflare: ''
+    });
+    
+    let provider2 = new ethers.providers.CloudflareProvider();
+    
+    var decryptedmnemonic = decrypt(seedphrasedb);
+    mnemonic = decryptedmnemonic;
+    const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); // Generate wallet from our Kronos seed
+    let ethwalletp = ethwallet.connect(provider); // Set wallet provider
+    
+    //Convert our mnemonic seed phrase to BIP39 Seed Buffer 
+    const seedc = bip39.mnemonicToSeedSync(mnemonic); //No pass included to keep Coinomi styled seed
+    
+    // Generate BitClout Pubkey and Privkey from BIP39 Seed
+    // By Carsen Klock @carsenk and @kronoswallet
+    const cloutkeychain = HDKey.fromMasterSeed(seedc).derive('m/44\'/0\'/0\'/0/0', false);
+    const cloutseedhex = cloutkeychain.privateKey.toString('hex');
+    
+    const ecc = new EC('secp256k1');
+    const eckeyfrompriv = ecc.keyFromPrivate(cloutseedhex);
+    const prefixc = [0xcd, 0x14, 0x0]; // BC for Clout Pub
+    const keyc = eckeyfrompriv.getPublic().encode('array', true);
+    const prefixAndKey = Uint8Array.from([...prefixc, ...keyc]);
+    const cloutpub = bs58check.encode(prefixAndKey);
+    
+    Storage.set('cloutaddress', cloutpub);
+
+    const Web3 = require('web3');
+
+    const web3eth = new Web3('https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'); // ETH
+
+    const web3 = new Web3('https://bsc-dataseed1.binance.org:443'); // BSC
+
+    const web3ftm = new Web3('https://rpcapi.fantom.network/'); // FTM
+
+    const usdtAddress = "0xdAC17F958D2ee523a2206206994597C13D831ec7"; // 0xdAC17F958D2ee523a2206206994597C13D831ec7 USDT (Tether USD ERC20)
+
+    const ercAbi = [
+        // Some details about ERC20 ABI
+        "function name() view returns (string)",
+        "function symbol() view returns (string)",
+        "function balanceOf(address) view returns (uint)",
+        "function transfer(address to, uint amount)",
+        "event Transfer(address indexed from, address indexed to, uint amount)"
+    ];
+
+    const usdtContract = new ethers.Contract(usdtAddress, ercAbi, provider);
+
+    const busdAddress = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56";
+
+    const bepAbi = [
+        // balanceOf
+        {
+        "constant":true,
+        "inputs":[{"name":"_owner","type":"address"}],
+        "name":"balanceOf",
+        "outputs":[{"name":"balance","type":"uint256"}],
+        "type":"function"
+        },
+        // decimals
+        {
+        "constant":true,
+        "inputs":[],
+        "name":"decimals",
+        "outputs":[{"name":"","type":"uint8"}],
+        "type":"function"
+        }
+    ];
+
+    const busdContract = new web3.eth.Contract(bepAbi, busdAddress);
 
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
@@ -644,6 +710,95 @@ exports.simpleindex = (req, res) => {
     let ethereumarray = [];
     let promises = [];
     let promises2 = [];
+
+    var mnemonic;
+    var ps;
+    let seedaddresses = [];
+    let store = [];
+    
+    var passsworddb = Storage.get('password');
+    var seedphrasedb = Storage.get('seed');
+    
+    let ethnetworktype = 'homestead'; //homestead is mainnet, ropsten for testing, choice for UI selection eventually
+    
+    let provider = ethers.getDefaultProvider(ethnetworktype, {
+        etherscan: 'JMBXKNZRZYDD439WT95P2JYI72827M4HHR',
+        // Or if using a project secret:
+        infura: {
+            projectId: 'f95db0ef78244281a226aad15788b4ae',
+            projectSecret: '6a2d027562de4857a1536774d6e65667',
+        },
+        alchemy: 'W5yjuu3Ade1lsIn3Od8rTqJsYiFJszVY',
+        cloudflare: ''
+    });
+    
+    let provider2 = new ethers.providers.CloudflareProvider();
+    
+    var decryptedmnemonic = decrypt(seedphrasedb);
+    mnemonic = decryptedmnemonic;
+    const ethwallet = ethers.Wallet.fromMnemonic(mnemonic); // Generate wallet from our Kronos seed
+    let ethwalletp = ethwallet.connect(provider); // Set wallet provider
+    
+    //Convert our mnemonic seed phrase to BIP39 Seed Buffer 
+    const seedc = bip39.mnemonicToSeedSync(mnemonic); //No pass included to keep Coinomi styled seed
+    
+    // Generate BitClout Pubkey and Privkey from BIP39 Seed
+    // By Carsen Klock @carsenk and @kronoswallet
+    const cloutkeychain = HDKey.fromMasterSeed(seedc).derive('m/44\'/0\'/0\'/0/0', false);
+    const cloutseedhex = cloutkeychain.privateKey.toString('hex');
+    
+    const ecc = new EC('secp256k1');
+    const eckeyfrompriv = ecc.keyFromPrivate(cloutseedhex);
+    const prefixc = [0xcd, 0x14, 0x0]; // BC for Clout Pub
+    const keyc = eckeyfrompriv.getPublic().encode('array', true);
+    const prefixAndKey = Uint8Array.from([...prefixc, ...keyc]);
+    const cloutpub = bs58check.encode(prefixAndKey);
+    
+    Storage.set('cloutaddress', cloutpub);
+
+    const Web3 = require('web3');
+
+    const web3eth = new Web3('https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'); // ETH
+
+    const web3 = new Web3('https://bsc-dataseed1.binance.org:443'); // BSC
+
+    const web3ftm = new Web3('https://rpcapi.fantom.network/'); // FTM
+
+    const usdtAddress = "0xdAC17F958D2ee523a2206206994597C13D831ec7"; // 0xdAC17F958D2ee523a2206206994597C13D831ec7 USDT (Tether USD ERC20)
+
+    const ercAbi = [
+        // Some details about ERC20 ABI
+        "function name() view returns (string)",
+        "function symbol() view returns (string)",
+        "function balanceOf(address) view returns (uint)",
+        "function transfer(address to, uint amount)",
+        "event Transfer(address indexed from, address indexed to, uint amount)"
+    ];
+
+    const usdtContract = new ethers.Contract(usdtAddress, ercAbi, provider);
+
+    const busdAddress = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56";
+
+    const bepAbi = [
+        // balanceOf
+        {
+        "constant":true,
+        "inputs":[{"name":"_owner","type":"address"}],
+        "name":"balanceOf",
+        "outputs":[{"name":"balance","type":"uint256"}],
+        "type":"function"
+        },
+        // decimals
+        {
+        "constant":true,
+        "inputs":[],
+        "name":"decimals",
+        "outputs":[{"name":"","type":"uint8"}],
+        "type":"function"
+        }
+    ];
+
+    const busdContract = new web3.eth.Contract(bepAbi, busdAddress);
 
     var decryptedpass = decrypt(passsworddb);
     ps = decryptedpass;
