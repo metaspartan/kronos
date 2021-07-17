@@ -1,14 +1,13 @@
-FROM node:12-slim
+FROM node:12 as builder
+WORKDIR /app
+RUN git clone https://github.com/carsenk/kronos.git
+RUN cd kronos && \
+    npm install
 
-COPY . /starter
-COPY package.json /starter/package.json
-COPY .env /starter/.env
+FROM node:12
 
-WORKDIR /starter
-
-ENV NODE_ENV production
-RUN npm install --production
-
-CMD ["npm","start"]
+COPY --from=builder /app/kronos /
 
 EXPOSE 3000
+
+CMD [ "npm", "run", "headless" ]
