@@ -127,7 +127,7 @@
     "bufferutil": "^4.0.2",
     "chai": "^4.2.0",
     "chrome-ext-downloader": "^1.0.4",
-    "electron": "^10.4.7",
+    "electron": ">=11.5.0",
     "electron-builder": "22.10.5",
     "electron-builder-squirrel-windows": "^22.11.8",
     "electron-prebuilt-compile": "8.2.0",
