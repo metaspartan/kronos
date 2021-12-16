@@ -3,23 +3,23 @@
 Official Website: https://kronoswallet.com
 
 
-Official BitClout (CLOUT) @kronoswallet https://bitclout.com/u/kronoswallet by https://bitclout.com/u/carsenk
+Official BitClout (CLOUT) @kronoswallet https://bitclout.com/u/kronoswallet
 
 #### A Dashboard Interface and Wallet for Denarius (D), Bitcoin (BTC), Ethereum (ETH), Binance Smart Chain (BSC), BitClout (CLOUT) and Fantom Opera (FTM) written in NodeJS and Electron
 =======================
 
 ![Kronos Wallet](https://user-images.githubusercontent.com/10162347/125235791-3e221d80-e2a0-11eb-9270-196b7afd9630.gif)
 
-[![GitHub version](https://img.shields.io/github/release/carsenk/kronos.svg)](https://badge.fury.io/gh/carsenk%2Fkronos)
-[![Build Status](https://travis-ci.org/carsenk/kronos.svg?branch=master)](https://travis-ci.org/carsenk/kronos) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/carsenk/kronos) [![Dependency Status](https://david-dm.org/carsenk/kronos/status.svg?style=flat)](https://david-dm.org/carsenk/kronos) [![devDependencies Status](https://david-dm.org/carsenk/kronos/dev-status.svg)](https://david-dm.org/carsenk/kronos?type=dev) [![Join the chat at https://discord.gg/UPpQy3n](https://img.shields.io/badge/Discord-Chat-blue.svg?logo=discord)](https://discord.gg/UPpQy3n)
+[![GitHub version](https://img.shields.io/github/release/metaspartan/kronos.svg)](https://badge.fury.io/gh/metaspartan%2Fkronos)
+[![Build Status](https://travis-ci.org/metaspartan/kronos.svg?branch=master)](https://travis-ci.org/metaspartan/kronos) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/metaspartan/kronos) [![Dependency Status](https://david-dm.org/metaspartan/kronos/status.svg?style=flat)](https://david-dm.org/metaspartan/kronos) [![devDependencies Status](https://david-dm.org/carsenk/kronos/dev-status.svg)](https://david-dm.org/metaspartan/kronos?type=dev) [![Join the chat at https://discord.gg/UPpQy3n](https://img.shields.io/badge/Discord-Chat-blue.svg?logo=discord)](https://discord.gg/UPpQy3n)
 
 [![Open in VS Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/carsenk/kronos)
 
 [![Kronos downloads](https://img.shields.io/github/downloads/carsenk/kronos/total.svg)](https://github.com/carsenk/kronos/releases)
 <a href="https://discord.gg/UPpQy3n"><img src="https://discordapp.com/api/guilds/334361453320732673/embed.png" alt="Discord server" /></a>
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/carsenk/kronos.svg) ![GitHub repo size in bytes](https://img.shields.io/github/repo-size/carsenk/kronos.svg)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/metaspartan/kronos.svg) ![GitHub repo size in bytes](https://img.shields.io/github/repo-size/metaspartan/kronos.svg)
 
-[![Build history](https://buildstats.info/travisci/chart/carsenk/kronos?branch=master)](https://travis-ci.org/carsenk/kronos?branch=master)
+[![Build history](https://buildstats.info/travisci/chart/metaspartan/kronos?branch=master)](https://travis-ci.org/metaspartan/kronos?branch=master)
 
 This is a massive project with active development in progress and this repo will be updated in time, be warned, things can break and always always backup backup backup!
 
@@ -115,12 +115,12 @@ As of v2.0.3 Beta of Kronos it now fully supports CLOUT profiles, allowing profi
 Prerequisites
 -------------
 
-- [denariusd](https://github.com/carsenk/denarius)
+- [denariusd](https://github.com/metaspartan/denarius)
 - [Node.js 12+](http://nodejs.org)
 
 Getting Started
 ---------------
-[GET STARTED USING KRONOS](https://github.com/carsenk/kronos/blob/master/GETTING-STARTED.md)
+[GET STARTED USING KRONOS](https://github.com/metaspartan/kronos/blob/master/GETTING-STARTED.md)
 
 
 License
@@ -128,7 +128,7 @@ License
 
 The MIT License (MIT)
 
-Copyright (c) 2020-2021 Carsen Klock
+Copyright (c) 2020-2021 Kronos
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
