@@ -128,10 +128,10 @@
     "chai": "^4.2.0",
     "chrome-ext-downloader": "^1.0.4",
     "electron": ">=11.5.0",
-    "electron-builder": "22.10.5",
-    "electron-builder-squirrel-windows": "^22.11.8",
+    "electron-builder": "22.14.5",
+    "electron-builder-squirrel-windows": "^22.14.10",
     "electron-prebuilt-compile": "8.2.0",
-    "electron-rebuild": "^2.3.5",
+    "electron-rebuild": "^3.2.5",
     "mocha": "^8.4.0",
     "utf-8-validate": "^5.0.5"
   },
