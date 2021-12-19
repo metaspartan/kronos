@@ -1,6 +1,6 @@
 {
   "name": "kronos",
-  "version": "2.0.6-Beta",
+  "version": "2.0.7-Beta",
   "description": "A Dashboard Interface and Wallet for Denarius (D) with support for BTC, ETH, BSC, USDT, BUSD, CLOUT and FTM built with NodeJS and Electron",
   "repository": {
     "type": "git",
@@ -62,7 +62,7 @@
     "electron-log": "^4.4.3",
     "electron-open-link-in-browser": "^1.0.2",
     "electron-updater": "^4.3.9",
-    "electrum-cash": "^2.0.7",
+    "electrum-cash": "^2.0.6",
     "elliptic": "^6.5.4",
     "errorhandler": "^1.5.1",
     "esm": "^3.2.25",
