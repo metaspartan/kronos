@@ -116,7 +116,7 @@
     "wallet-address-validator": "git://github.com/metaspartan/wallet-address-validator.git",
     "wallet-address-validatord": "git://github.com/metaspartan/wallet-address-validator.git",
     "web3": "^1.6.1",
-    "yubikey-client": "^0.2.5"
+    "yubikey-client": "git://github.com/metaspartan/yubikey-client.git"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.57",
