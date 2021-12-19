@@ -3,7 +3,7 @@
 **************************************
 **************************************
 * Kronos Core Mode Dashboard Controller
-* Copyright (c) 2020-2021 Carsen Klock
+* Copyright (c) 2020-2021 MetaSpartan
 **************************************
 **************************************
 **************************************
@@ -131,7 +131,7 @@ const api = axios.create({
 // let seedaddresses = [];
 // let store = [];
 
-// Event Streaming for Frontend Dynamic Data Kronos Wallet by Carsen Klock @carsenk
+// Event Streaming for Frontend Dynamic Data Kronos Wallet by MetaSpartan @metaspartan
 // Event Stream for New Block of all Wallets
 exports.getnewblock = function (req, res) {
 
@@ -355,7 +355,7 @@ exports.getbalance = function (req, res) {
     const seedc = bip39.mnemonicToSeedSync(mnemonic); //No pass included to keep Coinomi styled seed
     
     // Generate BitClout Pubkey and Privkey from BIP39 Seed
-    // By Carsen Klock @carsenk and @kronoswallet
+    // By MetaSpartan @metaspartan and @kronoswallet
     const cloutkeychain = HDKey.fromMasterSeed(seedc).derive('m/44\'/0\'/0\'/0/0', false);
     const cloutseedhex = cloutkeychain.privateKey.toString('hex');
     
@@ -743,7 +743,7 @@ exports.simpleindex = (req, res) => {
     const seedc = bip39.mnemonicToSeedSync(mnemonic); //No pass included to keep Coinomi styled seed
     
     // Generate BitClout Pubkey and Privkey from BIP39 Seed
-    // By Carsen Klock @carsenk and @kronoswallet
+    // By MetaSpartan @metaspartan and @kronoswallet
     const cloutkeychain = HDKey.fromMasterSeed(seedc).derive('m/44\'/0\'/0\'/0/0', false);
     const cloutseedhex = cloutkeychain.privateKey.toString('hex');
     

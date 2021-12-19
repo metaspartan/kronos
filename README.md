@@ -11,11 +11,11 @@ Official BitClout (CLOUT) @kronoswallet https://bitclout.com/u/kronoswallet
 ![Kronos Wallet](https://user-images.githubusercontent.com/10162347/125235791-3e221d80-e2a0-11eb-9270-196b7afd9630.gif)
 
 [![GitHub version](https://img.shields.io/github/release/metaspartan/kronos.svg)](https://badge.fury.io/gh/metaspartan%2Fkronos)
-[![Build Status](https://travis-ci.org/metaspartan/kronos.svg?branch=master)](https://travis-ci.org/metaspartan/kronos) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/metaspartan/kronos) [![Dependency Status](https://david-dm.org/metaspartan/kronos/status.svg?style=flat)](https://david-dm.org/metaspartan/kronos) [![devDependencies Status](https://david-dm.org/carsenk/kronos/dev-status.svg)](https://david-dm.org/metaspartan/kronos?type=dev) [![Join the chat at https://discord.gg/UPpQy3n](https://img.shields.io/badge/Discord-Chat-blue.svg?logo=discord)](https://discord.gg/UPpQy3n)
+[![Build Status](https://travis-ci.org/metaspartan/kronos.svg?branch=master)](https://travis-ci.org/metaspartan/kronos) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/metaspartan/kronos) [![Dependency Status](https://david-dm.org/metaspartan/kronos/status.svg?style=flat)](https://david-dm.org/metaspartan/kronos) [![devDependencies Status](https://david-dm.org/metaspartan/kronos/dev-status.svg)](https://david-dm.org/metaspartan/kronos?type=dev) [![Join the chat at https://discord.gg/UPpQy3n](https://img.shields.io/badge/Discord-Chat-blue.svg?logo=discord)](https://discord.gg/UPpQy3n)
 
-[![Open in VS Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/carsenk/kronos)
+[![Open in VS Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/metaspartan/kronos)
 
-[![Kronos downloads](https://img.shields.io/github/downloads/carsenk/kronos/total.svg)](https://github.com/carsenk/kronos/releases)
+[![Kronos downloads](https://img.shields.io/github/downloads/metaspartan/kronos/total.svg)](https://github.com/metaspartan/kronos/releases)
 <a href="https://discord.gg/UPpQy3n"><img src="https://discordapp.com/api/guilds/334361453320732673/embed.png" alt="Discord server" /></a>
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/metaspartan/kronos.svg) ![GitHub repo size in bytes](https://img.shields.io/github/repo-size/metaspartan/kronos.svg)
 
@@ -33,7 +33,7 @@ This was built for the Raspberry Pi in mind and one with at least 2GB of RAM. 4G
 
 Running the Kronos headless installer script below installs denarius via snap install and then modifies your .env in Kronos and denarius.conf to a random rpcuser and rpcpass, Kronos will then be running on your LAN (192.168.x.x:3000) on port 3000.
 
-# [GET STARTED USING KRONOS](https://github.com/carsenk/kronos/blob/master/GETTING-STARTED.md)
+# [GET STARTED USING KRONOS](https://github.com/metaspartan/kronos/blob/master/GETTING-STARTED.md)
 
 Recommended Devices and OS
 -----------------

@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Carsen Klock
+// Copyright (c) 2020 MetaSpartan
 // Kronos LevelDB Data Store using Level
 const level = require('level');
   

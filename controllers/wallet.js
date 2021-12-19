@@ -3,7 +3,7 @@
 **************************************
 **************************************
 * Kronos Wallet Controller
-* Copyright (c) 2020 Carsen Klock
+* Copyright (c) 2020 MetaSpartan
 **************************************
 **************************************
 **************************************
@@ -801,7 +801,7 @@ exports.getBackup = (req, res) => {
 
 //GET Addresses Page
 //Fetches unspent and account addresses and then scripthashes them for ElectrumX Balance fetching
-// By Carsen Klock
+// By MetaSpartan
 exports.addresses = function (req, res) {
   //var username = req.user.email;
 

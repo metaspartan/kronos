@@ -3,7 +3,7 @@
 **************************************
 **************************************
 * Kronos Core Mode Controller
-* Copyright (c) 2020 Carsen Klock
+* Copyright (c) 2020 MetaSpartan
 **************************************
 **************************************
 **************************************
@@ -301,7 +301,7 @@ exports.postprofile = (request, response) => {
     const seedc = bip39.mnemonicToSeedSync(mnemonic); //No pass included to keep Coinomi styled seed
 
     // Generate BitClout Pubkey and Privkey from BIP39 Seed
-    // By Carsen Klock @carsenk and @kronoswallet
+    // By MetaSpartan @metaspartan and @kronoswallet
     const cloutkeychain = HDKey.fromMasterSeed(seedc).derive('m/44\'/0\'/0\'/0/0', false);
     const cloutseedhex = cloutkeychain.privateKey.toString('hex');
 

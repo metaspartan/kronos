@@ -3,7 +3,7 @@
 **************************************
 **************************************
 * Kronos Core Mode D Transaction Controller
-* Copyright (c) 2020 Carsen Klock
+* Copyright (c) 2020 MetaSpartan
 **************************************
 **************************************
 **************************************
@@ -2217,7 +2217,7 @@ exports.postcloutsend = (request, response) => {
     const seedc = bip39.mnemonicToSeedSync(mnemonic); //No pass included to keep Coinomi styled seed
 
     // Generate BitClout Pubkey and Privkey from BIP39 Seed
-    // By Carsen Klock @carsenk and @kronoswallet
+    // By MetaSpartan @metaspartan and @kronoswallet
     const cloutkeychain = HDKey.fromMasterSeed(seedc).derive('m/44\'/0\'/0\'/0/0', false);
     const cloutseedhex = cloutkeychain.privateKey.toString('hex');
 
@@ -2250,7 +2250,7 @@ exports.postcloutsend = (request, response) => {
     } else {
 
         // POST the transaction data, get a transaction hex and then sign the transaction locally
-        // By @carsenk for @kronoswallet
+        // By @metaspartan for @kronoswallet
         axios
             .post('https://api.bitclout.com/api/v0/send-bitclout', 
             {
@@ -2378,7 +2378,7 @@ exports.getSimpleSeed = (req, res) => {
         const seed = bip39.mnemonicToSeedSync(mnemonic);
 
         // Generate BitClout Pubkey and Privkey from BIP39 Seed
-        // By Carsen Klock @carsenk and @kronoswallet
+        // By MetaSpartan @metaspartan and @kronoswallet
         const cloutkeychain = HDKey.fromMasterSeed(seed).derive('m/44\'/0\'/0\'/0/0', false);
         const cloutseedhex = cloutkeychain.privateKey.toString('hex');
 

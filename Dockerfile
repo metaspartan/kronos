@@ -1,6 +1,6 @@
 FROM node:12 as builder
 WORKDIR /app
-RUN git clone https://github.com/carsenk/kronos.git
+RUN git clone https://github.com/metaspartan/kronos.git
 RUN cd kronos && \
     npm install
 

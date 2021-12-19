@@ -1,9 +1,9 @@
 # Kronos - Snapcraft Build - Known to build in most Ubuntu versions
 # https://kronoswallet.org
-# https://github.com/carsenk/kronos
-# By Carsen Klock
+# https://github.com/metaspartan/kronos
+# By MetaSpartan
 name: kronos
-version: '2.0.5'
+version: '2.0.6'
 summary: Kronos
 description: |
   A Dashboard Interface and Wallet for Denarius (D), Ethereum (ETH), and Denarii (ARI) built with NodeJS and Electron
@@ -51,7 +51,7 @@ apps:
  
 parts:
   headless:
-    source: https://github.com/carsenk/kronos.git
+    source: https://github.com/metaspartan/kronos.git
     source-type: git
     source-tag: master
     plugin: nodejs
@@ -71,7 +71,7 @@ parts:
       - curl
       - build-essential
   kronos:
-    source: https://github.com/carsenk/kronos.git
+    source: https://github.com/metaspartan/kronos.git
     source-type: git
     source-tag: master
     plugin: nodejs

@@ -1,12 +1,12 @@
 {
   "name": "kronos",
-  "version": "2.0.5-Beta",
+  "version": "2.0.6-Beta",
   "description": "A Dashboard Interface and Wallet for Denarius (D) with support for BTC, ETH, BSC, USDT, BUSD, CLOUT and FTM built with NodeJS and Electron",
   "repository": {
     "type": "git",
-    "url": "https://github.com/carsenk/kronos.git"
+    "url": "https://github.com/metaspartan/kronos.git"
   },
-  "author": "Carsen Klock",
+  "author": "MetaSpartan",
   "license": "MIT",
   "main": "src/main.js",
   "scripts": {
@@ -33,12 +33,12 @@
     "axios": "^0.21.1",
     "axios-cache-adapter": "^2.7.3",
     "bip32": "^2.0.6",
-    "bip32d": "git://github.com/carsenk/bip32d.git",
+    "bip32d": "git://github.com/metaspartan/bip32d.git",
     "bip39": "^3.0.4",
-    "bitcoin": "git://github.com/carsenk/node-bitcoin.git",
-    "bitcoinjs-d-lib": "git://github.com/carsenk/bitcoinjs-lib-pos.git",
+    "bitcoin": "git://github.com/metaspartan/node-bitcoin.git",
+    "bitcoinjs-d-lib": "git://github.com/metaspartan/bitcoinjs-lib-pos.git",
     "bitcoinjs-lib": "^5.2.0",
-    "bitcoinjs-lib-pos": "git://github.com/carsenk/bitcoinjs-lib-pos.git",
+    "bitcoinjs-lib-pos": "git://github.com/metaspartan/bitcoinjs-lib-pos.git",
     "bluebird": "^3.7.2",
     "body-parser": "^1.19.0",
     "bs58": "^4.0.1",
@@ -52,8 +52,8 @@
     "csurf": "^1.11.0",
     "custom-electron-titlebar": "^3.2.7",
     "dat-swarm-defaults": "^1.0.2",
-    "denariusjs": "git://github.com/carsenk/denariusjs-lib.git",
-    "denariusjs-lib": "git://github.com/carsenk/denariusjs-lib.git",
+    "denariusjs": "git://github.com/metaspartan/denariusjs-lib.git",
+    "denariusjs-lib": "git://github.com/metaspartan/denariusjs-lib.git",
     "discovery-swarm": "^6.1.0",
     "dotenv": "^8.6.0",
     "electron-compile": "6.4.4",
@@ -72,7 +72,7 @@
     "express-rate-limit": "^5.3.0",
     "express-session": "^1.17.2",
     "express-socket.io-session": "^1.3.5",
-    "express-status-monitor": "git://github.com/carsenk/express-status-monitor.git",
+    "express-status-monitor": "git://github.com/metaspartan/express-status-monitor.git",
     "express-toastr": "^2.0.2",
     "fs": "0.0.1-security",
     "get-port": "^5.1.1",
@@ -82,7 +82,7 @@
     "ip": "^1.1.5",
     "is-port-reachable": "^3.0.0",
     "jquery": "^3.5.1",
-    "json-storage-fs": "git://github.com/carsenk/json-storage-fs.git",
+    "json-storage-fs": "git://github.com/metaspartan/json-storage-fs.git",
     "keymaster": "^1.6.2",
     "level": "^7.0.0",
     "lob": "^6.2.0",
@@ -113,8 +113,8 @@
     "tribus-hashjs": "^1.0.3",
     "unirest": "^0.6.0",
     "validator": "^13.1.1",
-    "wallet-address-validator": "git://github.com/carsenk/wallet-address-validator.git",
-    "wallet-address-validatord": "git://github.com/carsenk/wallet-address-validator.git",
+    "wallet-address-validator": "git://github.com/metaspartan/wallet-address-validator.git",
+    "wallet-address-validatord": "git://github.com/metaspartan/wallet-address-validator.git",
     "web3": "^1.4.0",
     "yubikey-client": "^0.2.5"
   },
@@ -136,7 +136,7 @@
     "utf-8-validate": "^5.0.5"
   },
   "build": {
-    "appId": "com.carsenk.kronos",
+    "appId": "com.metaspartan.kronos",
     "productName": "Kronos",
     "files": [
       "dist/src/**/*",
@@ -219,16 +219,16 @@
           "name": "@electron-forge/publisher-github",
           "config": {
             "prerelease": false,
-            "repo": "carsenk/kronos",
+            "repo": "metaspartan/kronos",
             "repository": {
-              "owner": "carsenk",
+              "owner": "metaspartan",
               "name": "kronos"
             }
           }
         }
       ],
       "github_repository": {
-        "owner": "carsenk",
+        "owner": "metaspartan",
         "name": "kronos"
       },
       "makers": [

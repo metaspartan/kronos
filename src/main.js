@@ -12,7 +12,7 @@ const { shell, session, Menu, protocol, nativeTheme, ipcMain} = require('electro
 
 const contextMenu = require('electron-context-menu');
 
-app.setAppUserModelId("com.carsenk.kronos");
+app.setAppUserModelId("com.metaspartan.kronos");
 app.setAsDefaultProtocolClient('Kronos');
 
 const log = require('electron-log');
@@ -27,7 +27,7 @@ const autoUpdater = updater.autoUpdater;
 // const feed = `${server}/OWNER/REPO/${process.platform}-${process.arch}/${app.getVersion()}`;
 
 // autoUpdater.setFeedURL(feed);
-// //https://github.com/carsenk/kronos/releases/download/v1.7.2-Beta/Kronos-Setup-1.7.2-Beta.exe
+// //https://github.com/metaspartan/kronos/releases/download/v1.7.2-Beta/Kronos-Setup-1.7.2-Beta.exe
 
 // autoUpdater.setFeedURL({ urlF });
 

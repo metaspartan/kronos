@@ -2,7 +2,7 @@
  * 
  * 
  * 
- * Kronos by Carsen Klock 2020, Main app.js
+ * Kronos by MetaSpartan 2020, Main app.js
  * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * * KRONOS - DECENTRALIZED APPLICATION AND LAN SERVER
  * * * * * * * * * * * * * * * * * * * * * * * * * * * *

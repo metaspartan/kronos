@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION='v2.0.5-Beta'
+VERSION='v2.0.6-Beta'
 
 TEMP=/tmp/answer$$
 whiptail --title "Kronos ${VERSION} for Denarius"  --menu  "Installer for Kronos Secondary Layer :" 20 0 0 1 "Install Kronos w/ Denarius Config" 2 "Install Kronos w/ Denarius Config & Chaindata" 3 "Update & Upgrade Kronos ${VERSION}" 2>$TEMP
@@ -19,7 +19,7 @@ NC='\033[0m' # No Color
 #
 #The MIT License (MIT)
 #
-#Copyright (c) 2020 Carsen Klock
+#Copyright (c) 2020 MetaSpartan
 #
 #Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 #The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
@@ -220,7 +220,7 @@ if [ -d "kronos" ]; then
   sudo rm -rf kronos
 fi
 
-git clone https://github.com/carsenk/kronos
+git clone https://github.com/metaspartan/kronos
 
 cd kronos
 
@@ -465,7 +465,7 @@ if [ -d "kronos" ]; then
   sudo rm -rf kronos
 fi
 
-git clone https://github.com/carsenk/kronos
+git clone https://github.com/metaspartan/kronos
 
 cd kronos
 

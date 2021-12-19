@@ -19,11 +19,11 @@ KRONOS BASH INSTALLER SCRIPT
 Simply run the single command below in your Terminal or via SSH, then choose one of the options if you want to Install Kronos with or without Denarius chaindata or if you want to just update!:
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/carsenk/kronos/master/installkronos.sh | bash
+wget -qO- https://raw.githubusercontent.com/metaspartan/kronos/master/installkronos.sh | bash
 ```
 or
 ```bash
-curl -o- https://raw.githubusercontent.com/carsenk/kronos/master/installkronos.sh | bash
+curl -o- https://raw.githubusercontent.com/metaspartan/kronos/master/installkronos.sh | bash
 ```
 
 You can choose an option 1-3 from the installer script above to either install Kronos, install Kronos with Denarius chaindata, or Update Kronos!
@@ -63,7 +63,7 @@ sudo mkdir -p ~/Kronos/DATA/storage
 
 sudo mkdir -p ~/Kronos/DATA/kronosleveldb
 
-git clone https://github.com/carsenk/kronos.git
+git clone https://github.com/metaspartan/kronos.git
 
 cd kronos
 
@@ -81,7 +81,7 @@ RUNNING THE KRONOS ELECTRON APP (Windows, macOS, etc.):
 -----------------
 Install NodeJS v12.16.3 via NVM or Installer from https://nodejs.org
 ```
-git clone https://github.com/carsenk/kronos.git
+git clone https://github.com/metaspartan/kronos.git
 
 cd kronos
 
@@ -96,7 +96,7 @@ BUILDING THE KRONOS ELECTRON APP (If you want to build your own binaries):
 -----------------
 Install NodeJS v12.16.3 via NVM or Installer from https://nodejs.org
 ```
-git clone https://github.com/carsenk/kronos.git
+git clone https://github.com/metaspartan/kronos.git
 
 cd kronos
 
