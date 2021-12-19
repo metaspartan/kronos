@@ -1,12 +1,13 @@
-language: python
-python: 3.6
 language: node_js
 node_js:
   - "14.17.3"
+python: 
+  - "3.8"
 jobs:
   fast_finish: true
 before_install:
   - sudo apt-get update
+  - sudo apt-get install -y python3 python3-pip python3-setuptools python3-dev
 install:
   - npm install -g lerna
   - npm install
