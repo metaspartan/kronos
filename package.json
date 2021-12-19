@@ -84,7 +84,7 @@
     "jquery": "^3.5.1",
     "json-storage-fs": "git://github.com/metaspartan/json-storage-fs.git",
     "keymaster": "^1.6.2",
-    "level": "^7.0.0",
+    "level": "^7.0.1",
     "lob": "^6.2.0",
     "lodash": "^4.17.15",
     "lusca": "^1.6.1",
