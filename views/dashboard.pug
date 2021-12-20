@@ -15,14 +15,14 @@ block content
         var hexhash = data.block.hex.toString();
         //$('#blockheight').html(height);
         $('#blockhash').html('<a href="/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;">BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
-        $('#link').html('<span class="blockcount"><a href="/block/'+height+'">'+height+'</a></span>'); 
+        $('#link').html('<span class="blockcount"><a href="/block/'+height+'">'+height+'</a></span>');
 
       } else {
         var height = data.block[0].height;
         var hexhash = data.block[0].hex.toString();
         //$('#blockheight').html(height);
         $('#blockhash').html('<a href="/block/'+height+'" style="color:#444;font-size:9px;font-weight:400;">BLOCK HEX: '+hexhash.substring(0,33)+'...</a>'); 
-        $('#link').html('<span class="blockcount"><a href="/block/'+height+'">'+height+'</a>'); 
+        $('#link').html('<span class="blockcount"><a href="/block/'+height+'">'+height+'</a>');
 
       }
     });

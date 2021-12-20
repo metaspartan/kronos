@@ -130,7 +130,7 @@ const client = new bitcoin.Client({
     var chaindl = 'nooverlay';
     var chaindlbtn = 'nobtn';
 
-    var balance = info;
+    var balance = info; 
 
     if (balance <= 0) {
       balance = 0;

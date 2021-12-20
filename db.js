@@ -1,4 +1,4 @@
-// Copyright (c) 2020 MetaSpartan
+// Copyright (c) 2020-2022 MetaSpartan
 // Kronos LevelDB Data Store using Level
 const level = require('level');
   

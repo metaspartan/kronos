@@ -3,7 +3,7 @@
 # https://github.com/metaspartan/kronos
 # By MetaSpartan
 name: kronos
-version: '2.0.7'
+version: '2.0.8'
 summary: Kronos
 description: |
   A Dashboard Interface and Wallet for Denarius (D), Ethereum (ETH), and Denarii (ARI) built with NodeJS and Electron

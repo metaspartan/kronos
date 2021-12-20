@@ -33,4 +33,4 @@ var load = document.getElementById('blockpp');
     }
   });
   
-  bar.animate(progValue3);  // Number from 0.0 to 1.0
+  bar.animate(progValue3);

@@ -78,7 +78,7 @@ if (currentOS === 'linux') {
     function encrypt(data) {
         data = CryptoJS.AES.encrypt(data, KEY);
         data = data.toString();
-        return data;
+        return data; 
     }
 
     function decrypt(data) {
