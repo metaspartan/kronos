@@ -3,7 +3,7 @@ const electron = require("electron"),
   BrowserWindow = electron.BrowserWindow;
 
 const path = require('path');
-const url = require('url');
+const url = require('url'); 
 const fs = require('fs');
 const randomstring = require("randomstring");
 const Storage = require('json-storage-fs');
@@ -43,7 +43,7 @@ function createWindow() {
     height: 900,
     frame: false,
     titleBarStyle: 'hidden',
-    icon: __dirname + '../public/img/caesarsmall.png',
+    icon: __dirname + '../public/img/caesarsmall.png', 
     webPreferences: {
       nodeIntegration: true,
       nativeWindowOpen: true,
@@ -203,20 +203,6 @@ autoUpdater.on('update-downloaded', () => {
   mainWindow.webContents.send('update_downloaded');
   log.info('Kronos Update was downloaded!');
 });
-
-// autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
-//   const dialogOpts = {
-//     type: 'info',
-//     buttons: ['Restart', 'Later'],
-//     title: 'Application Update',
-//     message: process.platform === 'win32' ? releaseNotes : releaseName,
-//     detail: 'A new version of Kronos has been downloaded. Restart the application to apply the updates.'
-//   };
-
-//   dialog.showMessageBox(dialogOpts).then((returnValue) => {
-//     if (returnValue.response === 0) autoUpdater.quitAndInstall();
-//   });
-// });
 
 ipcMain.on('restart_app', () => {
   autoUpdater.quitAndInstall();
