@@ -2,13 +2,8 @@
 
 Official Website: https://kronoswallet.com
 
-
-Official BitClout (CLOUT) @kronoswallet https://bitclout.com/u/kronoswallet
-
 #### A Dashboard Interface and Wallet for Denarius (D), Bitcoin (BTC), Ethereum (ETH), Binance Smart Chain (BSC), BitClout (CLOUT) and Fantom Opera (FTM) written in NodeJS and Electron 
 =======================
-
-![Kronos Wallet](https://user-images.githubusercontent.com/10162347/125235791-3e221d80-e2a0-11eb-9270-196b7afd9630.gif)
 
 [![GitHub version](https://img.shields.io/github/release/metaspartan/kronos.svg)](https://badge.fury.io/gh/metaspartan%2Fkronos)
 [![Build Status](https://travis-ci.org/metaspartan/kronos.svg?branch=master)](https://travis-ci.org/metaspartan/kronos) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/metaspartan/kronos) [![Dependency Status](https://david-dm.org/metaspartan/kronos/status.svg?style=flat)](https://david-dm.org/metaspartan/kronos) [![devDependencies Status](https://david-dm.org/metaspartan/kronos/dev-status.svg)](https://david-dm.org/metaspartan/kronos?type=dev) [![Join the chat at https://discord.gg/UPpQy3n](https://img.shields.io/badge/Discord-Chat-blue.svg?logo=discord)](https://discord.gg/UPpQy3n) 
@@ -116,7 +111,7 @@ Prerequisites
 -------------
 
 - [denariusd](https://github.com/metaspartan/denarius)
-- [Node.js 12+](http://nodejs.org)
+- [Node.js 16+](http://nodejs.org)
 
 Getting Started
 ---------------

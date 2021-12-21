@@ -79,7 +79,7 @@ nohup npm run headless &
 
 RUNNING THE KRONOS ELECTRON APP (Windows, macOS, etc.):
 -----------------
-Install NodeJS v14.17.3 via NVM or Installer from https://nodejs.org
+Install NodeJS v16.9.1 via NVM or Installer from https://nodejs.org
 ```
 git clone https://github.com/metaspartan/kronos.git
 
@@ -94,7 +94,7 @@ npm run kronos
 
 BUILDING THE KRONOS ELECTRON APP (If you want to build your own binaries):
 -----------------
-Install NodeJS v14.17.3 via NVM or Installer from https://nodejs.org
+Install NodeJS v16.9.1 via NVM or Installer from https://nodejs.org
 ```
 git clone https://github.com/metaspartan/kronos.git
 

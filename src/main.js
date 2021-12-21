@@ -2,6 +2,7 @@ const electron = require("electron"),
   app = electron.app,
   BrowserWindow = electron.BrowserWindow;
 
+require('electron-debug')();
 const path = require('path');
 const url = require('url'); 
 const fs = require('fs');
@@ -30,8 +31,6 @@ const autoUpdater = updater.autoUpdater;
 // //https://github.com/metaspartan/kronos/releases/download/v1.7.2-Beta/Kronos-Setup-1.7.2-Beta.exe
 
 // autoUpdater.setFeedURL({ urlF });
-
-const extensions = require('./extensions');
 
 //require('@treverix/remote/main').initialize();
 let mainWindow;
@@ -66,8 +65,16 @@ function createWindow() {
 
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
-  let indexPath;
-  indexPath = path.join(`brave/${__dirname}`, 'index.html');
+  // mainWindow.loadURL(url.format({
+  //   pathname: path.join(__dirname, 'index.html'),
+  //   protocol: 'file:',
+  //   slashes: true
+  // }));
+
+  // mainWindow.loadFile(`file://${__dirname}/index.html`);
+
+  // let indexPath;
+  // indexPath = path.join(`brave/${__dirname}`, 'index.html');
 
   nativeTheme.themeSource = 'dark';
 

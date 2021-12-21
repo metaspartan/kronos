@@ -55,7 +55,7 @@ parts:
     source-type: git
     source-tag: master
     plugin: nodejs
-    node-engine: 14.17.3
+    node-engine: 16.9.1
     build-packages:
       - g++
       - jq
@@ -75,7 +75,7 @@ parts:
     source-type: git
     source-tag: master
     plugin: nodejs
-    node-engine: 14.17.3
+    node-engine: 16.9.1
     build-packages:
       - g++
       - jq
