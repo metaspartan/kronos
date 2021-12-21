@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "app-root-path": "^3.0.0",
-    "axios": "^0.24.0",
+    "axios": "^0.21.1",
     "axios-cache-adapter": "^2.7.3",
     "bip32": "^2.0.6",
     "bip32d": "git://github.com/metaspartan/bip32d.git",
